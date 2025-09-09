@@ -118,3 +118,50 @@
 **🔄 ACTUALIZADO:** 09-Sep-2025  
 **⏰ PRÓXIMA REVISIÓN:** 10-Sep-2025  
 **📧 CONTACTO:** gr-depto.infoygc@minterior.gub.uy
+
+
+### ESTRUCTURA
+Directory structure:
+└── despliegues-dngr-sistema-para-registro-de-ingresos-y-egresos-del-ircca/
+    ├── README.md
+    ├── env.d.ts
+    ├── eslint.config.ts
+    ├── index.html
+    ├── package.json
+    ├── playwright.config.ts
+    ├── tsconfig.app.json
+    ├── tsconfig.json
+    ├── tsconfig.node.json
+    ├── tsconfig.vitest.json
+    ├── vite.config.ts
+    ├── vitest.config.ts
+    ├── .editorconfig
+    ├── .prettierrc.json
+    ├── docs/
+    │   ├── Acta de Constitución.md
+    │   ├── Análisis de Interesados.md
+    │   ├── Cronograma General.md
+    │   ├── EDT y Requisitos de Entregables.md
+    │   ├── Formulación del Proyecto.md
+    │   ├── FRONTEND_IRCCA_PANTALLAS.md
+    │   ├── Plan de Comunicaciones.md
+    │   ├── PWA_IRCCA_ARQUITECTURA.md
+    │   ├── SEGURIDAD_IRCCA_SISTEMA.md
+    │   └── tasks/
+    │       ├── TAREAS_PROYECTO_IRCCA.md
+    │       ├── TASK_1.2.0_Setup_Proyecto_Vue.md
+    │       └── TASK_1.2.3_Diseño_UI_UX.md
+    ├── e2e/
+    │   ├── tsconfig.json
+    │   └── vue.spec.ts
+    └── src/
+        ├── App.vue
+        ├── main.ts
+        ├── __tests__/
+        │   └── App.spec.ts
+        ├── plugins/
+        │   └── vuetify.ts
+        ├── router/
+        │   └── index.ts
+        └── stores/
+            └── counter.ts
