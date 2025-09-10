@@ -14,46 +14,47 @@ const router = createRouter({
       component: () => import('@/views/auth/LoginView.vue'),
       meta: { requiresGuest: true }
     },
-    {
-      path: '/dashboard',
-      name: 'Dashboard',
-      component: () => import('@/views/dashboard/DashboardView.vue'),
-      meta: { requiresAuth: true }
-    },
-    {
-      path: '/registro',
-      name: 'Registro',
-      component: () => import('@/views/registro/RegistroView.vue'),
-      meta: { requiresAuth: true },
-      children: [
-        {
-          path: 'ingreso',
-          name: 'RegistroIngreso',
-          component: () => import('@/views/registro/IngresoView.vue')
-        },
-        {
-          path: 'egreso',
-          name: 'RegistroEgreso', 
-          component: () => import('@/views/registro/EgresoView.vue')
-        }
-      ]
-    },
-    {
-      path: '/consultas',
-      name: 'Consultas',
-      component: () => import('@/views/consulta/ConsultasView.vue'),
-      meta: { requiresAuth: true }
-    },
-    {
-      path: '/admin',
-      name: 'Admin',
-      component: () => import('@/views/admin/AdminView.vue'),
-      meta: { requiresAuth: true, requiresAdmin: true }
-    },
+    // TODO: Crear estas vistas gradualmente según TASK_1.2.3
+    // {
+    //   path: '/dashboard',
+    //   name: 'Dashboard',
+    //   component: () => import('@/views/dashboard/DashboardView.vue'),
+    //   meta: { requiresAuth: true }
+    // },
+    // {
+    //   path: '/registro',
+    //   name: 'Registro',
+    //   component: () => import('@/views/registro/RegistroView.vue'),
+    //   meta: { requiresAuth: true },
+    //   children: [
+    //     {
+    //       path: 'ingreso',
+    //       name: 'RegistroIngreso',
+    //       component: () => import('@/views/registro/IngresoView.vue')
+    //     },
+    //     {
+    //       path: 'egreso',
+    //       name: 'RegistroEgreso', 
+    //       component: () => import('@/views/registro/EgresoView.vue')
+    //     }
+    //   ]
+    // },
+    // {
+    //   path: '/consultas',
+    //   name: 'Consultas',
+    //   component: () => import('@/views/consulta/ConsultasView.vue'),
+    //   meta: { requiresAuth: true }
+    // },
+    // {
+    //   path: '/admin',
+    //   name: 'Admin',
+    //   component: () => import('@/views/admin/AdminView.vue'),
+    //   meta: { requiresAuth: true, requiresAdmin: true }
+    // },
     {
       path: '/:pathMatch(.*)*',
       name: 'NotFound',
-      redirect: '/dashboard'
+      redirect: '/login'
     }
   ]
 })

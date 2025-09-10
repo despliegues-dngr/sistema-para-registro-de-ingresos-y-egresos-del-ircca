@@ -136,6 +136,7 @@ Directory structure:
     ├── vite.config.ts
     ├── vitest.config.ts
     ├── .editorconfig
+    ├── .env.example
     ├── .prettierrc.json
     ├── docs/
     │   ├── Acta de Constitución.md
@@ -149,6 +150,7 @@ Directory structure:
     │   ├── SEGURIDAD_IRCCA_SISTEMA.md
     │   └── tasks/
     │       ├── TAREAS_PROYECTO_IRCCA.md
+    │       ├── TASK_1.2.0_FASE3_Configuracion_PWA.md
     │       ├── TASK_1.2.0_Setup_Proyecto_Vue.md
     │       └── TASK_1.2.3_Diseño_UI_UX.md
     ├── e2e/
@@ -159,9 +161,18 @@ Directory structure:
         ├── main.ts
         ├── __tests__/
         │   └── App.spec.ts
+        ├── composables/
+        │   ├── useAuth.ts
+        │   └── useDatabase.ts
         ├── plugins/
         │   └── vuetify.ts
         ├── router/
         │   └── index.ts
+        ├── services/
+        │   ├── databaseService.ts
+        │   └── encryptionService.ts
         └── stores/
-            └── counter.ts
+            ├── app.ts
+            ├── auth.ts
+            ├── counter.ts
+            └── registro.ts
