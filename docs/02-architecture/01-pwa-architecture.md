@@ -18,6 +18,14 @@ La aplicación se construye sobre un stack moderno de JavaScript, enfocado en el
 - **Base de Datos Local:** IndexedDB
 - **Capacidad Offline:** Progressive Web App (PWA) mediante un Service Worker gestionado por Workbox.
 
+### Configuración Vuetify
+El proyecto sigue estrictamente las mejores prácticas oficiales de Vuetify:
+- **Sistema de Temas:** Configuración centralizada en `src/plugins/vuetify.ts`
+- **CSS Variables:** Uso de variables CSS del tema (`var(--v-theme-*)`)
+- **Clases de Utilidad:** Prioridad a clases oficiales (`bg-primary`, `text-*`)
+- **Defaults Globales:** Configuración de componentes en el tema
+- **Sin CSS Personalizado:** Evitar `!important` y CSS que interfiera con Vuetify
+
 *(Nota: El listado completo de dependencias y versiones se encuentra en `package.json` y está resumido en `docs/technical_overview.md`)*
 
 ---

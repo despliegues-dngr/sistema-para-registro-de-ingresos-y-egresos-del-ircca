@@ -26,12 +26,27 @@ INICIO → LOGIN → DASHBOARD → [REGISTRAR INGRESO/SALIDA] → DASHBOARD
 
 ## 2. Tema Gubernamental IRCCA
 
-La aplicación debe adherirse a un tema visual consistente definido en el **Design System**.
+La aplicación implementa un sistema de diseño basado en **Vuetify 3** siguiendo estrictamente las mejores prácticas oficiales.
 
-*   **Paleta de Colores:** Se utilizará una paleta de colores institucionales donde predomina el azul (`primary`), complementado con colores para estados (éxito, error, advertencia).
-*   **Tipografía:** La fuente principal será `Roboto`, con una jerarquía de tamaños y pesos definida para títulos, subtítulos y cuerpo de texto.
+### Implementación Técnica
+- **Sistema de Temas:** Configurado en `src/plugins/vuetify.ts`
+- **Background Automático:** `#F5F5F5` aplicado nativamente por Vuetify
+- **Clases de Utilidad:** `bg-primary`, `text-*`, `d-flex`, etc.
+- **CSS Variables:** `var(--v-theme-primary)` para colores dinámicos
 
-*(Nota: La definición exacta de los colores y la tipografía se encuentra en `design/docs/design_system.md`)*
+### Paleta de Colores Institucional
+- **Primary:** `#1565C0` (Azul gubernamental Uruguay)
+- **Secondary:** `#424242` (Gris neutro)
+- **Background:** `#F5F5F5` (Fondo institucional)
+- **Surface:** `#FFFFFF` (Superficies de tarjetas)
+- **Success/Error/Warning:** Colores de estado Material Design
+
+### Tipografía y Layout
+- **Fuente:** Roboto (nativa de Vuetify)
+- **Grid System:** `v-container`, `v-row`, `v-col` oficial
+- **Spacing:** Sistema de espaciado Vuetify (`py-6`, `mx-auto`)
+
+*(Implementación detallada en: `docs/02-architecture/04-vuetify-guidelines.md`)*
 
 ---
 
