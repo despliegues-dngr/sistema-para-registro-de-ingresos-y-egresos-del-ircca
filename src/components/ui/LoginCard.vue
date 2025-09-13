@@ -1,8 +1,5 @@
 <template>
-  <v-card 
-    class="mx-auto" 
-    :max-width="UI_CONFIG.LOGIN_CARD_MAX_WIDTH"
-  >
+  <v-card class="mx-auto" :max-width="UI_CONFIG.LOGIN_CARD_MAX_WIDTH">
     <slot />
   </v-card>
 </template>

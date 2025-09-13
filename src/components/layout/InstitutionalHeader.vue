@@ -1,12 +1,15 @@
 <template>
-  <v-card-item class="bg-primary text-center py-6 px-4" style="border-bottom: 3px solid rgb(var(--v-theme-primary));">
+  <v-card-item
+    class="bg-primary text-center py-6 px-4"
+    style="border-bottom: 3px solid rgb(var(--v-theme-primary))"
+  >
     <div class="d-flex flex-column align-center">
       <div class="mb-4">
         <v-avatar size="64" class="institutional-icon">
           <v-icon size="36" color="white">{{ ICONS.AUTH.SECURITY }}</v-icon>
         </v-avatar>
       </div>
-      
+
       <h1 class="text-h6 text-sm-h5 font-weight-bold text-white mb-2 text-center">
         {{ title }}
       </h1>
@@ -32,7 +35,7 @@ interface Props {
 withDefaults(defineProps<Props>(), {
   title: SYSTEM_INFO.NAME,
   subtitle: 'IRCCA',
-  country: SYSTEM_INFO.FULL_NAME
+  country: SYSTEM_INFO.FULL_NAME,
 })
 </script>
 

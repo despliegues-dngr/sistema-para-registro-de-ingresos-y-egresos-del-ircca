@@ -18,41 +18,40 @@ export const useAuth = () => {
     try {
       // TODO: Implementar autenticación con cifrado
       // Por ahora simulamos usuarios hardcodeados para desarrollo
-      
+
       if (username === 'admin' && password === 'admin123') {
         authStore.login({
           id: '1',
           username: 'admin',
           role: 'admin',
-          lastLogin: new Date()
+          lastLogin: new Date(),
         })
         router.push('/dashboard')
         return { success: true }
       }
-      
+
       if (username === 'operador' && password === 'op123') {
         authStore.login({
-          id: '2', 
+          id: '2',
           username: 'operador',
           role: 'operador',
-          lastLogin: new Date()
+          lastLogin: new Date(),
         })
         router.push('/dashboard')
         return { success: true }
       }
-      
+
       // Credenciales incorrectas
       authStore.incrementLoginAttempts()
-      return { 
-        success: false, 
+      return {
+        success: false,
         error: 'Credenciales incorrectas',
-        attemptsLeft: authStore.maxLoginAttempts - authStore.loginAttempts
+        attemptsLeft: authStore.maxLoginAttempts - authStore.loginAttempts,
       }
-      
-    } catch (error) {
-      return { 
-        success: false, 
-        error: 'Error en el sistema de autenticación' 
+    } catch {
+      return {
+        success: false,
+        error: 'Error en el sistema de autenticación',
       }
     }
   }
@@ -76,6 +75,6 @@ export const useAuth = () => {
     // Methods
     login,
     logout,
-    resetAttempts
+    resetAttempts,
   }
 }

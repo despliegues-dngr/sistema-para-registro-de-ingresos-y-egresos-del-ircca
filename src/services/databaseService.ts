@@ -5,7 +5,7 @@ import type { RegistroEntry } from '@/stores/registro'
 export interface BackupData {
   id: string
   timestamp: Date
-  data: any
+  data: unknown
   encrypted: boolean
   size: number
 }
@@ -27,19 +27,19 @@ export class DatabaseService {
   async saveRegistro(registro: RegistroEntry): Promise<{ success: boolean; error?: string }> {
     try {
       // Cifrar datos sensibles
-      const encryptedPersona = registro.persona ? 
-        await encryptionService.encrypt(JSON.stringify(registro.persona), this.masterKey) :
-        null
+      const encryptedPersona = registro.persona
+        ? await encryptionService.encrypt(JSON.stringify(registro.persona), this.masterKey)
+        : null
 
-      const encryptedVehiculo = registro.vehiculo ?
-        await encryptionService.encrypt(JSON.stringify(registro.vehiculo), this.masterKey) :
-        null
+      const encryptedVehiculo = registro.vehiculo
+        ? await encryptionService.encrypt(JSON.stringify(registro.vehiculo), this.masterKey)
+        : null
 
       const encryptedRegistro = {
         ...registro,
         persona: encryptedPersona,
         vehiculo: encryptedVehiculo,
-        encrypted: true
+        encrypted: true,
       }
 
       return await this.db.addRecord('registros', encryptedRegistro)
@@ -53,35 +53,39 @@ export class DatabaseService {
    */
   async getRegistros(filters?: { tipo?: string; fecha?: Date }): Promise<RegistroEntry[]> {
     try {
-      let registros = await this.db.getRecords('registros')
+      let registros = (await this.db.getRecords('registros')) as RegistroEntry[]
 
       // Filtrar si se especifica
       if (filters?.tipo) {
-        registros = registros.filter(r => r.tipo === filters.tipo)
+        registros = registros.filter((r) => r.tipo === filters.tipo)
       }
 
       if (filters?.fecha) {
         const fechaStr = filters.fecha.toDateString()
-        registros = registros.filter(r => 
-          new Date(r.timestamp).toDateString() === fechaStr
-        )
+        registros = registros.filter((r) => new Date(r.timestamp).toDateString() === fechaStr)
       }
 
       // Descifrar datos
       const decryptedRegistros = await Promise.all(
         registros.map(async (registro) => {
-          if (!registro.encrypted) return registro
+          const registroWithEncryption = registro as RegistroEntry & { encrypted?: boolean }
+          if (!registroWithEncryption.encrypted) return registro
 
           let persona = null
           let vehiculo = null
 
           if (registro.persona) {
             try {
+              const encryptedPersona = registro.persona as unknown as {
+                encrypted: string
+                salt: string
+                iv: string
+              }
               const decryptedPersona = await encryptionService.decrypt(
-                registro.persona.encrypted,
+                encryptedPersona.encrypted,
                 this.masterKey,
-                registro.persona.salt,
-                registro.persona.iv
+                encryptedPersona.salt,
+                encryptedPersona.iv,
               )
               persona = JSON.parse(decryptedPersona)
             } catch (error) {
@@ -91,11 +95,16 @@ export class DatabaseService {
 
           if (registro.vehiculo) {
             try {
+              const encryptedVehiculo = registro.vehiculo as unknown as {
+                encrypted: string
+                salt: string
+                iv: string
+              }
               const decryptedVehiculo = await encryptionService.decrypt(
-                registro.vehiculo.encrypted,
+                encryptedVehiculo.encrypted,
                 this.masterKey,
-                registro.vehiculo.salt,
-                registro.vehiculo.iv
+                encryptedVehiculo.salt,
+                encryptedVehiculo.iv,
               )
               vehiculo = JSON.parse(decryptedVehiculo)
             } catch (error) {
@@ -106,9 +115,9 @@ export class DatabaseService {
           return {
             ...registro,
             persona,
-            vehiculo
+            vehiculo,
           }
-        })
+        }),
       )
 
       return decryptedRegistros
@@ -123,7 +132,7 @@ export class DatabaseService {
    */
   async searchByDocumento(documento: string): Promise<RegistroEntry[]> {
     const registros = await this.getRegistros()
-    return registros.filter(r => r.persona?.documento === documento)
+    return registros.filter((r) => r.persona?.documento === documento)
   }
 
   /**
@@ -131,7 +140,7 @@ export class DatabaseService {
    */
   async searchByMatricula(matricula: string): Promise<RegistroEntry[]> {
     const registros = await this.getRegistros()
-    return registros.filter(r => r.vehiculo?.matricula === matricula)
+    return registros.filter((r) => r.vehiculo?.matricula === matricula)
   }
 
   /**
@@ -140,37 +149,35 @@ export class DatabaseService {
   async createBackup(): Promise<{ success: boolean; error?: string; backupId?: string }> {
     try {
       // Obtener todos los datos
-      const registros = await this.db.getRecords('registros')
-      const usuarios = await this.db.getRecords('usuarios')
-      const config = await this.db.getRecords('configuracion')
+      const registros = (await this.db.getRecords('registros')) as unknown[]
+      const usuarios = (await this.db.getRecords('usuarios')) as unknown[]
+      const config = (await this.db.getRecords('configuracion')) as unknown[]
 
       const backupData = {
         registros,
         usuarios,
         config,
         timestamp: new Date(),
-        version: '1.0'
+        version: '1.0',
       }
 
       // Cifrar backup completo
-      const encrypted = await encryptionService.encrypt(
-        JSON.stringify(backupData),
-        this.masterKey
-      )
+      const encrypted = await encryptionService.encrypt(JSON.stringify(backupData), this.masterKey)
 
       const backup: BackupData = {
         id: encryptionService.generateSecureId(),
         timestamp: new Date(),
         data: encrypted,
         encrypted: true,
-        size: JSON.stringify(backupData).length
+        size: JSON.stringify(backupData).length,
       }
 
-      const result = await this.db.addRecord('backups', backup)
-      
-      return result.success ? 
-        { success: true, backupId: backup.id } :
-        result
+      const result = await this.db.addRecord(
+        'backups',
+        backup as unknown as Record<string, unknown>,
+      )
+
+      return result.success ? { success: true, backupId: backup.id } : result
     } catch (error) {
       return { success: false, error: `Error creando backup: ${error}` }
     }
@@ -181,19 +188,20 @@ export class DatabaseService {
    */
   async restoreBackup(backupId: string): Promise<{ success: boolean; error?: string }> {
     try {
-      const backups = await this.db.getRecords('backups')
-      const backup = backups.find(b => b.id === backupId)
+      const backups = (await this.db.getRecords('backups')) as BackupData[]
+      const backup = backups.find((b) => b.id === backupId)
 
       if (!backup) {
         return { success: false, error: 'Backup no encontrado' }
       }
 
       // Descifrar backup
+      const encryptedBackup = backup.data as { encrypted: string; salt: string; iv: string }
       const decryptedData = await encryptionService.decrypt(
-        backup.data.encrypted,
+        encryptedBackup.encrypted,
         this.masterKey,
-        backup.data.salt,
-        backup.data.iv
+        encryptedBackup.salt,
+        encryptedBackup.iv,
       )
 
       const backupData = JSON.parse(decryptedData)
@@ -230,16 +238,14 @@ export class DatabaseService {
       const cutoffDate = new Date()
       cutoffDate.setDate(cutoffDate.getDate() - daysToKeep)
 
-      const registros = await this.db.getRecords('registros')
-      const oldRegistros = registros.filter(r => 
-        new Date(r.timestamp) < cutoffDate
-      )
+      const registros = (await this.db.getRecords('registros')) as RegistroEntry[]
+      const oldRegistros = registros.filter((r) => new Date(r.timestamp) < cutoffDate)
 
       // TODO: Implementar eliminación selectiva por ID
       // Por ahora solo contamos
-      
+
       return { success: true, cleaned: oldRegistros.length }
-    } catch (error) {
+    } catch {
       return { success: false, cleaned: 0 }
     }
   }

@@ -2,34 +2,34 @@
   <div class="auth-background">
     <!-- Capa base del fondo -->
     <div class="background-overlay"></div>
-    
+
     <!-- Formas geométricas distribuidas por toda la pantalla -->
     <div class="geometric-shapes">
       <!-- Formas grandes -->
       <div class="shape shape-large shape-1"></div>
       <div class="shape shape-large shape-2"></div>
       <div class="shape shape-large shape-3"></div>
-      
+
       <!-- Formas medianas -->
       <div class="shape shape-medium shape-4"></div>
       <div class="shape shape-medium shape-5"></div>
       <div class="shape shape-medium shape-6"></div>
       <div class="shape shape-medium shape-7"></div>
-      
+
       <!-- Formas pequeñas -->
       <div class="shape shape-small shape-8"></div>
       <div class="shape shape-small shape-9"></div>
       <div class="shape shape-small shape-10"></div>
       <div class="shape shape-small shape-11"></div>
       <div class="shape shape-small shape-12"></div>
-      
+
       <!-- Formas con borde únicamente -->
       <div class="shape shape-outline shape-13"></div>
       <div class="shape shape-outline shape-14"></div>
       <div class="shape shape-outline shape-15"></div>
       <div class="shape shape-outline shape-16"></div>
     </div>
-    
+
     <!-- Contenido principal -->
     <v-container fluid class="fill-height content-container">
       <v-row justify="center" align="center" class="fill-height">
@@ -229,7 +229,8 @@ import { UI_CONFIG } from '@/config/constants'
 
 /* Animaciones sutiles */
 @keyframes breathe {
-  0%, 100% {
+  0%,
+  100% {
     opacity: 1;
   }
   50% {
@@ -238,7 +239,8 @@ import { UI_CONFIG } from '@/config/constants'
 }
 
 @keyframes float-slow {
-  0%, 100% {
+  0%,
+  100% {
     transform: rotate(45deg) translateY(0px) scale(1);
   }
   50% {
@@ -247,7 +249,8 @@ import { UI_CONFIG } from '@/config/constants'
 }
 
 @keyframes float-medium {
-  0%, 100% {
+  0%,
+  100% {
     transform: rotate(45deg) translateY(0px);
   }
   50% {
@@ -256,7 +259,8 @@ import { UI_CONFIG } from '@/config/constants'
 }
 
 @keyframes float-fast {
-  0%, 100% {
+  0%,
+  100% {
     transform: rotate(45deg) translateY(0px);
   }
   50% {
@@ -265,7 +269,8 @@ import { UI_CONFIG } from '@/config/constants'
 }
 
 @keyframes pulse-outline {
-  0%, 100% {
+  0%,
+  100% {
     transform: rotate(45deg) scale(1);
     opacity: 0.6;
   }
@@ -281,12 +286,12 @@ import { UI_CONFIG } from '@/config/constants'
     width: 120px;
     height: 120px;
   }
-  
+
   .shape-medium {
     width: 70px;
     height: 70px;
   }
-  
+
   .shape-outline {
     width: 85px;
     height: 85px;
@@ -298,22 +303,22 @@ import { UI_CONFIG } from '@/config/constants'
     width: 100px;
     height: 100px;
   }
-  
+
   .shape-medium {
     width: 60px;
     height: 60px;
   }
-  
+
   .shape-small {
     width: 35px;
     height: 35px;
   }
-  
+
   .shape-outline {
     width: 70px;
     height: 70px;
   }
-  
+
   /* Ocultar algunas formas en móviles para no saturar */
   .shape-12,
   .shape-16 {
@@ -325,27 +330,27 @@ import { UI_CONFIG } from '@/config/constants'
   .geometric-shapes {
     opacity: 0.7;
   }
-  
+
   .shape-large {
     width: 80px;
     height: 80px;
   }
-  
+
   .shape-medium {
     width: 50px;
     height: 50px;
   }
-  
+
   .shape-small {
     width: 30px;
     height: 30px;
   }
-  
+
   .shape-outline {
     width: 60px;
     height: 60px;
   }
-  
+
   /* Ocultar más formas en pantallas muy pequeñas */
   .shape-10,
   .shape-11,

@@ -2,7 +2,7 @@
   <AuthBackground>
     <LoginCard>
       <InstitutionalHeader />
-      
+
       <v-card-text class="pa-8">
         <LoginForm
           :loading="loading"
@@ -11,23 +11,18 @@
           @clear-message="clearMessage"
         />
       </v-card-text>
-      
+
       <GovernmentFooter @help="showHelp = true" @register="handleRegister" />
     </LoginCard>
   </AuthBackground>
 
   <!-- Dialog de Ayuda Modular -->
-  <HelpDialog 
-    v-model="showHelp"
-    @close="showHelp = false"
-  />
+  <HelpDialog v-model="showHelp" @close="showHelp = false" />
 </template>
 
 <script setup lang="ts">
 import { ref } from 'vue'
-import { useRouter } from 'vue-router'
-import { useAuthStore } from '@/stores/auth'
-import { MESSAGES, ROUTES } from '@/config/constants'
+import { MESSAGES } from '@/config/constants'
 
 // Componentes modulares
 import AuthBackground from '@/components/layout/AuthBackground.vue'
@@ -38,8 +33,9 @@ import GovernmentFooter from '@/components/layout/GovernmentFooter.vue'
 import HelpDialog from '@/components/ui/HelpDialog.vue'
 
 // Composables
-const router = useRouter()
-const authStore = useAuthStore()
+// TODO: Habilitar cuando se implemente navegación
+// const router = useRouter()
+// const authStore = useAuthStore()
 
 // Estado reactivo
 const loading = ref(false)
@@ -50,11 +46,11 @@ const message = ref('')
 const onSubmit = async (credentials: { username: string; password: string }) => {
   loading.value = true
   message.value = ''
-  
+
   try {
     // Simular autenticación por ahora
-    await new Promise(resolve => setTimeout(resolve, 1500))
-    
+    await new Promise((resolve) => setTimeout(resolve, 1500))
+
     // TODO: Implementar autenticación real con authStore
     if (credentials.username === 'admin' && credentials.password === 'admin') {
       message.value = MESSAGES.AUTH.LOGIN_SUCCESS
@@ -62,7 +58,7 @@ const onSubmit = async (credentials: { username: string; password: string }) => 
     } else {
       message.value = MESSAGES.AUTH.LOGIN_ERROR
     }
-  } catch (error) {
+  } catch {
     message.value = MESSAGES.AUTH.CONNECTION_ERROR
   } finally {
     loading.value = false
@@ -78,4 +74,3 @@ const handleRegister = () => {
   message.value = MESSAGES.SYSTEM.REGISTER_DEVELOPMENT
 }
 </script>
-

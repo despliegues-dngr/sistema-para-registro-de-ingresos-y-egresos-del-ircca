@@ -6,13 +6,13 @@ const router = createRouter({
   routes: [
     {
       path: '/',
-      redirect: '/login'
+      redirect: '/login',
     },
     {
       path: '/login',
       name: 'Login',
       component: () => import('@/views/auth/LoginView.vue'),
-      meta: { requiresGuest: true }
+      meta: { requiresGuest: true },
     },
     // TODO: Crear estas vistas gradualmente según TASK_1.2.3
     // {
@@ -34,7 +34,7 @@ const router = createRouter({
     //     },
     //     {
     //       path: 'egreso',
-    //       name: 'RegistroEgreso', 
+    //       name: 'RegistroEgreso',
     //       component: () => import('@/views/registro/EgresoView.vue')
     //     }
     //   ]
@@ -54,33 +54,33 @@ const router = createRouter({
     {
       path: '/:pathMatch(.*)*',
       name: 'NotFound',
-      redirect: '/login'
-    }
-  ]
+      redirect: '/login',
+    },
+  ],
 })
 
 // Guards de autenticación
 router.beforeEach((to, from, next) => {
   const authStore = useAuthStore()
-  
+
   // Verificar si la ruta requiere autenticación
   if (to.meta.requiresAuth && !authStore.isAuthenticated) {
     next({ name: 'Login' })
     return
   }
-  
+
   // Verificar si la ruta requiere permisos de admin
   if (to.meta.requiresAdmin && !authStore.isAdmin) {
     next({ name: 'Dashboard' })
     return
   }
-  
+
   // Redirigir usuarios autenticados lejos del login
   if (to.meta.requiresGuest && authStore.isAuthenticated) {
     next({ name: 'Dashboard' })
     return
   }
-  
+
   next()
 })
 

@@ -1,5 +1,8 @@
 <template>
-  <v-card-item class="bg-grey-lighten-5 pt-3 pb-5 px-6" style="border-top: 1px solid rgb(var(--v-theme-on-surface), 0.12);">
+  <v-card-item
+    class="bg-grey-lighten-5 pt-3 pb-5 px-6"
+    style="border-top: 1px solid rgb(var(--v-theme-on-surface), 0.12)"
+  >
     <v-row>
       <v-col cols="12" class="text-center">
         <!-- Link de registro para nuevos usuarios -->
@@ -14,7 +17,7 @@
           <span class="d-none d-sm-inline">Registrarse como nuevo usuario</span>
           <span class="d-inline d-sm-none">Registrarse</span>
         </v-btn>
-      
+
         <!-- Acciones adicionales -->
         <div class="d-flex justify-center mt-1 mb-4">
           <slot name="actions">
@@ -30,9 +33,9 @@
             </v-btn>
           </slot>
         </div>
-        
+
         <!-- Copyright ESMAPO -->
-        <v-divider class="mx-auto mb-3" style="width: 80px;"></v-divider>
+        <v-divider class="mx-auto mb-3" style="width: 80px"></v-divider>
         <p class="text-caption text-grey-darken-1 mb-0">
           {{ SYSTEM_INFO.GOVERNMENT }}
         </p>

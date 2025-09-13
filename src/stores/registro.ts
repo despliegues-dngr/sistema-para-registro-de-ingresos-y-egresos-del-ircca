@@ -26,46 +26,46 @@ export const useRegistroStore = defineStore('registro', () => {
   const registros = ref<RegistroEntry[]>([])
   const loading = ref(false)
   const lastSync = ref<Date | null>(null)
-  
+
   // Getters
   const totalRegistros = computed(() => registros.value.length)
   const registrosHoy = computed(() => {
     const hoy = new Date().toDateString()
-    return registros.value.filter(r => 
-      new Date(r.timestamp).toDateString() === hoy
-    )
+    return registros.value.filter((r) => new Date(r.timestamp).toDateString() === hoy)
   })
-  
-  const ingresosPendientes = computed(() => 
-    registros.value.filter(r => 
-      r.tipo === 'ingreso' && 
-      !registros.value.some(egreso => 
-        egreso.tipo === 'egreso' && 
-        egreso.persona?.documento === r.persona?.documento &&
-        egreso.timestamp > r.timestamp
-      )
-    )
+
+  const ingresosPendientes = computed(() =>
+    registros.value.filter(
+      (r) =>
+        r.tipo === 'ingreso' &&
+        !registros.value.some(
+          (egreso) =>
+            egreso.tipo === 'egreso' &&
+            egreso.persona?.documento === r.persona?.documento &&
+            egreso.timestamp > r.timestamp,
+        ),
+    ),
   )
-  
+
   // Actions
   function addRegistro(registro: Omit<RegistroEntry, 'id' | 'timestamp'>) {
     const newRegistro: RegistroEntry = {
       ...registro,
       id: crypto.randomUUID(),
-      timestamp: new Date()
+      timestamp: new Date(),
     }
     registros.value.unshift(newRegistro) // Más recientes primero
     // TODO: Guardar en IndexedDB cifrado
   }
-  
+
   function getRegistrosByDocumento(documento: string) {
-    return registros.value.filter(r => r.persona?.documento === documento)
+    return registros.value.filter((r) => r.persona?.documento === documento)
   }
-  
+
   function getRegistrosByMatricula(matricula: string) {
-    return registros.value.filter(r => r.vehiculo?.matricula === matricula)
+    return registros.value.filter((r) => r.vehiculo?.matricula === matricula)
   }
-  
+
   async function syncData() {
     loading.value = true
     try {
@@ -77,7 +77,7 @@ export const useRegistroStore = defineStore('registro', () => {
       loading.value = false
     }
   }
-  
+
   function clearData() {
     registros.value = []
     lastSync.value = null
@@ -97,6 +97,6 @@ export const useRegistroStore = defineStore('registro', () => {
     getRegistrosByDocumento,
     getRegistrosByMatricula,
     syncData,
-    clearData
+    clearData,
   }
 })

@@ -1,10 +1,5 @@
 <template>
-  <v-form 
-    ref="loginForm" 
-    v-model="formValid" 
-    @submit.prevent="handleSubmit"
-    class="login-form"
-  >
+  <v-form ref="loginForm" v-model="formValid" @submit.prevent="handleSubmit" class="login-form">
     <!-- Alert de Estado -->
     <v-alert
       v-if="message"
@@ -88,7 +83,7 @@ interface Emits {
 
 withDefaults(defineProps<Props>(), {
   loading: false,
-  message: ''
+  message: '',
 })
 
 const emit = defineEmits<Emits>()
@@ -99,19 +94,19 @@ const showPassword = ref(false)
 
 const credentials = ref({
   username: '',
-  password: ''
+  password: '',
 })
 
 // Reglas de validación usando constantes centralizadas
 const usernameRules = [
   (v: string) => !!v || MESSAGES.VALIDATION.REQUIRED_FIELD,
   (v: string) => v.length >= AUTH_CONFIG.USERNAME_MIN_LENGTH || MESSAGES.VALIDATION.USERNAME_MIN,
-  (v: string) => VALIDATION_PATTERNS.USERNAME.test(v) || MESSAGES.VALIDATION.USERNAME_FORMAT
+  (v: string) => VALIDATION_PATTERNS.USERNAME.test(v) || MESSAGES.VALIDATION.USERNAME_FORMAT,
 ]
 
 const passwordRules = [
   (v: string) => !!v || MESSAGES.VALIDATION.REQUIRED_FIELD,
-  (v: string) => v.length >= AUTH_CONFIG.PASSWORD_MIN_LENGTH || MESSAGES.VALIDATION.PASSWORD_MIN
+  (v: string) => v.length >= AUTH_CONFIG.PASSWORD_MIN_LENGTH || MESSAGES.VALIDATION.PASSWORD_MIN,
 ]
 
 // Métodos

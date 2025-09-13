@@ -1,7 +1,7 @@
 <template>
-  <v-dialog 
-    v-model="modelValue" 
-    max-width="500" 
+  <v-dialog
+    v-model="modelValue"
+    max-width="500"
     persistent
     transition="dialog-bottom-transition"
     :scrim="true"
@@ -29,9 +29,11 @@
       <v-card-text class="pa-4">
         <!-- Información para operadores -->
         <div class="mb-4">
-          <h4 class="text-subtitle-2 font-weight-medium mb-2">{{ SYSTEM_INFO.NAME }} - Control de Acceso</h4>
+          <h4 class="text-subtitle-2 font-weight-medium mb-2">
+            {{ SYSTEM_INFO.NAME }} - Control de Acceso
+          </h4>
           <p class="text-body-2 mb-3">
-            Si es la primera vez que ingresa y aún no tiene usuario, por favor ingrese a 
+            Si es la primera vez que ingresa y aún no tiene usuario, por favor ingrese a
             <strong>"REGISTRARSE COMO NUEVO USUARIO"</strong> para hacer su registro.
           </p>
           <p class="text-body-2 text-warning">
@@ -42,7 +44,7 @@
         <!-- Contacto de soporte -->
         <div class="mb-4">
           <h4 class="text-subtitle-2 font-weight-medium mb-2">Contacto de soporte técnico:</h4>
-          
+
           <!-- Email -->
           <v-chip
             variant="outlined"
@@ -69,19 +71,13 @@
         </div>
 
         <!-- Responsabilidad institucional -->
-        <v-alert
-          type="info"
-          density="compact"
-          variant="tonal"
-          class="mb-0"
-          border="start"
-        >
+        <v-alert type="info" density="compact" variant="tonal" class="mb-0" border="start">
           <template #prepend>
             <v-icon size="20">{{ ICONS.STATUS.INFO }}</v-icon>
           </template>
           <div class="text-caption">
-            <strong>Responsabilidad:</strong> Ante cualquier inconveniente es responsabilidad 
-            del efectivo y oficial de control informar a través de los medios de contacto mencionados.
+            <strong>Responsabilidad:</strong> Ante cualquier inconveniente es responsabilidad del
+            efectivo y oficial de control informar a través de los medios de contacto mencionados.
           </div>
         </v-alert>
       </v-card-text>
@@ -89,8 +85,8 @@
       <!-- Actions -->
       <v-card-actions class="pa-4 pt-0">
         <v-spacer />
-        <v-btn 
-          color="primary" 
+        <v-btn
+          color="primary"
           variant="flat"
           :prepend-icon="ICONS.STATUS.SUCCESS"
           @click="closeDialog"
@@ -119,14 +115,14 @@ interface Emits {
 
 const props = withDefaults(defineProps<Props>(), {
   supportEmail: 'gr-depto.infoygc@minterior.gub.uy',
-  whatsappNumber: '099 505 227'
+  whatsappNumber: '099 505 227',
 })
 
 const emit = defineEmits<Emits>()
 
 const modelValue = computed({
   get: () => props.modelValue,
-  set: (value: boolean) => emit('update:modelValue', value)
+  set: (value: boolean) => emit('update:modelValue', value),
 })
 
 const closeDialog = () => {
@@ -161,11 +157,11 @@ const openWhatsApp = () => {
 
 <style scoped>
 .help-dialog-card {
-  border-top: 4px solid #1565C0;
+  border-top: 4px solid #1565c0;
 }
 
 .help-header {
-  background: linear-gradient(135deg, #1565C0 0%, #0D47A1 100%);
+  background: linear-gradient(135deg, #1565c0 0%, #0d47a1 100%);
 }
 
 .help-icon {

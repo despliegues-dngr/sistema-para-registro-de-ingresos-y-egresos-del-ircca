@@ -19,7 +19,7 @@ export default createVuetify({
         colors: {
           // Core institutional colors
           primary: '#1565C0',
-          secondary: '#424242', 
+          secondary: '#424242',
           accent: '#00695C',
           error: '#C62828',
           info: '#1976D2',
@@ -31,38 +31,38 @@ export default createVuetify({
           'on-primary': '#FFFFFF',
           'on-secondary': '#FFFFFF',
           'on-background': '#212121',
-          'on-surface': '#212121'
-        }
-      }
-    }
+          'on-surface': '#212121',
+        },
+      },
+    },
   },
   // Global component defaults following Vuetify patterns
   defaults: {
     VBtn: {
       color: 'primary',
       variant: 'flat',
-      rounded: 'lg'
+      rounded: 'lg',
     },
     VCard: {
       elevation: 2,
-      variant: 'flat'
+      variant: 'flat',
     },
     VTextField: {
       variant: 'outlined',
-      density: 'comfortable'
+      density: 'comfortable',
     },
     VDialog: {
       maxWidth: '600',
-      persistent: false
+      persistent: false,
     },
     VAlert: {
       variant: 'tonal',
       border: 'start',
-      closable: true
+      closable: true,
     },
     VChip: {
       variant: 'outlined',
-      size: 'small'
-    }
-  }
+      size: 'small',
+    },
+  },
 })

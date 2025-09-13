@@ -15,7 +15,7 @@ export class EncryptionService {
     algorithm: 'AES-GCM',
     keyLength: 256,
     iterations: 100000, // NIST recomendado
-    saltLength: 16
+    saltLength: 16,
   }
 
   /**
@@ -24,64 +24,66 @@ export class EncryptionService {
   private async deriveKey(password: string, salt: Uint8Array): Promise<CryptoKey> {
     const encoder = new TextEncoder()
     const passwordBuffer = encoder.encode(password)
-    
+
     const keyMaterial = await window.crypto.subtle.importKey(
       'raw',
       passwordBuffer,
       { name: 'PBKDF2' },
       false,
-      ['deriveKey']
+      ['deriveKey'],
     )
-    
+
     return window.crypto.subtle.deriveKey(
       {
         name: 'PBKDF2',
         salt: salt,
         iterations: this.config.iterations,
-        hash: 'SHA-256'
+        hash: 'SHA-256',
       },
       keyMaterial,
       {
         name: this.config.algorithm,
-        length: this.config.keyLength
+        length: this.config.keyLength,
       },
       false,
-      ['encrypt', 'decrypt']
+      ['encrypt', 'decrypt'],
     )
   }
 
   /**
    * Cifra datos usando AES-256-GCM
    */
-  async encrypt(data: string, password: string): Promise<{ encrypted: string; salt: string; iv: string }> {
+  async encrypt(
+    data: string,
+    password: string,
+  ): Promise<{ encrypted: string; salt: string; iv: string }> {
     try {
       const encoder = new TextEncoder()
       const dataBuffer = encoder.encode(data)
-      
+
       // Generar salt e IV aleatorios
       const salt = window.crypto.getRandomValues(new Uint8Array(this.config.saltLength))
       const iv = window.crypto.getRandomValues(new Uint8Array(12)) // GCM recomienda 12 bytes
-      
+
       // Derivar clave
       const key = await this.deriveKey(password, salt)
-      
+
       // Cifrar datos
       const encryptedBuffer = await window.crypto.subtle.encrypt(
         {
           name: this.config.algorithm,
-          iv: iv
+          iv: iv,
         },
         key,
-        dataBuffer
+        dataBuffer,
       )
-      
+
       // Convertir a Base64 para almacenamiento
       const encrypted = btoa(String.fromCharCode(...new Uint8Array(encryptedBuffer)))
       const saltB64 = btoa(String.fromCharCode(...salt))
       const ivB64 = btoa(String.fromCharCode(...iv))
-      
+
       return { encrypted, salt: saltB64, iv: ivB64 }
-      
     } catch (error) {
       throw new Error(`Error de cifrado: ${error}`)
     }
@@ -90,36 +92,46 @@ export class EncryptionService {
   /**
    * Descifra datos usando AES-256-GCM
    */
-  async decrypt(encryptedData: string, password: string, salt: string, iv: string): Promise<string> {
+  async decrypt(
+    encryptedData: string,
+    password: string,
+    salt: string,
+    iv: string,
+  ): Promise<string> {
     try {
       // Convertir desde Base64
       const encryptedBuffer = new Uint8Array(
-        atob(encryptedData).split('').map(c => c.charCodeAt(0))
+        atob(encryptedData)
+          .split('')
+          .map((c) => c.charCodeAt(0)),
       )
       const saltBuffer = new Uint8Array(
-        atob(salt).split('').map(c => c.charCodeAt(0))
+        atob(salt)
+          .split('')
+          .map((c) => c.charCodeAt(0)),
       )
       const ivBuffer = new Uint8Array(
-        atob(iv).split('').map(c => c.charCodeAt(0))
+        atob(iv)
+          .split('')
+          .map((c) => c.charCodeAt(0)),
       )
-      
+
       // Derivar clave
       const key = await this.deriveKey(password, saltBuffer)
-      
+
       // Descifrar datos
       const decryptedBuffer = await window.crypto.subtle.decrypt(
         {
           name: this.config.algorithm,
-          iv: ivBuffer
+          iv: ivBuffer,
         },
         key,
-        encryptedBuffer
+        encryptedBuffer,
       )
-      
+
       // Convertir a string
       const decoder = new TextDecoder()
       return decoder.decode(decryptedBuffer)
-      
     } catch (error) {
       throw new Error(`Error de descifrado: ${error}`)
     }
@@ -132,47 +144,47 @@ export class EncryptionService {
     const salt = window.crypto.getRandomValues(new Uint8Array(this.config.saltLength))
     const encoder = new TextEncoder()
     const passwordBuffer = encoder.encode(password)
-    
+
     const keyMaterial = await window.crypto.subtle.importKey(
       'raw',
       passwordBuffer,
       { name: 'PBKDF2' },
       false,
-      ['deriveKey']
+      ['deriveKey'],
     )
-    
+
     const hashKey = await window.crypto.subtle.deriveKey(
       {
         name: 'PBKDF2',
         salt: salt,
         iterations: this.config.iterations,
-        hash: 'SHA-256'
+        hash: 'SHA-256',
       },
       keyMaterial,
       {
         name: 'HMAC',
         hash: 'SHA-256',
-        length: 256
+        length: 256,
       },
       true,
-      ['sign']
+      ['sign'],
     )
-    
+
     const hashBuffer = await window.crypto.subtle.exportKey('raw', hashKey)
     const hash = btoa(String.fromCharCode(...new Uint8Array(hashBuffer)))
     const saltB64 = btoa(String.fromCharCode(...salt))
-    
+
     return { hash, salt: saltB64 }
   }
 
   /**
    * Verifica hash de contraseña
    */
-  async verifyPassword(password: string, hash: string, salt: string): Promise<boolean> {
+  async verifyPassword(password: string, hash: string): Promise<boolean> {
     try {
       const { hash: newHash } = await this.hashPassword(password)
       return newHash === hash
-    } catch (error) {
+    } catch {
       return false
     }
   }
