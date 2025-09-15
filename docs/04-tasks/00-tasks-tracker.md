@@ -30,7 +30,8 @@
 
 ### Desarrollo Frontend
 
-- [ ] **1.3.1-FE** Desarrollo FE: Autenticación y Layout - _16-17 Sep_
+- [x] **1.3.1-FE** Desarrollo FE: Autenticación y Layout - _16-17 Sep_
+- [ ] **1.3.1.1-FE** Desarrollo FE: Auto-Registro de Usuario - _16-Sep_ 🆕
 - [ ] **1.3.2-FE** Desarrollo FE: Módulo de Registro - _18-19 Sep_
 - [ ] **1.3.3-FE** Desarrollo FE: Módulo de Consulta - _18-Sep_
 
@@ -90,8 +91,8 @@
 ### Por Categoría
 
 - **Gestión del Proyecto:** ✅ 1/6 (17%)
-- **Diseño y Arquitectura:** ✅ 1/3 (33%)
-- **Desarrollo Frontend:** ⏳ 0/3 (0%)
+- **Diseño y Arquitectura:** ✅ 3/3 (100%)
+- **Desarrollo Frontend:** ✅ 1/4 (25%)
 - **Desarrollo Lógica:** ⏳ 0/6 (0%)
 - **Infraestructura:** ⏳ 0/2 (0%)
 - **Documentación:** ⏳ 0/2 (0%)
@@ -99,9 +100,9 @@
 
 ### Progreso General
 
-**COMPLETADO:** ✅ 2/23 tareas (9%)  
-**EN CURSO:** 🔄 Arquitectura técnica  
-**SIGUIENTE:** 🎯 Diseño de Arquitectura Técnica (1.2.1)
+**COMPLETADO:** ✅ 5/24 tareas (21%)  
+**EN CURSO:** 🔄 Auto-Registro de Usuario (TASK-1.3.1.1-FE)  
+**SIGUIENTE:** 🎯 Desarrollo FE: Módulo de Registro (1.3.2-FE)
 
 ---
 
@@ -146,66 +147,14 @@
 - ✅ Mejoras semánticas en componentes UI (variables CSS de Vuetify)
 - 📊 Progreso: Vulnerabilidades críticas resueltas, arquitectura de seguridad mejorada
 
+### 16-Sep-2025 (Cambio de Planificación)
+
+- 🆕 **NUEVA TAREA:** Se añade `TASK-1.3.1.1-FE` para el auto-registro de usuarios, a petición del stakeholder.
+-  güvenlik: La seguridad se manejará con una whitelist de Cédulas pre-autorizadas.
+- 📊 Progreso: El alcance de la Semana 2 se amplía para incluir esta nueva funcionalidad.
+
 ---
 
-**🔄 ACTUALIZADO:** 11-Sep-2025  
-**⏰ PRÓXIMA REVISIÓN:** 12-Sep-2025  
+**🔄 ACTUALIZADO:** 16-Sep-2025  
+**⏰ PRÓXIMA REVISIÓN:** 17-Sep-2025  
 **📧 CONTACTO:** gr-depto.infoygc@minterior.gub.uy
-
-### ESTRUCTURA
-
-Directory structure:
-└── despliegues-dngr-sistema-para-registro-de-ingresos-y-egresos-del-ircca/
-├── README.md
-├── env.d.ts
-├── eslint.config.ts
-├── index.html
-├── package.json
-├── playwright.config.ts
-├── tsconfig.app.json
-├── tsconfig.json
-├── tsconfig.node.json
-├── tsconfig.vitest.json
-├── vite.config.ts
-├── vitest.config.ts
-├── .editorconfig
-├── .env.example
-├── .prettierrc.json
-├── docs/
-│ ├── Acta de Constitución.md
-│ ├── Análisis de Interesados.md
-│ ├── Cronograma General.md
-│ ├── EDT y Requisitos de Entregables.md
-│ ├── Formulación del Proyecto.md
-│ ├── FRONTEND_IRCCA_PANTALLAS.md
-│ ├── Plan de Comunicaciones.md
-│ ├── PWA_IRCCA_ARQUITECTURA.md
-│ ├── SEGURIDAD_IRCCA_SISTEMA.md
-│ └── tasks/
-│ ├── TAREAS_PROYECTO_IRCCA.md
-│ ├── TASK_1.2.0_FASE3_Configuracion_PWA.md
-│ ├── TASK_1.2.0_Setup_Proyecto_Vue.md
-│ └── TASK_1.2.3_Diseño_UI_UX.md
-├── e2e/
-│ ├── tsconfig.json
-│ └── vue.spec.ts
-└── src/
-├── App.vue
-├── main.ts
-├── **tests**/
-│ └── App.spec.ts
-├── composables/
-│ ├── useAuth.ts
-│ └── useDatabase.ts
-├── plugins/
-│ └── vuetify.ts
-├── router/
-│ └── index.ts
-├── services/
-│ ├── databaseService.ts
-│ └── encryptionService.ts
-└── stores/
-├── app.ts
-├── auth.ts
-├── counter.ts
-└── registro.ts

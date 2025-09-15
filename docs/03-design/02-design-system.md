@@ -84,7 +84,7 @@ _(Implementación detallada en: `docs/02-architecture/04-vuetify-guidelines.md`)
 - **Secciones del Formulario:**
   - **Datos Personales:** Cédula, Nombre, Apellido, Teléfono (opcional).
   - **Datos de Visita:** Tipo de Visitante (selector), Área a Visitar (selector), Motivo (campo de texto).
-  - **Datos de Vehículo (Opcional):** Una sección expandible para no sobrecargar la UI, que contendrá campos para Placa, Modelo y Color.
+  - **Datos de Vehículo (Opcional):** Una sección expandible para no sobrecargar la UI, que contendrá campos para Matricula, Modelo y Color.
 - **Acciones:** Botones para "Cancelar" y "Registrar Ingreso". El botón de registro debe estar deshabilitado si los campos obligatorios no son válidos.
 
 ### 3.4. Modal de Registro de Salida
@@ -104,4 +104,4 @@ _(Implementación detallada en: `docs/02-architecture/04-vuetify-guidelines.md`)
 - Los campos obligatorios no pueden estar vacíos.
 - El campo Cédula debe aceptar un formato numérico de 8 dígitos.
 - El campo Teléfono, si se ingresa, debe seguir un formato válido (ej. `09X XXX XXX`).
-- El campo Placa de vehículo, si se ingresa, debe seguir el formato `ABC1234`.
+- El campo Matricula de vehículo, si se ingresa, debe seguir el formato `ABC1234`.

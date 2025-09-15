@@ -58,6 +58,14 @@ export class EncryptionService {
     password: string,
   ): Promise<{ encrypted: string; salt: string; iv: string }> {
     try {
+      // Validar parámetros de entrada
+      if (!password || password.trim().length === 0) {
+        throw new Error('La contraseña no puede estar vacía')
+      }
+      if (!data) {
+        throw new Error('Los datos a cifrar no pueden estar vacíos')
+      }
+
       const encoder = new TextEncoder()
       const dataBuffer = encoder.encode(data)
 

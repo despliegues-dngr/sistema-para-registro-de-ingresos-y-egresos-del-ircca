@@ -18,6 +18,13 @@
 
   <!-- Dialog de Ayuda Modular -->
   <HelpDialog v-model="showHelp" @close="showHelp = false" />
+
+  <!-- Dialog de Registro Modular -->
+  <RegistrationDialog 
+    v-model="showRegister" 
+    @close="showRegister = false"
+    @success="onRegistrationSuccess"
+  />
 </template>
 
 <script setup lang="ts">
@@ -31,6 +38,7 @@ import InstitutionalHeader from '@/components/layout/InstitutionalHeader.vue'
 import LoginForm from '@/components/forms/LoginForm.vue'
 import GovernmentFooter from '@/components/layout/GovernmentFooter.vue'
 import HelpDialog from '@/components/ui/HelpDialog.vue'
+import RegistrationDialog from '@/components/ui/RegistrationDialog.vue'
 
 // Composables
 import { useRouter } from 'vue-router'
@@ -42,6 +50,7 @@ const authStore = useAuthStore()
 // Estado reactivo
 const loading = ref(false)
 const showHelp = ref(false)
+const showRegister = ref(false)
 const message = ref('')
 
 // Métodos
@@ -92,7 +101,11 @@ const clearMessage = () => {
 }
 
 const handleRegister = () => {
-  // TODO: Implementar navegación al registro de usuarios
-  message.value = MESSAGES.SYSTEM.REGISTER_DEVELOPMENT
+  showRegister.value = true
+}
+
+const onRegistrationSuccess = (successMessage: string) => {
+  message.value = successMessage
+  showRegister.value = false
 }
 </script>

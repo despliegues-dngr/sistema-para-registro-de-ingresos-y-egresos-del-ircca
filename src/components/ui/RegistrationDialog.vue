@@ -1,0 +1,141 @@
+<template>
+  <v-dialog v-model="modelValue" max-width="600" persistent transition="dialog-bottom-transition">
+    <template #activator="{ props }">
+      <slot name="activator" v-bind="props" />
+    </template>
+
+    <v-card class="registration-dialog-card">
+      <!-- Header institucional -->
+      <v-card-title class="bg-primary pa-4">
+        <div class="d-flex align-center">
+          <v-icon size="24" color="white" class="mr-3">{{ ICONS.NAVIGATION.REGISTER }}</v-icon>
+          <div>
+            <h3 class="text-h6 text-white mb-0">Registro de Nuevo Operador</h3>
+            <p class="text-caption text-blue-lighten-4 mb-0">Sistema para registros del IRCCA</p>
+          </div>
+        </div>
+      </v-card-title>
+
+      <v-card-text class="pa-6">
+        <RegistrationForm
+          :loading="loading"
+          :message="message"
+          @submit="onSubmit"
+          @clear-message="clearMessage"
+        />
+      </v-card-text>
+
+      <!-- Actions -->
+      <v-card-actions class="pa-4 pt-2">
+        <v-spacer />
+        <v-btn 
+          color="secondary" 
+          variant="text" 
+          @click="closeDialog"
+          :disabled="loading"
+        >
+          Cancelar
+        </v-btn>
+      </v-card-actions>
+    </v-card>
+  </v-dialog>
+</template>
+
+<script setup lang="ts">
+import { ref, computed, watch } from 'vue'
+import { ICONS, MESSAGES } from '@/config/constants'
+import { useAuthStore } from '@/stores/auth'
+import RegistrationForm from '@/components/forms/RegistrationForm.vue'
+
+interface Props {
+  modelValue: boolean
+}
+
+interface Emits {
+  'update:modelValue': [value: boolean]
+  close: []
+  success: [message: string]
+}
+
+const props = defineProps<Props>()
+const emit = defineEmits<Emits>()
+
+const authStore = useAuthStore()
+
+// Estado reactivo
+const loading = ref(false)
+const message = ref('')
+
+const modelValue = computed({
+  get: () => props.modelValue,
+  set: (value: boolean) => emit('update:modelValue', value),
+})
+
+// Métodos
+const onSubmit = async (userData: {
+  cedula: string
+  grado: string
+  nombre: string
+  apellido: string
+  password: string
+  confirmPassword: string
+}) => {
+  loading.value = true
+  message.value = ''
+
+  try {
+    // Validar que las contraseñas coincidan
+    if (userData.password !== userData.confirmPassword) {
+      message.value = 'Las contraseñas no coinciden'
+      return
+    }
+
+    // Intentar registrar el usuario
+    await authStore.registerUser({
+      cedula: userData.cedula,
+      grado: userData.grado,
+      nombre: userData.nombre,
+      apellido: userData.apellido,
+      password: userData.password,
+    })
+
+    // Si llegamos aquí, el registro fue exitoso
+    const successMessage = `Usuario ${userData.nombre} ${userData.apellido} registrado exitosamente.`
+    emit('success', successMessage)
+    closeDialog()
+
+  } catch (error: any) {
+    console.error('Error durante el registro:', error)
+    message.value = error.message || MESSAGES.AUTH.CONNECTION_ERROR
+  } finally {
+    loading.value = false
+  }
+}
+
+const clearMessage = () => {
+  message.value = ''
+}
+
+const closeDialog = () => {
+  // Limpiar estado al cerrar
+  message.value = ''
+  loading.value = false
+  emit('update:modelValue', false)
+  emit('close')
+}
+
+// Emitir eventos globales para controlar blur del fondo
+watch(modelValue, (newVal: boolean) => {
+  if (newVal) {
+    window.dispatchEvent(new CustomEvent('dialog-opened'))
+  } else {
+    window.dispatchEvent(new CustomEvent('dialog-closed'))
+  }
+})
+</script>
+
+<style scoped>
+.registration-dialog-card {
+  border-top: 3px solid rgb(var(--v-theme-primary));
+}
+</style>

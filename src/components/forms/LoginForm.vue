@@ -3,7 +3,7 @@
     <!-- Alert de Estado -->
     <v-alert
       v-if="message"
-      :type="message.includes('exitoso') ? 'success' : 'error'"
+      :type="message.includes('exitosamente') ? 'success' : 'error'"
       density="compact"
       variant="tonal"
       class="mb-6"

@@ -98,6 +98,12 @@ export const ICONS = {
     DELETE: 'mdi-delete',
     REFRESH: 'mdi-refresh',
   },
+  USER: {
+    PROFILE: 'mdi-card-account-details',
+    RANK: 'mdi-medal',
+    PERSON: 'mdi-account',
+    ADD: 'mdi-account-plus',
+  },
   STATUS: {
     SUCCESS: 'mdi-check-circle',
     ERROR: 'mdi-alert-circle',
