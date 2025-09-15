@@ -1,4 +1,4 @@
-# Flujo de Usuario - Sistema IRCCA
+# Flujo de Usuario - Sistema para registros del IRCCA
 
 **Versión:** 1.0  
 **Fecha:** 10-Sep-2025
@@ -27,22 +27,22 @@ graph TD
 ### Casos de Uso Detallados
 
 1.  **Inicio de Turno:**
-    *   El operador encuentra la tablet en la pantalla de **Login**.
-    *   Ingresa su `usuario` y `PIN`.
-    *   Al validar, el sistema lo redirige al **Dashboard Principal**.
+    - El operador encuentra la tablet en la pantalla de **Login**.
+    - Ingresa su `usuario` y `PIN`.
+    - Al validar, el sistema lo redirige al **Dashboard Principal**.
 
 2.  **Registro de Ingreso de Visitante:**
-    *   Desde el **Dashboard**, el operador presiona "Registrar Ingreso".
-    *   Se abre un **Modal de Ingreso**.
-    *   El operador completa los datos del visitante y presiona "Registrar".
-    *   El modal se cierra, el registro se guarda en IndexedDB, y el **Dashboard** se actualiza con las nuevas estadísticas (ej. +1 Personas Dentro).
+    - Desde el **Dashboard**, el operador presiona "Registrar Ingreso".
+    - Se abre un **Modal de Ingreso**.
+    - El operador completa los datos del visitante y presiona "Registrar".
+    - El modal se cierra, el registro se guarda en IndexedDB, y el **Dashboard** se actualiza con las nuevas estadísticas (ej. +1 Personas Dentro).
 
 3.  **Registro de Salida de Visitante:**
-    *   Desde el **Dashboard**, el operador presiona "Registrar Salida".
-    *   Se abre un **Modal de Salida**.
-    *   El operador busca al visitante por su C.I., lo selecciona de la lista y presiona "Registrar".
-    *   El modal se cierra, el registro se actualiza, y el **Dashboard** se actualiza nuevamente.
+    - Desde el **Dashboard**, el operador presiona "Registrar Salida".
+    - Se abre un **Modal de Salida**.
+    - El operador busca al visitante por su C.I., lo selecciona de la lista y presiona "Registrar".
+    - El modal se cierra, el registro se actualiza, y el **Dashboard** se actualiza nuevamente.
 
 4.  **Consulta Rápida:**
-    *   El **Dashboard** muestra una lista de las últimas personas que ingresaron.
-    *   Para ver la lista completa, un botón "Ver todas" redirige a la vista de **Personas Dentro**.
+    - El **Dashboard** muestra una lista de las últimas personas que ingresaron.
+    - Para ver la lista completa, un botón "Ver todas" redirige a la vista de **Personas Dentro**.

@@ -1,5 +1,5 @@
 <template>
-  <div class="auth-background">
+  <div class="auth-background" :class="{ 'auth-background--blurred': isBlurred }">
     <!-- Capa base del fondo -->
     <div class="background-overlay"></div>
 
@@ -28,8 +28,31 @@
 </template>
 
 <script setup lang="ts">
+import { ref, onMounted, onUnmounted } from 'vue'
 import { UI_CONFIG } from '@/config/constants'
-// Authentication layout with institutional background design
+
+// Estado reactivo para el blur
+const isBlurred = ref(false)
+
+// Eventos globales para controlar el blur
+const handleDialogOpen = () => {
+  isBlurred.value = true
+}
+
+const handleDialogClose = () => {
+  isBlurred.value = false
+}
+
+onMounted(() => {
+  // Escuchar eventos globales de diálogos
+  window.addEventListener('dialog-opened', handleDialogOpen)
+  window.addEventListener('dialog-closed', handleDialogClose)
+})
+
+onUnmounted(() => {
+  window.removeEventListener('dialog-opened', handleDialogOpen)
+  window.removeEventListener('dialog-closed', handleDialogClose)
+})
 </script>
 
 <style scoped>
@@ -38,6 +61,11 @@ import { UI_CONFIG } from '@/config/constants'
   min-height: 100vh;
   background: v-bind('UI_CONFIG.BACKGROUND.GRADIENT_PRIMARY');
   overflow: hidden;
+  transition: filter 0.3s ease;
+}
+
+.auth-background--blurred {
+  filter: blur(6px);
 }
 
 .background-overlay {

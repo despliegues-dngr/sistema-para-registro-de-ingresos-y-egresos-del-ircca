@@ -54,6 +54,7 @@ export default createVuetify({
     VDialog: {
       maxWidth: '600',
       persistent: false,
+      scrim: 'rgba(0, 0, 0, 0.7)',
     },
     VAlert: {
       variant: 'tonal',

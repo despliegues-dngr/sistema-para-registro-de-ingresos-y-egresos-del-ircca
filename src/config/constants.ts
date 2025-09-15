@@ -6,7 +6,7 @@
 
 // Sistema de información institucional
 export const SYSTEM_INFO = {
-  NAME: 'Sistema IRCCA',
+  NAME: 'Sistema para registros del IRCCA',
   FULL_NAME: 'Instituto de Regulación y Control del Cannabis',
   GOVERNMENT: 'Gobierno de Uruguay - Sistema Oficial',
   VERSION: '1.0.0',

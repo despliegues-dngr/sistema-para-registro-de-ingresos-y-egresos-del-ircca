@@ -1,4 +1,4 @@
-# Sistema IRCCA - Registro de Ingresos y Egresos
+# Sistema para registros del IRCCA - Registro de Ingresos y Egresos
 
 Progressive Web App (PWA) para automatizar el registro, control y consulta de ingresos y egresos de personas y vehículos en el puesto de vigilancia del Instituto de Rehabilitación del Cuerpo de Comandos de Aeronáutica (IRCCA).
 
@@ -41,7 +41,7 @@ src/
 
 ### Prerrequisitos
 
-- Node.js 18+ 
+- Node.js 18+
 - pnpm (recomendado) o npm
 
 ### Instalación
@@ -91,12 +91,14 @@ pnpm deps:update      # Actualizar dependencias
 ## 🔐 Seguridad
 
 ### Cifrado de Datos
+
 - **Algoritmo:** AES-256-GCM
 - **Derivación de Clave:** PBKDF2 (100,000 iteraciones)
 - **Salt:** 16 bytes aleatorios
 - **IV:** 12 bytes aleatorios
 
 ### Cumplimiento Legal
+
 - **Ley N° 18.331:** Protección de Datos Personales (Uruguay)
 - **Retención:** 365 días configurables
 - **Auditoría:** Log completo de eventos
@@ -105,12 +107,14 @@ pnpm deps:update      # Actualizar dependencias
 ## 👥 Usuarios del Sistema
 
 ### Administrador
+
 - Gestión completa del sistema
 - Configuración de usuarios
 - Acceso a reportes y auditorías
 - Gestión de backups
 
 ### Operador
+
 - Registro de ingresos/egresos
 - Consultas básicas
 - Acceso limitado a configuración
@@ -226,4 +230,5 @@ pnpm test:e2e --debug
 ```sh
 pnpm lint
 ```
-"# Sistema IRCCA - Registro de Ingresos y Egresos" 
+
+"# Sistema para registros del IRCCA - Registro de Ingresos y Egresos"
