@@ -35,13 +35,13 @@ export const UI_CONFIG = {
     GRADIENT_PRIMARY: 'linear-gradient(135deg, #1565C0 0%, #0D47A1 50%, #1976D2 100%)',
     GRADIENT_OVERLAY:
       'radial-gradient(circle at 30% 20%, rgba(255, 255, 255, 0.05) 0%, transparent 50%)',
-    // Formas geométricas - colores institucionales (sutiles y degradados)
-    SHAPE_FILL_PRIMARY: 'rgba(255, 255, 255, 0.015)',
-    SHAPE_FILL_SECONDARY: 'rgba(255, 255, 255, 0.02)',
-    SHAPE_BORDER_PRIMARY: 'rgba(255, 255, 255, 0.03)',
-    SHAPE_BORDER_SECONDARY: 'rgba(255, 255, 255, 0.04)',
-    SHAPE_ACCENT: 'rgba(25, 118, 210, 0.08)',
-    SHAPE_LIGHT: 'rgba(255, 255, 255, 0.015)',
+    // Formas geométricas - colores institucionales (más visibles)
+    SHAPE_FILL_PRIMARY: 'rgba(255, 255, 255, 0.06)',
+    SHAPE_FILL_SECONDARY: 'rgba(255, 255, 255, 0.08)',
+    SHAPE_BORDER_PRIMARY: 'rgba(255, 255, 255, 0.12)',
+    SHAPE_BORDER_SECONDARY: 'rgba(255, 255, 255, 0.15)',
+    SHAPE_ACCENT: 'rgba(25, 118, 210, 0.20)',
+    SHAPE_LIGHT: 'rgba(255, 255, 255, 0.06)',
   },
 } as const
 

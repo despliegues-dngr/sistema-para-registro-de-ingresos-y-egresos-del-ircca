@@ -6,20 +6,20 @@
 
 ---
 
-## 🗓️ SEMANA 1: DISEÑO Y PLANIFICACIÓN (09-15 Sep)
+## 🗓️ SEMANA 1: DISEÑO Y PLANIFICACIÓN (09-15 Sep) - ✅ COMPLETADA
 
 ### Gestión del Proyecto
 - [x] **1.1.4** Cronograma Detallado (Este Doc.) - *09-Sep*
-- [ ] **Informe** Avance Semana 1 - *15-Sep*
+- [x] **Informe** Avance Semana 1 - *15-Sep*
 
 ### Diseño y Arquitectura  
 - [x] **1.2.3** Diseño de UI/UX (Maquetas y Flujo) - *10-11 Sep* ✅ **COMPLETADO - Login redeseñado**
-- [ ] **1.2.1** Diseño de Arquitectura Técnica - *10-11 Sep* ⭐ **PRÓXIMA TAREA**
-- [ ] **1.2.2** Diseño de Base de Datos (IndexedDB) - *12-Sep*
+- [x] **1.2.1** Diseño de Arquitectura Técnica - *10-11 Sep* ✅ **COMPLETADO**
+- [x] **1.2.2** Diseño de Base de Datos (IndexedDB) - *12-Sep* ✅ **COMPLETADO**
 
 ### Hitos Semana 1
-- [ ] 🎯 **HITO:** Diseño UI/UX Aprobado por Enc. de Seguridad - *12-Sep*
-- [ ] 📊 **HITO:** Informe de Avance Semana 1 entregado - *15-Sep*
+- [x] 🎯 **HITO:** Diseño UI/UX Aprobado por Enc. de Seguridad - *12-Sep*
+- [x] 📊 **HITO:** Informe de Avance Semana 1 entregado - *15-Sep*
 
 ---
 
