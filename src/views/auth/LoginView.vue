@@ -22,7 +22,7 @@
 
 <script setup lang="ts">
 import { ref } from 'vue'
-import { MESSAGES } from '@/config/constants'
+import { MESSAGES, ROUTES } from '@/config/constants'
 
 // Componentes modulares
 import AuthBackground from '@/components/layout/AuthBackground.vue'
@@ -33,9 +33,11 @@ import GovernmentFooter from '@/components/layout/GovernmentFooter.vue'
 import HelpDialog from '@/components/ui/HelpDialog.vue'
 
 // Composables
-// TODO: Habilitar cuando se implemente navegación
-// const router = useRouter()
-// const authStore = useAuthStore()
+import { useRouter } from 'vue-router'
+import { useAuthStore } from '@/stores/auth'
+
+const router = useRouter()
+const authStore = useAuthStore()
 
 // Estado reactivo
 const loading = ref(false)
@@ -48,17 +50,37 @@ const onSubmit = async (credentials: { username: string; password: string }) => 
   message.value = ''
 
   try {
-    // Simular autenticación por ahora
+    // Verificar si aún puede intentar login
+    if (!authStore.canAttemptLogin) {
+      message.value = MESSAGES.AUTH.ACCOUNT_LOCKED
+      return
+    }
+
+    // Simular delay de autenticación
     await new Promise((resolve) => setTimeout(resolve, 1500))
 
-    // TODO: Implementar autenticación real con authStore
+    // Lógica de autenticación simplificada para desarrollo
     if (credentials.username === 'admin' && credentials.password === 'admin') {
+      // Login exitoso - crear usuario y actualizar store
+      const userData = {
+        id: '1',
+        username: credentials.username,
+        role: 'admin' as const,
+        lastLogin: new Date()
+      }
+      
+      authStore.login(userData)
       message.value = MESSAGES.AUTH.LOGIN_SUCCESS
-      // router.push(ROUTES.DASHBOARD) // TODO: Habilitar cuando se cree DashboardView
+      
+      // Redirigir al dashboard
+      await router.push(ROUTES.DASHBOARD)
     } else {
+      // Login fallido - incrementar intentos
+      authStore.incrementLoginAttempts()
       message.value = MESSAGES.AUTH.LOGIN_ERROR
     }
-  } catch {
+  } catch (error) {
+    console.error('Error durante el login:', error)
     message.value = MESSAGES.AUTH.CONNECTION_ERROR
   } finally {
     loading.value = false

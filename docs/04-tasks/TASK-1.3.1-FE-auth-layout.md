@@ -24,17 +24,38 @@
   - Componentes creados: `AuthBackground`, `InstitutionalHeader`, `LoginCard`, `LoginForm`, `GovernmentFooter`, `HelpDialog`.
   - El componente `LoginForm` ya incluye validación de reglas y maneja el estado visual de carga y mensajes.
 
-- [ ] **2. Activar y conectar Store y Router (Pendiente).**
-  - [ ] Descomentar las importaciones de `useAuthStore` y `useRouter` en `LoginView.vue`.
-  - [ ] Reemplazar la lógica de `if/else` simulada en `onSubmit` por llamadas a las acciones del `authStore` (ej. `authStore.login()`, `authStore.incrementLoginAttempts()`).
-  - [ ] Descomentar la línea `router.push(ROUTES.DASHBOARD)` dentro de `onSubmit` para activar la redirección tras un login exitoso.
+- [x] **2. Activar y conectar Store y Router (Completado - 15-Sep-2025).**
+  - [x] Descomentar las importaciones de `useAuthStore` y `useRouter` en `LoginView.vue`.
+  - [x] Reemplazar la lógica de `if/else` simulada en `onSubmit` por llamadas a las acciones del `authStore` (ej. `authStore.login()`, `authStore.incrementLoginAttempts()`).
+  - [x] Descomentar la línea `router.push(ROUTES.DASHBOARD)` dentro de `onSubmit` para activar la redirección tras un login exitoso.
+
+- [x] **3. Crear DashboardView temporal (Completado - 15-Sep-2025).**
+  - [x] Crear archivo `src/views/dashboard/DashboardView.vue` con placeholder.
+  - [x] Activar ruta `/dashboard` en `src/router/index.ts`.
+  - [x] Implementar botón funcional de "Cerrar Sesión" conectado al authStore.
 
 ---
 
 ## ✅ CRITERIOS DE ACEPTACIÓN
 
-- [ ] Al hacer clic en "Ingresar", se ejecuta la lógica del `authStore`.
-- [ ] La interfaz reacciona visualmente a los estados de carga y a los mensajes de error/éxito.
-- [ ] Tras un login exitoso (simulado), la aplicación redirige a la ruta del Dashboard.
-- [ ] El código está limpio, sigue las guías de estilo y es modular.
-- [ ] La tarea se marca como completada en `00-tasks-tracker.md`.
+- [x] Al hacer clic en "Ingresar", se ejecuta la lógica del `authStore`.
+- [x] La interfaz reacciona visualmente a los estados de carga y a los mensajes de error/éxito.
+- [x] Tras un login exitoso (simulado), la aplicación redirige a la ruta del Dashboard.
+- [x] El código está limpio, sigue las guías de estilo y es modular.
+- [x] La tarea se marca como completada en `00-tasks-tracker.md`.
+
+---
+
+## 📋 RESUMEN DE COMPLETACIÓN - 15-Sep-2025
+
+**ESTADO:** ✅ COMPLETADA
+
+**Archivos modificados:**
+- `src/views/dashboard/DashboardView.vue` (nuevo)
+- `src/router/index.ts` (ruta /dashboard activada)
+- `src/views/auth/LoginView.vue` (authStore conectado)
+
+**Flujo funcional implementado:**
+Login (admin/admin) → Dashboard → Logout → Login
+
+**Credenciales de prueba:** usuario: `admin`, contraseña: `admin`

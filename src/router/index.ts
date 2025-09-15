@@ -15,12 +15,12 @@ const router = createRouter({
       meta: { requiresGuest: true },
     },
     // TODO: Crear estas vistas gradualmente según TASK_1.2.3
-    // {
-    //   path: '/dashboard',
-    //   name: 'Dashboard',
-    //   component: () => import('@/views/dashboard/DashboardView.vue'),
-    //   meta: { requiresAuth: true }
-    // },
+    {
+      path: '/dashboard',
+      name: 'Dashboard',
+      component: () => import('@/views/dashboard/DashboardView.vue'),
+      meta: { requiresAuth: true }
+    },
     // {
     //   path: '/registro',
     //   name: 'Registro',
