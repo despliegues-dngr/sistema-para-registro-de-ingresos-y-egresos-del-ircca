@@ -24,7 +24,7 @@
             <v-btn
               variant="text"
               size="small"
-              color="grey-darken-1"
+              color="medium-emphasis"
               class="mx-2"
               @click="$emit('help')"
             >
@@ -36,7 +36,7 @@
 
         <!-- Copyright ESMAPO -->
         <v-divider class="mx-auto mb-3" style="width: 80px"></v-divider>
-        <p class="text-caption text-grey-darken-1 mb-0">
+        <p class="text-caption text-medium-emphasis mb-0">
           {{ SYSTEM_INFO.GOVERNMENT }}
         </p>
       </v-col>

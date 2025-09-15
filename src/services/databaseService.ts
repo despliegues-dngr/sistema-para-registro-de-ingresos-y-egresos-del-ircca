@@ -12,7 +12,8 @@ export interface BackupData {
 
 export class DatabaseService {
   private db = useDatabase()
-  private masterKey = 'IRCCA_SISTEMA_2024' // TODO: Obtener de configuración segura
+  private sessionKey?: string
+  private isInitialized = false
 
   /**
    * Inicializa la base de datos
@@ -22,17 +23,73 @@ export class DatabaseService {
   }
 
   /**
+   * Inicializa el servicio con una clave de sesión derivada de las credenciales del usuario
+   */
+  async initializeWithSessionKey(userCredentials: string): Promise<void> {
+    // Derivar clave de sesión usando PBKDF2 con salt fijo para esta sesión
+    const encoder = new TextEncoder()
+    const credentialsBuffer = encoder.encode(userCredentials)
+    const salt = encoder.encode('IRCCA_SESSION_SALT_2024') // Salt fijo para derivación de sesión
+
+    const keyMaterial = await window.crypto.subtle.importKey(
+      'raw',
+      credentialsBuffer,
+      { name: 'PBKDF2' },
+      false,
+      ['deriveKey'],
+    )
+
+    const sessionKeyMaterial = await window.crypto.subtle.deriveKey(
+      {
+        name: 'PBKDF2',
+        salt: salt,
+        iterations: 100000,
+        hash: 'SHA-256',
+      },
+      keyMaterial,
+      {
+        name: 'AES-GCM',
+        length: 256,
+      },
+      true,
+      ['encrypt', 'decrypt'],
+    )
+
+    const sessionKeyBuffer = await window.crypto.subtle.exportKey('raw', sessionKeyMaterial)
+    this.sessionKey = btoa(String.fromCharCode(...new Uint8Array(sessionKeyBuffer)))
+    this.isInitialized = true
+  }
+
+  /**
+   * Verifica que el servicio esté inicializado con una clave de sesión
+   */
+  private ensureInitialized(): void {
+    if (!this.isInitialized || !this.sessionKey) {
+      throw new Error('DatabaseService debe ser inicializado con initializeWithSessionKey() antes de usar')
+    }
+  }
+
+  /**
+   * Limpia la clave de sesión (logout)
+   */
+  clearSession(): void {
+    this.sessionKey = undefined
+    this.isInitialized = false
+  }
+
+  /**
    * Guarda registro con cifrado
    */
   async saveRegistro(registro: RegistroEntry): Promise<{ success: boolean; error?: string }> {
+    this.ensureInitialized()
     try {
       // Cifrar datos sensibles
       const encryptedPersona = registro.persona
-        ? await encryptionService.encrypt(JSON.stringify(registro.persona), this.masterKey)
+        ? await encryptionService.encrypt(JSON.stringify(registro.persona), this.sessionKey!)
         : null
 
       const encryptedVehiculo = registro.vehiculo
-        ? await encryptionService.encrypt(JSON.stringify(registro.vehiculo), this.masterKey)
+        ? await encryptionService.encrypt(JSON.stringify(registro.vehiculo), this.sessionKey!)
         : null
 
       const encryptedRegistro = {
@@ -52,6 +109,7 @@ export class DatabaseService {
    * Obtiene registros con descifrado
    */
   async getRegistros(filters?: { tipo?: string; fecha?: Date }): Promise<RegistroEntry[]> {
+    this.ensureInitialized()
     try {
       let registros = (await this.db.getRecords('registros')) as RegistroEntry[]
 
@@ -83,7 +141,7 @@ export class DatabaseService {
               }
               const decryptedPersona = await encryptionService.decrypt(
                 encryptedPersona.encrypted,
-                this.masterKey,
+                this.sessionKey!,
                 encryptedPersona.salt,
                 encryptedPersona.iv,
               )
@@ -102,7 +160,7 @@ export class DatabaseService {
               }
               const decryptedVehiculo = await encryptionService.decrypt(
                 encryptedVehiculo.encrypted,
-                this.masterKey,
+                this.sessionKey!,
                 encryptedVehiculo.salt,
                 encryptedVehiculo.iv,
               )
@@ -147,6 +205,7 @@ export class DatabaseService {
    * Crear backup cifrado
    */
   async createBackup(): Promise<{ success: boolean; error?: string; backupId?: string }> {
+    this.ensureInitialized()
     try {
       // Obtener todos los datos
       const registros = (await this.db.getRecords('registros')) as unknown[]
@@ -162,7 +221,7 @@ export class DatabaseService {
       }
 
       // Cifrar backup completo
-      const encrypted = await encryptionService.encrypt(JSON.stringify(backupData), this.masterKey)
+      const encrypted = await encryptionService.encrypt(JSON.stringify(backupData), this.sessionKey!)
 
       const backup: BackupData = {
         id: encryptionService.generateSecureId(),
@@ -187,6 +246,7 @@ export class DatabaseService {
    * Restaurar desde backup
    */
   async restoreBackup(backupId: string): Promise<{ success: boolean; error?: string }> {
+    this.ensureInitialized()
     try {
       const backups = (await this.db.getRecords('backups')) as BackupData[]
       const backup = backups.find((b) => b.id === backupId)
@@ -199,7 +259,7 @@ export class DatabaseService {
       const encryptedBackup = backup.data as { encrypted: string; salt: string; iv: string }
       const decryptedData = await encryptionService.decrypt(
         encryptedBackup.encrypted,
-        this.masterKey,
+        this.sessionKey!,
         encryptedBackup.salt,
         encryptedBackup.iv,
       )

@@ -178,12 +178,47 @@ export class EncryptionService {
   }
 
   /**
-   * Verifica hash de contraseña
+   * Verifica hash de contraseña usando el salt original
    */
-  async verifyPassword(password: string, hash: string): Promise<boolean> {
+  async verifyPassword(password: string, storedHash: string, salt: string): Promise<boolean> {
     try {
-      const { hash: newHash } = await this.hashPassword(password)
-      return newHash === hash
+      const encoder = new TextEncoder()
+      const passwordBuffer = encoder.encode(password)
+      const saltBuffer = new Uint8Array(
+        atob(salt)
+          .split('')
+          .map((c) => c.charCodeAt(0)),
+      )
+
+      const keyMaterial = await window.crypto.subtle.importKey(
+        'raw',
+        passwordBuffer,
+        { name: 'PBKDF2' },
+        false,
+        ['deriveKey'],
+      )
+
+      const hashKey = await window.crypto.subtle.deriveKey(
+        {
+          name: 'PBKDF2',
+          salt: saltBuffer,
+          iterations: this.config.iterations,
+          hash: 'SHA-256',
+        },
+        keyMaterial,
+        {
+          name: 'HMAC',
+          hash: 'SHA-256',
+          length: 256,
+        },
+        true,
+        ['sign'],
+      )
+
+      const hashBuffer = await window.crypto.subtle.exportKey('raw', hashKey)
+      const computedHash = btoa(String.fromCharCode(...new Uint8Array(hashBuffer)))
+      
+      return computedHash === storedHash
     } catch {
       return false
     }

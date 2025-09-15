@@ -120,6 +120,15 @@
 - ✅ LoginView refactorizado de monolítico (350+ líneas) a modular (108 líneas)
 - 📊 Progreso: Login listo para producción, siguiente fase: Arquitectura técnica
 
+### 15-Sep-2025 (Correcciones Críticas de Seguridad)
+- ✅ CORRECCIÓN CRÍTICA: Bug en verifyPassword() corregido - ahora usa salt original correctamente
+- ✅ CORRECCIÓN CRÍTICA: Eliminada clave maestra hardcodeada de databaseService
+- ✅ Implementado patrón de clave de sesión derivada de credenciales de usuario
+- ✅ Agregados métodos initializeWithSessionKey() y clearSession() para gestión segura
+- ✅ Actualizada documentación de arquitectura de seguridad (PBKDF2 vs bcrypt)
+- ✅ Mejoras semánticas en componentes UI (variables CSS de Vuetify)
+- 📊 Progreso: Vulnerabilidades críticas resueltas, arquitectura de seguridad mejorada
+
 ---
 
 **🔄 ACTUALIZADO:** 11-Sep-2025  

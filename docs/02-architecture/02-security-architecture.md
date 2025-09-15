@@ -51,8 +51,9 @@ Toda la información sensible almacenada en la base de datos IndexedDB se encuen
 
 *   **Algoritmo:** Se utiliza el estándar **AES-256 en modo GCM**, que proporciona confidencialidad, integridad y autenticidad de los datos.
 *   **Gestión de Claves:**
-    *   **Clave Maestra:** Los datos generales del sistema se cifran utilizando una clave maestra segura definida en las variables de entorno de la aplicación.
-    *   **Clave por Usuario:** Los datos específicos de un usuario se cifran con una clave derivada de su PIN personal, asegurando que solo el usuario pueda acceder a su información.
+    *   **Clave de Sesión:** Los datos del sistema se cifran utilizando una clave de sesión derivada criptográficamente de las credenciales del usuario autenticado mediante PBKDF2.
+    *   **Sin Claves Maestras Hardcodeadas:** El sistema no utiliza claves predefinidas o hardcodeadas. Todas las operaciones de cifrado requieren inicialización previa con credenciales de usuario válidas.
+    *   **Limpieza de Sesión:** Las claves de cifrado se eliminan de memoria al cerrar sesión, garantizando que los datos no puedan ser accedidos sin nueva autenticación.
 *   **Derivación de Claves:** Se utiliza el algoritmo **PBKDF2** con un alto número de iteraciones y un `salt` criptográfico único para cada operación. Esto previene ataques de diccionario o de fuerza bruta contra las claves.
 *   **Vectores de Inicialización (IV):** Se genera un IV único para cada operación de cifrado, garantizando que cifrar el mismo dato dos veces produzca resultados diferentes.
 
@@ -63,7 +64,7 @@ Toda la información sensible almacenada en la base de datos IndexedDB se encuen
 El sistema implementa un mecanismo de autenticación multiusuario robusto para verificar la identidad de los operadores.
 
 *   **Credenciales:** Cada usuario accede al sistema mediante una combinación de `nombre de usuario` y un `PIN` numérico.
-*   **Almacenamiento Seguro de PINs:** Los PINs nunca se almacenan en texto plano. En su lugar, se utiliza el algoritmo **bcrypt** para generar un `hash` seguro con un `salt` individual. Esto hace inviable la recuperación del PIN original a partir del hash almacenado.
+*   **Almacenamiento Seguro de PINs:** Los PINs nunca se almacenan en texto plano. En su lugar, se utiliza el algoritmo **PBKDF2** con SHA-256 para generar un `hash` seguro con un `salt` individual único. La verificación utiliza el salt original para recrear el hash y compararlo con el almacenado, garantizando seguridad sin almacenar la contraseña.
 *   **Protección contra Fuerza Bruta:** El sistema bloquea automáticamente la cuenta de un usuario después de un número predefinido de intentos de inicio de sesión fallidos (ej. 3 intentos), previniendo ataques de fuerza bruta.
 *   **Gestión de Usuarios:** Los usuarios con rol de "Administrador" tienen la capacidad de crear, modificar y desactivar cuentas de usuario a través de un módulo de administración seguro.
 

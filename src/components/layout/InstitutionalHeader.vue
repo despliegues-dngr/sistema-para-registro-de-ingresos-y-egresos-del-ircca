@@ -1,7 +1,7 @@
 <template>
   <v-card-item
     class="bg-primary text-center py-6 px-4"
-    style="border-bottom: 3px solid rgb(var(--v-theme-primary))"
+    style="border-bottom: 3px solid rgba(var(--v-theme-on-primary-rgb), 0.2)"
   >
     <div class="d-flex flex-column align-center">
       <div class="mb-4">
@@ -41,8 +41,9 @@ withDefaults(defineProps<Props>(), {
 
 <style scoped>
 .institutional-icon {
-  background: linear-gradient(135deg, rgba(255, 255, 255, 0.15) 0%, rgba(255, 255, 255, 0.05) 100%);
-  border: 2px solid rgba(255, 255, 255, 0.2);
+  /* Usamos la variable --v-theme-on-primary-rgb que es el color de texto sobre el fondo primario */
+  background: linear-gradient(135deg, rgba(var(--v-theme-on-primary-rgb), 0.15) 0%, rgba(var(--v-theme-on-primary-rgb), 0.05) 100%);
+  border: 2px solid rgba(var(--v-theme-on-primary-rgb), 0.2);
   box-shadow: 0 4px 16px rgba(0, 0, 0, 0.15);
 }
 </style>
