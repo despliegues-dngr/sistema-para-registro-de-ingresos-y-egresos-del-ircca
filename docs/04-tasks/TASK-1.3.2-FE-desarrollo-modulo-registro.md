@@ -19,6 +19,19 @@
 
 ## 🚀 SUBTAREAS DETALLADAS
 
+### Fase 0: Setup TDD y Pruebas Unitarias
+
+- [ ] **0.1 Crear estructura de testing para registro**
+  - [ ] Crear `src/stores/registro.ts` con estructura inicial y tipos
+  - [ ] Crear `src/stores/__tests__/registro.spec.ts` con casos de prueba base
+  - [ ] Verificar integración con Vitest (`pnpm test:unit`)
+  - [ ] Implementar primeros tests para acciones básicas: `registrarIngreso()` y `registrarSalida()`
+
+- [ ] **0.2 Definir interfaz del store**
+  - [ ] Definir tipos TypeScript para `RegistroIngreso`, `RegistroSalida`, `PersonaDentro`
+  - [ ] Establecer estado inicial del store con propiedades reactivas
+  - [ ] Crear getters para estadísticas y consultas frecuentes
+
 ### Fase 1: Modal de Registro de Ingreso
 
 - [ ] **1.1 Crear componente `RegistroIngresoModal.vue`**

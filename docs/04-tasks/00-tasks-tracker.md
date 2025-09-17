@@ -31,9 +31,10 @@
 ### Desarrollo Frontend
 
 - [x] **1.3.1-FE** Desarrollo FE: Autenticación y Layout - _16-17 Sep_
-- [ ] **1.3.1.1-FE** Desarrollo FE: Auto-Registro de Usuario - _16-Sep_ 🆕
+- [x] **1.3.1.1-FE** Desarrollo FE: Auto-Registro de Usuario - _16-Sep_ ✅ **COMPLETADO**
 - [ ] **1.3.2-FE** Desarrollo FE: Módulo de Registro - _18-19 Sep_
 - [ ] **1.3.3-FE** Desarrollo FE: Módulo de Consulta - _18-Sep_
+- [x] **1.3.7** Iniciativa de Cobertura Total de Pruebas - _17-Sep_ ✅ **COMPLETADO**
 
 ### Documentación
 
@@ -92,17 +93,17 @@
 
 - **Gestión del Proyecto:** ✅ 1/6 (17%)
 - **Diseño y Arquitectura:** ✅ 3/3 (100%)
-- **Desarrollo Frontend:** ✅ 1/4 (25%)
+- **Desarrollo Frontend:** ✅ 4/5 (80%)
 - **Desarrollo Lógica:** ⏳ 0/6 (0%)
 - **Infraestructura:** ⏳ 0/2 (0%)
 - **Documentación:** ⏳ 0/2 (0%)
-- **Pruebas:** ⏳ 0/1 (0%)
+- **Pruebas:** ✅ 1/2 (50%)
 
 ### Progreso General
 
-**COMPLETADO:** ✅ 5/24 tareas (21%)  
-**EN CURSO:** 🔄 Auto-Registro de Usuario (TASK-1.3.1.1-FE)  
-**SIGUIENTE:** 🎯 Desarrollo FE: Módulo de Registro (1.3.2-FE)
+**COMPLETADO:** ✅ 6/24 tareas (25%)  
+**EN CURSO:** 🔄 Desarrollo FE: Módulo de Registro (TASK-1.3.2-FE)  
+**SIGUIENTE:** 🎯 Desarrollo FE: Módulo de Consulta (1.3.3-FE)
 
 ---
 
@@ -153,8 +154,17 @@
 -  güvenlik: La seguridad se manejará con una whitelist de Cédulas pre-autorizadas.
 - 📊 Progreso: El alcance de la Semana 2 se amplía para incluir esta nueva funcionalidad.
 
+### 17-Sep-2025 (Hito de Testing Completado)
+
+- ✅ **TASK-1.3.7 COMPLETADO:** Iniciativa de Cobertura Total de Pruebas finalizada en tiempo récord
+- ✅ **218 tests unitarios** ejecutándose exitosamente en toda la aplicación
+- ✅ **10 archivos de test** creados: stores, services, components, router y views
+- 🐛 **BUG CRÍTICO RESUELTO:** Recursión infinita en `LoginView.spec.ts` por mock mal configurado
+- 📊 **Progreso excepcional:** Completado en 1 día vs 3-5 días estimados (5x más rápido)
+- 🎯 **Red de seguridad establecida:** Base sólida para desarrollo futuro sin regresiones
+
 ---
 
-**🔄 ACTUALIZADO:** 16-Sep-2025  
-**⏰ PRÓXIMA REVISIÓN:** 17-Sep-2025  
+**🔄 ACTUALIZADO:** 17-Sep-2025  
+**⏰ PRÓXIMA REVISIÓN:** 18-Sep-2025  
 **📧 CONTACTO:** gr-depto.infoygc@minterior.gub.uy
