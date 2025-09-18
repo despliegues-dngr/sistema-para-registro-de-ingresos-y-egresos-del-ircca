@@ -6,10 +6,10 @@ import * as directives from 'vuetify/directives'
 import LoginForm from '../LoginForm.vue'
 
 // Crear instancia de Vuetify para tests
-const vuetify = createVuetify({
-  components,
-  directives,
-})
+// const vuetify = createVuetify({
+//   components,
+//   directives,
+// })
 
 // Mock de constantes para evitar dependencias
 vi.mock('@/config/constants', () => ({
@@ -40,10 +40,10 @@ vi.mock('@/config/constants', () => ({
 }))
 
 describe('LoginForm', () => {
-  let vuetify: any
+  let vuetifyInstance: ReturnType<typeof createVuetify>
 
   beforeEach(() => {
-    vuetify = createVuetify({
+    vuetifyInstance = createVuetify({
       components,
       directives
     })
@@ -53,7 +53,7 @@ describe('LoginForm', () => {
     return mount(LoginForm, {
       props,
       global: {
-        plugins: [vuetify]
+        plugins: [vuetifyInstance]
       }
     })
   }
@@ -240,7 +240,7 @@ describe('LoginForm', () => {
       })
 
       const alert = wrapper.find('.v-alert')
-      const closeBtn = alert.find('[data-testid="close"]')
+      // const closeBtn = alert.find('[data-testid="close"]')
       
       // En Vuetify, buscar el botón de cerrar
       const closeButton = alert.find('.v-alert__close button')

@@ -1,6 +1,6 @@
 import { describe, it, expect, beforeEach, afterEach, vi } from 'vitest'
 import { mount, flushPromises } from '@vue/test-utils'
-import { nextTick } from 'vue'
+// import { nextTick } from 'vue'
 import { createVuetify } from 'vuetify'
 import { createRouter, createWebHistory } from 'vue-router'
 import { setActivePinia, createPinia } from 'pinia'
@@ -94,9 +94,9 @@ vi.mock('@/stores/auth', () => ({
 }))
 
 describe('LoginView', () => {
-  let vuetify: any
-  let router: any
-  let pinia: any
+  let vuetifyInstance: ReturnType<typeof createVuetify>
+  let router: ReturnType<typeof createRouter>
+  let pinia: ReturnType<typeof createPinia>
 
   beforeEach(() => {
     // Reset mocks
@@ -106,7 +106,7 @@ describe('LoginView', () => {
     mockAuthStore.user = null
 
     // Setup Vuetify
-    vuetify = createVuetify({
+    vuetifyInstance = createVuetify({
       components,
       directives
     })
@@ -125,9 +125,9 @@ describe('LoginView', () => {
     setActivePinia(pinia)
 
     // Mock setTimeout para tests síncronos
-    vi.spyOn(global, 'setTimeout').mockImplementation((fn: any) => {
+    vi.spyOn(global, 'setTimeout').mockImplementation((fn: () => void) => {
       fn()
-      return 1 as any
+      return 1 as NodeJS.Timeout
     })
   })
 
@@ -139,7 +139,7 @@ describe('LoginView', () => {
     return mount(LoginView, {
       props,
       global: {
-        plugins: [vuetify, router, pinia]
+        plugins: [vuetifyInstance, router, pinia]
       }
     })
   }
@@ -267,7 +267,8 @@ describe('LoginView', () => {
       const wrapper = mountComponent()
 
       const loginForm = wrapper.findComponent({ name: 'LoginForm' })
-      const submitPromise = loginForm.vm.$emit('submit', { username: 'admin', password: 'admin' })
+      // const submitPromise = loginForm.vm.$emit('submit', { username: 'admin', password: 'admin' })
+      loginForm.vm.$emit('submit', { username: 'admin', password: 'admin' })
 
       // Verificar loading inmediatamente
       expect(wrapper.vm.loading).toBe(true)

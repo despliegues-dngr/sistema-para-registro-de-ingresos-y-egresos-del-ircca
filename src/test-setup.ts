@@ -76,7 +76,7 @@ vi.stubGlobal('crypto', {
 vi.stubGlobal('indexedDB', {
   open: vi.fn(() => {
     const mockDB = {
-      transaction: vi.fn((storeName, mode) => ({
+      transaction: vi.fn(() => ({
         objectStore: vi.fn(() => ({
           add: vi.fn(() => ({
             onsuccess: null,
@@ -110,7 +110,7 @@ vi.stubGlobal('indexedDB', {
             onsuccess: null,
             onerror: null,
             addEventListener: vi.fn((event, callback) => {
-              if (event === 'success') setTimeout(() => callback({ target: { result: undefined } }), 0)
+              if (event === 'success') setTimeout(() => callback({ target: { result: [] } }), 0)
             })
           })),
           index: vi.fn(() => ({
@@ -146,7 +146,7 @@ vi.stubGlobal('indexedDB', {
     // Simular éxito inmediato
     setTimeout(() => {
       if (request.onsuccess && typeof request.onsuccess === 'function') {
-        request.onsuccess({ target: { result: mockDB } } as any)
+        request.onsuccess({ target: { result: mockDB } } as unknown)
       }
     }, 0)
     

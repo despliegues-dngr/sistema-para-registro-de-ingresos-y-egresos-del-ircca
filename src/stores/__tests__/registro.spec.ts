@@ -1,6 +1,6 @@
 import { describe, it, expect, beforeEach, vi } from 'vitest'
 import { setActivePinia, createPinia } from 'pinia'
-import { useRegistroStore, type RegistroEntry } from '../registro'
+import { useRegistroStore } from '../registro'
 
 describe('useRegistroStore', () => {
   beforeEach(() => {

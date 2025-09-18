@@ -8,7 +8,7 @@ export interface AuditEvent {
   username: string
   eventType: 'auth' | 'user_management' | 'data_operation' | 'backup' | 'system_error'
   action: string
-  details: Record<string, any>
+  details: Record<string, unknown>
   timestamp: string
   sessionId: string
   ipAddress?: string
@@ -73,7 +73,7 @@ export const useAuditStore = defineStore('audit', () => {
     username: string
     eventType: AuditEvent['eventType']
     action: string
-    details?: Record<string, any>
+    details?: Record<string, unknown>
     sessionId: string
     ipAddress?: string
     userAgent?: string
@@ -220,7 +220,7 @@ export const useAuditStore = defineStore('audit', () => {
     username: string, 
     action: string, 
     sessionId: string, 
-    details?: Record<string, any>
+    details?: Record<string, unknown>
   ): Promise<void> {
     return logEvent({
       userId,
@@ -237,7 +237,7 @@ export const useAuditStore = defineStore('audit', () => {
     username: string, 
     action: string, 
     sessionId: string, 
-    details?: Record<string, any>
+    details?: Record<string, unknown>
   ): Promise<void> {
     return logEvent({
       userId,
@@ -254,7 +254,7 @@ export const useAuditStore = defineStore('audit', () => {
     username: string, 
     error: string, 
     sessionId: string, 
-    details?: Record<string, any>
+    details?: Record<string, unknown>
   ): Promise<void> {
     return logEvent({
       userId,

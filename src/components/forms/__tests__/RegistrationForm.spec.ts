@@ -6,10 +6,10 @@ import * as directives from 'vuetify/directives'
 import RegistrationForm from '../RegistrationForm.vue'
 
 // Crear instancia de Vuetify para tests
-const vuetify = createVuetify({
-  components,
-  directives,
-})
+// const vuetify = createVuetify({
+//   components,
+//   directives,
+// })
 
 // Mock de constantes
 vi.mock('@/config/constants', () => ({
@@ -36,10 +36,10 @@ vi.mock('@/config/constants', () => ({
 }))
 
 describe('RegistrationForm', () => {
-  let vuetify: any
+  let vuetifyInstance: ReturnType<typeof createVuetify>
 
   beforeEach(() => {
-    vuetify = createVuetify({
+    vuetifyInstance = createVuetify({
       components,
       directives
     })
@@ -49,7 +49,7 @@ describe('RegistrationForm', () => {
     return mount(RegistrationForm, {
       props,
       global: {
-        plugins: [vuetify]
+        plugins: [vuetifyInstance]
       }
     })
   }
@@ -183,7 +183,7 @@ describe('RegistrationForm', () => {
       
       expect(gradoOptions).toHaveLength(10)
       expectedGrados.forEach(grado => {
-        expect(gradoOptions.some((option: any) => option.title === grado)).toBe(true)
+        expect(gradoOptions.some((option: { title: string; value: string }) => option.title === grado)).toBe(true)
       })
     })
 
@@ -192,7 +192,7 @@ describe('RegistrationForm', () => {
 
       const gradoOptions = wrapper.vm.gradoOptions
       
-      gradoOptions.forEach((option: any) => {
+      gradoOptions.forEach((option: { title: string; value: string }) => {
         expect(option).toHaveProperty('title')
         expect(option).toHaveProperty('value')
         expect(typeof option.title).toBe('string')

@@ -1,5 +1,5 @@
 import { describe, it, expect, beforeEach, vi } from 'vitest'
-import { createRouter, createMemoryHistory, type RouteRecordRaw } from 'vue-router'
+import { createRouter, createMemoryHistory } from 'vue-router'
 import { setActivePinia, createPinia } from 'pinia'
 import { useAuthStore } from '@/stores/auth'
 
@@ -50,8 +50,8 @@ const routes = [
 ]
 
 describe('Router Navigation Guards', () => {
-  let router: any
-  let authStore: any
+  let router: ReturnType<typeof createRouter>
+  let authStore: typeof mockAuthStore
 
   beforeEach(() => {
     // Resetear estado del mock authStore
@@ -73,9 +73,9 @@ describe('Router Navigation Guards', () => {
 
     // Aplicar el mismo navigation guard que el router real
     // SOLUCIÓN: Obtener estado fresco en cada navegación (no capturar por closure)
-    router.beforeEach((to: any, from: any, next: any) => {
+    router.beforeEach((to, from, next) => {
       // DEBUG: Estado del guard en tiempo real
-      const currentAuthStore = useAuthStore() // Obtener referencia fresca
+      const currentAuthStore = useAuthStore()
       const isAuth = currentAuthStore.isAuthenticated
       const isAdminRole = currentAuthStore.isAdmin
       

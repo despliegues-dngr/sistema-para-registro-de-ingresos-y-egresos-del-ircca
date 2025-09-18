@@ -104,7 +104,7 @@ const onSubmit = async (userData: {
     emit('success', successMessage)
     closeDialog()
 
-  } catch (error: any) {
+  } catch (error: unknown) {
     console.error('Error durante el registro:', error)
     message.value = error.message || MESSAGES.AUTH.CONNECTION_ERROR
   } finally {
