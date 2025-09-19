@@ -11,6 +11,8 @@ export interface User {
   nombre?: string
   apellido?: string
   grado?: string
+  cedula?: string // Alias para username (para compatibilidad)
+  fechaRegistro?: string // Fecha de creación del usuario
 }
 
 export interface RegisterUserData {
@@ -35,7 +37,12 @@ export const useAuthStore = defineStore('auth', () => {
 
   // Actions
   function login(userData: User) {
-    user.value = userData
+    // Asegurar compatibilidad de datos
+    user.value = {
+      ...userData,
+      cedula: userData.cedula || userData.username, // cedula es alias de username
+      fechaRegistro: userData.fechaRegistro || new Date().toISOString().split('T')[0] // Fecha por defecto si no existe
+    }
     isAuthenticated.value = true
     loginAttempts.value = 0
     // TODO: Implementar cifrado de sesión
@@ -108,6 +115,115 @@ export const useAuthStore = defineStore('auth', () => {
     }
   }
 
+  // Actualizar perfil de usuario
+  async function updateUserProfile(updatedData: {
+    cedula: string
+    grado: string
+    nombre: string
+    apellido: string
+  }) {
+    try {
+      if (!user.value) {
+        throw new Error('No hay usuario autenticado')
+      }
+
+      const { initDatabase, updateRecord, getRecords } = useDatabase()
+      await initDatabase()
+
+      // Verificar si la cédula cambió
+      let updateData: any = {
+        grado: updatedData.grado,
+        nombre: updatedData.nombre,
+        apellido: updatedData.apellido,
+      }
+
+      // Si la cédula cambió, verificar que no exista otro usuario con esa cédula
+      if (updatedData.cedula !== user.value.username) {
+        const existingUsers = await getRecords('usuarios', 'username', updatedData.cedula)
+        if (existingUsers.length > 0) {
+          throw new Error('Ya existe un usuario registrado con esa cédula')
+        }
+        
+        // Permitir cambio de cédula (username)
+        updateData.username = updatedData.cedula
+      }
+
+      // Actualizar en la base de datos
+      const result = await updateRecord('usuarios', user.value.id, updateData)
+
+      if (!result.success) {
+        throw new Error(result.error || 'Error al actualizar el perfil')
+      }
+
+      // Actualizar el estado local
+      user.value = {
+        ...user.value,
+        username: updatedData.cedula, // Actualizar también el username
+        cedula: updatedData.cedula, // Mantener consistencia
+        grado: updatedData.grado,
+        nombre: updatedData.nombre,
+        apellido: updatedData.apellido,
+      }
+
+      console.log('Perfil actualizado exitosamente')
+
+    } catch (error) {
+      console.error('Error en updateUserProfile:', error)
+      throw error
+    }
+  }
+
+  // Cambiar contraseña
+  async function changePassword(currentPassword: string, newPassword: string) {
+    try {
+      if (!user.value) {
+        throw new Error('No hay usuario autenticado')
+      }
+
+      const { initDatabase, getRecords, updateRecord } = useDatabase()
+      await initDatabase()
+
+      // Obtener usuario actual de la base de datos
+      const users = await getRecords('usuarios', 'id', user.value.id)
+      if (users.length === 0) {
+        throw new Error('Usuario no encontrado')
+      }
+
+      const currentUser = users[0]
+      
+      // Verificar contraseña actual
+      const isCurrentPasswordValid = await EncryptionService.verifyPassword(
+        currentPassword, 
+        currentUser.hashedPassword, 
+        currentUser.salt
+      )
+
+      if (!isCurrentPasswordValid) {
+        throw new Error('La contraseña actual es incorrecta')
+      }
+
+      // Generar nueva contraseña hasheada
+      const { hashedPassword: newHashedPassword, salt: newSalt } = 
+        await EncryptionService.hashPassword(newPassword)
+
+      // Actualizar en la base de datos
+      const result = await updateRecord('usuarios', user.value.id, {
+        hashedPassword: newHashedPassword,
+        salt: newSalt,
+      })
+
+      if (!result.success) {
+        throw new Error(result.error || 'Error al cambiar la contraseña')
+      }
+
+      console.log('Contraseña cambiada exitosamente')
+
+    } catch (error) {
+      console.error('Error en changePassword:', error)
+      throw error
+    }
+  }
+
   return {
     user,
     isAuthenticated,
@@ -121,5 +237,7 @@ export const useAuthStore = defineStore('auth', () => {
     incrementLoginAttempts,
     resetLoginAttempts,
     registerUser,
+    updateUserProfile,
+    changePassword,
   }
 })

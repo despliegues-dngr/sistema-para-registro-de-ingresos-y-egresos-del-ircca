@@ -122,6 +122,47 @@ export const useDatabase = () => {
     }
   }
 
+  const updateRecord = async (
+    storeName: string,
+    id: string,
+    data: Record<string, unknown>,
+  ): Promise<{ success: boolean; error?: string }> => {
+    if (!db.value) {
+      return { success: false, error: 'Base de datos no inicializada' }
+    }
+
+    try {
+      return new Promise((resolve, reject) => {
+        const transaction = db.value!.transaction([storeName], 'readwrite')
+        const store = transaction.objectStore(storeName)
+        
+        // Primero obtener el registro existente
+        const getRequest = store.get(id)
+        
+        getRequest.onsuccess = () => {
+          const existingRecord = getRequest.result
+          if (!existingRecord) {
+            reject({ success: false, error: 'Registro no encontrado' })
+            return
+          }
+          
+          // Combinar datos existentes con los nuevos
+          const updatedRecord = { ...existingRecord, ...data }
+          
+          // Actualizar el registro
+          const putRequest = store.put(updatedRecord)
+          
+          putRequest.onsuccess = () => resolve({ success: true })
+          putRequest.onerror = () => reject({ success: false, error: 'Error al actualizar registro' })
+        }
+        
+        getRequest.onerror = () => reject({ success: false, error: 'Error al obtener registro' })
+      })
+    } catch {
+      return { success: false, error: 'Error en transacción de actualización' }
+    }
+  }
+
   const clearStore = async (storeName: string): Promise<{ success: boolean; error?: string }> => {
     if (!db.value) {
       return { success: false, error: 'Base de datos no inicializada' }
@@ -148,6 +189,7 @@ export const useDatabase = () => {
     // Methods
     initDatabase,
     addRecord,
+    updateRecord,
     getRecords,
     clearStore,
   }

@@ -1,99 +1,93 @@
 <template>
   <v-container fluid class="pa-6">
-    <!-- Header de bienvenida temporal -->
-    <v-row>
-      <v-col cols="12">
-        <v-card class="mb-6" elevation="2">
-          <v-card-title class="bg-primary text-white pa-4">
-            <v-icon left class="mr-2">mdi-view-dashboard</v-icon>
-            Dashboard - Sistema IRCCA
-          </v-card-title>
-          <v-card-text class="pa-4">
-            <h2 class="text-h4 mb-2">¡Bienvenido al Sistema!</h2>
-            <p class="text-body-1 mb-0">
-              Esta es una vista temporal del Dashboard. La funcionalidad completa se desarrollará en futuras tareas.
-            </p>
-          </v-card-text>
-        </v-card>
+    <!-- Header de bienvenida con tiempo real -->
+    <WelcomeHeader 
+      @view-profile="handleViewProfile"
+      @edit-profile="handleEditProfile" 
+      @change-password="handleChangePassword"
+      @logout="handleLogout"
+    />
+
+    <!-- Estadísticas principales -->
+    <v-row class="mb-8">
+      <!-- Card de Personas y Actividad - Primera -->
+      <v-col cols="12" lg="4" class="mb-4 mb-lg-0">
+        <PeopleStatsCard :people-data="peopleData" />
+      </v-col>
+
+      <!-- Card de Vehículos Detallada - Segunda -->
+      <v-col cols="12" lg="8">
+        <VehicleStatsCard :vehicle-data="vehicleData" />
       </v-col>
     </v-row>
 
-    <!-- Información del usuario actual -->
-    <v-row>
-      <v-col cols="12" md="6">
-        <v-card elevation="1">
-          <v-card-title class="text-h6">
-            <v-icon left class="mr-2">mdi-account-circle</v-icon>
-            Información de Sesión
-          </v-card-title>
-          <v-card-text>
-            <p><strong>Usuario:</strong> {{ authStore.user?.username || 'Usuario de prueba' }}</p>
-            <p><strong>Rol:</strong> {{ authStore.user?.role || 'Operador' }}</p>
-            <p><strong>Estado:</strong> 
-              <v-chip color="success" small>
-                <v-icon left small>mdi-check-circle</v-icon>
-                Autenticado
-              </v-chip>
-            </p>
-          </v-card-text>
-        </v-card>
-      </v-col>
+    <!-- Botones de Acción Rápida -->
+    <ActionButtons 
+      @registro-ingreso="handleRegistroIngreso"
+      @registro-salida="handleRegistroSalida"
+    />
 
-      <!-- Acciones disponibles -->
-      <v-col cols="12" md="6">
-        <v-card elevation="1">
-          <v-card-title class="text-h6">
-            <v-icon left class="mr-2">mdi-cog</v-icon>
-            Acciones
-          </v-card-title>
-          <v-card-text>
-            <v-btn
-              color="error"
-              variant="elevated"
-              @click="handleLogout"
-              :loading="isLoggingOut"
-              block
-              class="mb-2"
-            >
-              <v-icon left>mdi-logout</v-icon>
-              Cerrar Sesión
-            </v-btn>
-            
-            <p class="text-caption text-center mt-2">
-              El Dashboard completo se implementará en las próximas tareas del proyecto.
-            </p>
-          </v-card-text>
-        </v-card>
-      </v-col>
-    </v-row>
-
-    <!-- Placeholder para futuras funcionalidades -->
-    <v-row class="mt-6">
-      <v-col cols="12">
-        <v-card elevation="1" class="text-center pa-6">
-          <v-icon size="64" color="grey-lighten-1" class="mb-4">mdi-construction</v-icon>
-          <h3 class="text-h5 mb-2">Funcionalidades en Desarrollo</h3>
-          <p class="text-body-1 text-grey">
-            Aquí se implementarán las estadísticas, acciones rápidas de registro y la lista de personas dentro del predio.
-          </p>
-          <v-chip color="info" variant="outlined">
-            <v-icon left small>mdi-calendar-clock</v-icon>
-            Próximamente en TASK-1.3.2-FE
-          </v-chip>
-        </v-card>
-      </v-col>
-    </v-row>
   </v-container>
 </template>
 
 <script setup lang="ts">
-import { ref } from 'vue'
+import { ref, reactive } from 'vue'
 import { useRouter } from 'vue-router'
 import { useAuthStore } from '@/stores/auth'
+
+// Componentes del Dashboard - Todos necesarios y en uso
+import WelcomeHeader from '@/components/dashboard/WelcomeHeader.vue'        // Header con avatar y menú
+import VehicleStatsCard from '@/components/dashboard/VehicleStatsCard.vue'  // Para estadísticas detalladas de vehículos
+import PeopleStatsCard from '@/components/dashboard/PeopleStatsCard.vue'    // Para control de personas y actividad
+import ActionButtons from '@/components/dashboard/ActionButtons.vue'        // Botones principales de registro
 
 const router = useRouter()
 const authStore = useAuthStore()
 const isLoggingOut = ref(false)
+
+// ========== DATOS SIMULADOS (TODO: Conectar con stores reales) ==========
+
+// Estadísticas detalladas de vehículos por categoría - Usadas por VehicleStatsCard  
+const vehicleData = reactive({
+  automoviles: 12,    // 🚗 Autos particulares
+  motocicletas: 5,    // 🏍️ Motos y scooters
+  camiones: 2,        // 🚚 Vehículos de carga
+  buses: 1            // 🚌 Transporte público
+})
+
+// Estadísticas de control de personas - Usadas por PeopleStatsCard
+const peopleData = reactive({
+  personasDentro: 15,  // 🏢 Personas actualmente en el predio  
+  ingresosHoy: 23,     // ➡️ Total de ingresos del día
+  salidasHoy: 8        // ⬅️ Total de salidas del día
+})
+
+// Handlers para los botones de acción
+const handleRegistroIngreso = () => {
+  // TODO: Abrir modal de registro de ingreso
+  console.log('Abrir modal de registro de ingreso')
+}
+
+const handleRegistroSalida = () => {
+  // TODO: Abrir modal de registro de salida
+  console.log('Abrir modal de registro de salida')
+}
+
+// Handlers para el menú de perfil
+const handleViewProfile = () => {
+  // TODO: Abrir modal de ver perfil
+  console.log('Ver perfil del usuario')
+}
+
+const handleEditProfile = () => {
+  // TODO: Abrir modal de editar perfil
+  console.log('Editar perfil del usuario')
+}
+
+const handleChangePassword = () => {
+  // TODO: Abrir modal de cambio de contraseña
+  console.log('Cambiar contraseña')
+}
 
 const handleLogout = async () => {
   try {
@@ -113,8 +107,30 @@ const handleLogout = async () => {
 </script>
 
 <style scoped>
-/* Estilos específicos del componente si son necesarios */
+/* Layout refinado para el Dashboard gubernamental */
 .v-container {
-  max-width: 1200px;
+  max-width: 1400px;
+  padding: 1.5rem !important;
+}
+
+/* Mejorar espaciado en tablets y desktop */
+@media (min-width: 960px) {
+  .v-container {
+    padding: 2rem !important;
+  }
+}
+
+/* Espaciado óptimo en pantallas grandes */
+@media (min-width: 1264px) {
+  .v-container {
+    padding: 2.5rem !important;
+  }
+}
+
+/* Ajustes para móviles */
+@media (max-width: 600px) {
+  .v-container {
+    padding: 1rem !important;
+  }
 }
 </style>

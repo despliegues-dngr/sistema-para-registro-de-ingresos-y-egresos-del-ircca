@@ -16,14 +16,10 @@
       <div class="shape shape-small corner-bl-3"></div>
     </div>
 
-    <!-- Contenido principal -->
-    <v-container fluid class="fill-height content-container">
-      <v-row justify="center" align="center" class="fill-height">
-        <v-col cols="12" sm="8" md="6" lg="4" xl="3">
-          <slot />
-        </v-col>
-      </v-row>
-    </v-container>
+    <!-- Contenido principal - Flexible para todas las vistas -->
+    <div class="content-container">
+      <slot />
+    </div>
   </div>
 </template>
 
@@ -157,10 +153,8 @@ onUnmounted(() => {
 .content-container {
   position: relative;
   z-index: 10;
-}
-
-.fill-height {
   min-height: 100vh;
+  width: 100%;
 }
 
 

@@ -1,5 +1,5 @@
 <template>
-  <AuthBackground>
+  <CenteredContainer>
     <LoginCard>
       <InstitutionalHeader />
 
@@ -14,7 +14,7 @@
 
       <GovernmentFooter @help="showHelp = true" @register="handleRegister" />
     </LoginCard>
-  </AuthBackground>
+  </CenteredContainer>
 
   <!-- Dialog de Ayuda Modular -->
   <HelpDialog v-model="showHelp" @close="showHelp = false" />
@@ -32,7 +32,7 @@ import { ref } from 'vue'
 import { MESSAGES, ROUTES } from '@/config/constants'
 
 // Componentes modulares
-import AuthBackground from '@/components/layout/AuthBackground.vue'
+import CenteredContainer from '@/components/layout/CenteredContainer.vue'
 import LoginCard from '@/components/ui/LoginCard.vue'
 import InstitutionalHeader from '@/components/layout/InstitutionalHeader.vue'
 import LoginForm from '@/components/forms/LoginForm.vue'
