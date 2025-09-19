@@ -32,12 +32,13 @@
 
 - [x] **1.3.1-FE** Desarrollo FE: Autenticación y Layout - _16-17 Sep_
 - [x] **1.3.1.1-FE** Desarrollo FE: Auto-Registro de Usuario - _16-Sep_ ✅ **COMPLETADO**
-- [x] **1.3.2-FE** Desarrollo FE: Dashboard Visual (Operador) - _18-19 Sep_ ✅ **PARCIAL - Solo vista, sin lógica**
+- [x] **1.3.2-FE** Desarrollo FE: Módulo de Registro (Operador) - _18-19 Sep_ 🔄 **EN CURSO - Vista Dashboard OK, falta implementar modales**
 - [ ] **1.3.3-FE** Desarrollo FE: Módulo de Consulta - _18-Sep_
 - [x] **1.3.7** Iniciativa de Cobertura Total de Pruebas - _17-Sep_ ✅ **COMPLETADO**
 
 ### Documentación
 
+- [x] **1.2.4** Definiciones Operativas y de Flujo - _19-Sep_ ✅ **COMPLETADO**
 - [ ] **1.5.2** Inicio Manual de Usuario - _18-22 Sep_
 - [ ] **1.5.3** Redacción Política de Uso y Privacidad - _20-22 Sep_
 

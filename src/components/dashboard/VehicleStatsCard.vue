@@ -4,64 +4,72 @@
       <v-icon class="mr-3" color="accent">mdi-car-multiple</v-icon>
       Vehículos en el Predio
     </v-card-title>
-    
+
     <v-card-text class="px-6 pb-6">
       <v-row>
-        <!-- Automóviles -->
-        <v-col cols="6" sm="3" class="mb-3">
-          <div class="vehicle-category">
-            <div class="d-flex align-center mb-2">
-              <v-avatar size="40" color="primary" class="text-white mr-3">
-                <v-icon size="20">mdi-car</v-icon>
+        <!-- Autos -->
+        <v-col cols="6" sm="3" class="mb-4">
+          <div class="vehicle-item">
+            <div class="d-flex align-center">
+              <v-avatar size="48" color="primary" class="text-white mr-4">
+                <v-icon size="24">mdi-car</v-icon>
               </v-avatar>
               <div>
-                <div class="text-h5 font-weight-bold text-primary mb-0">{{ vehicleData.automoviles }}</div>
-                <div class="text-caption text-grey-darken-1">Automóviles</div>
+                <div class="text-h5 font-weight-bold text-primary mb-0">
+                  {{ vehicleData.autos }}
+                </div>
+                <div class="text-body-2 text-grey-darken-1 font-weight-medium">Autos</div>
               </div>
             </div>
           </div>
         </v-col>
 
-        <!-- Motocicletas -->
-        <v-col cols="6" sm="3" class="mb-3">
-          <div class="vehicle-category">
-            <div class="d-flex align-center mb-2">
-              <v-avatar size="40" color="accent" class="text-white mr-3">
-                <v-icon size="20">mdi-motorbike</v-icon>
+        <!-- Motos -->
+        <v-col cols="6" sm="3" class="mb-4">
+          <div class="vehicle-item">
+            <div class="d-flex align-center">
+              <v-avatar size="48" color="accent" class="text-white mr-4">
+                <v-icon size="24">mdi-motorbike</v-icon>
               </v-avatar>
               <div>
-                <div class="text-h5 font-weight-bold text-accent mb-0">{{ vehicleData.motocicletas }}</div>
-                <div class="text-caption text-grey-darken-1">Motocicletas</div>
+                <div class="text-h5 font-weight-bold text-accent mb-0">
+                  {{ vehicleData.motos }}
+                </div>
+                <div class="text-body-2 text-grey-darken-1 font-weight-medium">Motos</div>
               </div>
             </div>
           </div>
         </v-col>
 
         <!-- Camiones -->
-        <v-col cols="6" sm="3" class="mb-3">
-          <div class="vehicle-category">
-            <div class="d-flex align-center mb-2">
-              <v-avatar size="40" color="warning" class="text-white mr-3">
-                <v-icon size="20">mdi-truck</v-icon>
+        <v-col cols="6" sm="3" class="mb-4">
+          <div class="vehicle-item">
+            <div class="d-flex align-center">
+              <v-avatar size="48" color="warning" class="text-white mr-4">
+                <v-icon size="24">mdi-truck</v-icon>
               </v-avatar>
               <div>
-                <div class="text-h5 font-weight-bold text-warning mb-0">{{ vehicleData.camiones }}</div>
-                <div class="text-caption text-grey-darken-1">Camiones</div>
+                <div class="text-h5 font-weight-bold text-warning mb-0">
+                  {{ vehicleData.camiones }}
+                </div>
+                <div class="text-body-2 text-grey-darken-1 font-weight-medium">Camiones</div>
               </div>
             </div>
           </div>
         </v-col>
 
         <!-- Buses -->
-        <v-col cols="6" sm="3" class="mb-3">
-          <div class="vehicle-category">
-            <div class="d-flex align-center mb-2">
-              <v-avatar size="40" color="success" class="text-white mr-3">
-                <v-icon size="20">mdi-bus</v-icon>
+        <v-col cols="6" sm="3" class="mb-4">
+          <div class="vehicle-item">
+            <div class="d-flex align-center">
+              <v-avatar size="48" color="success" class="text-white mr-4">
+                <v-icon size="24">mdi-bus</v-icon>
               </v-avatar>
               <div>
-                <div class="text-h5 font-weight-bold text-success mb-0">{{ vehicleData.buses }}</div>
-                <div class="text-caption text-grey-darken-1">Buses</div>
+                <div class="text-h5 font-weight-bold text-success mb-0">
+                  {{ vehicleData.buses }}
+                </div>
+                <div class="text-body-2 text-grey-darken-1 font-weight-medium">Buses</div>
               </div>
             </div>
           </div>
@@ -71,12 +79,7 @@
       <!-- Total -->
       <v-divider class="my-4"></v-divider>
       <div class="d-flex justify-center align-center">
-        <v-chip
-          color="accent"
-          variant="tonal"
-          size="large"
-          class="font-weight-bold"
-        >
+        <v-chip color="accent" variant="tonal" size="large" class="font-weight-bold">
           Total: {{ totalVehicles }}
         </v-chip>
       </div>
@@ -89,8 +92,8 @@ import { computed } from 'vue'
 
 interface Props {
   vehicleData: {
-    automoviles: number
-    motocicletas: number
+    autos: number
+    motos: number
     camiones: number
     buses: number
   }
@@ -100,10 +103,12 @@ const props = defineProps<Props>()
 
 // Calcular total de vehículos
 const totalVehicles = computed(() => {
-  return props.vehicleData.automoviles + 
-         props.vehicleData.motocicletas + 
-         props.vehicleData.camiones + 
-         props.vehicleData.buses
+  return (
+    props.vehicleData.autos +
+    props.vehicleData.motos +
+    props.vehicleData.camiones +
+    props.vehicleData.buses
+  )
 })
 </script>
 
@@ -124,24 +129,32 @@ const totalVehicles = computed(() => {
   height: 100%;
 }
 
-.vehicle-category {
-  padding: 0.5rem;
-  border-radius: 8px;
+.vehicle-item {
+  padding: 1rem;
+  border-radius: 12px;
   transition: all 0.2s ease;
+  background: rgba(0, 0, 0, 0.02);
+  border: 1px solid rgba(0, 0, 0, 0.05);
 }
 
-.vehicle-category:hover {
-  background-color: rgba(0, 0, 0, 0.02);
+.vehicle-item:hover {
+  background-color: rgba(0, 0, 0, 0.04);
+  transform: scale(1.02);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
 }
 
 /* Responsive adjustments */
 @media (max-width: 600px) {
+  .vehicle-item {
+    padding: 0.75rem;
+  }
+
   .v-avatar {
-    width: 36px !important;
-    height: 36px !important;
+    width: 42px !important;
+    height: 42px !important;
     margin-right: 0.75rem !important;
   }
-  
+
   .text-h5 {
     font-size: 1.3rem !important;
   }

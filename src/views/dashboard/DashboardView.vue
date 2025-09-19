@@ -1,9 +1,9 @@
 <template>
   <v-container fluid class="pa-6">
     <!-- Header de bienvenida con tiempo real -->
-    <WelcomeHeader 
+    <WelcomeHeader
       @view-profile="handleViewProfile"
-      @edit-profile="handleEditProfile" 
+      @edit-profile="handleEditProfile"
       @change-password="handleChangePassword"
       @logout="handleLogout"
     />
@@ -22,55 +22,89 @@
     </v-row>
 
     <!-- Botones de Acción Rápida -->
-    <ActionButtons 
+    <ActionButtons
       @registro-ingreso="handleRegistroIngreso"
       @registro-salida="handleRegistroSalida"
     />
 
+    <!-- Modales de Registro -->
+    <RegistroIngresoDialog
+      v-model="showRegistroIngreso"
+      @success="handleRegistroIngresoSuccess"
+      @close="handleDialogClose"
+    />
+
+    <RegistroSalidaDialog
+      v-model="showRegistroSalida"
+      @success="handleRegistroSalidaSuccess"
+      @close="handleDialogClose"
+    />
   </v-container>
 </template>
 
 <script setup lang="ts">
-import { ref, reactive } from 'vue'
+import { ref, reactive, computed } from 'vue'
 import { useRouter } from 'vue-router'
 import { useAuthStore } from '@/stores/auth'
+import { useRegistroStore } from '@/stores/registro'
 
 // Componentes del Dashboard - Todos necesarios y en uso
-import WelcomeHeader from '@/components/dashboard/WelcomeHeader.vue'        // Header con avatar y menú
-import VehicleStatsCard from '@/components/dashboard/VehicleStatsCard.vue'  // Para estadísticas detalladas de vehículos
-import PeopleStatsCard from '@/components/dashboard/PeopleStatsCard.vue'    // Para control de personas y actividad
-import ActionButtons from '@/components/dashboard/ActionButtons.vue'        // Botones principales de registro
+import WelcomeHeader from '@/components/dashboard/WelcomeHeader.vue' // Header con avatar y menú
+import VehicleStatsCard from '@/components/dashboard/VehicleStatsCard.vue' // Para estadísticas detalladas de vehículos
+import PeopleStatsCard from '@/components/dashboard/PeopleStatsCard.vue' // Para control de personas y actividad
+import ActionButtons from '@/components/dashboard/ActionButtons.vue' // Botones principales de registro
+import RegistroIngresoDialog from '@/components/ui/RegistroIngresoDialog.vue' // Modal de registro de ingreso
+import RegistroSalidaDialog from '@/components/ui/RegistroSalidaDialog.vue' // Modal de registro de salida
 
 const router = useRouter()
 const authStore = useAuthStore()
+const registroStore = useRegistroStore()
+
+// Estado para controlar modales
 const isLoggingOut = ref(false)
+const showRegistroIngreso = ref(false)
+const showRegistroSalida = ref(false)
 
-// ========== DATOS SIMULADOS (TODO: Conectar con stores reales) ==========
+// ========== DATOS CONECTADOS CON STORES ==========
 
-// Estadísticas detalladas de vehículos por categoría - Usadas por VehicleStatsCard  
-const vehicleData = reactive({
-  automoviles: 12,    // 🚗 Autos particulares
-  motocicletas: 5,    // 🏍️ Motos y scooters
-  camiones: 2,        // 🚚 Vehículos de carga
-  buses: 1            // 🚌 Transporte público
-})
+// Estadísticas en tiempo real desde el store de registro
+const peopleData = computed(() => ({
+  personasDentro: registroStore.estadisticasHoy.personasDentro,
+  ingresosHoy: registroStore.estadisticasHoy.ingresosHoy,
+  salidasHoy: registroStore.estadisticasHoy.salidasHoy,
+}))
 
-// Estadísticas de control de personas - Usadas por PeopleStatsCard
-const peopleData = reactive({
-  personasDentro: 15,  // 🏢 Personas actualmente en el predio  
-  ingresosHoy: 23,     // ➡️ Total de ingresos del día
-  salidasHoy: 8        // ⬅️ Total de salidas del día
-})
+// Estadísticas detalladas de vehículos por categoría - Usadas por VehicleStatsCard
+const vehicleData = computed(() => ({
+  autos: registroStore.estadisticasHoy.vehiculosDentro, // TODO: Separar por categorías
+  motos: 0, // TODO: Implementar categorización
+  camiones: 0, // TODO: Implementar categorización
+  buses: 0, // TODO: Implementar categorización
+}))
 
 // Handlers para los botones de acción
 const handleRegistroIngreso = () => {
-  // TODO: Abrir modal de registro de ingreso
-  console.log('Abrir modal de registro de ingreso')
+  showRegistroIngreso.value = true
 }
 
 const handleRegistroSalida = () => {
-  // TODO: Abrir modal de registro de salida
-  console.log('Abrir modal de registro de salida')
+  showRegistroSalida.value = true
+}
+
+// Handlers para modales de registro
+const handleRegistroIngresoSuccess = (message: string) => {
+  console.log('Registro de ingreso exitoso:', message)
+  // TODO: Mostrar notificación de éxito global
+}
+
+const handleRegistroSalidaSuccess = (message: string) => {
+  console.log('Registro de salida exitoso:', message)
+  // TODO: Mostrar notificación de éxito global
+}
+
+const handleDialogClose = () => {
+  showRegistroIngreso.value = false
+  showRegistroSalida.value = false
 }
 
 // Handlers para el menú de perfil
@@ -92,10 +126,10 @@ const handleChangePassword = () => {
 const handleLogout = async () => {
   try {
     isLoggingOut.value = true
-    
+
     // Ejecutar el logout del store
     await authStore.logout()
-    
+
     // Redirigir al login
     await router.push('/login')
   } catch (error) {

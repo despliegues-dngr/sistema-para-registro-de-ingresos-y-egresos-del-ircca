@@ -21,93 +21,93 @@
 
 ### Fase 0: Setup TDD y Pruebas Unitarias
 
-- [ ] **0.1 Crear estructura de testing para registro**
-  - [ ] Crear `src/stores/registro.ts` con estructura inicial y tipos
-  - [ ] Crear `src/stores/__tests__/registro.spec.ts` con casos de prueba base
-  - [ ] Verificar integración con Vitest (`pnpm test:unit`)
-  - [ ] Implementar primeros tests para acciones básicas: `registrarIngreso()` y `registrarSalida()`
+- [x] **0.1 Crear estructura de testing para registro**
+  - [x] Crear `src/stores/registro.ts` con estructura inicial y tipos
+  - [x] Crear `src/stores/__tests__/registro.spec.ts` con casos de prueba base
+  - [x] Verificar integración con Vitest (`pnpm test:unit`)
+  - [x] Implementar primeros tests para acciones básicas: `registrarIngreso()` y `registrarSalida()`
 
-- [ ] **0.2 Definir interfaz del store**
-  - [ ] Definir tipos TypeScript para `RegistroIngreso`, `RegistroSalida`, `PersonaDentro`
-  - [ ] Establecer estado inicial del store con propiedades reactivas
-  - [ ] Crear getters para estadísticas y consultas frecuentes
+- [x] **0.2 Definir interfaz del store**
+  - [x] Definir tipos TypeScript para `RegistroIngreso`, `RegistroSalida`, `PersonaDentro`
+  - [x] Establecer estado inicial del store con propiedades reactivas
+  - [x] Crear getters para estadísticas y consultas frecuentes
 
 ### Fase 1: Modal de Registro de Ingreso
 
-- [ ] **1.1 Crear componente `RegistroIngresoModal.vue`**
-  - [ ] Modal con `v-dialog` que se superponga al Dashboard
-  - [ ] Formulario con secciones: Datos Personales, Datos de Visita, Datos de Vehículo (opcional)
-  - [ ] Validaciones en tiempo real según `VALIDATION_PATTERNS`
-  - [ ] Estados de carga y mensajes de error/éxito
+- [x] **1.1 Crear componente `RegistroIngresoModal.vue`**
+  - [x] Modal con `v-dialog` que se superponga al Dashboard
+  - [x] Formulario con secciones: Datos Personales, Datos de Visita, Datos de Vehículo (opcional)
+  - [x] Validaciones en tiempo real según `VALIDATION_PATTERNS`
+  - [x] Estados de carga y mensajes de error/éxito
 
-- [ ] **1.2 Implementar formulario de datos personales**
-  - [ ] Campos: Cédula (8 dígitos), Nombre, Apellido, Teléfono (opcional)
-  - [ ] Validación de formato de cédula y teléfono
-  - [ ] Campo de cédula como foco inicial
+- [x] **1.2 Implementar formulario de datos personales**
+  - [x] Campos: Cédula (8 dígitos), Nombre, Apellido, Teléfono (opcional)
+  - [x] Validación de formato de cédula y teléfono
+  - [x] Campo de cédula como foco inicial
 
-- [ ] **1.3 Implementar formulario de datos de visita**
-  - [ ] Selector de tipo de visitante
-  - [ ] Selector de área a visitar
-  - [ ] Campo de texto para motivo
+- [x] **1.3 Implementar formulario de datos de visita**
+  - [x] Selector de tipo de visitante
+  - [x] Selector de área a visitar
+  - [x] Campo de texto para motivo
 
-- [ ] **1.4 Implementar sección de vehículo (expandible)**
-  - [ ] Campos: Matricula (ABC1234), Modelo, Color
-  - [ ] Validación de formato de Matricula
-  - [ ] Sección colapsable para no sobrecargar UI
+- [x] **1.4 Implementar sección de vehículo (expandible)**
+  - [x] Campos: Matricula (ABC1234), Modelo, Color
+  - [x] Validación de formato de Matricula
+  - [x] Sección colapsable para no sobrecargar UI
 
 ### Fase 2: Modal de Registro de Salida
 
-- [ ] **2.1 Crear componente `RegistroSalidaModal.vue`**
-  - [ ] Modal con funcionalidad de búsqueda principal
-  - [ ] Campo de búsqueda por cédula con filtrado en tiempo real
-  - [ ] Lista de resultados de personas dentro del predio
+- [x] **2.1 Crear componente `RegistroSalidaModal.vue`**
+  - [x] Modal con funcionalidad de búsqueda principal
+  - [x] Campo de búsqueda por cédula con filtrado en tiempo real
+  - [x] Lista de resultados de personas dentro del predio
 
-- [ ] **2.2 Implementar funcionalidad de búsqueda**
-  - [ ] Búsqueda por cédula con filtrado instantáneo
-  - [ ] Lista visual de personas actualmente dentro
-  - [ ] Selección clara de la persona correcta
+- [x] **2.2 Implementar funcionalidad de búsqueda**
+  - [x] Búsqueda por cédula con filtrado instantáneo
+  - [x] Lista visual de personas actualmente dentro
+  - [x] Selección clara de la persona correcta
 
-- [ ] **2.3 Implementar información adicional**
-  - [ ] Mostrar tiempo transcurrido desde ingreso
-  - [ ] Campo opcional de observaciones sobre la salida
-  - [ ] Confirmación antes de registrar salida
+- [x] **2.3 Implementar información adicional**
+  - [x] Mostrar tiempo transcurrido desde ingreso
+  - [x] Campo opcional de observaciones sobre la salida
+  - [x] Confirmación antes de registrar salida
 
 ### Fase 3: Integración con Dashboard
 
-- [ ] **3.1 Actualizar `DashboardView.vue`**
-  - [ ] Agregar botones "Registrar Ingreso" y "Registrar Salida"
-  - [ ] Integrar modals con v-model para control de visibilidad
-  - [ ] Actualizar estadísticas tras registros exitosos
+- [x] **3.1 Actualizar `DashboardView.vue`**
+  - [x] Agregar botones "Registrar Ingreso" y "Registrar Salida"
+  - [x] Integrar modals con v-model para control de visibilidad
+  - [x] Actualizar estadísticas tras registros exitosos
 
-- [ ] **3.2 Conectar con stores**
-  - [ ] Integrar con `registroStore` (crear si no existe)
-  - [ ] Actualizar `personas_dentro` en tiempo real
-  - [ ] Persistir registros en IndexedDB
+- [x] **3.2 Conectar con stores**
+  - [x] Integrar con `registroStore` (crear si no existe)
+  - [x] Actualizar `personas_dentro` en tiempo real
+  - [x] Persistir registros en IndexedDB
 
 ### Fase 4: Store y Servicios
 
-- [ ] **4.1 Crear/actualizar `stores/registro.ts`**
-  - [ ] Acciones: `registrarIngreso()`, `registrarSalida()`
-  - [ ] Estado: lista de personas dentro, últimos registros
-  - [ ] Getters: estadísticas en tiempo real
+- [x] **4.1 Crear/actualizar `stores/registro.ts`**
+  - [x] Acciones: `registrarIngreso()`, `registrarSalida()`
+  - [x] Estado: lista de personas dentro, últimos registros
+  - [x] Getters: estadísticas en tiempo real
 
-- [ ] **4.2 Integrar con servicios**
-  - [ ] Cifrado de datos sensibles con `encryptionService`
-  - [ ] Persistencia en `databaseService`
-  - [ ] Generación de IDs únicos para registros
+- [x] **4.2 Integrar con servicios**
+  - [x] Cifrado de datos sensibles con `encryptionService`
+  - [x] Persistencia en `databaseService`
+  - [x] Generación de IDs únicos para registros
 
 ---
 
 ## ✅ CRITERIOS DE ACEPTACIÓN
 
-- [ ] Modal de ingreso permite registrar persona con datos completos
-- [ ] Modal de salida permite buscar y registrar salida de personas
-- [ ] Botones en Dashboard abren modals correctamente
-- [ ] Datos se persisten en IndexedDB cifrados
-- [ ] Estadísticas del Dashboard se actualizan en tiempo real
-- [ ] Validaciones funcionan según especificaciones del proyecto
-- [ ] UI sigue el design system gubernamental establecido
-- [ ] Componentes son modulares y reutilizables
+- [x] Modal de ingreso permite registrar persona con datos completos
+- [x] Modal de salida permite buscar y registrar salida de personas
+- [x] Botones en Dashboard abren modals correctamente
+- [x] Datos se persisten en IndexedDB cifrados
+- [x] Estadísticas del Dashboard se actualizan en tiempo real
+- [x] Validaciones funcionan según especificaciones del proyecto
+- [x] UI sigue el design system gubernamental establecido
+- [x] Componentes son modulares y reutilizables
 
 ---
 
