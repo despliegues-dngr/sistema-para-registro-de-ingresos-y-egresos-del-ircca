@@ -60,7 +60,6 @@
 
 <script setup lang="ts">
 import { ref, computed, watch } from 'vue'
-import { MESSAGES } from '@/config/constants'
 import { useAuthStore } from '@/stores/auth'
 import { useRegistroStore } from '@/stores/registro'
 import RegistroSalidaForm from '@/components/forms/RegistroSalidaForm.vue'
@@ -121,7 +120,7 @@ const onSubmit = async (salidaData: RegistroSalidaData) => {
     }
 
     // Registrar salida en el store
-    const nuevoRegistro = registroStore.registrarSalida({
+    registroStore.registrarSalida({
       cedulaBuscada: salidaData.cedulaBuscada,
       tiempoEstadia: salidaData.tiempoEstadia,
       operadorId,

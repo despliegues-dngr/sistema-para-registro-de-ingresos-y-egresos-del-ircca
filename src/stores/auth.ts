@@ -253,7 +253,12 @@ export const useAuthStore = defineStore('auth', () => {
       await initDatabase()
 
       // Verificar si la cédula cambió
-      const updateData: any = {
+      const updateData: {
+        grado: string
+        nombre: string
+        apellido: string
+        username?: string
+      } = {
         grado: updatedData.grado,
         nombre: updatedData.nombre,
         apellido: updatedData.apellido,

@@ -103,7 +103,7 @@ withDefaults(defineProps<Props>(), {
 const emit = defineEmits<Emits>()
 
 // Composable de seguridad para modo kiosko
-const { isKioskMode, clearSensitiveData, getSecureFieldAttributes } = useKioskSecurity()
+const { isKioskMode, clearSensitiveData } = useKioskSecurity()
 
 // Estado reactivo
 const formValid = ref(false)

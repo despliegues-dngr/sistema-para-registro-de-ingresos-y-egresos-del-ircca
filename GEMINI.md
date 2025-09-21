@@ -1,10 +1,12 @@
 # Project Overview
 
-This is a Progressive Web App (PWA) built with Vue.js 3 and Vuetify 3 to automate the registration, control, and consultation of income and expenses of people and vehicles at the surveillance post of the IRCCA.
+This is a Progressive Web App (PWA) built with Vue.js 3 and Vuetify 3 to automate the registration, control, and consultation of personnel and vehicle entries and exits for the IRCCA (Instituto de Rehabilitación del Cuerpo de Comandos de Aeronáutica).
+
+The application is designed to work offline and in a kiosk mode on an Android tablet. It features a multi-user system with 'Admin' and 'Operator' roles.
 
 ## Key Technologies
 
-*   **Frontend:** Vue.js 3, TypeScript, Composition API
+*   **Frontend:** Vue 3, TypeScript, Composition API
 *   **UI Framework:** Vuetify 3, Material Design Icons
 *   **State Management:** Pinia
 *   **Routing:** Vue Router 4
@@ -12,27 +14,29 @@ This is a Progressive Web App (PWA) built with Vue.js 3 and Vuetify 3 to automat
 *   **Database:** IndexedDB
 *   **Testing:** Vitest, Playwright
 *   **Build Tool:** Vite
-*   **Code Quality:** ESLint, Prettier
+*   **Package Manager:** pnpm
 
 ## Architecture
 
-The project follows a modular architecture with a clear separation of concerns:
+The project follows a standard Vue.js project structure:
 
 *   `src/components`: Reusable UI components.
 *   `src/composables`: Shared logic using the Composition API.
-*   `src/services`: Services for database, encryption, etc.
-*   `src/stores`: Pinia stores for state management.
+*   `src/services`: Services for database interaction, encryption, etc.
+*   `src/stores`: Pinia stores for state management (auth, registration, app).
 *   `src/views`: Main pages/routes.
 *   `src/router`: Routing configuration.
 *   `src/plugins`: Plugin configuration.
 *   `src/assets`: Static assets.
+
+Authentication is handled by a Pinia store (`src/stores/auth.ts`) and uses `IndexedDB` to store user data. Passwords are encrypted using AES-256 with PBKDF2. The application uses route guards to protect routes based on authentication and user roles.
 
 # Building and Running
 
 ## Prerequisites
 
 *   Node.js 18+
-*   pnpm (recommended) or npm
+*   pnpm
 
 ## Installation
 
@@ -43,18 +47,19 @@ pnpm install
 ## Development
 
 ```bash
+# Run the development server
 pnpm dev
+
+# Run in kiosk mode
+pnpm dev:kiosk
 ```
 
-This will start the Vite development server.
-
-## Building for Production
+## Building
 
 ```bash
+# Build for production
 pnpm build
 ```
-
-This will create a production-ready build in the `dist` directory.
 
 ## Testing
 
@@ -64,13 +69,15 @@ pnpm test:unit
 
 # Run end-to-end tests
 pnpm test:e2e
+
+# Run all tests
+pnpm test:all
 ```
 
 # Development Conventions
 
-*   **Coding Style:** The project uses ESLint and Prettier to enforce a consistent coding style.
+*   **Coding Style:** The project uses ESLint and Prettier for code formatting and linting.
 *   **Testing:** Unit tests are written with Vitest and end-to-end tests with Playwright.
-*   **Commits:** Conventional Commits are likely used, although not explicitly stated.
-*   **State Management:** State is managed using Pinia, with a separate store for each feature (e.g., `auth`, `registro`).
-*   **Components:** Components are kept small and focused on a single responsibility.
-*   **TypeScript:** TypeScript is used throughout the project to ensure type safety.
+*   **Commits:** No explicit commit message convention is mentioned in the documentation, but the project uses Git for version control.
+*   **State Management:** State is managed using Pinia, with separate stores for different modules (e.g., `auth`, `registro`).
+*   **UI:** The UI is built with Vuetify 3, and custom components are organized in the `src/components` directory.

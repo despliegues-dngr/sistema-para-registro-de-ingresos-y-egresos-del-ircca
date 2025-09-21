@@ -21,7 +21,10 @@
         <div>
           <h4 class="text-h6 mb-1">{{ fullName }}</h4>
           <p class="text-body-2 text-medium-emphasis mb-0">{{ roleDisplay }}</p>
-          <p v-if="userData.fechaRegistro && mode === 'view'" class="text-caption text-medium-emphasis">
+          <p
+            v-if="userData.fechaRegistro && mode === 'view'"
+            class="text-caption text-medium-emphasis"
+          >
             Registrado: {{ formatDate(userData.fechaRegistro) }}
           </p>
         </div>
@@ -45,16 +48,17 @@
           hint="8 dígitos sin puntos ni guiones"
           persistent-hint
         />
-        <v-alert 
-          v-if="formData.cedula !== userData.cedula && formData.cedula.length >= 7" 
-          variant="tonal" 
-          color="info" 
-          density="compact" 
+        <v-alert
+          v-if="formData.cedula !== userData.cedula && formData.cedula.length >= 7"
+          variant="tonal"
+          color="info"
+          density="compact"
           class="mt-2"
         >
           <v-icon size="16" class="mr-1">mdi-information</v-icon>
           <span class="text-caption">
-            Nueva cédula será su usuario para próximos ingresos: <strong>{{ formData.cedula }}</strong>
+            Nueva cédula será su usuario para próximos ingresos:
+            <strong>{{ formData.cedula }}</strong>
           </span>
         </v-alert>
       </v-col>
@@ -104,7 +108,7 @@
           <v-icon size="20" color="info" class="mr-2">mdi-information</v-icon>
           <strong class="text-body-2">Información del Usuario</strong>
         </div>
-        
+
         <!-- Cédula -->
         <div class="d-flex justify-space-between align-center mb-2">
           <span class="text-body-2">
@@ -113,7 +117,7 @@
           </span>
           <span class="text-body-2 font-weight-medium">{{ formData.cedula || '—' }}</span>
         </div>
-        
+
         <!-- Grado/Rol -->
         <div class="d-flex justify-space-between align-center mb-2">
           <span class="text-body-2">
@@ -122,7 +126,7 @@
           </span>
           <v-chip color="primary" variant="tonal" size="small">{{ roleDisplay }}</v-chip>
         </div>
-        
+
         <!-- Nombre completo -->
         <div class="d-flex justify-space-between align-center mb-2">
           <span class="text-body-2">
@@ -131,7 +135,7 @@
           </span>
           <span class="text-body-2 font-weight-medium">{{ formData.nombre || '—' }}</span>
         </div>
-        
+
         <!-- Apellido -->
         <div class="d-flex justify-space-between align-center mb-2">
           <span class="text-body-2">
@@ -140,7 +144,7 @@
           </span>
           <span class="text-body-2 font-weight-medium">{{ formData.apellido || '—' }}</span>
         </div>
-        
+
         <!-- Estado del sistema -->
         <v-divider class="my-3" />
         <div class="d-flex justify-space-between align-center">
@@ -159,7 +163,7 @@
 </template>
 
 <script setup lang="ts">
-import { ref, computed, watch, nextTick } from 'vue'
+import { ref, computed, watch } from 'vue'
 
 type ProfileMode = 'view' | 'edit'
 
@@ -218,7 +222,7 @@ const fullName = computed(() => {
 const roleDisplay = computed(() => {
   const grado = formData.value.grado || props.userData.grado || ''
   // Buscar el título completo en las opciones
-  const gradoOption = gradoOptions.find(option => option.value === grado)
+  const gradoOption = gradoOptions.find((option) => option.value === grado)
   return gradoOption?.title || grado || 'Operador'
 })
 
@@ -228,10 +232,10 @@ const gradoOptions = [
   { title: 'Cabo', value: 'cabo' },
   { title: 'Sargento', value: 'sargento' },
   { title: 'Sub Oficial', value: 'sub_oficial' },
-  { title: 'Alferez', value: 'alferez' },
+  { title: 'Alférez', value: 'alferez' },
   { title: 'Teniente', value: 'teniente' },
   { title: 'Tte. 1°', value: 'teniente_primero' },
-  { title: 'Capitán', value: 'capitan' },  
+  { title: 'Capitán', value: 'capitan' },
   { title: 'Cte. Mayor', value: 'comandante_mayor' },
   { title: 'Cte. General', value: 'comandante_general' },
 ]
@@ -246,10 +250,12 @@ const messageType = computed(() => {
 // Validación del formulario
 const isFormValid = computed(() => {
   if (props.mode !== 'edit') return true
-  
-  return formData.value.grado.length >= 2 &&
-         formData.value.nombre.length >= 2 &&
-         formData.value.apellido.length >= 2
+
+  return (
+    formData.value.grado.length >= 2 &&
+    formData.value.nombre.length >= 2 &&
+    formData.value.apellido.length >= 2
+  )
 })
 
 // Reglas de validación
@@ -286,7 +292,7 @@ const formatDate = (dateString: string) => {
     return new Date(dateString).toLocaleDateString('es-UY', {
       year: 'numeric',
       month: 'long',
-      day: 'numeric'
+      day: 'numeric',
     })
   } catch {
     return dateString
@@ -296,13 +302,17 @@ const formatDate = (dateString: string) => {
 // Exponer métodos y propiedades para el componente padre
 defineExpose({
   submit: handleSubmit,
-  isFormValid
+  isFormValid,
 })
 
 // Watchers
-watch(() => props.userData, (newData) => {
-  formData.value = { ...newData }
-}, { immediate: true, deep: true })
+watch(
+  () => props.userData,
+  (newData) => {
+    formData.value = { ...newData }
+  },
+  { immediate: true, deep: true },
+)
 </script>
 
 <style scoped>

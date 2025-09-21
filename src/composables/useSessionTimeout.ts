@@ -26,8 +26,8 @@ export function useSessionTimeout() {
     logout()
   }, WARNING_TIME, { immediate: false })
   
-  // Contador regresivo para mostrar en el diálogo
-  const { start: startCountdown, stop: stopCountdown } = useTimeoutFn(() => {
+  // Contador regresivo para mostrar en el diálogo (removido por no estar en uso)
+  const { stop: stopCountdown } = useTimeoutFn(() => {
     updateCountdown()
   }, 1000, { immediate: false })
   

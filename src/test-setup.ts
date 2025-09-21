@@ -10,13 +10,8 @@ vi.mock('vuetify/lib/components/VTextarea/VTextarea.css', () => ({}))
 vi.mock('vuetify/lib/components/VBtn/VBtn.css', () => ({}))
 vi.mock('vuetify/lib/components/VCard/VCard.css', () => ({}))
 
-// Mock ResizeObserver para Vuetify
-const ResizeObserverMock = vi.fn(() => ({
-  observe: vi.fn(),
-  unobserve: vi.fn(),
-  disconnect: vi.fn(),
-}))
-vi.stubGlobal('ResizeObserver', ResizeObserverMock)
+// ResizeObserver polyfill para Vuetify (oficial)
+global.ResizeObserver = require('resize-observer-polyfill')
 
 // Global mocks para browser APIs con funcionalidad realista
 let mockCounter = 0
@@ -146,7 +141,7 @@ vi.stubGlobal('indexedDB', {
     // Simular éxito inmediato
     setTimeout(() => {
       if (request.onsuccess && typeof request.onsuccess === 'function') {
-        request.onsuccess({ target: { result: mockDB } } as unknown)
+        request.onsuccess({ target: { result: mockDB } } as any)
       }
     }, 0)
     
@@ -180,3 +175,37 @@ vi.stubGlobal('TextDecoder', class {
 // Mock btoa/atob
 vi.stubGlobal('btoa', vi.fn((str: string) => Buffer.from(str).toString('base64')))
 vi.stubGlobal('atob', vi.fn((str: string) => Buffer.from(str, 'base64').toString()))
+
+// Configuración oficial de Vuetify para tests
+import { createVuetify } from 'vuetify'
+import * as components from 'vuetify/components'
+import * as directives from 'vuetify/directives'
+
+// Crear instancia de Vuetify siguiendo documentación oficial
+const vuetify = createVuetify({
+  components,
+  directives,
+})
+
+// Helper global para mount siguiendo documentación oficial
+import { mount } from '@vue/test-utils'
+import { createPinia } from 'pinia'
+
+vi.stubGlobal('mountWithVuetify', (component: any, options: any = {}) => {
+  const pinia = createPinia()
+  
+  return mount(component, {
+    global: {
+      plugins: [vuetify, pinia],
+      stubs: {
+        'router-link': true,
+        'router-view': true
+      },
+      ...options.global
+    },
+    ...options
+  })
+})
+
+// También hacer Vuetify disponible globalmente
+vi.stubGlobal('vuetifyInstance', vuetify)

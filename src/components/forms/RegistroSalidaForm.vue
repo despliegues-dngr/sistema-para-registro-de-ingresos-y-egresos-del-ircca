@@ -519,7 +519,7 @@ const formRef = ref()
 
 // Estado del formulario
 const personaSeleccionada = ref<PersonaDentro | null>(null)
-const personaSeleccionadaItem = ref<any>(null)
+const personaSeleccionadaItem = ref<{ displayText: string; persona: PersonaDentro; searchText: string } | null>(null)
 const observaciones = ref('')
 const terminoBusqueda = ref('')
 const mostrarEdicionSalida = ref(false)
@@ -540,15 +540,7 @@ const tiposVehiculo = [
   'Bus'
 ]
 
-// Interfaz para alertas
-interface AlertaDescoordinacion {
-  tipo: 'warning' | 'error' | 'info'
-  icono: string
-  titulo: string
-  mensaje: string
-  accion?: () => void
-  textoAccion?: string
-}
+// Interfaz para alertas (removida por no estar en uso)
 
 // Computed properties
 const messageType = computed(() => {
@@ -639,12 +631,7 @@ const calcularTiempoEstadiaEnMinutos = (ingresoTimestamp: Date): number => {
   return Math.floor((ahora.getTime() - ingreso.getTime()) / (1000 * 60))
 }
 
-const formatearHoraIngreso = (timestamp: Date): string => {
-  return new Date(timestamp).toLocaleTimeString('es-UY', {
-    hour: '2-digit',
-    minute: '2-digit'
-  })
-}
+// formatearHoraIngreso removido por no estar en uso
 
 const getTipoVisitanteColor = (tipo: string): string => {
   const colores: Record<string, string> = {

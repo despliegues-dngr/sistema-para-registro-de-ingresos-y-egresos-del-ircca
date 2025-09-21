@@ -288,7 +288,7 @@
 
 <script setup lang="ts">
 import { ref, computed, reactive } from 'vue'
-import { useRegistroStore, type RegistroIngresoData, type DatosPersonales, type DatosVisita, type DatosVehiculo, type DatosAcompanante } from '@/stores/registro'
+import { type RegistroIngresoData, type DatosPersonales, type DatosVisita, type DatosVehiculo, type DatosAcompanante } from '@/stores/registro'
 import FormSection from '@/components/forms/FormSection.vue'
 
 

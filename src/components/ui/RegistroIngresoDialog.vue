@@ -60,7 +60,6 @@
 
 <script setup lang="ts">
 import { ref, computed, watch } from 'vue'
-import { MESSAGES } from '@/config/constants'
 import { useAuthStore } from '@/stores/auth'
 import { useRegistroStore, type DatosPersonales, type DatosVisita, type DatosVehiculo } from '@/stores/registro'
 import RegistroIngresoForm from '@/components/forms/RegistroIngresoForm.vue'
@@ -113,7 +112,7 @@ const onSubmit = async (registroData: RegistroIngresoData) => {
     const operadorId = authStore.user?.id || 'unknown'
 
     // Registrar ingreso en el store
-    const nuevoRegistro = registroStore.registrarIngreso({
+    registroStore.registrarIngreso({
       datosPersonales: registroData.datosPersonales,
       datosVisita: registroData.datosVisita,
       datosVehiculo: registroData.datosVehiculo,
