@@ -3,10 +3,24 @@ import { defineStore } from 'pinia'
 import { EncryptionService } from '@/services/encryptionService'
 import { useDatabase } from '@/composables/useDatabase'
 
+// Interfaz para usuario almacenado en BD
+interface StoredUser {
+  id: string
+  username: string
+  role: 'admin' | 'supervisor' | 'operador'
+  nombre: string
+  apellido: string
+  grado: string
+  hashedPassword: string
+  salt: string
+  createdAt: string
+  lastLogin: string | null
+}
+
 export interface User {
   id: string
   username: string
-  role: 'admin' | 'operador'
+  role: 'admin' | 'supervisor' | 'operador'
   lastLogin?: Date
   nombre?: string
   apellido?: string
@@ -30,28 +44,136 @@ export const useAuthStore = defineStore('auth', () => {
   const loginAttempts = ref(0)
   const maxLoginAttempts = ref(3)
 
+  // Clave para localStorage (con prefijo para evitar conflictos)
+  const SESSION_KEY = 'ircca_auth_session'
+  
+  // Función para guardar sesión en localStorage
+  function saveSession() {
+    if (user.value && isAuthenticated.value) {
+      const sessionData = {
+        user: user.value,
+        isAuthenticated: isAuthenticated.value,
+        timestamp: Date.now()
+      }
+      localStorage.setItem(SESSION_KEY, JSON.stringify(sessionData))
+    }
+  }
+  
+  // Función para restaurar sesión desde localStorage
+  function restoreSession(): boolean {
+    try {
+      const sessionData = localStorage.getItem(SESSION_KEY)
+      if (!sessionData) return false
+      
+      const parsed = JSON.parse(sessionData)
+      const sessionAge = Date.now() - parsed.timestamp
+      const maxSessionAge = 3 * 60 * 60 * 1000 // 3 horas (mismo que el timeout)
+      
+      // Verificar que la sesión no haya expirado
+      if (sessionAge > maxSessionAge) {
+        clearSession()
+        return false
+      }
+      
+      // Restaurar datos
+      user.value = parsed.user
+      isAuthenticated.value = parsed.isAuthenticated
+      console.log('Sesión restaurada para usuario:', user.value?.username)
+      return true
+      
+    } catch (error) {
+      console.error('Error al restaurar sesión:', error)
+      clearSession()
+      return false
+    }
+  }
+  
+  // Función para limpiar sesión de localStorage
+  function clearSession() {
+    localStorage.removeItem(SESSION_KEY)
+  }
+
   // Getters
   const isAdmin = computed(() => user.value?.role === 'admin')
+  const isSupervisor = computed(() => user.value?.role === 'supervisor')
   const isOperador = computed(() => user.value?.role === 'operador')
   const canAttemptLogin = computed(() => loginAttempts.value < maxLoginAttempts.value)
 
-  // Actions
-  function login(userData: User) {
-    // Asegurar compatibilidad de datos
-    user.value = {
-      ...userData,
-      cedula: userData.cedula || userData.username, // cedula es alias de username
-      fechaRegistro: userData.fechaRegistro || new Date().toISOString().split('T')[0] // Fecha por defecto si no existe
+  /**
+   * Login con verificación de credenciales en base de datos
+   */
+  async function login(username: string, password: string): Promise<void> {
+    try {
+      if (!canAttemptLogin.value) {
+        throw new Error('Máximo número de intentos de login excedido. Contacte al administrador.')
+      }
+
+      // Inicializar BD si no está inicializada
+      await initDatabase()
+
+      // Buscar usuario por username (cédula)
+      const users = await getRecords('usuarios', 'username', username)
+      if (users.length === 0) {
+        incrementLoginAttempts()
+        throw new Error('Usuario no encontrado')
+      }
+
+      const dbUser = users[0] as StoredUser
+
+      // Verificar contraseña usando método estático
+      const isPasswordValid = await EncryptionService.verifyPassword(
+        password,
+        dbUser.hashedPassword,
+        dbUser.salt
+      )
+
+      if (!isPasswordValid) {
+        incrementLoginAttempts()
+        throw new Error('Contraseña incorrecta')
+      }
+
+      // Actualizar último login en la BD
+      const updateResult = await updateRecord('usuarios', dbUser.id, {
+        lastLogin: new Date().toISOString()
+      })
+
+      if (!updateResult.success) {
+        console.warn('No se pudo actualizar lastLogin:', updateResult.error)
+      }
+
+      // Login exitoso - establecer usuario
+      user.value = {
+        id: dbUser.id,
+        username: dbUser.username,
+        role: dbUser.role || 'operador',
+        nombre: dbUser.nombre,
+        apellido: dbUser.apellido,
+        grado: dbUser.grado,
+        cedula: dbUser.username, // Alias para compatibilidad
+        lastLogin: new Date(),
+        fechaRegistro: dbUser.createdAt ? dbUser.createdAt.split('T')[0] : new Date().toISOString().split('T')[0]
+      }
+
+      isAuthenticated.value = true
+      loginAttempts.value = 0 // Reset intentos tras login exitoso
+
+      // Guardar sesión en localStorage
+      saveSession()
+
+      console.log('Login exitoso para usuario:', username)
+
+    } catch (error) {
+      console.error('Error en login:', error)
+      throw error
     }
-    isAuthenticated.value = true
-    loginAttempts.value = 0
-    // TODO: Implementar cifrado de sesión
   }
 
   function logout() {
     user.value = null
     isAuthenticated.value = false
     loginAttempts.value = 0
+    // Limpiar sesión de localStorage
+    clearSession()
     // TODO: Limpiar datos cifrados
   }
 
@@ -65,7 +187,7 @@ export const useAuthStore = defineStore('auth', () => {
 
   // Instancias de servicios
   const encryptionService = new EncryptionService()
-  const { addRecord, getRecords, initDatabase } = useDatabase()
+  const { addRecord, getRecords, updateRecord, initDatabase } = useDatabase()
 
   // Actions
   const registerUser = async (userData: RegisterUserData): Promise<void> => {
@@ -131,7 +253,7 @@ export const useAuthStore = defineStore('auth', () => {
       await initDatabase()
 
       // Verificar si la cédula cambió
-      let updateData: any = {
+      const updateData: any = {
         grado: updatedData.grado,
         nombre: updatedData.nombre,
         apellido: updatedData.apellido,
@@ -189,7 +311,7 @@ export const useAuthStore = defineStore('auth', () => {
         throw new Error('Usuario no encontrado')
       }
 
-      const currentUser = users[0]
+      const currentUser = users[0] as StoredUser
       
       // Verificar contraseña actual
       const isCurrentPasswordValid = await EncryptionService.verifyPassword(
@@ -203,7 +325,7 @@ export const useAuthStore = defineStore('auth', () => {
       }
 
       // Generar nueva contraseña hasheada
-      const { hashedPassword: newHashedPassword, salt: newSalt } = 
+      const { hash: newHashedPassword, salt: newSalt } = 
         await EncryptionService.hashPassword(newPassword)
 
       // Actualizar en la base de datos
@@ -224,12 +346,16 @@ export const useAuthStore = defineStore('auth', () => {
     }
   }
 
+  // Inicializar sesión al crear el store
+  restoreSession()
+
   return {
     user,
     isAuthenticated,
     loginAttempts,
     maxLoginAttempts,
     isAdmin,
+    isSupervisor,
     isOperador,
     canAttemptLogin,
     login,
@@ -239,5 +365,7 @@ export const useAuthStore = defineStore('auth', () => {
     registerUser,
     updateUserProfile,
     changePassword,
+    restoreSession,
+    clearSession,
   }
 })

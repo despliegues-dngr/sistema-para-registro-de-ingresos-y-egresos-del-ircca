@@ -1,5 +1,12 @@
 <template>
-  <v-form ref="loginForm" v-model="formValid" @submit.prevent="handleSubmit" class="login-form">
+  <v-form 
+    ref="loginForm" 
+    v-model="formValid" 
+    @submit.prevent="handleSubmit" 
+    class="login-form"
+    autocomplete="off"
+    novalidate
+  >
     <!-- Alert de Estado -->
     <v-alert
       v-if="message"
@@ -27,9 +34,12 @@
       bg-color="grey-lighten-5"
       :rules="usernameRules"
       :disabled="loading"
-      autocomplete="username"
+      autocomplete="off"
       autofocus
       hide-details="auto"
+      spellcheck="false"
+      :readonly="false"
+      @focus="clearFormOnFocus"
     />
 
     <!-- Campo Contraseña -->
@@ -44,9 +54,12 @@
       class="mb-6"
       :rules="passwordRules"
       :disabled="loading"
-      autocomplete="current-password"
+      autocomplete="new-password"
       @click:append-inner="showPassword = !showPassword"
       hide-details="auto"
+      spellcheck="false"
+      :readonly="false"
+      @focus="clearFormOnFocus"
     />
 
     <!-- Botón de Login -->
@@ -68,8 +81,9 @@
 </template>
 
 <script setup lang="ts">
-import { ref } from 'vue'
+import { ref, onMounted } from 'vue'
 import { MESSAGES, AUTH_CONFIG, ICONS, VALIDATION_PATTERNS } from '@/config/constants'
+import { useKioskSecurity } from '@/composables/useKioskSecurity'
 
 interface Props {
   loading?: boolean
@@ -87,6 +101,9 @@ withDefaults(defineProps<Props>(), {
 })
 
 const emit = defineEmits<Emits>()
+
+// Composable de seguridad para modo kiosko
+const { isKioskMode, clearSensitiveData, getSecureFieldAttributes } = useKioskSecurity()
 
 // Estado reactivo
 const formValid = ref(false)
@@ -109,12 +126,43 @@ const passwordRules = [
   (v: string) => v.length >= AUTH_CONFIG.PASSWORD_MIN_LENGTH || MESSAGES.VALIDATION.PASSWORD_MIN,
 ]
 
+// Función para limpiar formulario en focus (seguridad en modo kiosko)
+const clearFormOnFocus = () => {
+  if (isKioskMode) {
+    // En modo kiosko, limpiar cualquier dato residual al hacer focus
+    clearSensitiveData()
+    console.log('Modo kiosko: datos sensibles limpiados en focus')
+  }
+}
+
+// Función para limpiar completamente el formulario
+const clearForm = () => {
+  credentials.value.username = ''
+  credentials.value.password = ''
+  showPassword.value = false
+}
+
 // Métodos
 const handleSubmit = () => {
   if (formValid.value) {
     emit('submit', { ...credentials.value })
+    // Limpiar inmediatamente después del submit por seguridad
+    setTimeout(clearForm, 1000)
   }
 }
+
+// Inicialización
+onMounted(() => {
+  if (isKioskMode) {
+    console.log('🔒 Modo KIOSKO activado - Medidas de seguridad aplicadas:')
+    console.log('  ✅ Autocompletado deshabilitado')
+    console.log('  ✅ Guardado de contraseñas bloqueado')
+    console.log('  ✅ Limpieza automática de datos sensibles')
+    console.log('  ✅ Eventos de seguridad configurados')
+  } else {
+    console.log('🏠 Modo NORMAL - Seguridad estándar aplicada')
+  }
+})
 </script>
 
 <!-- Sin estilos custom, usando estilos nativos de Vuetify -->

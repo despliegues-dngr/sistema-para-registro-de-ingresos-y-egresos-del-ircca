@@ -106,7 +106,7 @@ const onSubmit = async (userData: {
 
   } catch (error: unknown) {
     console.error('Error durante el registro:', error)
-    message.value = error.message || MESSAGES.AUTH.CONNECTION_ERROR
+    message.value = (error instanceof Error ? error.message : MESSAGES.AUTH.CONNECTION_ERROR)
   } finally {
     loading.value = false
   }

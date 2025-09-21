@@ -65,32 +65,27 @@ const onSubmit = async (credentials: { username: string; password: string }) => 
       return
     }
 
-    // Simular delay de autenticación
-    await new Promise((resolve) => setTimeout(resolve, 1500))
+    // Intentar login usando la lógica real del authStore
+    await authStore.login(credentials.username, credentials.password)
+    
+    // Login exitoso
+    message.value = MESSAGES.AUTH.LOGIN_SUCCESS
+    
+    // Pequeño delay para mostrar mensaje de éxito antes de redirección
+    setTimeout(async () => {
+      // Verificar si hay una ruta de redirección pendiente
+      const redirect = router.currentRoute.value.query.redirect as string
+      await router.push(redirect || ROUTES.DASHBOARD)
+    }, 1000)
 
-    // Lógica de autenticación simplificada para desarrollo
-    if (credentials.username === 'admin' && credentials.password === 'admin') {
-      // Login exitoso - crear usuario y actualizar store
-      const userData = {
-        id: '1',
-        username: credentials.username,
-        role: 'admin' as const,
-        lastLogin: new Date()
-      }
-      
-      authStore.login(userData)
-      message.value = MESSAGES.AUTH.LOGIN_SUCCESS
-      
-      // Redirigir al dashboard
-      await router.push(ROUTES.DASHBOARD)
-    } else {
-      // Login fallido - incrementar intentos
-      authStore.incrementLoginAttempts()
-      message.value = MESSAGES.AUTH.LOGIN_ERROR
-    }
   } catch (error) {
-    console.error('Error durante el login:', error)
-    message.value = MESSAGES.AUTH.CONNECTION_ERROR
+    // Manejar diferentes tipos de error
+    if (error instanceof Error) {
+      message.value = error.message
+    } else {
+      console.error('Error durante el login:', error)
+      message.value = MESSAGES.AUTH.CONNECTION_ERROR
+    }
   } finally {
     loading.value = false
   }

@@ -39,14 +39,23 @@
       @success="handleRegistroSalidaSuccess"
       @close="handleDialogClose"
     />
+
+    <!-- Diálogo de timeout de sesión -->
+    <SessionTimeoutDialog
+      v-model="showTimeoutWarning"
+      :remaining-time="timeoutRemainingTime"
+      @extend="handleExtendSession"
+      @logout="handleSessionTimeout"
+    />
   </v-container>
 </template>
 
 <script setup lang="ts">
-import { ref, reactive, computed } from 'vue'
+import { ref, reactive, computed, onMounted, onUnmounted } from 'vue'
 import { useRouter } from 'vue-router'
 import { useAuthStore } from '@/stores/auth'
 import { useRegistroStore } from '@/stores/registro'
+import { useSessionTimeout } from '@/composables/useSessionTimeout'
 
 // Componentes del Dashboard - Todos necesarios y en uso
 import WelcomeHeader from '@/components/dashboard/WelcomeHeader.vue' // Header con avatar y menú
@@ -55,10 +64,21 @@ import PeopleStatsCard from '@/components/dashboard/PeopleStatsCard.vue' // Para
 import ActionButtons from '@/components/dashboard/ActionButtons.vue' // Botones principales de registro
 import RegistroIngresoDialog from '@/components/ui/RegistroIngresoDialog.vue' // Modal de registro de ingreso
 import RegistroSalidaDialog from '@/components/ui/RegistroSalidaDialog.vue' // Modal de registro de salida
+import SessionTimeoutDialog from '@/components/ui/SessionTimeoutDialog.vue' // Diálogo de timeout de sesión
 
 const router = useRouter()
 const authStore = useAuthStore()
 const registroStore = useRegistroStore()
+
+// Sistema de timeout de sesión
+const {
+  showWarningDialog: showTimeoutWarning,
+  remainingTime: timeoutRemainingTime,
+  extendSession,
+  initializeTimeout,
+  cleanup: cleanupTimeout,
+  resetTimer
+} = useSessionTimeout()
 
 // Estado para controlar modales
 const isLoggingOut = ref(false)
@@ -127,6 +147,9 @@ const handleLogout = async () => {
   try {
     isLoggingOut.value = true
 
+    // Limpiar timeout de sesión antes del logout
+    cleanupTimeout()
+
     // Ejecutar el logout del store
     await authStore.logout()
 
@@ -138,6 +161,30 @@ const handleLogout = async () => {
     isLoggingOut.value = false
   }
 }
+
+// Handlers para el sistema de timeout de sesión
+const handleExtendSession = () => {
+  console.log('Usuario extendió la sesión desde el dashboard')
+  extendSession()
+  // Reset timer para actividad del usuario
+  resetTimer()
+}
+
+const handleSessionTimeout = async () => {
+  console.log('Sesión cerrada por timeout desde el dashboard')
+  await handleLogout()
+}
+
+// Lifecycle hooks para el sistema de timeout
+onMounted(() => {
+  console.log('Inicializando sistema de timeout en dashboard')
+  initializeTimeout()
+})
+
+onUnmounted(() => {
+  console.log('Limpiando sistema de timeout en dashboard')
+  cleanupTimeout()
+})
 </script>
 
 <style scoped>

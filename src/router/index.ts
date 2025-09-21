@@ -60,27 +60,55 @@ const router = createRouter({
 })
 
 // Guards de autenticación
-router.beforeEach((to, from, next) => {
+router.beforeEach(async (to, from, next) => {
   const authStore = useAuthStore()
 
-  // Verificar si la ruta requiere autenticación
-  if (to.meta.requiresAuth && !authStore.isAuthenticated) {
-    next({ name: 'Login' })
-    return
-  }
-
-  // Verificar si la ruta requiere permisos de admin
-  if (to.meta.requiresAdmin && !authStore.isAdmin) {
-    next({ name: 'Dashboard' })
-    return
-  }
-
-  // Redirigir usuarios autenticados lejos del login
+  // Si el usuario está autenticado y intenta ir a login, redirigir al dashboard
   if (to.meta.requiresGuest && authStore.isAuthenticated) {
+    console.log('Usuario autenticado redirigido a dashboard desde:', to.path)
     next({ name: 'Dashboard' })
     return
   }
 
+  // Si la ruta no requiere autenticación, permitir acceso
+  if (!to.meta.requiresAuth) {
+    next()
+    return
+  }
+
+  // Verificar autenticación
+  if (!authStore.isAuthenticated) {
+    console.log('Usuario no autenticado intentó acceder a:', to.path)
+    next({ 
+      name: 'Login',
+      query: { redirect: to.fullPath } // Guardar la ruta de destino
+    })
+    return
+  }
+
+  // Verificar permisos de administrador si es requerido
+  if (to.meta.requiresAdmin && !authStore.isAdmin) {
+    console.log('Usuario sin permisos de admin intentó acceder a:', to.path)
+    // Redirigir al dashboard con mensaje de error
+    next({ 
+      name: 'Dashboard',
+      query: { error: 'insufficient_permissions' }
+    })
+    return
+  }
+
+  // Verificar permisos específicos de supervisor si es requerido
+  if (to.meta.requiresSupervisor && !authStore.isAdmin && authStore.user?.role !== 'supervisor') {
+    console.log('Usuario sin permisos de supervisor intentó acceder a:', to.path)
+    next({ 
+      name: 'Dashboard',
+      query: { error: 'insufficient_permissions' }
+    })
+    return
+  }
+
+  // Si llegamos aquí, el usuario tiene permisos para acceder
+  console.log('Acceso permitido a:', to.path, 'para usuario:', authStore.user?.username)
   next()
 })
 

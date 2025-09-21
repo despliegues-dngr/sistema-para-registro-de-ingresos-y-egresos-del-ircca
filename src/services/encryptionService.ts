@@ -233,6 +233,102 @@ export class EncryptionService {
   }
 
   /**
+   * MÉTODO ESTÁTICO: Hashea contraseña (para uso sin instancia)
+   */
+  static async hashPassword(password: string): Promise<{ hash: string; salt: string }> {
+    const config = {
+      iterations: 100000,
+      saltLength: 16,
+    }
+    
+    const salt = window.crypto.getRandomValues(new Uint8Array(config.saltLength))
+    const encoder = new TextEncoder()
+    const passwordBuffer = encoder.encode(password)
+
+    const keyMaterial = await window.crypto.subtle.importKey(
+      'raw',
+      passwordBuffer,
+      { name: 'PBKDF2' },
+      false,
+      ['deriveKey'],
+    )
+
+    const hashKey = await window.crypto.subtle.deriveKey(
+      {
+        name: 'PBKDF2',
+        salt: salt,
+        iterations: config.iterations,
+        hash: 'SHA-256',
+      },
+      keyMaterial,
+      {
+        name: 'HMAC',
+        hash: 'SHA-256',
+        length: 256,
+      },
+      true,
+      ['sign'],
+    )
+
+    const hashBuffer = await window.crypto.subtle.exportKey('raw', hashKey)
+    const hash = btoa(String.fromCharCode(...new Uint8Array(hashBuffer)))
+    const saltB64 = btoa(String.fromCharCode(...salt))
+
+    return { hash, salt: saltB64 }
+  }
+
+  /**
+   * MÉTODO ESTÁTICO: Verifica hash de contraseña (para uso sin instancia)
+   */
+  static async verifyPassword(password: string, storedHash: string, salt: string): Promise<boolean> {
+    try {
+      const config = {
+        iterations: 100000,
+      }
+      
+      const encoder = new TextEncoder()
+      const passwordBuffer = encoder.encode(password)
+      const saltBuffer = new Uint8Array(
+        atob(salt)
+          .split('')
+          .map((c) => c.charCodeAt(0)),
+      )
+
+      const keyMaterial = await window.crypto.subtle.importKey(
+        'raw',
+        passwordBuffer,
+        { name: 'PBKDF2' },
+        false,
+        ['deriveKey'],
+      )
+
+      const hashKey = await window.crypto.subtle.deriveKey(
+        {
+          name: 'PBKDF2',
+          salt: saltBuffer,
+          iterations: config.iterations,
+          hash: 'SHA-256',
+        },
+        keyMaterial,
+        {
+          name: 'HMAC',
+          hash: 'SHA-256',
+          length: 256,
+        },
+        true,
+        ['sign'],
+      )
+
+      const hashBuffer = await window.crypto.subtle.exportKey('raw', hashKey)
+      const computedHash = btoa(String.fromCharCode(...new Uint8Array(hashBuffer)))
+      
+      return computedHash === storedHash
+    } catch {
+      return false
+    }
+  }
+
+  /**
    * Genera ID único criptográficamente seguro
    */
   generateSecureId(): string {
