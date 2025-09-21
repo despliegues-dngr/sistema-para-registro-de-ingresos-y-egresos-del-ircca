@@ -1,6 +1,6 @@
 import { describe, it, expect, beforeEach, vi } from 'vitest'
 import { setActivePinia, createPinia } from 'pinia'
-import { useAuthStore, type User, type RegisterUserData } from '../auth'
+import { useAuthStore, type RegisterUserData } from '../auth'
 import { EncryptionService } from '@/services/encryptionService'
 
 // Mock del composable useDatabase - COMPLETO según documentación oficial

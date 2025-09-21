@@ -1,5 +1,4 @@
 import { describe, it, expect, beforeEach, vi } from 'vitest'
-import { mount } from '@vue/test-utils'
 import { createVuetify } from 'vuetify'
 import * as components from 'vuetify/components'
 import * as directives from 'vuetify/directives'
@@ -40,17 +39,17 @@ vi.mock('@/config/constants', () => ({
 }))
 
 describe('LoginForm', () => {
-  let vuetifyInstance: ReturnType<typeof createVuetify>
-
   beforeEach(() => {
-    vuetifyInstance = createVuetify({
+    // Vuetify instance is handled globally in test-setup.ts
+    createVuetify({
       components,
       directives
     })
   })
 
   const mountComponent = (props = {}) => {
-    return global.mountWithVuetify(LoginForm, {
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    return (globalThis as any).mountWithVuetify(LoginForm, {
       props
     })
   }

@@ -11,7 +11,8 @@ vi.mock('vuetify/lib/components/VBtn/VBtn.css', () => ({}))
 vi.mock('vuetify/lib/components/VCard/VCard.css', () => ({}))
 
 // ResizeObserver polyfill para Vuetify (oficial)
-global.ResizeObserver = require('resize-observer-polyfill')
+import ResizeObserverPolyfill from 'resize-observer-polyfill'
+global.ResizeObserver = ResizeObserverPolyfill
 
 // Global mocks para browser APIs con funcionalidad realista
 let mockCounter = 0
@@ -141,7 +142,8 @@ vi.stubGlobal('indexedDB', {
     // Simular éxito inmediato
     setTimeout(() => {
       if (request.onsuccess && typeof request.onsuccess === 'function') {
-        request.onsuccess({ target: { result: mockDB } } as any)
+        const event = { target: { result: mockDB } };
+        (request.onsuccess as (event: { target: { result: unknown } }) => void)(event)
       }
     }, 0)
     
@@ -191,7 +193,7 @@ const vuetify = createVuetify({
 import { mount } from '@vue/test-utils'
 import { createPinia } from 'pinia'
 
-vi.stubGlobal('mountWithVuetify', (component: any, options: any = {}) => {
+vi.stubGlobal('mountWithVuetify', (component: unknown, options: Record<string, unknown> = {}) => {
   const pinia = createPinia()
   
   return mount(component, {
@@ -201,7 +203,7 @@ vi.stubGlobal('mountWithVuetify', (component: any, options: any = {}) => {
         'router-link': true,
         'router-view': true
       },
-      ...options.global
+      ...(options.global || {})
     },
     ...options
   })
