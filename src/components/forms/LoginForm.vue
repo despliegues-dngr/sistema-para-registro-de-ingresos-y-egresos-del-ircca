@@ -10,7 +10,7 @@
     <!-- Alert de Estado -->
     <v-alert
       v-if="message"
-      :type="message.includes('exitosamente') ? 'success' : 'error'"
+      :type="isSuccessMessage(message) ? 'success' : 'error'"
       density="compact"
       variant="tonal"
       class="mb-6"
@@ -140,6 +140,17 @@ const clearForm = () => {
   credentials.value.username = ''
   credentials.value.password = ''
   showPassword.value = false
+}
+
+// Función para determinar si un mensaje es de éxito
+const isSuccessMessage = (message: string): boolean => {
+  return message === MESSAGES.AUTH.LOGIN_SUCCESS ||
+         message === MESSAGES.AUTH.LOGOUT_SUCCESS ||
+         message.includes('exitosamente') ||
+         message.includes('creado') ||
+         message.includes('registrado') ||
+         message.includes('autorizado') ||
+         message.includes('bienvenido')
 }
 
 // Métodos

@@ -1,69 +1,66 @@
 <template>
   <v-card class="mb-8 welcome-header" elevation="4">
     <v-card-item class="header-solid text-white py-6 px-8">
-      <div class="d-flex flex-column flex-sm-row justify-space-between align-center">
-        <!-- Información del usuario con avatar -->
-        <div class="d-flex align-center mb-4 mb-sm-0">
-          <!-- Avatar elegante con iniciales -->
-          <v-menu offset-y>
-            <template v-slot:activator="{ props }">
-              <v-avatar 
-                size="64" 
-                color="white" 
-                class="text-accent mr-4 user-avatar"
-                v-bind="props"
-                style="cursor: pointer; border: 3px solid rgba(255, 255, 255, 0.4); box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);"
-              >
-                <span class="text-h5 font-weight-medium">{{ userInitials }}</span>
-              </v-avatar>
-            </template>
-            
-            <!-- Menú de usuario sobrio -->
-            <v-card class="user-menu" elevation="8" min-width="240">
-              <v-card-item class="pb-2">
-                <div class="d-flex align-center">
-                  <v-avatar size="40" color="accent" class="text-white mr-3">
-                    <span class="text-h6">{{ userInitials }}</span>
-                  </v-avatar>
-                  <div>
-                    <div class="text-subtitle-1 font-weight-medium">{{ displayName }}</div>
-                    <div class="text-caption text-grey-darken-1">{{ roleDisplay }}</div>
-                  </div>
+      <div class="d-flex align-center">
+        <!-- Avatar elegante con iniciales -->
+        <v-menu offset-y>
+          <template v-slot:activator="{ props }">
+            <v-avatar 
+              size="64" 
+              color="white" 
+              class="text-accent mr-4 user-avatar"
+              v-bind="props"
+              style="cursor: pointer; border: 3px solid rgba(255, 255, 255, 0.4); box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);"
+            >
+              <span class="text-h5 font-weight-medium">{{ userInitials }}</span>
+            </v-avatar>
+          </template>
+          
+          <!-- Menú de usuario sobrio -->
+          <v-card class="user-menu" elevation="8" min-width="240">
+            <v-card-item class="pb-2">
+              <div class="d-flex align-center">
+                <v-avatar size="40" color="accent" class="text-white mr-3">
+                  <span class="text-h6">{{ userInitials }}</span>
+                </v-avatar>
+                <div>
+                  <div class="text-subtitle-1 font-weight-medium">{{ displayName }}</div>
+                  <div class="text-caption text-grey-darken-1">{{ roleDisplay }}</div>
                 </div>
-              </v-card-item>
+              </div>
+            </v-card-item>
+            
+            <v-list density="compact" class="pt-0">
+              <v-list-item @click="showViewProfile = true" prepend-icon="mdi-account-circle">
+                <v-list-item-title>Ver Perfil</v-list-item-title>
+              </v-list-item>
               
-              <v-list density="compact" class="pt-0">
-                <v-list-item @click="showViewProfile = true" prepend-icon="mdi-account-circle">
-                  <v-list-item-title>Ver Perfil</v-list-item-title>
-                </v-list-item>
-                
-                <v-list-item @click="showChangePassword = true" prepend-icon="mdi-lock-reset">
-                  <v-list-item-title>Cambiar Contraseña</v-list-item-title>
-                </v-list-item>
-                
-                <v-divider class="my-1"></v-divider>
-                
-                <v-list-item @click="$emit('logout')" prepend-icon="mdi-logout" class="text-error">
-                  <v-list-item-title>Cerrar Sesión</v-list-item-title>
-                </v-list-item>
-              </v-list>
-            </v-card>
-          </v-menu>
+              <v-list-item @click="showChangePassword = true" prepend-icon="mdi-lock-reset">
+                <v-list-item-title>Cambiar Contraseña</v-list-item-title>
+              </v-list-item>
+              
+              <v-divider class="my-1"></v-divider>
+              
+              <v-list-item @click="$emit('logout')" prepend-icon="mdi-logout" class="text-error">
+                <v-list-item-title>Cerrar Sesión</v-list-item-title>
+              </v-list-item>
+            </v-list>
+          </v-card>
+        </v-menu>
 
-          <!-- Información textual institucional -->
-          <div>
-            <h2 class="text-h4 font-weight-bold mb-2">{{ displayName }}</h2>
-            <p class="text-h6 mb-1 opacity-95 font-weight-medium">Sistema de Control de Acceso</p>
-            <p class="text-body-2 mb-0 opacity-85">IRCCA</p>
+        <!-- Información textual con saludo dinámico -->
+        <div class="flex-grow-1">
+          <div class="d-flex justify-space-between align-center mb-1">
+            <h2 class="text-h5 font-weight-bold opacity-95">{{ dynamicGreeting }}</h2>
+            <div class="text-h6 font-weight-medium opacity-90 text-right">{{ currentDate }}</div>
           </div>
-        </div>
-
-        <!-- Fecha y hora -->
-        <div class="text-center text-sm-right date-time-section">
-          <div class="text-h6 font-weight-medium mb-1">{{ currentDate }}</div>
-          <div class="text-body-1 opacity-90 font-mono time-display">
-            <v-icon size="16" class="mr-1 opacity-75">mdi-clock-outline</v-icon>
-            {{ currentTime }}
+          <h3 class="text-h4 font-weight-bold mb-2">{{ gradeAndName }}</h3>
+          <div class="d-flex justify-space-between align-center">
+            <p class="text-body-2 mb-0 opacity-75 font-weight-medium">Serv. Art. 222 - IRCCA</p>
+            <div class="text-body-1 opacity-90 font-mono time-display text-right">
+              <v-icon size="16" class="mr-1 opacity-75">mdi-clock-outline</v-icon>
+              {{ currentTime }}
+            </div>
           </div>
         </div>
       </div>
@@ -146,20 +143,79 @@ const roleDisplay = computed(() => {
   }
 })
 
+// Saludo dinámico según la hora del día (se actualiza automáticamente con el tiempo)
+const dynamicGreeting = computed(() => {
+  // Usar la hora actual que se actualiza cada segundo
+  const now = new Date()
+  const hour = now.getHours()
+  
+  if (hour >= 6 && hour < 12) {
+    return '¡Buenos días!'
+  } else if (hour >= 12 && hour < 20) {
+    return '¡Buenas tardes!'
+  } else {
+    return '¡Buenas noches!'
+  }
+})
+
+// Grado + Nombre completo
+const gradeAndName = computed(() => {
+  const user = authStore.user
+  if (!user) return 'Usuario no identificado'
+  
+  // Obtener grado completo desde las opciones
+  const gradoOptions = [
+    { title: 'Guardia Republicano', value: 'guardia_republicano' },
+    { title: 'Cabo', value: 'cabo' },
+    { title: 'Sargento', value: 'sargento' },
+    { title: 'Sub Oficial', value: 'sub_oficial' },
+    { title: 'Alférez', value: 'alferez' },
+    { title: 'Teniente', value: 'teniente' },
+    { title: 'Tte. 1°', value: 'teniente_primero' },
+    { title: 'Capitán', value: 'capitan' },
+    { title: 'Cte. Mayor', value: 'comandante_mayor' },
+    { title: 'Cte. General', value: 'comandante_general' },
+  ]
+  
+  // Buscar el título completo del grado
+  const gradoOption = gradoOptions.find(option => option.value === user.grado)
+  const gradoDisplay = gradoOption?.title || user.grado || ''
+  
+  // Construir nombre completo
+  const nombreCompleto = `${user.nombre || ''} ${user.apellido || ''}`.trim()
+  
+  // Si hay grado, mostrarlo con el nombre
+  if (gradoDisplay && nombreCompleto) {
+    return `${gradoDisplay} ${nombreCompleto}`
+  } else if (nombreCompleto) {
+    return nombreCompleto
+  } else {
+    return 'Usuario Sistema'
+  }
+})
+
 // Datos del usuario actual para los modales
-const currentUserData = computed(() => ({
-  cedula: authStore.user?.cedula || '12345678',
-  grado: roleDisplay.value,
-  nombre: authStore.user?.nombre || 'Usuario',
-  apellido: authStore.user?.apellido || 'Sistema',
-  fechaRegistro: authStore.user?.fechaRegistro || '2025-09-01',
-}))
+const currentUserData = computed(() => {
+  console.log('🔍 DEBUG WelcomeHeader - authStore.user completo:', authStore.user)
+  console.log('🔍 DEBUG WelcomeHeader - authStore.user.grado:', authStore.user?.grado)
+  console.log('🔍 DEBUG WelcomeHeader - authStore.user.role:', authStore.user?.role)
+  
+  const userData = {
+    cedula: authStore.user?.cedula || '12345678',
+    grado: authStore.user?.grado || '',  // ✅ USAR GRADO MILITAR, NO ROL
+    nombre: authStore.user?.nombre || 'Usuario',
+    apellido: authStore.user?.apellido || 'Sistema',
+    fechaRegistro: authStore.user?.fechaRegistro || '2025-09-01',
+  }
+  
+  console.log('🔍 DEBUG WelcomeHeader - currentUserData generado:', userData)
+  return userData
+})
 
 // Handlers para los modales
 const handleProfileSuccess = (message: string) => {
   console.log('Perfil actualizado:', message)
   // TODO: Mostrar notificación de éxito
-  // TODO: Actualizar datos del usuario en el store
 }
 
 const handlePasswordSuccess = (message: string) => {

@@ -13,6 +13,12 @@ import LoginForm from '../LoginForm.vue'
 // Mock de constantes para evitar dependencias
 vi.mock('@/config/constants', () => ({
   MESSAGES: {
+    AUTH: {
+      LOGIN_SUCCESS: 'Acceso autorizado. Bienvenido al sistema.',
+      LOGOUT_SUCCESS: 'Sesión cerrada correctamente.',
+      LOGIN_ERROR: 'Credenciales incorrectas.',
+      CONNECTION_ERROR: 'Error de conexión.'
+    },
     VALIDATION: {
       REQUIRED_FIELD: 'Este campo es requerido',
       USERNAME_MIN: 'El usuario debe tener al menos 3 caracteres',

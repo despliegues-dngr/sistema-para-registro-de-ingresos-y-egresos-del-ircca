@@ -20,7 +20,7 @@
         </v-avatar>
         <div>
           <h4 class="text-h6 mb-1">{{ fullName }}</h4>
-          <p class="text-body-2 text-medium-emphasis mb-0">{{ roleDisplay }}</p>
+          <p class="text-body-2 text-medium-emphasis mb-0">{{ gradeDisplay }}</p>
           <p
             v-if="userData.fechaRegistro && mode === 'view'"
             class="text-caption text-medium-emphasis"
@@ -124,7 +124,7 @@
             <v-icon size="16" class="mr-1">mdi-police-badge</v-icon>
             Grado:
           </span>
-          <v-chip color="primary" variant="tonal" size="small">{{ roleDisplay }}</v-chip>
+          <v-chip color="primary" variant="tonal" size="small">{{ gradeDisplay }}</v-chip>
         </div>
 
         <!-- Nombre completo -->
@@ -219,12 +219,34 @@ const fullName = computed(() => {
   return `${nombre} ${apellido}`.trim()
 })
 
-const roleDisplay = computed(() => {
+const gradeDisplay = computed(() => {
   const grado = formData.value.grado || props.userData.grado || ''
-  // Buscar el título completo en las opciones
+  
+  // Si no hay grado, mostrar mensaje por defecto
+  if (!grado) return 'Sin grado asignado'
+  
+  // Buscar el título completo en las opciones (coincidencia exacta)
   const gradoOption = gradoOptions.find((option) => option.value === grado)
-  return gradoOption?.title || grado || 'Operador'
+  if (gradoOption) return gradoOption.title
+  
+  // Buscar por título (para retrocompatibilidad)
+  const gradoByTitle = gradoOptions.find((option) => option.title === grado)
+  if (gradoByTitle) return gradoByTitle.title
+  
+  // Si no se encuentra en las opciones, mostrar el valor actual
+  // (importante para mantener el valor cuando se está editando)
+  return grado
 })
+
+// Computed para mostrar el ROL del sistema (admin/supervisor/operador)
+// Removido temporalmente hasta que se necesite en el template
+// const roleDisplay = computed(() => {
+//   // Si necesitáramos mostrar el rol del sistema:
+//   // import { useAuthStore } from '@/stores/auth'
+//   // const authStore = useAuthStore()
+//   // return authStore.user?.role || 'operador'
+//   return 'Operador'
+// })
 
 // Opciones de grado (mismo que RegistrationForm.vue)
 const gradoOptions = [
@@ -309,9 +331,24 @@ defineExpose({
 watch(
   () => props.userData,
   (newData) => {
+    console.log('🔍 DEBUG UserProfileForm - Datos recibidos:', newData)
+    console.log('🔍 DEBUG UserProfileForm - Grado en datos:', newData.grado)
     formData.value = { ...newData }
+    console.log('🔍 DEBUG UserProfileForm - formData actualizado:', formData.value)
   },
   { immediate: true, deep: true },
+)
+
+// Debug adicional para el v-select del grado
+watch(
+  () => formData.value.grado,
+  (newGrado) => {
+    console.log('🔍 DEBUG UserProfileForm - Grado cambiado a:', newGrado)
+    const option = gradoOptions.find(opt => opt.value === newGrado)
+    console.log('🔍 DEBUG UserProfileForm - Opción encontrada:', option)
+    console.log('🔍 DEBUG UserProfileForm - gradeDisplay actual:', gradeDisplay.value)
+  },
+  { immediate: true }
 )
 </script>
 

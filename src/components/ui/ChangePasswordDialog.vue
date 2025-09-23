@@ -8,7 +8,7 @@
       <!-- Header institucional -->
       <v-card-title class="bg-primary pa-4">
         <div class="d-flex align-center">
-          <v-icon size="24" color="white" class="mr-3">{{ ICONS.NAVIGATION.SECURITY || 'mdi-lock-reset' }}</v-icon>
+          <v-icon size="24" color="white" class="mr-3">mdi-lock-reset</v-icon>
           <div>
             <h3 class="text-h6 text-white mb-0">Cambiar Contraseña</h3>
             <p class="text-caption text-blue-lighten-4 mb-0">Sistema para registros del IRCCA</p>
@@ -34,7 +34,7 @@
           @click="closeDialog"
           :disabled="loading"
         >
-          Cancelar
+          {{ isSuccess ? 'Cerrar' : 'Cancelar' }}
         </v-btn>
       </v-card-actions>
     </v-card>
@@ -43,7 +43,7 @@
 
 <script setup lang="ts">
 import { ref, computed, watch } from 'vue'
-import { ICONS, MESSAGES } from '@/config/constants'
+import { MESSAGES } from '@/config/constants'
 import { useAuthStore } from '@/stores/auth'
 import ChangePasswordForm from '@/components/forms/ChangePasswordForm.vue'
 
@@ -65,6 +65,7 @@ const authStore = useAuthStore()
 // Estado reactivo
 const loading = ref(false)
 const message = ref('')
+const isSuccess = ref(false)
 
 const modelValue = computed({
   get: () => props.modelValue,
@@ -92,7 +93,9 @@ const onSubmit = async (passwordData: {
 
     const successMessage = 'Contraseña cambiada exitosamente.'
     emit('success', successMessage)
-    closeDialog()
+    message.value = successMessage // ✅ MOSTRAR mensaje igual que perfil
+    isSuccess.value = true // ✅ Marcar como exitoso para cambiar botones
+    // ✅ NO cerrar modal para que usuario vea el mensaje
 
   } catch (error: unknown) {
     console.error('Error al cambiar contraseña:', error)
@@ -110,6 +113,7 @@ const closeDialog = () => {
   // Limpiar estado al cerrar
   message.value = ''
   loading.value = false
+  isSuccess.value = false // ✅ Resetear estado de éxito
   emit('update:modelValue', false)
   emit('close')
 }

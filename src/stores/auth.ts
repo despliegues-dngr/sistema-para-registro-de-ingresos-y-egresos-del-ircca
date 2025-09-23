@@ -283,6 +283,9 @@ export const useAuthStore = defineStore('auth', () => {
       }
 
       // Actualizar el estado local
+      console.log('🔍 DEBUG AUTH STORE - Datos antes de actualizar user.value:', user.value)
+      console.log('🔍 DEBUG AUTH STORE - updatedData recibido:', updatedData)
+      
       user.value = {
         ...user.value,
         username: updatedData.cedula, // Actualizar también el username
@@ -292,7 +295,11 @@ export const useAuthStore = defineStore('auth', () => {
         apellido: updatedData.apellido,
       }
 
+      console.log('🔍 DEBUG AUTH STORE - user.value después de actualizar:', user.value)
       console.log('Perfil actualizado exitosamente')
+      
+      // Guardar sesión actualizada
+      saveSession()
 
     } catch (error) {
       console.error('Error en updateUserProfile:', error)
@@ -311,7 +318,11 @@ export const useAuthStore = defineStore('auth', () => {
       await initDatabase()
 
       // Obtener usuario actual de la base de datos
-      const users = await getRecords('usuarios', 'id', user.value.id)
+      // ✅ CORRECCIÓN: Buscar por username en lugar de id (índice que sí existe)
+      console.log('🔍 DEBUG changePassword - Buscando usuario por username:', user.value.username)
+      const users = await getRecords('usuarios', 'username', user.value.username)
+      console.log('🔍 DEBUG changePassword - Usuarios encontrados:', users.length)
+      
       if (users.length === 0) {
         throw new Error('Usuario no encontrado')
       }
@@ -334,16 +345,18 @@ export const useAuthStore = defineStore('auth', () => {
         await EncryptionService.hashPassword(newPassword)
 
       // Actualizar en la base de datos
+      console.log('🔍 DEBUG changePassword - Actualizando usuario con id:', user.value.id)
       const result = await updateRecord('usuarios', user.value.id, {
         hashedPassword: newHashedPassword,
         salt: newSalt,
       })
+      console.log('🔍 DEBUG changePassword - Resultado de actualización:', result)
 
       if (!result.success) {
         throw new Error(result.error || 'Error al cambiar la contraseña')
       }
 
-      console.log('Contraseña cambiada exitosamente')
+      console.log('✅ Contraseña cambiada exitosamente')
 
     } catch (error) {
       console.error('Error en changePassword:', error)
