@@ -195,10 +195,17 @@ import { createPinia } from 'pinia'
 
 vi.stubGlobal('mountWithVuetify', (component: unknown, options: Record<string, unknown> = {}) => {
   const pinia = createPinia()
+  const plugins = [vuetify, pinia]
+  
+  // Si se proporciona router, agregarlo a los plugins
+  if (options.router) {
+    plugins.push(options.router as typeof vuetify)
+    delete options.router // Removerlo de options para evitar conflictos
+  }
   
   return mount(component, {
     global: {
-      plugins: [vuetify, pinia],
+      plugins,
       stubs: {
         'router-link': true,
         'router-view': true

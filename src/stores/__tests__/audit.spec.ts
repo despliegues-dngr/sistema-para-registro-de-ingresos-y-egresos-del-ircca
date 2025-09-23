@@ -194,10 +194,7 @@ describe('useAuditStore', () => {
         }
       ]
 
-      mockGetRecords.mockResolvedValue({
-        success: true,
-        data: mockLogs
-      })
+      mockGetRecords.mockResolvedValue(mockLogs)
 
       await auditStore.loadAuditLogs()
 
@@ -245,10 +242,7 @@ describe('useAuditStore', () => {
         }
       ]
 
-      mockGetRecords.mockResolvedValue({
-        success: true,
-        data: mockLogs
-      })
+      mockGetRecords.mockResolvedValue(mockLogs)
 
       const filter: AuditFilter = {
         userId: 'user-1',
@@ -275,10 +269,7 @@ describe('useAuditStore', () => {
         sessionId: 'session-1'
       }))
 
-      mockGetRecords.mockResolvedValue({
-        success: true,
-        data: mockLogs
-      })
+      mockGetRecords.mockResolvedValue(mockLogs)
 
       await auditStore.loadAuditLogs({ limit: 5 })
 
@@ -288,10 +279,7 @@ describe('useAuditStore', () => {
     it('debe manejar errores al cargar logs', async () => {
       const auditStore = useAuditStore()
       
-      mockGetRecords.mockResolvedValue({
-        success: false,
-        error: 'Failed to access database'
-      })
+      mockGetRecords.mockRejectedValue(new Error('Failed to access database'))
 
       await expect(auditStore.loadAuditLogs()).rejects.toThrow('Failed to access database')
       
@@ -422,10 +410,7 @@ describe('useAuditStore', () => {
         }
       ]
 
-      mockGetRecords.mockResolvedValue({
-        success: true,
-        data: mockLogs
-      })
+      mockGetRecords.mockResolvedValue(mockLogs)
 
       const filter: AuditFilter = {
         startDate: new Date('2023-01-10'),

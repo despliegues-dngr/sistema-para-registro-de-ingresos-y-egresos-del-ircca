@@ -20,23 +20,13 @@ export const useAuth = () => {
       // Por ahora simulamos usuarios hardcodeados para desarrollo
 
       if (username === 'admin' && password === 'admin123') {
-        authStore.login({
-          id: '1',
-          username: 'admin',
-          role: 'admin',
-          lastLogin: new Date(),
-        })
+        await authStore.login(username, password)
         router.push('/dashboard')
         return { success: true }
       }
 
       if (username === 'operador' && password === 'op123') {
-        authStore.login({
-          id: '2',
-          username: 'operador',
-          role: 'operador',
-          lastLogin: new Date(),
-        })
+        await authStore.login(username, password)
         router.push('/dashboard')
         return { success: true }
       }

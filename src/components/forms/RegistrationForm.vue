@@ -155,7 +155,7 @@
       :prepend-icon="ICONS.USER.ADD"
       elevation="1"
     >
-      REGISTRAR OPERADOR
+      {{ loading ? 'Registrando...' : 'REGISTRAR OPERADOR' }}
     </v-btn>
 
     <!-- Modal de Términos y Condiciones -->

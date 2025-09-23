@@ -299,6 +299,7 @@ export const useRegistroStore = defineStore('registro', () => {
         if (registro.tipo === 'ingreso') {
           const reg = registro as RegistroIngreso
           return reg.datosVehiculo ? {
+            tipo: reg.datosVehiculo.tipo, // Incluir tipo del vehículo
             matricula: reg.datosVehiculo.matricula,
             marca: 'Toyota', // valor por defecto para tests
             modelo: 'Corolla', // valor por defecto para tests

@@ -116,9 +116,8 @@ const onSubmit = async (registroData: RegistroIngresoData) => {
       datosPersonales: registroData.datosPersonales,
       datosVisita: registroData.datosVisita,
       datosVehiculo: registroData.datosVehiculo,
-      operadorId,
       observaciones: registroData.observaciones,
-    })
+    }, operadorId)
 
     const successMessage = `Ingreso registrado exitosamente para ${registroData.datosPersonales.nombre} ${registroData.datosPersonales.apellido}.`
     emit('success', successMessage)

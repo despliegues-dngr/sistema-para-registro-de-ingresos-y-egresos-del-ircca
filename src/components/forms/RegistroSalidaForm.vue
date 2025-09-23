@@ -665,12 +665,12 @@ const getTipoVisitanteIcon = (tipo: string): string => {
 const getVehiculoInfo = (cedula: string) => {
   // Buscar el registro de ingreso que corresponde a esta cédula
   const registro = registroStore.registros.find(r => 
-    r.tipo === 'ingreso' && r.datosPersonales.cedula === cedula
+    r.tipo === 'ingreso' && r.persona.documento === cedula
   )
   
   // Type narrowing para asegurar que es un registro de ingreso
   if (registro && registro.tipo === 'ingreso') {
-    return registro.datosVehiculo || null
+    return registro.vehiculo || null
   }
   return null
 }
@@ -687,64 +687,91 @@ const getVehiculoIcon = (tipoVehiculo?: string): string => {
 
 // Nuevas funciones para manejo de grupos y relaciones
 const getAcompanantesCount = (cedulaTitular: string): number => {
-  // Buscar el registro de ingreso del titular
-  const registro = registroStore.registros.find(r => 
-    r.tipo === 'ingreso' && 
-    r.datosPersonales.cedula === cedulaTitular &&
-    r.acompanantes && r.acompanantes.length > 0
+  // Buscar personas en el predio que no son el titular
+  const acompanantesEnPredio = registroStore.personasDentro.filter(p => 
+    p.cedula !== cedulaTitular
   )
   
-  if (registro && registro.tipo === 'ingreso' && registro.acompanantes) {
-    // Contar cuántos acompañantes siguen dentro del predio
-    return registro.acompanantes.filter(acomp => 
-      registroStore.personasDentro.some(p => p.cedula === acomp.cedula)
-    ).length
+  // Verificar que ingresaron al mismo tiempo que el titular
+  const registroTitular = registroStore.registros.find(r => 
+    r.tipo === 'ingreso' && r.persona.documento === cedulaTitular
+  )
+  
+  if (registroTitular) {
+    return acompanantesEnPredio.filter(acomp => {
+      // Buscar si esta persona ingresó aproximadamente al mismo tiempo
+      return Math.abs(
+        acomp.ingresoTimestamp.getTime() - registroTitular.timestamp.getTime()
+      ) < 60000 // Menos de 1 minuto de diferencia
+    }).length
   }
+  
   return 0
 }
 
 const getAcompanantesData = (cedulaTitular: string) => {
-  // Buscar el registro de ingreso del titular
-  const registro = registroStore.registros.find(r => 
-    r.tipo === 'ingreso' && 
-    r.datosPersonales.cedula === cedulaTitular &&
-    r.acompanantes && r.acompanantes.length > 0
+  // Buscar personas en el predio que no son el titular
+  const acompanantesEnPredio = registroStore.personasDentro.filter(p => 
+    p.cedula !== cedulaTitular
   )
   
-  if (registro && registro.tipo === 'ingreso' && registro.acompanantes) {
-    // Devolver solo los acompañantes que siguen dentro del predio
-    return registro.acompanantes.filter(acomp => 
-      registroStore.personasDentro.some(p => p.cedula === acomp.cedula)
-    )
+  // Verificar que ingresaron al mismo tiempo que el titular
+  const registroTitular = registroStore.registros.find(r => 
+    r.tipo === 'ingreso' && r.persona.documento === cedulaTitular
+  )
+  
+  if (registroTitular) {
+    return acompanantesEnPredio.filter(acomp => {
+      // Buscar si esta persona ingresó aproximadamente al mismo tiempo
+      return Math.abs(
+        acomp.ingresoTimestamp.getTime() - registroTitular.timestamp.getTime()
+      ) < 60000 // Menos de 1 minuto de diferencia
+    }).map(acomp => ({
+      cedula: acomp.cedula,
+      nombre: acomp.nombre,
+      apellido: acomp.apellido,
+      tipoVisitante: acomp.tipoVisitante,
+      areaVisitar: acomp.areaVisitar
+    }))
   }
   return []
 }
 
 const getVehiculoTitular = (cedulaAcompanante: string) => {
-  // Buscar en todos los registros de ingreso para encontrar si esta persona es acompañante
-  const registroConAcompanante = registroStore.registros.find(r => 
-    r.tipo === 'ingreso' && 
-    r.acompanantes && 
-    r.acompanantes.some(acomp => acomp.cedula === cedulaAcompanante)
+  // Buscar el registro de la persona acompañante para saber cuándo ingresó
+  const personaAcompanante = registroStore.personasDentro.find(p => 
+    p.cedula === cedulaAcompanante
   )
   
-  if (registroConAcompanante && registroConAcompanante.tipo === 'ingreso') {
-    return registroConAcompanante.datosVehiculo || null
-  }
-  return null
+  if (!personaAcompanante) return null
+  
+  // Buscar registros de ingreso del mismo momento (con vehículo)
+  const registrosConVehiculo = registroStore.registros.filter(r => 
+    r.tipo === 'ingreso' && 
+    r.vehiculo &&
+    Math.abs(r.timestamp.getTime() - personaAcompanante.ingresoTimestamp.getTime()) < 60000
+  )
+  
+  return registrosConVehiculo[0]?.vehiculo || null
 }
 
 const getNombreTitular = (cedulaAcompanante: string): string => {
-  // Buscar el titular del grupo donde está esta persona como acompañante
-  const registroConAcompanante = registroStore.registros.find(r => 
-    r.tipo === 'ingreso' && 
-    r.acompanantes && 
-    r.acompanantes.some(acomp => acomp.cedula === cedulaAcompanante)
+  // Buscar el registro de la persona acompañante
+  const personaAcompanante = registroStore.personasDentro.find(p => 
+    p.cedula === cedulaAcompanante
   )
   
-  if (registroConAcompanante && registroConAcompanante.tipo === 'ingreso') {
-    const titular = registroConAcompanante.datosPersonales
-    return `${titular.nombre} ${titular.apellido}`
+  if (!personaAcompanante) return 'Desconocido'
+  
+  // Buscar el registro principal del mismo momento
+  const registroTitular = registroStore.registros.find(r => 
+    r.tipo === 'ingreso' && 
+    Math.abs(r.timestamp.getTime() - personaAcompanante.ingresoTimestamp.getTime()) < 60000 &&
+    r.persona.documento !== cedulaAcompanante
+  )
+  
+  if (registroTitular) {
+    return `${registroTitular.persona.nombre} ${registroTitular.persona.apellido}`
   }
   return 'Desconocido'
 }

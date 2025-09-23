@@ -1,6 +1,21 @@
 import { useDatabase } from '@/composables/useDatabase'
 import { encryptionService } from './encryptionService'
-import type { RegistroEntry } from '@/stores/registro'
+import type { RegistroEntry, RegistroIngreso, RegistroSalida } from '@/stores/registro'
+
+// Tipos para registros con datos cifrados
+type RegistroWithEncryptedData = RegistroEntry & {
+  encrypted?: boolean
+  persona?: {
+    encrypted: string
+    salt: string
+    iv: string
+  }
+  vehiculo?: {
+    encrypted: string
+    salt: string
+    iv: string
+  }
+}
 
 export interface BackupData {
   id: string
@@ -83,14 +98,30 @@ export class DatabaseService {
   async saveRegistro(registro: RegistroEntry): Promise<{ success: boolean; error?: string }> {
     this.ensureInitialized()
     try {
-      // Cifrar datos sensibles
-      const encryptedPersona = registro.persona
-        ? await encryptionService.encrypt(JSON.stringify(registro.persona), this.sessionKey!)
-        : null
-
-      const encryptedVehiculo = registro.vehiculo
-        ? await encryptionService.encrypt(JSON.stringify(registro.vehiculo), this.sessionKey!)
-        : null
+      // Cifrar datos sensibles - usar estructura correcta según tipo
+      let encryptedPersona: { encrypted: string; salt: string; iv: string } | null = null
+      let encryptedVehiculo: { encrypted: string; salt: string; iv: string } | null = null
+      
+      if (registro.tipo === 'ingreso') {
+        const registroIngreso = registro as RegistroIngreso
+        encryptedPersona = await encryptionService.encrypt(
+          JSON.stringify(registroIngreso.datosPersonales), 
+          this.sessionKey!
+        )
+        if (registroIngreso.datosVehiculo) {
+          encryptedVehiculo = await encryptionService.encrypt(
+            JSON.stringify(registroIngreso.datosVehiculo), 
+            this.sessionKey!
+          )
+        }
+      } else {
+        // Para registros de salida, cifrar la cédula buscada
+        const registroSalida = registro as RegistroSalida
+        encryptedPersona = await encryptionService.encrypt(
+          registroSalida.cedulaBuscada, 
+          this.sessionKey!
+        )
+      }
 
       const encryptedRegistro = {
         ...registro,
@@ -126,38 +157,49 @@ export class DatabaseService {
       // Descifrar datos
       const decryptedRegistros = await Promise.all(
         registros.map(async (registro) => {
-          const registroWithEncryption = registro as RegistroEntry & { encrypted?: boolean }
+          const registroWithEncryption = registro as RegistroWithEncryptedData
           if (!registroWithEncryption.encrypted) return registro
 
-          let persona = null
-          let vehiculo = null
+          let persona: unknown = null
+          let vehiculo: unknown = null
 
-          if (registro.persona) {
-            try {
-              const encryptedPersona = registro.persona as unknown as {
-                encrypted: string
-                salt: string
-                iv: string
+          // Descifrar datos según tipo de registro
+          if (registro.tipo === 'ingreso') {
+            if (registroWithEncryption.persona) {
+              try {
+                const encryptedPersona = registroWithEncryption.persona
+                const decryptedPersona = await encryptionService.decrypt(
+                  encryptedPersona.encrypted,
+                  this.sessionKey!,
+                  encryptedPersona.salt,
+                  encryptedPersona.iv,
+                )
+                persona = JSON.parse(decryptedPersona)
+              } catch (error) {
+                console.error('Error descifrando datosPersonales:', error)
               }
-              const decryptedPersona = await encryptionService.decrypt(
-                encryptedPersona.encrypted,
-                this.sessionKey!,
-                encryptedPersona.salt,
-                encryptedPersona.iv,
-              )
-              persona = JSON.parse(decryptedPersona)
-            } catch (error) {
-              console.error('Error descifrando persona:', error)
+            }
+          } else {
+            // Para registros de salida, descifrar cedulaBuscada
+            if (registroWithEncryption.persona) {
+              try {
+                const encryptedCedula = registroWithEncryption.persona
+                const decryptedCedula = await encryptionService.decrypt(
+                  encryptedCedula.encrypted,
+                  this.sessionKey!,
+                  encryptedCedula.salt,
+                  encryptedCedula.iv,
+                )
+                persona = decryptedCedula
+              } catch (error) {
+                console.error('Error descifrando cedulaBuscada:', error)
+              }
             }
           }
 
-          if (registro.vehiculo) {
+          if (registroWithEncryption.vehiculo) {
             try {
-              const encryptedVehiculo = registro.vehiculo as unknown as {
-                encrypted: string
-                salt: string
-                iv: string
-              }
+              const encryptedVehiculo = registroWithEncryption.vehiculo
               const decryptedVehiculo = await encryptionService.decrypt(
                 encryptedVehiculo.encrypted,
                 this.sessionKey!,
@@ -170,10 +212,21 @@ export class DatabaseService {
             }
           }
 
-          return {
-            ...registro,
-            persona,
-            vehiculo,
+          // Return the original structure without mixing incompatible properties
+          if (registro.tipo === 'ingreso') {
+            const registroIngreso = registro as RegistroIngreso
+            return {
+              ...registroIngreso,
+              // Mantener datos descifrados en su estructura original
+              datosPersonales: persona || registroIngreso.datosPersonales,
+              datosVehiculo: vehiculo || registroIngreso.datosVehiculo,
+            } as RegistroIngreso
+          } else {
+            const registroSalida = registro as RegistroSalida
+            return {
+              ...registroSalida,
+              cedulaBuscada: persona || registroSalida.cedulaBuscada,
+            } as RegistroSalida
           }
         }),
       )
@@ -190,7 +243,15 @@ export class DatabaseService {
    */
   async searchByDocumento(documento: string): Promise<RegistroEntry[]> {
     const registros = await this.getRegistros()
-    return registros.filter((r) => r.persona?.documento === documento)
+    return registros.filter((r) => {
+      if (r.tipo === 'ingreso') {
+        const registroIngreso = r as RegistroIngreso
+        return registroIngreso.datosPersonales?.cedula === documento
+      } else {
+        const registroSalida = r as RegistroSalida
+        return registroSalida.cedulaBuscada === documento
+      }
+    })
   }
 
   /**
@@ -198,7 +259,13 @@ export class DatabaseService {
    */
   async searchByMatricula(matricula: string): Promise<RegistroEntry[]> {
     const registros = await this.getRegistros()
-    return registros.filter((r) => r.vehiculo?.matricula === matricula)
+    return registros.filter((r) => {
+      if (r.tipo === 'ingreso') {
+        const registroIngreso = r as RegistroIngreso
+        return registroIngreso.datosVehiculo?.matricula === matricula
+      }
+      return false
+    })
   }
 
   /**

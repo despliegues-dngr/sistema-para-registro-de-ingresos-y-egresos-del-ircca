@@ -2,7 +2,7 @@ import { ref, computed } from 'vue'
 import { defineStore } from 'pinia'
 import { useDatabase } from '@/composables/useDatabase'
 
-export interface AuditEvent {
+export interface AuditEvent extends Record<string, unknown> {
   id: string
   userId: string
   username: string
@@ -129,11 +129,7 @@ export const useAuditStore = defineStore('audit', () => {
 
       // Obtener todos los logs desde IndexedDB
       const result = await getRecords('audit_logs')
-      if (!result.success) {
-        throw new Error(result.error || 'Error al cargar logs de auditoría')
-      }
-
-      let logs = result.data as AuditEvent[]
+      let logs = result as AuditEvent[]
 
       // Aplicar filtros si se proporcionan
       if (filter) {

@@ -23,7 +23,14 @@
     "test:all": "run-s lint:check format:check test:unit test:e2e",
     "clean": "rimraf dist node_modules/.vite",
     "deps:check": "npm outdated",
-    "deps:update": "npm update"
+    "deps:update": "npm update",
+    "vercel:dev": "vercel dev",
+    "vercel:build": "vercel build",
+    "vercel:deploy": "vercel --prod",
+    "vercel:preview": "vercel",
+    "check": "run-p lint:check type-check",
+    "check:fix": "run-s lint type-check",
+    "pre-build": "run-s lint:check type-check"
   },
   "dependencies": {
     "@mdi/font": "^7.4.47",

@@ -7,8 +7,8 @@ import { useAuthStore } from '@/stores/auth'
 const mockAuthStore = {
   isAuthenticated: false,
   isAdmin: false,
-  user: null,
-  login: vi.fn((userData) => {
+  user: null as { id: string; username: string; role: string } | null,
+  login: vi.fn((userData: { id: string; username: string; role: string }) => {
     mockAuthStore.user = userData
     mockAuthStore.isAuthenticated = true
     mockAuthStore.isAdmin = userData.role === 'admin'
@@ -69,7 +69,7 @@ describe('Router Navigation Guards', () => {
     })
 
     // Configurar authStore
-    authStore = useAuthStore()
+    authStore = mockAuthStore
 
     // Aplicar el mismo navigation guard que el router real
     // SOLUCIÓN: Obtener estado fresco en cada navegación (no capturar por closure)

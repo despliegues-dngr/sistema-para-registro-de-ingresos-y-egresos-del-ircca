@@ -93,6 +93,7 @@ describe('useRegistroStore', () => {
           motivo: 'Entrega de documentos'
         },
         vehiculo: {
+          tipo: 'Auto',
           matricula: 'ABC1234',
           marca: 'Toyota',
           modelo: 'Corolla',
@@ -104,6 +105,7 @@ describe('useRegistroStore', () => {
       registroStore.addRegistro(registroConVehiculo)
 
       expect(registroStore.registros[0].vehiculo).toEqual({
+        tipo: 'Auto',
         matricula: 'ABC1234',
         marca: 'Toyota',
         modelo: 'Corolla',
@@ -195,11 +197,12 @@ describe('useRegistroStore', () => {
       expect(registroStore.ingresosPendientes).toHaveLength(1)
       expect(registroStore.ingresosPendientes[0].persona?.documento).toBe('12345678')
       
-      // Agregar egreso para la misma persona
+      // Agregar egreso para la misma persona (con timestamp posterior)
       registroStore.addRegistro({
         tipo: 'egreso',
         persona: { documento: '12345678', nombre: 'Juan', apellido: 'Pérez', motivo: 'Fin visita' },
-        operadorId: 'op-001'
+        operadorId: 'op-001',
+        timestamp: new Date(Date.now() + 1000) // 1 segundo después
       })
       
       console.log('📝 DEBUG Registro - Después del egreso:')

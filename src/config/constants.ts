@@ -90,6 +90,8 @@ export const ICONS = {
     SEARCH: 'mdi-magnify',
     HELP: 'mdi-help-circle',
     SETTINGS: 'mdi-cog',
+    PROFILE: 'mdi-account',
+    EDIT: 'mdi-account-edit',
   },
   ACTIONS: {
     SAVE: 'mdi-content-save',
