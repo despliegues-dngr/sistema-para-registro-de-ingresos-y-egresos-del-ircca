@@ -79,6 +79,7 @@ const onSubmit = async (userData: {
   apellido: string
   password: string
   confirmPassword: string
+  terminosCondiciones: boolean
 }) => {
   loading.value = true
   message.value = ''
@@ -97,6 +98,7 @@ const onSubmit = async (userData: {
       nombre: userData.nombre,
       apellido: userData.apellido,
       password: userData.password,
+      terminosCondiciones: userData.terminosCondiciones,
     })
 
     // Si llegamos aquí, el registro fue exitoso

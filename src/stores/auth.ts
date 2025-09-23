@@ -35,6 +35,7 @@ export interface RegisterUserData {
   nombre: string
   apellido: string
   password: string
+  terminosCondiciones: boolean
 }
 
 export const useAuthStore = defineStore('auth', () => {
@@ -192,6 +193,11 @@ export const useAuthStore = defineStore('auth', () => {
   // Actions
   const registerUser = async (userData: RegisterUserData): Promise<void> => {
     try {
+      // Validar que los términos fueron aceptados
+      if (!userData.terminosCondiciones) {
+        throw new Error('Debe aceptar los términos y condiciones para proceder con el registro')
+      }
+
       // Inicializar BD si no está inicializada
       await initDatabase()
 
@@ -217,6 +223,8 @@ export const useAuthStore = defineStore('auth', () => {
         grado: userData.grado,
         hashedPassword,
         salt,
+        terminosCondiciones: userData.terminosCondiciones,
+        fechaAceptacionTerminos: new Date().toISOString(),
         createdAt: new Date().toISOString(),
         lastLogin: null
       }

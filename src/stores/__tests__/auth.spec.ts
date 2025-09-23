@@ -315,12 +315,13 @@ describe('useAuthStore', () => {
     it('debe registrar un nuevo usuario exitosamente', async () => {
       const authStore = useAuthStore()
       
-      const newUserData: RegisterUserData = {
+      const newUserData = {
         cedula: '12345678',
         grado: 'Guardia Republicano',
         nombre: 'Juan',
         apellido: 'Pérez',
-        password: 'password123'
+        password: 'password123',
+        terminosCondiciones: true
       }
 
       // La función debe completarse sin errores
@@ -346,7 +347,8 @@ describe('useAuthStore', () => {
         nombre: 'Otro',
         apellido: 'Usuario',
         grado: 'Teniente',
-        password: 'password456'
+        password: 'password456',
+        terminosCondiciones: true
       }
 
       // Configurar mock para devolver usuario existente
@@ -363,6 +365,23 @@ describe('useAuthStore', () => {
       expect(mockGetRecords).toHaveBeenCalledWith('usuarios', 'username', '87654321')
     })
 
+    it('debe fallar si no se aceptan los términos y condiciones', async () => {
+      const authStore = useAuthStore()
+      
+      const userData: RegisterUserData = {
+        cedula: '11223344',
+        grado: 'Sargento',
+        nombre: 'Carlos',
+        apellido: 'López',
+        password: 'password789',
+        terminosCondiciones: false
+      }
+
+      // Debe lanzar error por términos no aceptados
+      await expect(authStore.registerUser(userData))
+        .rejects.toThrow('Debe aceptar los términos y condiciones para proceder con el registro')
+    })
+
     it('debe fallar si hay error en la base de datos', async () => {
       const authStore = useAuthStore()
       
@@ -371,7 +390,8 @@ describe('useAuthStore', () => {
         grado: 'Sargento',
         nombre: 'Carlos',
         apellido: 'López',
-        password: 'password789'
+        password: 'password789',
+        terminosCondiciones: true
       }
 
       // Mock para simular error en la base de datos

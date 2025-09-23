@@ -12,6 +12,52 @@ export const useDatabase = () => {
   const isConnected = ref(false)
   const db = ref<IDBDatabase | null>(null)
 
+  // Función para solicitar almacenamiento persistente
+  const requestPersistentStorage = async (): Promise<boolean> => {
+    try {
+      if ('storage' in navigator && 'persist' in navigator.storage) {
+        const isPersistent = await navigator.storage.persist()
+        
+        if (isPersistent) {
+          appStore.addNotification('Almacenamiento persistente activado', 'info')
+        }
+        
+        return isPersistent
+      } else {
+        console.warn('Storage API de persistencia no soportada')
+        return false
+      }
+    } catch (error) {
+      console.error('Error al solicitar persistencia:', error)
+      return false
+    }
+  }
+
+  // Función para monitorear uso de almacenamiento
+  const getStorageQuota = async (): Promise<{usage: number, quota: number, available: number}> => {
+    try {
+      if ('storage' in navigator && 'estimate' in navigator.storage) {
+        const estimate = await navigator.storage.estimate()
+        const usage = estimate.usage || 0
+        const quota = estimate.quota || 0
+        const available = quota - usage
+        
+        console.log(`📊 Almacenamiento: ${(usage / 1024 / 1024).toFixed(2)} MB usados de ${(quota / 1024 / 1024).toFixed(2)} MB disponibles`)
+        
+        // Alertar si queda poco espacio (menos del 10%)
+        if (available < quota * 0.1) {
+          appStore.addNotification('Espacio de almacenamiento bajo', 'warning')
+        }
+        
+        return { usage, quota, available }
+      }
+    } catch (error) {
+      console.error('Error al obtener información de cuota:', error)
+    }
+    
+    return { usage: 0, quota: 0, available: 0 }
+  }
+
   const config: DatabaseConfig = {
     dbName: 'IRCCA_Sistema_DB',
     version: 1,
@@ -20,6 +66,9 @@ export const useDatabase = () => {
 
   const initDatabase = async (): Promise<{ success: boolean; error?: string }> => {
     try {
+      // Solicitar persistencia antes de abrir la base de datos
+      await requestPersistentStorage()
+      
       return new Promise((resolve, reject) => {
         const request = indexedDB.open(config.dbName, config.version)
 
@@ -192,5 +241,8 @@ export const useDatabase = () => {
     updateRecord,
     getRecords,
     clearStore,
+    // Storage Management
+    requestPersistentStorage,
+    getStorageQuota,
   }
 }

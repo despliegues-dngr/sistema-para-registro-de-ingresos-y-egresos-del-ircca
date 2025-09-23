@@ -101,12 +101,46 @@
       :append-inner-icon="showConfirmPassword ? ICONS.AUTH.HIDE_PASSWORD : ICONS.AUTH.SHOW_PASSWORD"
       variant="outlined"
       bg-color="grey-lighten-5"
-      class="mb-6"
+      class="mb-4"
       :rules="confirmPasswordRules"
       :disabled="loading"
       @click:append-inner="showConfirmPassword = !showConfirmPassword"
       hide-details="auto"
     />
+
+    <!-- Términos y Condiciones -->
+    <div class="terms-section mb-6">
+      <v-checkbox
+        v-model="userData.terminosCondiciones"
+        :rules="terminosRules"
+        :disabled="loading"
+        color="primary"
+        hide-details="auto"
+        class="mb-2"
+      >
+        <template #label>
+          <span class="text-body-2">
+            He leído y acepto los 
+            <v-btn
+              variant="text"
+              color="primary"
+              size="small"
+              class="pa-0"
+              style="text-decoration: underline; vertical-align: baseline; min-width: auto; height: auto;"
+              @click.stop="showTermsDialog = true"
+            >
+              Términos y Condiciones
+            </v-btn>
+            del sistema
+          </span>
+        </template>
+      </v-checkbox>
+      
+      <p class="text-caption text-grey-darken-1 ml-8 mt-2">
+        <v-icon size="14" class="mr-1">mdi-shield-check</v-icon>
+        Al aceptar, confirma el cumplimiento de la Ley N° 18.331 de Protección de Datos Personales
+      </p>
+    </div>
 
     <!-- Botón de Registro -->
     <v-btn
@@ -123,12 +157,19 @@
     >
       REGISTRAR OPERADOR
     </v-btn>
+
+    <!-- Modal de Términos y Condiciones -->
+    <TermsAndConditionsDialog
+      v-model="showTermsDialog"
+      @close="showTermsDialog = false"
+    />
   </v-form>
 </template>
 
 <script setup lang="ts">
 import { ref, computed } from 'vue'
 import { ICONS, MESSAGES, VALIDATION_PATTERNS } from '@/config/constants'
+import TermsAndConditionsDialog from '@/components/ui/TermsAndConditionsDialog.vue'
 
 interface Props {
   loading?: boolean
@@ -143,6 +184,7 @@ interface Emits {
     apellido: string
     password: string
     confirmPassword: string
+    terminosCondiciones: boolean
   }]
   clearMessage: []
 }
@@ -158,6 +200,7 @@ const emit = defineEmits<Emits>()
 const formValid = ref(false)
 const showPassword = ref(false)
 const showConfirmPassword = ref(false)
+const showTermsDialog = ref(false)
 
 const userData = ref({
   cedula: '',
@@ -166,6 +209,7 @@ const userData = ref({
   apellido: '',
   password: '',
   confirmPassword: '',
+  terminosCondiciones: false,
 })
 
 // Opciones de grado para el select (orden jerárquico ascendente)
@@ -217,6 +261,10 @@ const confirmPasswordRules = computed(() => [
   (v: string) => !!v || MESSAGES.VALIDATION.REQUIRED_FIELD,
   (v: string) => v === userData.value.password || 'Las contraseñas no coinciden',
 ])
+
+const terminosRules = [
+  (v: boolean) => !!v || 'Debe aceptar los términos y condiciones para continuar',
+]
 
 // Métodos
 const handleSubmit = () => {

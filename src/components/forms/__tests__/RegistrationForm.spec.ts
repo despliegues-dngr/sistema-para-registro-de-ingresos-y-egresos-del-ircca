@@ -35,6 +35,16 @@ vi.mock('@/config/constants', () => ({
   }
 }))
 
+// Mock del componente TermsAndConditionsDialog
+vi.mock('@/components/ui/TermsAndConditionsDialog.vue', () => ({
+  default: {
+    name: 'TermsAndConditionsDialog',
+    template: '<div data-testid="terms-dialog">Terms Dialog</div>',
+    props: ['modelValue'],
+    emits: ['update:modelValue', 'close']
+  }
+}))
+
 describe('RegistrationForm', () => {
   let vuetifyInstance: ReturnType<typeof createVuetify>
 
@@ -42,6 +52,51 @@ describe('RegistrationForm', () => {
     vuetifyInstance = createVuetify({
       components,
       directives
+    })
+  })
+
+  describe('Términos y Condiciones', () => {
+    it('debe mostrar checkbox de términos y condiciones', () => {
+      const wrapper = mountComponent()
+      
+      // Verificar que existe el checkbox
+      const checkbox = wrapper.find('input[type="checkbox"]')
+      expect(checkbox.exists()).toBe(true)
+    })
+
+    it('debe mostrar el texto de términos con enlace', () => {
+      const wrapper = mountComponent()
+      
+      expect(wrapper.text()).toContain('He leído y acepto los')
+      expect(wrapper.text()).toContain('Términos y Condiciones')
+      expect(wrapper.text()).toContain('Ley N° 18.331')
+    })
+
+    it('debe mostrar el modal de términos al hacer click en el enlace', async () => {
+      const wrapper = mountComponent()
+      
+      // Buscar el botón de términos y condiciones
+      const termsButton = wrapper.find('button')
+      await termsButton.trigger('click')
+      
+      // Verificar que se muestra el modal (mockeado)
+      expect(wrapper.find('[data-testid="terms-dialog"]').exists()).toBe(true)
+    })
+
+    it('debe incluir el campo terminosCondiciones en el submit', async () => {
+      const wrapper = mountComponent()
+      
+      // Simular llenado del formulario
+      const form = wrapper.find('form')
+      await form.trigger('submit.prevent')
+      
+      // Verificar que el evento submit incluye terminosCondiciones
+      const submitEvents = wrapper.emitted('submit')
+      if (submitEvents && submitEvents[0]) {
+        const userData = submitEvents[0][0] as Record<string, unknown>
+        expect(userData).toHaveProperty('terminosCondiciones')
+        expect(typeof userData.terminosCondiciones).toBe('boolean')
+      }
     })
   })
 

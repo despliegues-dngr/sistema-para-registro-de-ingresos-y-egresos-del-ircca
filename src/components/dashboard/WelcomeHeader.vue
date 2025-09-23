@@ -25,7 +25,7 @@
                 </v-avatar>
                 <div>
                   <div class="text-subtitle-1 font-weight-medium">{{ displayName }}</div>
-                  <div class="text-caption text-grey-darken-1">{{ roleDisplay }}</div>
+                  <div class="text-caption text-grey-darken-1">{{ gradeAndNameForMenu }}</div>
                 </div>
               </div>
             </v-card-item>
@@ -131,15 +131,42 @@ const userInitials = computed(() => {
   return 'U'
 })
 
-const roleDisplay = computed(() => {
-  const role = authStore.user?.role
-  switch (role) {
-    case 'admin':
-      return 'Administrador'
-    case 'operador':
-      return 'Operador'
-    default:
-      return 'Operador'
+
+// Formato específico para el menú: Grado + Nombre Apellido (más compacto)
+const gradeAndNameForMenu = computed(() => {
+  const user = authStore.user
+  if (!user) return 'Usuario'
+  
+  // Opciones de grado (mismas que en el formulario)
+  const gradoOptions = [
+    { title: 'Guardia Republicano', value: 'guardia_republicano' },
+    { title: 'Cabo', value: 'cabo' },
+    { title: 'Sargento', value: 'sargento' },
+    { title: 'Sub Oficial', value: 'sub_oficial' },
+    { title: 'Alférez', value: 'alferez' },
+    { title: 'Teniente', value: 'teniente' },
+    { title: 'Tte. 1°', value: 'teniente_primero' },
+    { title: 'Capitán', value: 'capitan' },
+    { title: 'Cte. Mayor', value: 'comandante_mayor' },
+    { title: 'Cte. General', value: 'comandante_general' },
+  ]
+  
+  // Buscar el título completo del grado
+  const gradoOption = gradoOptions.find(option => option.value === user.grado)
+  const gradoDisplay = gradoOption?.title || user.grado || ''
+  
+  // Construir nombre completo
+  const nombreCompleto = `${user.nombre || ''} ${user.apellido || ''}`.trim()
+  
+  // Formato compacto para el menú
+  if (gradoDisplay && nombreCompleto) {
+    return `${gradoDisplay} ${nombreCompleto}`
+  } else if (nombreCompleto) {
+    return nombreCompleto
+  } else if (gradoDisplay) {
+    return gradoDisplay
+  } else {
+    return 'Usuario Sistema'
   }
 })
 
