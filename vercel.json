@@ -30,10 +30,28 @@
       ]
     },
     {
-      "source": "/(.*\\.(js|css|png|svg|ico|woff2|woff))",
+      "source": "/**/*.js",
       "headers": [
         {
-          "key": "Cache-Control", 
+          "key": "Cache-Control",
+          "value": "public, max-age=31536000, immutable"
+        }
+      ]
+    },
+    {
+      "source": "/**/*.css",
+      "headers": [
+        {
+          "key": "Cache-Control",
+          "value": "public, max-age=31536000, immutable"
+        }
+      ]
+    },
+    {
+      "source": "/**/*.{png,svg,ico,woff,woff2}",
+      "headers": [
+        {
+          "key": "Cache-Control",
           "value": "public, max-age=31536000, immutable"
         }
       ]
