@@ -44,6 +44,7 @@
           Cancelar
         </v-btn>
         <v-btn 
+          v-if="!isEditingMode"
           color="warning" 
           variant="flat" 
           prepend-icon="mdi-logout"
@@ -94,6 +95,11 @@ const formRef = ref()
 // Computed para validación del formulario
 const isFormValid = computed(() => {
   return formRef.value?.isFormValid ?? false
+})
+
+// Computed para verificar si está en modo edición
+const isEditingMode = computed(() => {
+  return formRef.value?.isEditingMode ?? false
 })
 
 const modelValue = computed({

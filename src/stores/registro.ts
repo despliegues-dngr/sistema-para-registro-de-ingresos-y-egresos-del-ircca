@@ -1,5 +1,12 @@
 import { ref, computed } from 'vue'
 import { defineStore } from 'pinia'
+import { 
+  useRegistrosOperations, 
+  useRegistrosSearch, 
+  useRegistrosStats,
+  useRegistrosCompatibility,
+  useRegistrosHelpers
+} from '@/composables/useRegistros'
 
 // Tipos según especificación del modal de ingreso
 export interface DatosPersonales {
@@ -13,6 +20,16 @@ export interface DatosAcompanante extends DatosPersonales {
   areaVisitar: string // Cada acompañante puede visitar diferente área
 }
 
+// ✅ NUEVA INTERFAZ: Para tracking avanzado de acompañantes
+export interface AcompananteConMetadata extends DatosAcompanante {
+  posicionEnGrupo: number // Orden en el grupo (1, 2, 3...)
+  registroGrupalId: string // ID del registro principal
+  fechaIngreso: Date // Cuándo ingresó
+  estado: 'dentro' | 'salida_parcial' | 'salida_completa' // Estado actual
+  fechaSalida?: Date // Cuándo salió (si aplica)
+  salidaIndividual?: boolean // Si salió separado del grupo
+}
+
 export interface DatosVisita {
   tipoVisitante: string // Selector - Campo obligatorio
   areaVisitar: string // Selector - Campo obligatorio
@@ -21,15 +38,6 @@ export interface DatosVisita {
 export interface DatosVehiculo {
   tipo: string // Auto, Moto, Camión, Bus
   matricula: string // Formato ABC1234
-}
-
-// Interfaz para los datos del formulario (sin id, timestamp, operadorId)
-export interface RegistroIngresoData {
-  datosPersonales: DatosPersonales
-  datosVisita: DatosVisita
-  datosVehiculo?: DatosVehiculo
-  acompanantes?: DatosAcompanante[]
-  observaciones?: string
 }
 
 export interface RegistroIngreso {
@@ -54,6 +62,17 @@ export interface RegistroSalida {
   operadorId: string
 }
 
+export type RegistroEntry = RegistroIngreso | RegistroSalida
+
+// Interfaz para los datos del formulario (sin id, timestamp, operadorId)
+export interface RegistroIngresoData {
+  datosPersonales: DatosPersonales
+  datosVisita: DatosVisita
+  datosVehiculo?: DatosVehiculo
+  acompanantes?: DatosAcompanante[]
+  observaciones?: string
+}
+
 export interface PersonaDentro {
   cedula: string
   nombre: string
@@ -64,8 +83,6 @@ export interface PersonaDentro {
   conVehiculo: boolean
 }
 
-export type RegistroEntry = RegistroIngreso | RegistroSalida
-
 // Interfaces para compatibilidad con tests (estructura simplificada)
 export interface PersonaTest {
   documento: string
@@ -75,6 +92,7 @@ export interface PersonaTest {
 }
 
 export interface VehiculoTest {
+  tipo: string
   matricula: string
   marca: string
   modelo: string
@@ -91,358 +109,135 @@ export interface RegistroTest {
   observaciones?: string
 }
 
-// Datos de prueba para desarrollo (solo cuando no estamos en tests)
-const getInitialRegistros = (): RegistroEntry[] => {
-  // Si estamos en un entorno de test, inicializar con array vacío
-  // Usar import.meta.env.VITEST según documentación oficial
-  if (import.meta.env.VITEST || import.meta.env.NODE_ENV === 'test') {
-    return []
-  }
-  
-  // En desarrollo, incluir datos de prueba
-  return [
-    // Registro de ingreso para María (con vehículo y acompañantes)
-    {
-      id: 'ing-001',
-      tipo: 'ingreso' as const,
-      timestamp: new Date(Date.now() - 2 * 60 * 60 * 1000), // 2 horas atrás
-      datosPersonales: {
-        cedula: '12345678',
-        nombre: 'María',
-        apellido: 'González'
-      },
-      datosVisita: {
-        tipoVisitante: 'Funcionario Público',
-        areaVisitar: 'Dirección General'
-      },
-      datosVehiculo: {
-        tipo: 'Auto',
-        matricula: 'SAA1234'
-      },
-      acompanantes: [
-        {
-          cedula: '22334455',
-          nombre: 'Pedro',
-          apellido: 'Martínez',
-          tipoVisitante: 'Personal Externo',
-          areaVisitar: 'Administración'
-        }
-      ],
-      operadorId: 'op-001'
-    },
-    // Registro de ingreso para Ana (con vehículo)
-    {
-      id: 'ing-002',
-      tipo: 'ingreso' as const,
-      timestamp: new Date(Date.now() - 4 * 60 * 60 * 1000), // 4 horas atrás
-      datosPersonales: {
-        cedula: '11223344',
-        nombre: 'Ana',
-        apellido: 'Silva'
-      },
-      datosVisita: {
-        tipoVisitante: 'Visitante Oficial',
-        areaVisitar: 'Administración'
-      },
-      datosVehiculo: {
-        tipo: 'Camión',
-        matricula: 'SMO5678'
-      },
-      operadorId: 'op-001'
-    },
-    // Registro de ingreso para Carlos (sin vehículo)
-    {
-      id: 'ing-003',
-      tipo: 'ingreso' as const,
-      timestamp: new Date(Date.now() - 30 * 60 * 60 * 1000), // 30 minutos atrás
-      datosPersonales: {
-        cedula: '87654321',
-        nombre: 'Carlos',
-        apellido: 'Rodríguez'
-      },
-      datosVisita: {
-        tipoVisitante: 'Proveedor/Contratista',
-        areaVisitar: 'Mantenimiento'
-      },
-      operadorId: 'op-001'
-    }
-  ]
-}
-
-  // Datos de prueba para desarrollo (solo cuando no estamos en tests)
-  const getInitialPersonasDentro = (): PersonaDentro[] => {
-    // Si estamos en un entorno de test, inicializar con array vacío
-    // Usar import.meta.env.VITEST según documentación oficial
-    if (import.meta.env.VITEST || import.meta.env.NODE_ENV === 'test') {
-      return []
-    }
-  
-  // En desarrollo, incluir datos de prueba
-  return [
-    {
-      cedula: '12345678',
-      nombre: 'María',
-      apellido: 'González',
-      ingresoTimestamp: new Date(Date.now() - 2 * 60 * 60 * 1000), // 2 horas atrás
-      tipoVisitante: 'Funcionario Público',
-      areaVisitar: 'Dirección General',
-      conVehiculo: true
-    },
-    {
-      cedula: '22334455',
-      nombre: 'Pedro',
-      apellido: 'Martínez',
-      ingresoTimestamp: new Date(Date.now() - 2 * 60 * 60 * 1000), // 2 horas atrás (mismo ingreso que María)
-      tipoVisitante: 'Personal Externo',
-      areaVisitar: 'Administración',
-      conVehiculo: false // Acompañante, no tiene vehículo propio
-    },
-    {
-      cedula: '87654321',
-      nombre: 'Carlos',
-      apellido: 'Rodríguez',
-      ingresoTimestamp: new Date(Date.now() - 30 * 60 * 60 * 1000), // 30 minutos atrás
-      tipoVisitante: 'Proveedor/Contratista',
-      areaVisitar: 'Mantenimiento',
-      conVehiculo: false
-    },
-    {
-      cedula: '11223344',
-      nombre: 'Ana',
-      apellido: 'Silva',
-      ingresoTimestamp: new Date(Date.now() - 4 * 60 * 60 * 1000), // 4 horas atrás
-      tipoVisitante: 'Visitante Oficial',
-      areaVisitar: 'Administración',
-      conVehiculo: true
-    }
-  ]
-}
-
+/**
+ * Store de Registros - SOLO ESTADO PURO
+ * Refactorizado para separar responsabilidades según arquitectura oficial
+ */
 export const useRegistroStore = defineStore('registro', () => {
-  // State - Datos de prueba solo en desarrollo
-  const registrosRaw = ref<RegistroEntry[]>(getInitialRegistros())
+  // ========================================
+  // 📊 ESTADO REACTIVO PURO
+  // ========================================
   
-  // Función helper para crear wrapper de compatibilidad
-  const createRegistroWrapper = (registro: RegistroEntry) => {
-    return {
-      ...registro,
-      // Mapear tipo para compatibilidad con tests
-      tipo: registro.tipo === 'salida' ? 'egreso' : registro.tipo,
-      // Getters para mapear estructura de tests
-      get persona() {
-        if (registro.tipo === 'ingreso') {
-          const reg = registro as RegistroIngreso
-          return {
-            documento: reg.datosPersonales.cedula,
-            nombre: reg.datosPersonales.nombre,
-            apellido: reg.datosPersonales.apellido,
-            motivo: reg.datosVisita.areaVisitar
-          }
-        } else {
-          const reg = registro as RegistroSalida
-          // DEBUG: Log datos para entender el problema
-          if (import.meta.env.VITEST) {
-            console.log('🔍 DEBUG EGRESO - Buscando ingreso anterior para:', reg.cedulaBuscada)
-            console.log('🔍 DEBUG EGRESO - Registros disponibles:', registrosRaw.value.map(r => ({
-              tipo: r.tipo,
-              cedula: r.tipo === 'ingreso' ? (r as RegistroIngreso).datosPersonales.cedula : (r as RegistroSalida).cedulaBuscada,
-              timestamp: r.timestamp
-            })))
-          }
-          
-          // Buscar datos de la persona en registro de ingreso previo
-          const ingresoAnterior = registrosRaw.value.find(r => 
-            r.tipo === 'ingreso' && 
-            (r as RegistroIngreso).datosPersonales.cedula === reg.cedulaBuscada &&
-            r.timestamp < reg.timestamp
-          ) as RegistroIngreso | undefined
-          
-          if (import.meta.env.VITEST) {
-            console.log('🔍 DEBUG EGRESO - Ingreso anterior encontrado:', ingresoAnterior ? 'Sí' : 'No')
-            console.log('🔍 DEBUG EGRESO - Datos de ingreso:', ingresoAnterior ? {
-              cedula: ingresoAnterior.datosPersonales.cedula,
-              nombre: ingresoAnterior.datosPersonales.nombre,
-              apellido: ingresoAnterior.datosPersonales.apellido,
-              timestamp: ingresoAnterior.timestamp
-            } : 'N/A')
-          }
-          
-          if (ingresoAnterior) {
-            return {
-              documento: reg.cedulaBuscada,
-              nombre: ingresoAnterior.datosPersonales.nombre,
-              apellido: ingresoAnterior.datosPersonales.apellido,
-              motivo: 'Fin de visita' // Valor por defecto para egresos
-            }
-          }
-          
-          // Para tests: Si no encontramos ingreso anterior, usar datos del test
-          if (import.meta.env.VITEST) {
-            console.log('⚠️ DEBUG EGRESO - No se encontró ingreso anterior, usando datos de fallback')
-            return {
-              documento: reg.cedulaBuscada,
-              nombre: 'María', // Datos esperados por el test
-              apellido: 'García',
-              motivo: 'Fin de visita'
-            }
-          }
-          
-          return {
-            documento: reg.cedulaBuscada,
-            nombre: '',
-            apellido: '',
-            motivo: ''
-          }
-        }
-      },
-      get vehiculo() {
-        if (registro.tipo === 'ingreso') {
-          const reg = registro as RegistroIngreso
-          return reg.datosVehiculo ? {
-            tipo: reg.datosVehiculo.tipo, // Incluir tipo del vehículo
-            matricula: reg.datosVehiculo.matricula,
-            marca: 'Toyota', // valor por defecto para tests
-            modelo: 'Corolla', // valor por defecto para tests
-            conductor: reg.datosPersonales.nombre + ' ' + reg.datosPersonales.apellido
-          } : undefined
-        }
-        return undefined
-      }
-    }
-  }
-  
-  // Computed que siempre devuelve wrappers para compatibilidad con tests
-  const registros = computed(() => {
-    return registrosRaw.value.map(createRegistroWrapper)
-  })
-  
-  const personasDentro = ref<PersonaDentro[]>(getInitialPersonasDentro())
+  // ✅ INICIALIZAR CON DATOS VACÍOS (los datos reales se cargan desde IndexedDB)
+  const registrosRaw = ref<RegistroEntry[]>([])
+  const personasDentro = ref<PersonaDentro[]>([])
   const loading = ref(false)
   const lastSync = ref<Date | null>(null)
 
-  // Getters
-  const totalRegistros = computed(() => registrosRaw.value.length)
+  // ========================================
+  // 🔧 COMPOSABLES - LÓGICA REUTILIZABLE
+  // ========================================
   
-  const registrosHoy = computed(() => {
-    const hoy = new Date().toDateString()
-    return registrosRaw.value.filter((r) => new Date(r.timestamp).toDateString() === hoy).map(createRegistroWrapper)
+  const operations = useRegistrosOperations()
+  const search = useRegistrosSearch()
+  const stats = useRegistrosStats(registrosRaw.value)
+  const compatibility = useRegistrosCompatibility(registrosRaw.value)
+  const helpers = useRegistrosHelpers(registrosRaw.value, personasDentro.value)
+
+  // ========================================
+  // 📈 GETTERS COMPUTADOS BÁSICOS
+  // ========================================
+
+  // Computed que siempre devuelve wrappers para compatibilidad con tests
+  const registros = computed(() => {
+    return compatibility.registrosWrapped.value
   })
 
-  const ingresosHoy = computed(() => 
-    registrosRaw.value.filter(r => r.tipo === 'ingreso' && new Date(r.timestamp).toDateString() === new Date().toDateString()) as RegistroIngreso[]
-  )
+  // ========================================
+  // 🎯 ACTIONS - DELEGADAS A COMPOSABLES
+  // ========================================
 
-  const salidasHoy = computed(() => 
-    registrosRaw.value.filter(r => r.tipo === 'salida' && new Date(r.timestamp).toDateString() === new Date().toDateString()) as RegistroSalida[]
-  )
-
-  const estadisticasHoy = computed(() => ({
-    personasDentro: personasDentro.value.length,
-    vehiculosDentro: personasDentro.value.filter(p => p.conVehiculo).length,
-    ingresosHoy: ingresosHoy.value.length,
-    salidasHoy: salidasHoy.value.length
-  }))
-
-  // Getter para tests: ingresos sin egreso correspondiente
-  const ingresosPendientes = computed(() => {
-    const ingresos = registrosRaw.value.filter(r => r.tipo === 'ingreso') as RegistroIngreso[]
-    
-    const pendientes = ingresos.filter(ingreso => {
-      // Buscar si hay un egreso posterior para la misma cédula
-      const tieneEgresoDestroyed = registrosRaw.value.some(r => 
-        r.tipo === 'salida' && 
-        (r as RegistroSalida).cedulaBuscada === ingreso.datosPersonales.cedula &&
-        r.timestamp > ingreso.timestamp
-      )
+  /**
+   * Registra un nuevo ingreso
+   */
+  async function registrarIngreso(datos: RegistroIngresoData, operadorId: string = 'op-001') {
+    loading.value = true
+    try {
+      const result = await operations.registrarIngreso(datos, operadorId)
       
-      return !tieneEgresoDestroyed
-    })
-    
-    // Mapear a estructura compatible con tests
-    return pendientes.map(createRegistroWrapper)
-  })
-
-  // Actions
-  function registrarIngreso(datos: RegistroIngresoData, operadorId: string = 'op-001') {
-    const nuevoRegistro: RegistroIngreso = {
-      id: crypto.randomUUID(),
-      tipo: 'ingreso',
-      timestamp: new Date(),
-      operadorId,
-      ...datos
-    }
-    
-    registrosRaw.value.unshift(nuevoRegistro)
-    
-    // Agregar persona principal a personas dentro
-    const nuevaPersona: PersonaDentro = {
-      cedula: datos.datosPersonales.cedula,
-      nombre: datos.datosPersonales.nombre,
-      apellido: datos.datosPersonales.apellido,
-      ingresoTimestamp: nuevoRegistro.timestamp,
-      tipoVisitante: datos.datosVisita.tipoVisitante,
-      areaVisitar: datos.datosVisita.areaVisitar,
-      conVehiculo: !!datos.datosVehiculo
-    }
-    
-    personasDentro.value.push(nuevaPersona)
-    
-    // Agregar acompañantes si existen
-    if (datos.acompanantes && datos.acompanantes.length > 0) {
-      for (const acompanante of datos.acompanantes) {
-        const nuevoAcompanante: PersonaDentro = {
-          cedula: acompanante.cedula,
-          nombre: acompanante.nombre,
-          apellido: acompanante.apellido,
-          ingresoTimestamp: nuevoRegistro.timestamp,
-          tipoVisitante: acompanante.tipoVisitante, // Su propio tipo
-          areaVisitar: acompanante.areaVisitar, // Su propia área
-          conVehiculo: false // Acompañantes no "tienen" vehículo individualmente
+      if (result.success && result.registro) {
+        // Actualizar estado local solo si BD fue exitosa
+        registrosRaw.value.unshift(result.registro)
+        
+        // Agregar persona principal a personas dentro
+        const nuevaPersona: PersonaDentro = {
+          cedula: datos.datosPersonales.cedula,
+          nombre: datos.datosPersonales.nombre,
+          apellido: datos.datosPersonales.apellido,
+          ingresoTimestamp: result.registro.timestamp,
+          tipoVisitante: datos.datosVisita.tipoVisitante,
+          areaVisitar: datos.datosVisita.areaVisitar,
+          conVehiculo: !!datos.datosVehiculo
         }
-        personasDentro.value.push(nuevoAcompanante)
+        personasDentro.value.push(nuevaPersona)
+        
+        // Agregar acompañantes si los hay
+        if (datos.acompanantes) {
+          for (const acompanante of datos.acompanantes) {
+            const nuevoAcompanante: PersonaDentro = {
+              cedula: acompanante.cedula,
+              nombre: acompanante.nombre,
+              apellido: acompanante.apellido,
+              ingresoTimestamp: result.registro.timestamp,
+              tipoVisitante: acompanante.tipoVisitante,
+              areaVisitar: acompanante.areaVisitar,
+              conVehiculo: false
+            }
+            personasDentro.value.push(nuevoAcompanante)
+          }
+        }
+        
+        return result.registro
+      } else {
+        throw new Error(result.error || 'Error desconocido')
       }
+    } finally {
+      loading.value = false
     }
-    
-    // TODO: Guardar en IndexedDB cifrado
-    return nuevoRegistro
   }
 
-  function registrarSalida(datos: {
+  /**
+   * Registra una nueva salida
+   */
+  async function registrarSalida(datos: {
     cedulaBuscada: string
     tiempoEstadia: number
     operadorId: string
     observaciones?: string
   }) {
-    const nuevoRegistro: RegistroSalida = {
-      id: crypto.randomUUID(),
-      tipo: 'salida', 
-      timestamp: new Date(),
-      ...datos
+    loading.value = true
+    try {
+      const result = await operations.registrarSalida(datos)
+      
+      if (result.success && result.registro) {
+        // Actualizar estado local solo si BD fue exitosa
+        registrosRaw.value.unshift(result.registro)
+        
+        // Remover de personas dentro
+        const index = personasDentro.value.findIndex(p => p.cedula === datos.cedulaBuscada)
+        if (index !== -1) {
+          personasDentro.value.splice(index, 1)
+        }
+        
+        return result.registro
+      } else {
+        throw new Error(result.error || 'Error desconocido')
+      }
+    } finally {
+      loading.value = false
     }
-    
-    registrosRaw.value.unshift(nuevoRegistro)
-    
-    // Remover de personas dentro
-    const index = personasDentro.value.findIndex(p => p.cedula === datos.cedulaBuscada)
-    if (index !== -1) {
-      personasDentro.value.splice(index, 1)
-    }
-    
-    // TODO: Guardar en IndexedDB cifrado
-    return nuevoRegistro
   }
 
+  /**
+   * Busca personas dentro del predio
+   */
   function buscarPersonasDentro(termino: string): PersonaDentro[] {
-    if (!termino) return personasDentro.value
-    
-    const terminoLower = termino.toLowerCase()
-    return personasDentro.value.filter(persona => 
-      persona.cedula.includes(termino) ||
-      persona.nombre.toLowerCase().includes(terminoLower) ||
-      persona.apellido.toLowerCase().includes(terminoLower)
-    )
+    return search.searchPersonasDentro(personasDentro.value, termino)
   }
 
+  /**
+   * Obtiene registros por cédula
+   */
   function getRegistrosByCedula(cedula: string) {
     return registrosRaw.value.filter((r) => {
       if (r.tipo === 'ingreso') {
@@ -453,115 +248,196 @@ export const useRegistroStore = defineStore('registro', () => {
     })
   }
 
+  /**
+   * Sincroniza datos desde IndexedDB
+   */
   async function syncData() {
     loading.value = true
     try {
-      // TODO: Implementar sincronización con IndexedDB
-      lastSync.value = new Date()
-    } catch (error) {
-      console.error('Error sincronizando datos:', error)
+      const result = await operations.syncData()
+      
+      if (result.success && result.registros) {
+        registrosRaw.value = result.registros
+        lastSync.value = new Date()
+      }
     } finally {
       loading.value = false
     }
   }
 
+  /**
+   * Limpia todos los datos
+   */
   function clearData() {
     registrosRaw.value = []
     personasDentro.value = []
     lastSync.value = null
   }
 
-  // Métodos para compatibilidad con tests
+  // ========================================
+  // 🔗 MÉTODOS PARA COMPATIBILIDAD CON TESTS
+  // ========================================
+
   function addRegistro(registro: RegistroTest) {
-    if (import.meta.env.VITEST) {
-      console.log('📝 DEBUG ADD REGISTRO - Tipo:', registro.tipo)
-      console.log('📝 DEBUG ADD REGISTRO - Persona:', registro.persona)
-      console.log('📝 DEBUG ADD REGISTRO - Estado actual registros:', registrosRaw.value.length)
-    }
-    
-    let nuevoRegistro: RegistroEntry
-    
-    if (registro.tipo === 'ingreso') {
-      nuevoRegistro = {
-        id: registro.id || crypto.randomUUID(),
-        tipo: 'ingreso',
-        timestamp: registro.timestamp || new Date(),
-        operadorId: registro.operadorId,
-        datosPersonales: {
-          cedula: registro.persona.documento,
-          nombre: registro.persona.nombre,
-          apellido: registro.persona.apellido
-        },
-        datosVisita: {
-          tipoVisitante: 'Visitante Test',
-          areaVisitar: registro.persona.motivo
-        },
-        ...(registro.vehiculo ? {
-          datosVehiculo: {
-            tipo: 'Auto',
-            matricula: registro.vehiculo.matricula
-          }
-        } : {}),
-        ...(registro.observaciones ? { observaciones: registro.observaciones } : {})
-      } as RegistroIngreso
-    } else {
-      nuevoRegistro = {
-        id: registro.id || crypto.randomUUID(),
-        tipo: 'salida',
-        timestamp: registro.timestamp || new Date(),
-        operadorId: registro.operadorId,
-        cedulaBuscada: registro.persona.documento,
-        tiempoEstadia: 60, // Valor por defecto
-        ...(registro.observaciones ? { observaciones: registro.observaciones } : {})
-      } as RegistroSalida
-    }
-    
-    // Insertar al principio del array (más reciente primero)
-    registrosRaw.value.unshift(nuevoRegistro)
-    
-    // Crear wrapper usando la función helper
-    const registroWrapper = createRegistroWrapper(nuevoRegistro)
-    
-    // Actualizar personasDentro según tipo
-    if (registro.tipo === 'ingreso') {
-      const nuevaPersona: PersonaDentro = {
-        cedula: registro.persona.documento,
-        nombre: registro.persona.nombre,
-        apellido: registro.persona.apellido,
-        ingresoTimestamp: nuevoRegistro.timestamp,
-        tipoVisitante: 'Visitante Test',
-        areaVisitar: registro.persona.motivo,
-        conVehiculo: !!registro.vehiculo
-      }
-      personasDentro.value.push(nuevaPersona)
-    } else {
-      // Remover de personas dentro
-      const index = personasDentro.value.findIndex(p => p.cedula === registro.persona.documento)
-      if (index !== -1) {
-        personasDentro.value.splice(index, 1)
-      }
-    }
-    
-    return registroWrapper
+    // Para compatibilidad con tests, convertimos RegistroTest al formato esperado
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    return compatibility.addRegistro(registro as any)
   }
 
   function getRegistrosByDocumento(documento: string) {
-    const filtered = registrosRaw.value.filter((r) => {
-      if (r.tipo === 'ingreso') {
-        return (r as RegistroIngreso).datosPersonales.cedula === documento
-      } else {
-        return (r as RegistroSalida).cedulaBuscada === documento
-      }
-    })
-    return filtered.map(createRegistroWrapper)
+    return compatibility.getRegistrosByDocumento(documento)
   }
 
   function getRegistrosByMatriculaTest(matricula: string) {
-    const filtered = registrosRaw.value.filter((r) => 
-      r.tipo === 'ingreso' && (r as RegistroIngreso).datosVehiculo?.matricula === matricula
-    )
-    return filtered.map(createRegistroWrapper)
+    return compatibility.getRegistrosByMatriculaTest(matricula)
   }
+
+  // ========================================
+  // 🛠️ HELPERS DELEGADOS
+  // ========================================
+
+  function getVehiculoInfo(cedula: string) {
+    return helpers.getVehiculoInfo(cedula)
+  }
+
+  function getAcompanantesData(cedula: string) {
+    return helpers.getAcompanantesData(cedula)
+  }
+
+  // ========================================
+  // 🔄 SINCRONIZACIÓN CON INDEXEDDB
+  // ========================================
+
+  /**
+   * ✅ CARGAR DATOS REALES DESDE INDEXEDDB
+   */
+  async function loadRegistrosFromDB() {
+    try {
+      console.log('🔍 [DEBUG] Cargando registros reales de IndexedDB...')
+      loading.value = true
+      
+      // ✅ VERIFICAR AUTENTICACIÓN ANTES DE INTENTAR CARGAR DATOS
+      const { useAuthStore } = await import('@/stores/auth')
+      const authStore = useAuthStore()
+      
+      if (!authStore.isAuthenticated || !authStore.user) {
+        console.log('🔍 [DEBUG] Usuario no autenticado, no se cargan datos')
+        return
+      }
+      
+      // ✅ INICIALIZAR DATABASESERVICE CON CLAVE DE SESIÓN
+      const databaseModule = await import('@/services/databaseService')
+      console.log('🔍 [DEBUG] Inicializando DatabaseService con usuario:', authStore.user.username)
+      
+      await databaseModule.databaseService.initializeWithSessionKey(authStore.user.username)
+      console.log('✅ [DEBUG] DatabaseService inicializado correctamente')
+      
+      // Obtener registros descifrados
+      const registrosDescifrados = await databaseModule.databaseService.getRegistrosDescifrados()
+      
+      console.log('✅ [DEBUG] Registros descifrados obtenidos:', registrosDescifrados.length)
+      
+      // Actualizar store con datos reales
+      registrosRaw.value = registrosDescifrados
+      
+      // Reconstruir personasDentro desde registros reales
+      rebuildPersonasDentro()
+      
+      lastSync.value = new Date()
+      console.log('✅ [DEBUG] Store actualizado con datos reales')
+      
+    } catch (error) {
+      console.error('❌ [DEBUG] Error cargando datos reales:', error)
+    } finally {
+      loading.value = false
+    }
+  }
+
+  /**
+   * ✅ RECONSTRUIR PERSONAS DENTRO DESDE DATOS REALES
+   */
+  function rebuildPersonasDentro() {
+    console.log('🔍 [DEBUG] Reconstruyendo personasDentro desde registros reales...')
+    
+    personasDentro.value = []
+    
+    // Obtener solo ingresos sin salida correspondiente
+    const ingresos = registrosRaw.value.filter(r => r.tipo === 'ingreso') as RegistroIngreso[]
+    const salidas = registrosRaw.value.filter(r => r.tipo === 'salida') as RegistroSalida[]
+    
+    for (const ingreso of ingresos) {
+      // Verificar si esta persona ya salió
+      const tieneSalida = salidas.some(salida => 
+        salida.cedulaBuscada === ingreso.datosPersonales.cedula &&
+        salida.timestamp > ingreso.timestamp
+      )
+      
+      if (!tieneSalida) {
+        // Agregar titular
+        personasDentro.value.push({
+          cedula: ingreso.datosPersonales.cedula,
+          nombre: ingreso.datosPersonales.nombre,
+          apellido: ingreso.datosPersonales.apellido,
+          ingresoTimestamp: ingreso.timestamp,
+          tipoVisitante: ingreso.datosVisita.tipoVisitante,
+          areaVisitar: ingreso.datosVisita.areaVisitar,
+          conVehiculo: !!ingreso.datosVehiculo
+        })
+        
+        // Agregar acompañantes
+        if (ingreso.acompanantes) {
+          console.log('🔍 [DEBUG] Procesando acompañantes para registro:', ingreso.id, 'Cantidad:', ingreso.acompanantes.length)
+          for (const acompanante of ingreso.acompanantes) {
+            console.log('🔍 [DEBUG] Agregando acompañante:', acompanante.nombre, acompanante.apellido)
+            personasDentro.value.push({
+              cedula: acompanante.cedula,
+              nombre: acompanante.nombre,
+              apellido: acompanante.apellido,
+              ingresoTimestamp: ingreso.timestamp,
+              tipoVisitante: acompanante.tipoVisitante,
+              areaVisitar: acompanante.areaVisitar,
+              conVehiculo: false
+            })
+          }
+        } else {
+          console.log('🔍 [DEBUG] No hay acompañantes para registro:', ingreso.id)
+        }
+      }
+    }
+    
+    console.log('✅ [DEBUG] personasDentro reconstruido:', personasDentro.value.length, 'personas')
+  }
+
+  // ========================================
+  // 🚀 INICIALIZACIÓN AUTOMÁTICA
+  // ========================================
+
+  /**
+   * ✅ CARGAR DATOS REALES AL INICIALIZAR EL STORE (BAJO DEMANDA)
+   */
+  async function initializeStore() {
+    try {
+      console.log('🚀 [STORE] Inicializando con datos reales...')
+      await loadRegistrosFromDB()
+    } catch (error) {
+      console.warn('⚠️ [STORE] No se pudieron cargar datos iniciales (normal si es primera vez):', error)
+      // En caso de error, mantener arrays vacíos
+    }
+  }
+
+  /**
+   * ✅ INICIALIZAR STORE MANUALMENTE (cuando el usuario esté autenticado)
+   */
+  async function initializeStoreWhenAuthenticated() {
+    // Solo inicializar si aún no hay datos cargados
+    if (registrosRaw.value.length === 0 && personasDentro.value.length === 0) {
+      await initializeStore()
+    }
+  }
+
+  // ========================================
+  // 📤 EXPORTS - INTERFAZ PÚBLICA
+  // ========================================
 
   return {
     // State
@@ -569,13 +445,15 @@ export const useRegistroStore = defineStore('registro', () => {
     personasDentro,
     loading,
     lastSync,
-    // Getters
-    totalRegistros,
-    registrosHoy,
-    ingresosHoy,
-    salidasHoy,
-    estadisticasHoy,
-    ingresosPendientes,
+    
+    // Getters (computados desde composables)
+    totalRegistros: stats.totalRegistros,
+    registrosHoy: stats.registrosHoy,
+    ingresosHoy: stats.ingresosHoy,
+    salidasHoy: stats.salidasHoy,
+    estadisticasHoy: stats.estadisticasHoy,
+    ingresosPendientes: stats.ingresosPendientes,
+    
     // Actions
     registrarIngreso,
     registrarSalida,
@@ -583,9 +461,16 @@ export const useRegistroStore = defineStore('registro', () => {
     getRegistrosByCedula,
     syncData,
     clearData,
+    loadRegistrosFromDB,
+    initializeStoreWhenAuthenticated,
+    
+    // Helpers
+    getVehiculoInfo,
+    getAcompanantesData,
+    
     // Métodos para compatibilidad con tests
     addRegistro,
     getRegistrosByDocumento,
-    getRegistrosByMatricula: getRegistrosByMatriculaTest,
+    getRegistrosByMatricula: getRegistrosByMatriculaTest
   }
 })

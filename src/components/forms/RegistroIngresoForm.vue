@@ -256,14 +256,14 @@
         variant="tonal"
         prepend-icon="mdi-account-plus"
         @click="addAcompanante"
-        :disabled="formData.acompanantes.length >= 5"
+        :disabled="formData.acompanantes.length >= 20"
         class="mb-2"
       >
         Agregar Acompañante
       </v-btn>
       
-      <div v-if="formData.acompanantes.length >= 5" class="text-body-2 text-warning ml-2">
-        Máximo 5 acompañantes por registro
+      <div v-if="formData.acompanantes.length >= 20" class="text-body-2 text-warning ml-2">
+        Máximo 20 acompañantes por registro (buses/camionetas)
       </div>
     </FormSection>
 
@@ -467,13 +467,26 @@ const handleSubmit = async () => {
       submitData.datosVehiculo = { ...formData.datosVehiculo }
     }
 
+    // ✅ Incluir acompañantes si existen
+    if (formData.acompanantes.length > 0) {
+      submitData.acompanantes = [...formData.acompanantes]
+    }
+
+    console.log('🔍 DEBUG handleSubmit - Datos a enviar:', submitData)
+    console.log('🔍 DEBUG handleSubmit - Tiene acompañantes:', formData.acompanantes.length > 0)
+    console.log('🔍 DEBUG handleSubmit - Cantidad acompañantes:', formData.acompanantes.length)
+    console.log('🔍 DEBUG handleSubmit - Acompañantes details:', formData.acompanantes)
+
     emit('submit', submitData)
   }
 }
 
 // Métodos para manejar acompañantes
 const addAcompanante = () => {
-  if (formData.acompanantes.length < 5) {
+  console.log('🔍 DEBUG addAcompanante - Función ejecutada')
+  console.log('🔍 DEBUG addAcompanante - Cantidad actual:', formData.acompanantes.length)
+  
+  if (formData.acompanantes.length < 20) {
     formData.acompanantes.push({
       cedula: '',
       nombre: '',
@@ -481,10 +494,16 @@ const addAcompanante = () => {
       tipoVisitante: '',
       areaVisitar: ''
     })
+    
+    console.log('✅ DEBUG addAcompanante - Acompañante agregado. Nueva cantidad:', formData.acompanantes.length)
+    
     // Auto-expandir sección si se agrega el primer acompañante
     if (formData.acompanantes.length === 1) {
       acompanantesExpanded.value = 0
+      console.log('✅ DEBUG addAcompanante - Sección expandida automáticamente')
     }
+  } else {
+    console.log('⚠️ DEBUG addAcompanante - Límite máximo alcanzado (20)')
   }
 }
 

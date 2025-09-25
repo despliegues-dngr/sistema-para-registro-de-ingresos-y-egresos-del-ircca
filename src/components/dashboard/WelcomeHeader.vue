@@ -51,10 +51,10 @@
         <!-- Información textual con saludo dinámico -->
         <div class="flex-grow-1">
           <div class="d-flex justify-space-between align-center mb-1">
-            <h2 class="text-h5 font-weight-bold opacity-95">{{ dynamicGreeting }}</h2>
+            <h2 class="text-body-2 mb-0 opacity-75 font-weight-medium">{{ dynamicGreeting }}</h2>
             <div class="text-h6 font-weight-medium opacity-90 text-right">{{ currentDate }}</div>
           </div>
-          <h3 class="text-h4 font-weight-bold mb-2">{{ gradeAndName }}</h3>
+          <h3 class="text-h5 font-weight-bold opacity-95 mb-2">{{ gradeAndName }}</h3>
           <div class="d-flex justify-space-between align-center">
             <p class="text-body-2 mb-0 opacity-75 font-weight-medium">Serv. Art. 222 - IRCCA</p>
             <div class="text-body-1 opacity-90 font-mono time-display text-right">

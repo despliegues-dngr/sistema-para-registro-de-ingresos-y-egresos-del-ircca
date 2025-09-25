@@ -93,7 +93,8 @@ export const useDatabase = () => {
             const registrosStore = database.createObjectStore('registros', { keyPath: 'id' })
             registrosStore.createIndex('timestamp', 'timestamp', { unique: false })
             registrosStore.createIndex('tipo', 'tipo', { unique: false })
-            registrosStore.createIndex('documento', 'persona.documento', { unique: false })
+            registrosStore.createIndex('operador', 'operadorId', { unique: false })
+            // Nota: No creamos índice por cédula ya que está cifrada por seguridad
           }
 
           // Crear store de usuarios

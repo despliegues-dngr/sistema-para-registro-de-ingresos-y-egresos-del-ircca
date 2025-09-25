@@ -19,8 +19,10 @@ La documentación de este proyecto está centralizada en la carpeta `/docs` y se
   - **Cuándo consultarla:** Para entender los objetivos, el alcance, el cronograma y los stakeholders involucrados.
 
 - ### 📁 `02-architecture/`
-  - **Contiene:** Las guías conceptuales sobre **CÓMO** está construido el sistema a nivel técnico (arquitectura PWA, seguridad, vista técnica general).
-  - **Cuándo consultarla:** Para entender la estructura técnica, las tecnologías y las decisiones de alto nivel sin necesidad de leer el código fuente.
+  - **Contiene:** Las guías conceptuales sobre **CÓMO** está construido el sistema a nivel técnico (arquitectura PWA, seguridad, vista técnica general, base de datos).
+  - **Cuándo consultarla:** Para entender la estructura técnica, las tecnologías, la base de datos IndexedDB y las decisiones de alto nivel sin necesidad de leer el código fuente.
+  - **📋 Documentos clave:**
+    - `06-database-architecture.md` - Estructura completa de IndexedDB, stores, índices y patrones de consulta
 
 - ### 📁 `03-design/`
   - **Contiene:** Todo lo relacionado con la **APARIENCIA** y la **EXPERIENCIA DE USUARIO** (UI/UX).

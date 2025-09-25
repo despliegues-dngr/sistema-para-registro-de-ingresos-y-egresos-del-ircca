@@ -45,6 +45,8 @@
         placeholder="Escriba cédula o matrícula del vehículo..."
         :search="terminoBusqueda"
         @update:search="terminoBusqueda = $event"
+        :custom-filter="() => true"
+        no-filter
       >
         <!-- Slot personalizado para cada item -->
         <template #item="{ props: itemProps, item }">
@@ -468,8 +470,8 @@
     </div>
 
 
-    <!-- Observaciones (solo se muestra después de seleccionar persona) -->
-    <div v-if="personaSeleccionada" class="form-section mt-6">
+    <!-- Observaciones (solo se muestra después de seleccionar persona Y no estar en modo edición) -->
+    <div v-if="personaSeleccionada && !mostrarEdicionSalida" class="form-section mt-6">
       <v-textarea
         v-model="observaciones"
         label="Observaciones sobre la Salida (Opcional)"
@@ -552,9 +554,13 @@ const messageType = computed(() => {
 
 // Computed para el autocomplete
 const personasParaSelect = computed(() => {
+  console.log('🔍 DEBUG personasParaSelect - Procesando personas:', registroStore.personasDentro.length)
+  
   return registroStore.personasDentro.map(persona => {
     const vehiculoInfo = getVehiculoInfo(persona.cedula)
     const matricula = vehiculoInfo ? vehiculoInfo.matricula : ''
+    
+    console.log(`🔍 DEBUG personasParaSelect - Persona: ${persona.nombre}, Cédula: ${persona.cedula}, Matrícula: "${matricula}"`)
     
     return {
       displayText: `${persona.nombre} ${persona.apellido} - C.I: ${persona.cedula}`,
@@ -571,18 +577,30 @@ const personasFiltradas = computed(() => {
   }
   
   const termino = terminoBusqueda.value.toLowerCase().trim()
+  console.log('🔍 DEBUG personasFiltradas - Término de búsqueda:', `"${termino}"`)
   
   return personasParaSelect.value.filter(item => {
     const persona = item.persona
+    
     // Buscar por cédula (exacta o parcial)
-    if (persona.cedula.includes(termino)) {
+    const coincideCedula = persona.cedula.includes(termino)
+    console.log(`🔍 DEBUG personasFiltradas - ${persona.nombre} - Cédula "${persona.cedula}" coincide con "${termino}":`, coincideCedula)
+    
+    if (coincideCedula) {
       return true
     }
+    
     // Buscar por matrícula del vehículo (si tiene vehículo)
     const vehiculoInfo = getVehiculoInfo(persona.cedula)
-    if (vehiculoInfo && vehiculoInfo.matricula.toLowerCase().includes(termino)) {
+    const matricula = vehiculoInfo?.matricula?.toLowerCase() || ''
+    const coincideMatricula = matricula.includes(termino)
+    
+    console.log(`🔍 DEBUG personasFiltradas - ${persona.nombre} - Matrícula "${matricula}" coincide con "${termino}":`, coincideMatricula)
+    
+    if (vehiculoInfo && coincideMatricula) {
       return true
     }
+    
     return false
   })
 })
@@ -663,10 +681,16 @@ const getTipoVisitanteIcon = (tipo: string): string => {
 }
 
 const getVehiculoInfo = (cedula: string) => {
+  console.log('🔍 DEBUG getVehiculoInfo - Buscando vehículo para cédula:', cedula)
+  console.log('🔍 DEBUG getVehiculoInfo - Total registros:', registroStore.registros.length)
+  
   // Buscar el registro de ingreso que corresponde a esta cédula
   const registro = registroStore.registros.find(r => 
     r.tipo === 'ingreso' && r.persona.documento === cedula
   )
+  
+  console.log('🔍 DEBUG getVehiculoInfo - Registro encontrado:', registro)
+  console.log('🔍 DEBUG getVehiculoInfo - Vehículo info:', registro?.vehiculo)
   
   // Type narrowing para asegurar que es un registro de ingreso
   if (registro && registro.tipo === 'ingreso') {
@@ -792,12 +816,28 @@ const activarModoEdicion = () => {
     // Si entró a pie, por defecto también sale a pie (usuario puede cambiar)
     datosSalida.conVehiculo = false
   }
+  
+  // ✅ Pre-cargar acompañantes: si ingresaron juntos, probablemente salgan juntos
+  if (personaSeleccionada.value) {
+    const acompanantes = getAcompanantesData(personaSeleccionada.value.cedula)
+    datosSalida.acompanantesSalen = acompanantes.map(acomp => acomp.cedula)
+    console.log('🔍 DEBUG activarModoEdicion - Acompañantes pre-marcados:', datosSalida.acompanantesSalen)
+  }
 }
 
 const guardarEdicion = () => {
   // Aquí se podría agregar validación si es necesaria
   mostrarEdicionSalida.value = false
-  // Los datos ya están guardados en datosSalida, se usarán en el submit
+  
+  // ✅ Actualizar la información mostrada en la card con los datos editados
+  // Los datos están en datosSalida y se mostrarán actualizados en la vista de solo lectura
+  // Esto proporciona feedback visual inmediato al usuario
+  console.log('🔍 DEBUG guardarEdicion - Datos de salida actualizados:', {
+    conVehiculo: datosSalida.conVehiculo,
+    tipoVehiculo: datosSalida.tipoVehiculo, 
+    matricula: datosSalida.matricula,
+    acompanantesSalen: datosSalida.acompanantesSalen
+  })
 }
 
 const cancelarEdicion = () => {
@@ -861,7 +901,8 @@ const resetForm = () => {
 defineExpose({
   submit: handleSubmit,
   resetForm,
-  isFormValid
+  isFormValid,
+  isEditingMode: computed(() => mostrarEdicionSalida.value)
 })
 </script>
 

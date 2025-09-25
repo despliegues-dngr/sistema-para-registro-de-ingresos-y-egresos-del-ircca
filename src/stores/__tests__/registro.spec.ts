@@ -252,7 +252,7 @@ describe('useRegistroStore', () => {
       registroStore.addRegistro({
         tipo: 'ingreso',
         persona: { documento: '12345678', nombre: 'Juan', apellido: 'Pérez', motivo: 'Visita' },
-        vehiculo: { matricula: 'ABC1234', marca: 'Toyota', modelo: 'Corolla', conductor: 'Juan Pérez' },
+        vehiculo: { tipo: 'auto', matricula: 'ABC1234', marca: 'Toyota', modelo: 'Corolla', conductor: 'Juan Pérez' },
         operadorId: 'op-001'
       })
       

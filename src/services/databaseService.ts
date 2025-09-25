@@ -1,21 +1,6 @@
 import { useDatabase } from '@/composables/useDatabase'
 import { encryptionService } from './encryptionService'
-import type { RegistroEntry, RegistroIngreso, RegistroSalida } from '@/stores/registro'
-
-// Tipos para registros con datos cifrados
-type RegistroWithEncryptedData = RegistroEntry & {
-  encrypted?: boolean
-  persona?: {
-    encrypted: string
-    salt: string
-    iv: string
-  }
-  vehiculo?: {
-    encrypted: string
-    salt: string
-    iv: string
-  }
-}
+import type { RegistroEntry, RegistroIngreso, RegistroSalida, DatosAcompanante } from '@/stores/registro'
 
 export interface BackupData {
   id: string
@@ -23,6 +8,45 @@ export interface BackupData {
   data: unknown
   encrypted: boolean
   size: number
+}
+
+interface RegistroBaseCifrado {
+  id: string
+  tipo: 'ingreso' | 'salida'
+  timestamp: Date
+  operadorId: string
+  encrypted: boolean
+}
+
+interface RegistroIngresoCifrado extends RegistroBaseCifrado {
+  tipo: 'ingreso'
+  persona?: {
+    encrypted: string
+    iv: string
+    salt: string
+  }
+  vehiculo?: {
+    encrypted: string
+    iv: string
+    salt: string
+  }
+  acompanantes?: {
+    encrypted: string
+    iv: string
+    salt: string
+  }
+}
+
+interface RegistroSalidaCifrado extends RegistroBaseCifrado {
+  tipo: 'salida'
+  cedulaBuscada: string
+  tiempoEstadia: number
+  observaciones?: string
+  persona?: {
+    encrypted: string
+    iv: string
+    salt: string
+  }
 }
 
 export class DatabaseService {
@@ -34,13 +58,36 @@ export class DatabaseService {
    * Inicializa la base de datos
    */
   async initialize(): Promise<{ success: boolean; error?: string }> {
-    return await this.db.initDatabase()
+    console.log('🔍 [DEBUG] DatabaseService.initialize() - Inicializando IndexedDB interno...')
+    const result = await this.db.initDatabase()
+    console.log('🔍 [DEBUG] DatabaseService.initialize() resultado:', result)
+    return result
   }
 
   /**
    * Inicializa el servicio con una clave de sesión derivada de las credenciales del usuario
    */
   async initializeWithSessionKey(userCredentials: string): Promise<void> {
+    console.log('🔍 [DEBUG] DatabaseService.initializeWithSessionKey() - INICIO')
+    console.log('🔍 [DEBUG] isInitialized actual:', this.isInitialized)
+    console.log('🔍 [DEBUG] sessionKey existe:', !!this.sessionKey)
+    
+    // Si ya está inicializado con las mismas credenciales, no hacer nada
+    if (this.isInitialized && this.sessionKey) {
+      console.log('✅ [DEBUG] DatabaseService YA está inicializado - saltando')
+      return
+    }
+    
+    console.log('🔍 [DEBUG] Procediendo con inicialización...')
+    
+    // ✅ PRIMERO: Inicializar IndexedDB interno del DatabaseService
+    console.log('🔍 [DEBUG] Inicializando IndexedDB interno del DatabaseService...')
+    const dbResult = await this.initialize()
+    if (!dbResult.success) {
+      throw new Error(`Error inicializando IndexedDB interno: ${dbResult.error}`)
+    }
+    console.log('✅ [DEBUG] IndexedDB interno del DatabaseService inicializado')
+    
     // Derivar clave de sesión usando PBKDF2 con salt fijo para esta sesión
     const encoder = new TextEncoder()
     const credentialsBuffer = encoder.encode(userCredentials)
@@ -73,6 +120,9 @@ export class DatabaseService {
     const sessionKeyBuffer = await window.crypto.subtle.exportKey('raw', sessionKeyMaterial)
     this.sessionKey = btoa(String.fromCharCode(...new Uint8Array(sessionKeyBuffer)))
     this.isInitialized = true
+    
+    console.log('✅ [DEBUG] DatabaseService inicializado correctamente')
+    console.log('🔍 [DEBUG] Nueva sessionKey longitud:', this.sessionKey.length)
   }
 
   /**
@@ -101,18 +151,52 @@ export class DatabaseService {
       // Cifrar datos sensibles - usar estructura correcta según tipo
       let encryptedPersona: { encrypted: string; salt: string; iv: string } | null = null
       let encryptedVehiculo: { encrypted: string; salt: string; iv: string } | null = null
+      let encryptedAcompanantes: { encrypted: string; salt: string; iv: string } | null = null
       
       if (registro.tipo === 'ingreso') {
         const registroIngreso = registro as RegistroIngreso
+        
+        // ✅ CIFRAR TODOS LOS DATOS SENSIBLES DE LA PERSONA (Compliance Ley 18.331)
+        const datosPersonaCompletos = {
+          datosPersonales: registroIngreso.datosPersonales,
+          datosVisita: registroIngreso.datosVisita,
+          observaciones: registroIngreso.observaciones
+        }
+        console.log('🔍 [DEBUG] Cifrando datos persona completos:', JSON.stringify(datosPersonaCompletos, null, 2))
+        
         encryptedPersona = await encryptionService.encrypt(
-          JSON.stringify(registroIngreso.datosPersonales), 
+          JSON.stringify(datosPersonaCompletos), 
           this.sessionKey!
         )
+        
+        // Cifrar datos de vehículo si existen
         if (registroIngreso.datosVehiculo) {
           encryptedVehiculo = await encryptionService.encrypt(
             JSON.stringify(registroIngreso.datosVehiculo), 
             this.sessionKey!
           )
+        }
+        
+        // ✅ CIFRAR ACOMPAÑANTES si existen (COMPLIANCE LEY 18.331)
+        if (registroIngreso.acompanantes && registroIngreso.acompanantes.length > 0) {
+          console.log('🔍 [DEBUG] Cifrando acompañantes:', registroIngreso.acompanantes.length, 'personas')
+          
+          // ✅ ESTRUCTURA MEJORADA: Cada acompañante con metadata para consultas futuras
+          const acompanantesConMetadata = registroIngreso.acompanantes.map((acompanante, index) => ({
+            ...acompanante,
+            posicionEnGrupo: index + 1, // Para mantener orden
+            registroGrupalId: registro.id, // Referencia al registro principal
+            fechaIngreso: registro.timestamp,
+            estado: 'dentro' // Para trackear salidas individuales futuras
+          }))
+          
+          encryptedAcompanantes = await encryptionService.encrypt(
+            JSON.stringify(acompanantesConMetadata), 
+            this.sessionKey!
+          )
+          console.log('✅ [DEBUG] Acompañantes cifrados con metadata para consultas futuras')
+        } else {
+          console.log('🔍 [DEBUG] No hay acompañantes para este registro')
         }
       } else {
         // Para registros de salida, cifrar la cédula buscada
@@ -123,11 +207,18 @@ export class DatabaseService {
         )
       }
 
+      // ✅ CREAR REGISTRO LIMPIO - SOLO DATOS CIFRADOS (Compliance Ley 18.331)
       const encryptedRegistro = {
-        ...registro,
-        persona: encryptedPersona,
-        vehiculo: encryptedVehiculo,
+        id: registro.id,
+        tipo: registro.tipo,
+        timestamp: registro.timestamp,
+        operadorId: registro.operadorId,
+        // ❌ observaciones ahora está cifrado dentro de 'persona'
+        persona: encryptedPersona, // ✅ Incluye datosPersonales + datosVisita + observaciones
+        vehiculo: encryptedVehiculo, // ✅ Solo datos cifrados (si existe)
+        acompanantes: encryptedAcompanantes, // ✅ Acompañantes cifrados (si existen)
         encrypted: true,
+        // ❌ NO incluir datosPersonales, datosVehiculo, datosVisita, acompanantes, observaciones sin cifrar
       }
 
       return await this.db.addRecord('registros', encryptedRegistro)
@@ -137,139 +228,212 @@ export class DatabaseService {
   }
 
   /**
-   * Obtiene registros con descifrado
+   * ✅ NUEVO: Obtiene registros con descifrado completo
    */
-  async getRegistros(filters?: { tipo?: string; fecha?: Date }): Promise<RegistroEntry[]> {
+  async getRegistrosDescifrados(filters?: { tipo?: string; fecha?: Date }): Promise<RegistroEntry[]> {
     this.ensureInitialized()
     try {
-      let registros = (await this.db.getRecords('registros')) as RegistroEntry[]
+      console.log('🔍 [DEBUG] getRegistrosDescifrados() - INICIO')
+      
+      // Obtener registros cifrados de IndexedDB
+      let registrosCifrados = (await this.db.getRecords('registros')) as (RegistroIngresoCifrado | RegistroSalidaCifrado)[]
+      console.log('🔍 [DEBUG] Registros obtenidos de IndexedDB:', registrosCifrados.length)
 
-      // Filtrar si se especifica
+      // Aplicar filtros si se especifica
       if (filters?.tipo) {
-        registros = registros.filter((r) => r.tipo === filters.tipo)
+        registrosCifrados = registrosCifrados.filter((r) => r.tipo === filters.tipo)
+        console.log('🔍 [DEBUG] Después filtro tipo:', registrosCifrados.length)
       }
 
       if (filters?.fecha) {
         const fechaStr = filters.fecha.toDateString()
-        registros = registros.filter((r) => new Date(r.timestamp).toDateString() === fechaStr)
+        registrosCifrados = registrosCifrados.filter((r) => 
+          new Date(r.timestamp).toDateString() === fechaStr
+        )
+        console.log('🔍 [DEBUG] Después filtro fecha:', registrosCifrados.length)
       }
 
-      // Descifrar datos
-      const decryptedRegistros = await Promise.all(
-        registros.map(async (registro) => {
-          const registroWithEncryption = registro as RegistroWithEncryptedData
-          if (!registroWithEncryption.encrypted) return registro
-
-          let persona: unknown = null
-          let vehiculo: unknown = null
-
-          // Descifrar datos según tipo de registro
-          if (registro.tipo === 'ingreso') {
-            if (registroWithEncryption.persona) {
-              try {
-                const encryptedPersona = registroWithEncryption.persona
-                const decryptedPersona = await encryptionService.decrypt(
-                  encryptedPersona.encrypted,
-                  this.sessionKey!,
-                  encryptedPersona.salt,
-                  encryptedPersona.iv,
-                )
-                persona = JSON.parse(decryptedPersona)
-              } catch (error) {
-                console.error('Error descifrando datosPersonales:', error)
-              }
+      // ✅ DESCIFRAR CADA REGISTRO COMPLETAMENTE
+      const registrosDescifrados = await Promise.all(
+        registrosCifrados.map(async (registroCifrado) => {
+          try {
+            if (!registroCifrado.encrypted) {
+              console.log('⚠️ [DEBUG] Registro sin cifrar encontrado:', registroCifrado.id)
+              // Para registros sin cifrar, necesitamos convertirlos al formato correcto
+              // Por ahora, los omitimos ya que todos deberían estar cifrados
+              return null
             }
-          } else {
-            // Para registros de salida, descifrar cedulaBuscada
-            if (registroWithEncryption.persona) {
-              try {
-                const encryptedCedula = registroWithEncryption.persona
-                const decryptedCedula = await encryptionService.decrypt(
-                  encryptedCedula.encrypted,
-                  this.sessionKey!,
-                  encryptedCedula.salt,
-                  encryptedCedula.iv,
-                )
-                persona = decryptedCedula
-              } catch (error) {
-                console.error('Error descifrando cedulaBuscada:', error)
-              }
-            }
-          }
 
-          if (registroWithEncryption.vehiculo) {
-            try {
-              const encryptedVehiculo = registroWithEncryption.vehiculo
-              const decryptedVehiculo = await encryptionService.decrypt(
-                encryptedVehiculo.encrypted,
-                this.sessionKey!,
-                encryptedVehiculo.salt,
-                encryptedVehiculo.iv,
-              )
-              vehiculo = JSON.parse(decryptedVehiculo)
-            } catch (error) {
-              console.error('Error descifrando vehículo:', error)
+            console.log('🔓 [DEBUG] Descifrando registro:', registroCifrado.id)
+            
+            // Descifrar según tipo de registro
+            if (registroCifrado.tipo === 'ingreso') {
+              return await this.descifrarRegistroIngreso(registroCifrado as RegistroIngresoCifrado)
+            } else if (registroCifrado.tipo === 'salida') {
+              return await this.descifrarRegistroSalida(registroCifrado as RegistroSalidaCifrado)
+            } else {
+              // eslint-disable-next-line @typescript-eslint/no-explicit-any
+              console.error('❌ [DEBUG] Tipo de registro desconocido:', (registroCifrado as any).tipo)
+              return null // Retornar null para registros inválidos
             }
+          } catch (error) {
+            console.error('❌ [DEBUG] Error descifrando registro:', registroCifrado.id, error)
+            return null // Omitir registros que no se pueden descifrar
           }
-
-          // Return the original structure without mixing incompatible properties
-          if (registro.tipo === 'ingreso') {
-            const registroIngreso = registro as RegistroIngreso
-            return {
-              ...registroIngreso,
-              // Mantener datos descifrados en su estructura original
-              datosPersonales: persona || registroIngreso.datosPersonales,
-              datosVehiculo: vehiculo || registroIngreso.datosVehiculo,
-            } as RegistroIngreso
-          } else {
-            const registroSalida = registro as RegistroSalida
-            return {
-              ...registroSalida,
-              cedulaBuscada: persona || registroSalida.cedulaBuscada,
-            } as RegistroSalida
-          }
-        }),
+        })
       )
 
-      return decryptedRegistros
+      // Filtrar registros nulos (errores de descifrado)
+      const registrosValidos = registrosDescifrados.filter((r): r is RegistroEntry => r !== null)
+      console.log('✅ [DEBUG] Registros descifrados exitosamente:', registrosValidos.length)
+      
+      return registrosValidos
     } catch (error) {
-      console.error('Error obteniendo registros:', error)
-      return []
+      console.error('❌ [DEBUG] Error en getRegistrosDescifrados:', error)
+      throw new Error(`Error obteniendo registros: ${error}`)
     }
   }
 
   /**
-   * Buscar por documento
+   * ✅ DESCIFRA REGISTRO DE INGRESO COMPLETO
+   */
+  private async descifrarRegistroIngreso(registroCifrado: RegistroIngresoCifrado): Promise<RegistroIngreso> {
+    console.log('🔓 [DEBUG] Descifrando registro de ingreso:', registroCifrado.id)
+    
+    // 1. Descifrar datos de persona (datosPersonales + datosVisita + observaciones)
+    let datosPersonaCompletos: Record<string, unknown> | null = null
+    if (registroCifrado.persona) {
+      const personaDescifrada = await encryptionService.decrypt(
+        registroCifrado.persona.encrypted,
+        this.sessionKey!,
+        registroCifrado.persona.salt,
+        registroCifrado.persona.iv
+      )
+      datosPersonaCompletos = JSON.parse(personaDescifrada) as Record<string, unknown>
+      console.log('✅ [DEBUG] Datos persona descifrados')
+    }
+
+    // 2. Descifrar datos de vehículo (si existe)
+    let datosVehiculo: Record<string, unknown> | null = null
+    if (registroCifrado.vehiculo) {
+      const vehiculoDescifrado = await encryptionService.decrypt(
+        registroCifrado.vehiculo.encrypted,
+        this.sessionKey!,
+        registroCifrado.vehiculo.salt,
+        registroCifrado.vehiculo.iv
+      )
+      datosVehiculo = JSON.parse(vehiculoDescifrado) as Record<string, unknown>
+      console.log('✅ [DEBUG] Datos vehículo descifrados')
+    }
+
+    // 3. Descifrar acompañantes (si existen)
+    let acompanantes: DatosAcompanante[] = []
+    if (registroCifrado.acompanantes) {
+      const acompanantesDescifrados = await encryptionService.decrypt(
+        registroCifrado.acompanantes.encrypted,
+        this.sessionKey!,
+        registroCifrado.acompanantes.salt,
+        registroCifrado.acompanantes.iv
+      )
+      acompanantes = JSON.parse(acompanantesDescifrados)
+      console.log('✅ [DEBUG] Acompañantes descifrados:', acompanantes.length)
+    }
+
+    // 4. Construir registro completo descifrado
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    const personaData = datosPersonaCompletos as any
+    const registroDescifrado: RegistroIngreso = {
+      id: registroCifrado.id,
+      tipo: 'ingreso',
+      timestamp: new Date(registroCifrado.timestamp),
+      operadorId: registroCifrado.operadorId,
+      datosPersonales: personaData?.datosPersonales || {},
+      datosVisita: personaData?.datosVisita || {},
+      observaciones: personaData?.observaciones,
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      datosVehiculo: datosVehiculo as any || undefined,
+      acompanantes: acompanantes.length > 0 ? acompanantes : undefined
+    }
+
+    console.log('✅ [DEBUG] Registro ingreso descifrado completamente')
+    return registroDescifrado
+  }
+
+  /**
+   * ✅ DESCIFRA REGISTRO DE SALIDA
+   */
+  private async descifrarRegistroSalida(registroCifrado: RegistroSalidaCifrado): Promise<RegistroSalida> {
+    console.log('🔓 [DEBUG] Descifrando registro de salida:', registroCifrado.id)
+    
+    // Descifrar cédula buscada
+    let cedulaBuscada = ''
+    if (registroCifrado.persona) {
+      cedulaBuscada = await encryptionService.decrypt(
+        registroCifrado.persona.encrypted,
+        this.sessionKey!,
+        registroCifrado.persona.salt,
+        registroCifrado.persona.iv
+      )
+      console.log('✅ [DEBUG] Cédula buscada descifrada')
+    }
+
+    const registroDescifrado: RegistroSalida = {
+      id: registroCifrado.id,
+      tipo: 'salida',
+      timestamp: new Date(registroCifrado.timestamp),
+      cedulaBuscada,
+      tiempoEstadia: registroCifrado.tiempoEstadia,
+      operadorId: registroCifrado.operadorId,
+      observaciones: registroCifrado.observaciones
+    }
+
+    return registroDescifrado
+  }
+
+  /**
+   * ✅ MÉTODO LEGACY (para compatibilidad)
+   */
+  async getRegistros(filters?: { tipo?: string; fecha?: Date }): Promise<RegistroEntry[]> {
+    // Redirigir al nuevo método
+    return this.getRegistrosDescifrados(filters)
+  }
+
+  /**
+   * ✅ BÚSQUEDA POR CÉDULA (con descifrado)
    */
   async searchByDocumento(documento: string): Promise<RegistroEntry[]> {
-    const registros = await this.getRegistros()
+    console.log('🔍 [DEBUG] Buscando por cédula:', documento)
+    const registros = await this.getRegistrosDescifrados()
+    
     return registros.filter((r) => {
       if (r.tipo === 'ingreso') {
         const registroIngreso = r as RegistroIngreso
-        return registroIngreso.datosPersonales?.cedula === documento
+        return registroIngreso.datosPersonales?.cedula?.includes(documento)
       } else {
         const registroSalida = r as RegistroSalida
-        return registroSalida.cedulaBuscada === documento
+        return registroSalida.cedulaBuscada?.includes(documento)
       }
     })
   }
 
   /**
-   * Buscar por matrícula
+   * ✅ BÚSQUEDA POR MATRÍCULA (con descifrado)
    */
   async searchByMatricula(matricula: string): Promise<RegistroEntry[]> {
-    const registros = await this.getRegistros()
+    console.log('🔍 [DEBUG] Buscando por matrícula:', matricula)
+    const registros = await this.getRegistrosDescifrados()
+    
     return registros.filter((r) => {
       if (r.tipo === 'ingreso') {
         const registroIngreso = r as RegistroIngreso
-        return registroIngreso.datosVehiculo?.matricula === matricula
+        return registroIngreso.datosVehiculo?.matricula?.toUpperCase().includes(matricula.toUpperCase())
       }
       return false
     })
   }
 
   /**
-   * Crear backup cifrado
+   * ✅ CREAR BACKUP CIFRADO
    */
   async createBackup(): Promise<{ success: boolean; error?: string; backupId?: string }> {
     this.ensureInitialized()
@@ -290,18 +454,15 @@ export class DatabaseService {
       // Cifrar backup completo
       const encrypted = await encryptionService.encrypt(JSON.stringify(backupData), this.sessionKey!)
 
-      const backup: BackupData = {
-        id: encryptionService.generateSecureId(),
+      const backup = {
+        id: crypto.randomUUID(),
         timestamp: new Date(),
         data: encrypted,
         encrypted: true,
         size: JSON.stringify(backupData).length,
       }
 
-      const result = await this.db.addRecord(
-        'backups',
-        backup as unknown as Record<string, unknown>,
-      )
+      const result = await this.db.addRecord('backups', backup)
 
       return result.success ? { success: true, backupId: backup.id } : result
     } catch (error) {
@@ -310,62 +471,14 @@ export class DatabaseService {
   }
 
   /**
-   * Restaurar desde backup
-   */
-  async restoreBackup(backupId: string): Promise<{ success: boolean; error?: string }> {
-    this.ensureInitialized()
-    try {
-      const backups = (await this.db.getRecords('backups')) as BackupData[]
-      const backup = backups.find((b) => b.id === backupId)
-
-      if (!backup) {
-        return { success: false, error: 'Backup no encontrado' }
-      }
-
-      // Descifrar backup
-      const encryptedBackup = backup.data as { encrypted: string; salt: string; iv: string }
-      const decryptedData = await encryptionService.decrypt(
-        encryptedBackup.encrypted,
-        this.sessionKey!,
-        encryptedBackup.salt,
-        encryptedBackup.iv,
-      )
-
-      const backupData = JSON.parse(decryptedData)
-
-      // Limpiar stores existentes
-      await this.db.clearStore('registros')
-      await this.db.clearStore('usuarios')
-      await this.db.clearStore('configuracion')
-
-      // Restaurar datos
-      for (const registro of backupData.registros) {
-        await this.db.addRecord('registros', registro)
-      }
-
-      for (const usuario of backupData.usuarios) {
-        await this.db.addRecord('usuarios', usuario)
-      }
-
-      for (const config of backupData.config) {
-        await this.db.addRecord('configuracion', config)
-      }
-
-      return { success: true }
-    } catch (error) {
-      return { success: false, error: `Error restaurando backup: ${error}` }
-    }
-  }
-
-  /**
-   * Limpiar datos antiguos (cumplimiento legal)
+   * ✅ LIMPIAR DATOS ANTIGUOS
    */
   async cleanOldData(daysToKeep: number = 365): Promise<{ success: boolean; cleaned: number }> {
     try {
       const cutoffDate = new Date()
       cutoffDate.setDate(cutoffDate.getDate() - daysToKeep)
 
-      const registros = (await this.db.getRecords('registros')) as RegistroEntry[]
+      const registros = await this.getRegistrosDescifrados()
       const oldRegistros = registros.filter((r) => new Date(r.timestamp) < cutoffDate)
 
       // TODO: Implementar eliminación selectiva por ID

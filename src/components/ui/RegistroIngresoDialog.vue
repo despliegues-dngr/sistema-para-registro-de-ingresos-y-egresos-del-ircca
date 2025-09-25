@@ -61,15 +61,10 @@
 <script setup lang="ts">
 import { ref, computed, watch } from 'vue'
 import { useAuthStore } from '@/stores/auth'
-import { useRegistroStore, type DatosPersonales, type DatosVisita, type DatosVehiculo } from '@/stores/registro'
+import { useRegistroStore, type RegistroIngresoData } from '@/stores/registro'
 import RegistroIngresoForm from '@/components/forms/RegistroIngresoForm.vue'
 
-interface RegistroIngresoData {
-  datosPersonales: DatosPersonales
-  datosVisita: DatosVisita
-  datosVehiculo?: DatosVehiculo
-  observaciones?: string
-}
+// ✅ Usar el tipo correcto del store que incluye acompanantes
 
 interface Props {
   modelValue: boolean
@@ -112,10 +107,15 @@ const onSubmit = async (registroData: RegistroIngresoData) => {
     const operadorId = authStore.user?.id || 'unknown'
 
     // Registrar ingreso en el store
+    console.log('🔍 DEBUG RegistroIngresoDialog - Datos antes de enviar al store:', registroData)
+    console.log('🔍 DEBUG RegistroIngresoDialog - ¿Tiene acompañantes?', !!registroData.acompanantes)
+    console.log('🔍 DEBUG RegistroIngresoDialog - Cantidad acompañantes:', registroData.acompanantes?.length || 0)
+    
     registroStore.registrarIngreso({
       datosPersonales: registroData.datosPersonales,
       datosVisita: registroData.datosVisita,
       datosVehiculo: registroData.datosVehiculo,
+      acompanantes: registroData.acompanantes, // ✅ INCLUIR ACOMPAÑANTES
       observaciones: registroData.observaciones,
     }, operadorId)
 

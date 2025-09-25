@@ -89,14 +89,14 @@ const showRegistroSalida = ref(false)
 
 // Estadísticas en tiempo real desde el store de registro
 const peopleData = computed(() => ({
-  personasDentro: registroStore.estadisticasHoy.personasDentro,
-  ingresosHoy: registroStore.estadisticasHoy.ingresosHoy,
-  salidasHoy: registroStore.estadisticasHoy.salidasHoy,
+  personasDentro: registroStore.personasDentro.length,
+  ingresosHoy: registroStore.ingresosHoy.length,
+  salidasHoy: registroStore.salidasHoy.length,
 }))
 
 // Estadísticas detalladas de vehículos por categoría - Usadas por VehicleStatsCard
 const vehicleData = computed(() => ({
-  autos: registroStore.estadisticasHoy.vehiculosDentro, // TODO: Separar por categorías
+  autos: registroStore.personasDentro.filter(p => p.conVehiculo).length,
   motos: 0, // TODO: Implementar categorización
   camiones: 0, // TODO: Implementar categorización
   buses: 0, // TODO: Implementar categorización
@@ -176,9 +176,14 @@ const handleSessionTimeout = async () => {
 }
 
 // Lifecycle hooks para el sistema de timeout
-onMounted(() => {
+onMounted(async () => {
   console.log('Inicializando sistema de timeout en dashboard')
   initializeTimeout()
+  
+  // ✅ INICIALIZAR STORE DE REGISTROS CON DATOS REALES
+  console.log('🚀 [DASHBOARD] Inicializando store de registros con usuario autenticado')
+  await registroStore.initializeStoreWhenAuthenticated()
+  console.log('✅ [DASHBOARD] Store de registros inicializado')
 })
 
 onUnmounted(() => {
