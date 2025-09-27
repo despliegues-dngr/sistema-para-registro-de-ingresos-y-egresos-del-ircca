@@ -152,12 +152,33 @@ export const useRegistroStore = defineStore('registro', () => {
    */
   async function registrarIngreso(datos: RegistroIngresoData, operadorId: string = 'op-001') {
     loading.value = true
+    
+    // 🔍 DEBUG: Log de datos de entrada
+    console.log('🚀 [STORE DEBUG] === REGISTRANDO INGRESO ===')
+    console.log('🚀 [STORE DEBUG] Datos completos recibidos:', JSON.stringify(datos, null, 2))
+    console.log('🚀 [STORE DEBUG] ¿Tiene vehículo?', !!datos.datosVehiculo)
+    if (datos.datosVehiculo) {
+      console.log('🚀 [STORE DEBUG] Tipo de vehículo:', datos.datosVehiculo.tipo)
+      console.log('🚀 [STORE DEBUG] Matrícula:', datos.datosVehiculo.matricula)
+    }
+    console.log('🚀 [STORE DEBUG] ==========================================')
+    
     try {
       const result = await operations.registrarIngreso(datos, operadorId)
       
       if (result.success && result.registro) {
         // Actualizar estado local solo si BD fue exitosa
         registrosRaw.value.unshift(result.registro)
+        
+        // 🔍 DEBUG: Log de registro guardado
+        console.log('✅ [STORE DEBUG] === REGISTRO GUARDADO EXITOSO ===')
+        console.log('✅ [STORE DEBUG] Registro completo guardado:', JSON.stringify(result.registro, null, 2))
+        const registroIngreso = result.registro as RegistroIngreso
+        if (registroIngreso.datosVehiculo) {
+          console.log('✅ [STORE DEBUG] Vehículo guardado - Tipo:', registroIngreso.datosVehiculo.tipo)
+          console.log('✅ [STORE DEBUG] Vehículo guardado - Matrícula:', registroIngreso.datosVehiculo.matricula)
+        }
+        console.log('✅ [STORE DEBUG] =======================================')
         
         // Agregar persona principal a personas dentro
         const nuevaPersona: PersonaDentro = {
@@ -373,6 +394,15 @@ export const useRegistroStore = defineStore('registro', () => {
       )
       
       if (!tieneSalida) {
+        // 🔍 DEBUG: Log del registro que se está procesando
+        console.log(`🏗️ [REBUILD DEBUG] Procesando ingreso ID: ${ingreso.id}`)
+        console.log(`🏗️ [REBUILD DEBUG] Persona: ${ingreso.datosPersonales.nombre} ${ingreso.datosPersonales.apellido}`)
+        console.log(`🏗️ [REBUILD DEBUG] ¿Tiene vehículo?`, !!ingreso.datosVehiculo)
+        if (ingreso.datosVehiculo) {
+          console.log(`🏗️ [REBUILD DEBUG] Tipo vehículo desde BD:`, ingreso.datosVehiculo.tipo)
+          console.log(`🏗️ [REBUILD DEBUG] Matrícula desde BD:`, ingreso.datosVehiculo.matricula)
+        }
+        
         // Agregar titular
         personasDentro.value.push({
           cedula: ingreso.datosPersonales.cedula,
@@ -383,6 +413,8 @@ export const useRegistroStore = defineStore('registro', () => {
           areaVisitar: ingreso.datosVisita.areaVisitar,
           conVehiculo: !!ingreso.datosVehiculo
         })
+        
+        console.log(`🏗️ [REBUILD DEBUG] Titular agregado. Total personas dentro: ${personasDentro.value.length}`)
         
         // Agregar acompañantes
         if (ingreso.acompanantes) {
@@ -442,6 +474,7 @@ export const useRegistroStore = defineStore('registro', () => {
   return {
     // State
     registros,
+    registrosRaw,  // 🔧 EXPONER registrosRaw directamente
     personasDentro,
     loading,
     lastSync,

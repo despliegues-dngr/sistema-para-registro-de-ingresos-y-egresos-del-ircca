@@ -9,12 +9,18 @@
       <v-row>
         <!-- Autos -->
         <v-col cols="6" sm="3" class="mb-4">
-          <div class="vehicle-item">
+          <div 
+            class="vehicle-item clickable-vehicle" 
+            @click="handleVehicleClick('Auto')"
+            role="button"
+            tabindex="0"
+            @keyup.enter="handleVehicleClick('Auto')"
+          >
             <div class="d-flex align-center">
               <v-avatar size="48" color="primary" class="text-white mr-4">
                 <v-icon size="24">mdi-car</v-icon>
               </v-avatar>
-              <div>
+              <div class="flex-grow-1">
                 <div class="text-h5 font-weight-bold text-primary mb-0">
                   {{ vehicleData.autos }}
                 </div>
@@ -26,12 +32,18 @@
 
         <!-- Motos -->
         <v-col cols="6" sm="3" class="mb-4">
-          <div class="vehicle-item">
+          <div 
+            class="vehicle-item clickable-vehicle" 
+            @click="handleVehicleClick('Moto')"
+            role="button"
+            tabindex="0"
+            @keyup.enter="handleVehicleClick('Moto')"
+          >
             <div class="d-flex align-center">
               <v-avatar size="48" color="accent" class="text-white mr-4">
                 <v-icon size="24">mdi-motorbike</v-icon>
               </v-avatar>
-              <div>
+              <div class="flex-grow-1">
                 <div class="text-h5 font-weight-bold text-accent mb-0">
                   {{ vehicleData.motos }}
                 </div>
@@ -43,12 +55,18 @@
 
         <!-- Camiones -->
         <v-col cols="6" sm="3" class="mb-4">
-          <div class="vehicle-item">
+          <div 
+            class="vehicle-item clickable-vehicle" 
+            @click="handleVehicleClick('Camión')"
+            role="button"
+            tabindex="0"
+            @keyup.enter="handleVehicleClick('Camión')"
+          >
             <div class="d-flex align-center">
               <v-avatar size="48" color="warning" class="text-white mr-4">
                 <v-icon size="24">mdi-truck</v-icon>
               </v-avatar>
-              <div>
+              <div class="flex-grow-1">
                 <div class="text-h5 font-weight-bold text-warning mb-0">
                   {{ vehicleData.camiones }}
                 </div>
@@ -60,12 +78,18 @@
 
         <!-- Buses -->
         <v-col cols="6" sm="3" class="mb-4">
-          <div class="vehicle-item">
+          <div 
+            class="vehicle-item clickable-vehicle" 
+            @click="handleVehicleClick('Bus')"
+            role="button"
+            tabindex="0"
+            @keyup.enter="handleVehicleClick('Bus')"
+          >
             <div class="d-flex align-center">
               <v-avatar size="48" color="success" class="text-white mr-4">
                 <v-icon size="24">mdi-bus</v-icon>
               </v-avatar>
-              <div>
+              <div class="flex-grow-1">
                 <div class="text-h5 font-weight-bold text-success mb-0">
                   {{ vehicleData.buses }}
                 </div>
@@ -101,6 +125,11 @@ interface Props {
 
 const props = defineProps<Props>()
 
+// Emits para comunicar clicks al componente padre
+const emit = defineEmits<{
+  'vehicle-click': [tipoVehiculo: string]
+}>()
+
 // Calcular total de vehículos
 const totalVehicles = computed(() => {
   return (
@@ -110,6 +139,11 @@ const totalVehicles = computed(() => {
     props.vehicleData.buses
   )
 })
+
+// Handler para clicks en vehículos
+function handleVehicleClick(tipoVehiculo: string) {
+  emit('vehicle-click', tipoVehiculo)
+}
 </script>
 
 <style scoped>
@@ -141,6 +175,32 @@ const totalVehicles = computed(() => {
   background-color: rgba(0, 0, 0, 0.04);
   transform: scale(1.02);
   box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+}
+
+/* Estilos para vehículos clickeables */
+.clickable-vehicle {
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.clickable-vehicle:hover {
+  background-color: rgba(0, 0, 0, 0.06) !important;
+  transform: scale(1.05);
+  box-shadow: 0 6px 16px rgba(0, 0, 0, 0.15);
+}
+
+.clickable-vehicle:focus {
+  outline: 2px solid #1976D2;
+  outline-offset: 2px;
+}
+
+.click-indicator {
+  opacity: 0.6;
+  transition: opacity 0.2s ease;
+}
+
+.clickable-vehicle:hover .click-indicator {
+  opacity: 1;
 }
 
 /* Responsive adjustments */

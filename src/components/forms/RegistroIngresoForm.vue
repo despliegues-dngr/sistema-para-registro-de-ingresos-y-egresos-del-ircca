@@ -465,6 +465,16 @@ const handleSubmit = async () => {
     // Solo incluir datos de vehículo si hay información
     if (hasVehiculoData.value) {
       submitData.datosVehiculo = { ...formData.datosVehiculo }
+      
+      // 🔍 DEBUG: Log de datos de vehículo del formulario
+      console.log('📝 [FORM DEBUG] === DATOS DE VEHÍCULO DESDE FORMULARIO ===')
+      console.log('📝 [FORM DEBUG] hasVehiculoData:', hasVehiculoData.value)
+      console.log('📝 [FORM DEBUG] formData.datosVehiculo.tipo:', formData.datosVehiculo.tipo)
+      console.log('📝 [FORM DEBUG] formData.datosVehiculo.matricula:', formData.datosVehiculo.matricula)
+      console.log('📝 [FORM DEBUG] submitData.datosVehiculo:', submitData.datosVehiculo)
+      console.log('📝 [FORM DEBUG] =============================================')
+    } else {
+      console.log('📝 [FORM DEBUG] No hay datos de vehículo - hasVehiculoData:', hasVehiculoData.value)
     }
 
     // ✅ Incluir acompañantes si existen

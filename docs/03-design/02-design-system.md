@@ -65,7 +65,7 @@ _(Implementación detallada en: `docs/02-architecture/04-vuetify-guidelines.md`)
   - Campo de texto para "Usuario".
   - Campo de texto para "Contraseña" (tipo password).
   - Botón de acción principal para "Ingresar".
-- **Footer:** Un pie de tarjeta con texto institucional ("Gobierno de Uruguay - Sistema Oficial").
+- **Footer:** Un pie de tarjeta con texto institucional ("@2025, Dirección Nacional Guardia Republicana").
 
 ### 3.2. Dashboard Principal
 

@@ -8,7 +8,7 @@
 export const SYSTEM_INFO = {
   NAME: 'Sistema para registros del IRCCA',
   FULL_NAME: 'Instituto de Regulación y Control del Cannabis',
-  GOVERNMENT: 'Gobierno de Uruguay - Sistema Oficial',
+  GOVERNMENT: '@2025, Dirección Nacional Guardia Republicana',
   VERSION: '1.0.0',
   ENVIRONMENT: import.meta.env.MODE || 'development',
 } as const
