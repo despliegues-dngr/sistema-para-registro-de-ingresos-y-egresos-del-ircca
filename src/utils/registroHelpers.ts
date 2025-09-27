@@ -32,8 +32,7 @@ export const getInitialRegistros = (): RegistroEntry[] => {
         apellido: 'González'
       },
       datosVisita: {
-        tipoVisitante: 'Funcionario Público',
-        areaVisitar: 'Administración'
+        destino: 'IRCCA'
       },
       datosVehiculo: {
         tipo: 'Auto',
@@ -44,8 +43,7 @@ export const getInitialRegistros = (): RegistroEntry[] => {
           cedula: '23456789',
           nombre: 'Juan',
           apellido: 'Pérez',
-          tipoVisitante: 'Funcionario Público',
-          areaVisitar: 'Administración'
+          destino: 'IRCCA'
         }
       ],
       operadorId: 'op-001'
@@ -61,8 +59,7 @@ export const getInitialRegistros = (): RegistroEntry[] => {
         apellido: 'Silva'
       },
       datosVisita: {
-        tipoVisitante: 'Visitante Oficial',
-        areaVisitar: 'Dirección General'
+        destino: 'Ligeral'
       },
       datosVehiculo: {
         tipo: 'Camión',
@@ -81,8 +78,7 @@ export const getInitialRegistros = (): RegistroEntry[] => {
         apellido: 'Rodríguez'
       },
       datosVisita: {
-        tipoVisitante: 'Proveedor/Contratista',
-        areaVisitar: 'Mantenimiento'
+        destino: 'Simbiosys'
       },
       operadorId: 'op-001'
     }
@@ -103,8 +99,7 @@ export const getInitialPersonasDentro = (): PersonaDentro[] => {
       nombre: 'María',
       apellido: 'González',
       ingresoTimestamp: new Date(Date.now() - 2 * 60 * 60 * 1000), // 2 horas atrás
-      tipoVisitante: 'Funcionario Público',
-      areaVisitar: 'Administración',
+      destino: 'IRCCA',
       conVehiculo: true
     },
     {
@@ -112,8 +107,7 @@ export const getInitialPersonasDentro = (): PersonaDentro[] => {
       nombre: 'Juan',
       apellido: 'Pérez',
       ingresoTimestamp: new Date(Date.now() - 2 * 60 * 60 * 1000), // 2 horas atrás  
-      tipoVisitante: 'Funcionario Público',
-      areaVisitar: 'Administración',
+      destino: 'IRCCA',
       conVehiculo: false // Acompañante, no tiene vehículo propio
     },
     {
@@ -121,8 +115,7 @@ export const getInitialPersonasDentro = (): PersonaDentro[] => {
       nombre: 'Carlos',
       apellido: 'Rodríguez',
       ingresoTimestamp: new Date(Date.now() - 30 * 60 * 60 * 1000), // 30 minutos atrás
-      tipoVisitante: 'Proveedor/Contratista',
-      areaVisitar: 'Mantenimiento',
+      destino: 'Simbiosys',
       conVehiculo: false
     },
     {
@@ -130,8 +123,7 @@ export const getInitialPersonasDentro = (): PersonaDentro[] => {
       nombre: 'Ana',
       apellido: 'Silva',
       ingresoTimestamp: new Date(Date.now() - 4 * 60 * 60 * 1000), // 4 horas atrás
-      tipoVisitante: 'Visitante Oficial',
-      areaVisitar: 'Administración',
+      destino: 'IRCCA',
       conVehiculo: true
     }
   ]
@@ -153,7 +145,7 @@ export const createRegistroWrapper = (registro: RegistroEntry) => {
           documento: reg.datosPersonales.cedula,
           nombre: reg.datosPersonales.nombre,
           apellido: reg.datosPersonales.apellido,
-          motivo: reg.datosVisita.areaVisitar
+          motivo: reg.datosVisita.destino
         }
       } else {
         const reg = registro as RegistroSalida

@@ -62,12 +62,8 @@
                       <span>Ingreso: {{ formatearHora((persona as any)?.ingresoTimestamp) }}</span>
                     </div>
                     <div class="d-flex align-center">
-                      <v-icon size="16" class="mr-2">mdi-account-circle</v-icon>
-                      <span>Tipo: {{ (persona as any)?.tipoVisitante }}</span>
-                    </div>
-                    <div class="d-flex align-center">
-                      <v-icon size="16" class="mr-2">mdi-map-marker</v-icon>
-                      <span>Área: {{ (persona as any)?.areaVisitar }}</span>
+                      <v-icon size="16" class="mr-2">mdi-domain</v-icon>
+                      <span>Destino: {{ (persona as any)?.destino }}</span>
                     </div>
                   </div>
                 </v-list-item-subtitle>
@@ -183,8 +179,7 @@ interface PersonaModalData {
   cedula: string
   nombre: string
   apellido: string
-  areaVisitar: string
-  tipoVisitante: string
+  destino: string
   ingresoTimestamp?: Date
   conVehiculo?: boolean
 }
@@ -247,13 +242,11 @@ const filteredData = computed(() => {
       const personaData = itemData as PersonaModalData
       const nombre = `${personaData?.nombre || ''} ${personaData?.apellido || ''}`.toLowerCase()
       const cedula = (personaData?.cedula || '').toString().toLowerCase()
-      const area = (personaData?.areaVisitar || '').toLowerCase()
-      const tipo = (personaData?.tipoVisitante || '').toLowerCase()
+      const destino = (personaData?.destino || '').toLowerCase()
       
       return nombre.includes(query) || 
              cedula.includes(query) || 
-             area.includes(query) ||
-             tipo.includes(query)
+             destino.includes(query)
     } else {
       // Para vehículos
       const vehiculoData = itemData as VehiculoModalData

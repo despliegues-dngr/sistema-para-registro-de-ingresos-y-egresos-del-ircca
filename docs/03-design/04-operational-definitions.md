@@ -12,7 +12,7 @@ Esta sección define el origen y la gestión de las opciones para los campos de 
 
 ### 1.1. Decisión
 
-Para la Versión 1.0, las listas de opciones para los selectores **"Tipo de Visitante"** y **"Área a Visitar"** serán **listas estáticas definidas como constantes** dentro del código fuente de la aplicación.
+Para la Versión 1.0, las listas de opciones para el selector **"Destino"** serán **listas estáticas definidas como constantes** dentro del código fuente de la aplicación.
 
 ### 1.2. Justificación
 
@@ -24,27 +24,14 @@ Para la Versión 1.0, las listas de opciones para los selectores **"Tipo de Visi
 
 Las listas se definirán en un archivo de constantes (ej. `src/config/constants.ts`).
 
-**Lista: Tipo de Visitante**
+**Lista: Destino**
 ```typescript
-export const VISITOR_TYPES = [
-  'Funcionario',
-  'Visitante',
-  'Proveedor',
-  'Contratista',
-  'Otro'
-];
-```
-
-**Lista: Área a Visitar**
-```typescript
-export const VISIT_AREAS = [
-  'Presidencia',
-  'Gerencia General',
-  'Tecnologías de la Información',
-  'Jurídica y Notarial',
-  'Administración y Finanzas',
-  'Fiscalización y Control',
-  'Recepción'
+export const DESTINOS = [
+  'IRCCA',
+  'Ligeral',
+  'Simbiosys',
+  'Jabelor',
+  'Otra'
 ];
 ```
 
@@ -54,22 +41,13 @@ export const VISIT_AREAS = [
 
 Para cumplir con el objetivo de "<15 segundos para visitantes recurrentes", se define un flujo de UI/UX optimizado.
 
-### 2.1. Flujo para "Funcionario"
+### 2.1. Flujo de Registro Optimizado
 
-1.  En el modal de registro de ingreso, el Operador selecciona **"Tipo de Visitante: Funcionario"**.
-2.  La interfaz reacciona ocultando la mayoría de los campos del formulario. Solo permanecerán visibles:
-    *   Un campo de búsqueda de Cédula.
-    *   El botón "Registrar Ingreso".
-3.  El Operador ingresa la C.I. del funcionario y presiona "Registrar Ingreso".
-4.  El sistema busca al funcionario en la base de datos local, crea el registro de ingreso y cierra el modal, actualizando el Dashboard.
-
-### 2.2. Flujo para "Visitante" Recurrente (Autocompletado)
-
-1.  En el modal de registro de ingreso, el Operador mantiene el tipo "Visitante".
-2.  Ingresa el número de C.I. en el campo correspondiente.
-3.  Al salir del campo (on-blur) o tras una breve pausa, el sistema busca si esa C.I. ya existe.
-4.  Si existe, los campos **"Nombre"** y **"Apellido"** se rellenan automáticamente.
-5.  El Operador solo necesita completar el resto de la información de la visita (Área, Motivo) y guardar.
+1.  En el modal de registro de ingreso, el Operador ingresa directamente los datos requeridos.
+2.  Al introducir el número de C.I., el sistema busca automáticamente si esa persona ya existe en registros anteriores.
+3.  Si existe, los campos **"Nombre"** y **"Apellido"** se rellenan automáticamente (autocompletado).
+4.  El Operador solo necesita completar el resto de la información de la visita (Destino) y datos opcionales del vehículo.
+5.  Presiona "Registrar Ingreso" para completar el proceso.
 
 ---
 

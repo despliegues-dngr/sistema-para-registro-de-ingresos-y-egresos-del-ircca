@@ -81,21 +81,12 @@
                 <!-- Información de visita -->
                 <div class="d-flex flex-wrap gap-1">
                   <v-chip 
-                    :color="getTipoVisitanteColor(item.raw.persona.tipoVisitante)" 
-                    variant="tonal" 
-                    size="x-small"
-                    :prepend-icon="getTipoVisitanteIcon(item.raw.persona.tipoVisitante)"
-                  >
-                    {{ item.raw.persona.tipoVisitante }}
-                  </v-chip>
-                  
-                  <v-chip 
                     color="info" 
                     variant="tonal" 
                     size="x-small"
                     prepend-icon="mdi-domain"
                   >
-                    {{ item.raw.persona.areaVisitar }}
+                    {{ item.raw.persona.destino }}
                   </v-chip>
                 </div>
               </div>
@@ -245,23 +236,13 @@
               
               <div class="mb-3">
                 <v-chip 
-                  :color="getTipoVisitanteColor(personaSeleccionada.tipoVisitante)" 
-                  variant="tonal" 
-                  size="small"
-                  :prepend-icon="getTipoVisitanteIcon(personaSeleccionada.tipoVisitante)"
-                  class="mr-2 mb-2"
-                >
-                  {{ personaSeleccionada.tipoVisitante }}
-                </v-chip>
-                
-                <v-chip 
                   color="info" 
                   variant="tonal" 
                   size="small"
                   prepend-icon="mdi-domain"
                   class="mb-2"
                 >
-                  {{ personaSeleccionada.areaVisitar }}
+                  {{ personaSeleccionada.destino }}
                 </v-chip>
               </div>
 
@@ -381,21 +362,12 @@
                     </div>
                     <div class="d-flex align-center ml-4 mt-1">
                       <v-chip 
-                        :color="getTipoVisitanteColor(acompanante.tipoVisitante)" 
-                        variant="tonal" 
-                        size="x-small"
-                        :prepend-icon="getTipoVisitanteIcon(acompanante.tipoVisitante)"
-                        class="mr-1"
-                      >
-                        {{ acompanante.tipoVisitante }}
-                      </v-chip>
-                      <v-chip 
                         color="info" 
                         variant="tonal" 
                         size="x-small"
                         prepend-icon="mdi-domain"
                       >
-                        {{ acompanante.areaVisitar }}
+                        {{ acompanante.destino }}
                       </v-chip>
                     </div>
                   </div>
@@ -651,35 +623,6 @@ const calcularTiempoEstadiaEnMinutos = (ingresoTimestamp: Date): number => {
 
 // formatearHoraIngreso removido por no estar en uso
 
-const getTipoVisitanteColor = (tipo: string): string => {
-  const colores: Record<string, string> = {
-    'Funcionario Público': 'primary',
-    'Proveedor/Contratista': 'orange',
-    'Visitante Oficial': 'purple',
-    'Técnico/Mantenimiento': 'green',
-    'Abogado/Representante Legal': 'blue',
-    'Familiar de Interno': 'pink',
-    'Organización Civil': 'teal',
-    'Otro': 'grey'
-  }
-  return colores[tipo] || 'grey'
-}
-
-const getTipoVisitanteIcon = (tipo: string): string => {
-  const iconos: Record<string, string> = {
-    'Funcionario Público': 'mdi-account-tie',
-    'Proveedor/Contratista': 'mdi-hammer-wrench',
-    'Visitante Oficial': 'mdi-account-star',
-    'Técnico/Mantenimiento': 'mdi-tools',
-    'Abogado/Representante Legal': 'mdi-scale-balance',
-    'Familiar de Interno': 'mdi-account-heart',
-    'Organización Civil': 'mdi-account-group',
-    'Personal Externo': 'mdi-account-plus',
-    'Otro': 'mdi-account-question'
-  }
-  return iconos[tipo] || 'mdi-account'
-}
-
 const getVehiculoInfo = (cedula: string) => {
   console.log('🔍 DEBUG getVehiculoInfo - Buscando vehículo para cédula:', cedula)
   console.log('🔍 DEBUG getVehiculoInfo - Total registros:', registroStore.registros.length)
@@ -754,8 +697,7 @@ const getAcompanantesData = (cedulaTitular: string) => {
       cedula: acomp.cedula,
       nombre: acomp.nombre,
       apellido: acomp.apellido,
-      tipoVisitante: acomp.tipoVisitante,
-      areaVisitar: acomp.areaVisitar
+      destino: acomp.destino
     }))
   }
   return []

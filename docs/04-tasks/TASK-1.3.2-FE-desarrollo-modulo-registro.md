@@ -46,9 +46,8 @@
   - [x] Campo de cédula como foco inicial
 
 - [x] **1.3 Implementar formulario de datos de visita**
-  - [x] Selector de tipo de visitante
-  - [x] Selector de área a visitar
-  - [x] Campo de texto para motivo
+  - [x] Selector de destino
+  - [x] Campo de observaciones opcional
 
 - [x] **1.4 Implementar sección de vehículo (expandible)**
   - [x] Campos: Matricula (ABC1234), Modelo, Color

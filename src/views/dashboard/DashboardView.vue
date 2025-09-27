@@ -265,8 +265,7 @@ const ingresosHoyData = computed(() => {
       nombre: ingreso.datosPersonales.nombre,
       apellido: ingreso.datosPersonales.apellido,
       ingresoTimestamp: ingreso.timestamp,
-      tipoVisitante: ingreso.datosVisita.tipoVisitante,
-      areaVisitar: ingreso.datosVisita.areaVisitar,
+      destino: ingreso.datosVisita.destino,
       conVehiculo: !!ingreso.datosVehiculo
     }))
 })
@@ -293,8 +292,7 @@ const salidasHoyData = computed(() => {
         nombre: ingresoCorrespondiente?.datosPersonales.nombre || 'N/A',
         apellido: ingresoCorrespondiente?.datosPersonales.apellido || '',
         ingresoTimestamp: salida.timestamp,
-        tipoVisitante: ingresoCorrespondiente?.datosVisita.tipoVisitante || 'Salida registrada',
-        areaVisitar: ingresoCorrespondiente?.datosVisita.areaVisitar || 'N/A',
+        destino: ingresoCorrespondiente?.datosVisita.destino || 'N/A',
         conVehiculo: !!ingresoCorrespondiente?.datosVehiculo
       }
     })

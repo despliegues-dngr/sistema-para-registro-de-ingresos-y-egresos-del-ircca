@@ -30,8 +30,7 @@ export class TestCifradoCompleto {
           apellido: 'BERNI GONZALEZ'
         },
         datosVisita: {
-          tipoVisitante: 'Funcionario Público',
-          areaVisitar: 'Dirección General'
+          destino: 'IRCCA'
         },
         datosVehiculo: {
           tipo: 'Camioneta',
@@ -42,22 +41,19 @@ export class TestCifradoCompleto {
             cedula: '45123789',
             nombre: 'Ana María',
             apellido: 'RODRIGUEZ LOPEZ',
-            tipoVisitante: 'Personal Externo',
-            areaVisitar: 'Administración'
+            destino: 'Ligeral'
           },
           {
             cedula: '38567234',
             nombre: 'Carlos Eduardo',
             apellido: 'MARTINEZ SILVA',
-            tipoVisitante: 'Proveedor/Contratista',
-            areaVisitar: 'Mantenimiento'
+            destino: 'Simbiosys'
           },
           {
             cedula: '52789456',
             nombre: 'Laura Beatriz',
             apellido: 'GARCIA FERNANDEZ',
-            tipoVisitante: 'Visitante Oficial',
-            areaVisitar: 'Seguridad'
+            destino: 'Jabelor'
           }
         ],
         observaciones: 'Visita de inspección técnica programada. Vehículo oficial con 3 acompañantes del equipo técnico.'
@@ -100,9 +96,6 @@ export class TestCifradoCompleto {
       }
       
       console.log('✅ [TEST] Validando datos de visita...')
-      if (registroIngreso.datosVisita?.tipoVisitante !== datosRegistro.datosVisita.tipoVisitante) {
-        throw new Error('❌ Tipo visitante no descifrado correctamente')
-      }
       
       console.log('✅ [TEST] Validando datos de vehículo...')
       if (registroIngreso.datosVehiculo?.matricula !== datosRegistro.datosVehiculo?.matricula) {
@@ -196,16 +189,14 @@ export class TestCifradoCompleto {
             apellido: `Apellido ${i}`
           },
           datosVisita: {
-            tipoVisitante: 'Funcionario Público',
-            areaVisitar: 'Administración'
+            destino: 'IRCCA'
           },
           acompanantes: [
             {
               cedula: `9876543${i}`,
               nombre: `Acompañante ${i}`,
               apellido: `Acomp Apellido ${i}`,
-              tipoVisitante: 'Personal Externo',
-              areaVisitar: 'Seguridad'
+              destino: 'Otra'
             }
           ],
           observaciones: `Registro de prueba número ${i}`

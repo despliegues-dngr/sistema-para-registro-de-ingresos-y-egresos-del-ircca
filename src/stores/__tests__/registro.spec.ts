@@ -119,8 +119,7 @@ describe('useRegistroStore', () => {
           apellido: 'Pérez'
         },
         datosVisita: {
-          tipoVisitante: 'Funcionario',
-          areaVisitar: 'Administración'
+          destino: 'IRCCA'
         }
       }
 

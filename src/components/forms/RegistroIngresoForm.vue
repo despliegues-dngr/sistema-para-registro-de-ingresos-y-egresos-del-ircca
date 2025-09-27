@@ -63,27 +63,14 @@
           />
         </v-col>
 
-        <!-- Tipo de Visitante -->
-        <v-col cols="12" md="6">
-          <v-select
-            v-model="formData.datosVisita.tipoVisitante"
-            label="Tipo de Visitante"
-            prepend-inner-icon="mdi-account-group"
-            :items="tiposVisitante"
-            :rules="requiredRules"
-            variant="outlined"
-            density="comfortable"
-            required
-          />
-        </v-col>
 
-        <!-- Área a Visitar -->
+        <!-- Destino -->
         <v-col cols="12">
           <v-select
-            v-model="formData.datosVisita.areaVisitar"
-            label="Área a Visitar"
+            v-model="formData.datosVisita.destino"
+            label="Destino"
             prepend-inner-icon="mdi-domain"
-            :items="areasVisitar"
+            :items="destinos"
             :rules="requiredRules"
             variant="outlined"
             density="comfortable"
@@ -219,27 +206,13 @@
               />
             </v-col>
 
-            <!-- Tipo de Visitante del acompañante -->
-            <v-col cols="12" md="6">
-              <v-select
-                v-model="acompanante.tipoVisitante"
-                label="Tipo de Visitante"
-                prepend-inner-icon="mdi-account-group"
-                :items="tiposVisitante"
-                :rules="requiredRules"
-                variant="outlined"
-                density="comfortable"
-                required
-              />
-            </v-col>
-
-            <!-- Área a Visitar del acompañante -->
+            <!-- Destino del acompañante -->
             <v-col cols="12">
               <v-select
-                v-model="acompanante.areaVisitar"
-                label="Área a Visitar"
+                v-model="acompanante.destino"
+                label="Destino"
                 prepend-inner-icon="mdi-domain"
-                :items="areasVisitar"
+                :items="destinos"
                 :rules="requiredRules"
                 variant="outlined"
                 density="comfortable"
@@ -323,8 +296,7 @@ const formData = reactive({
     apellido: '',
   } as DatosPersonales,
   datosVisita: {
-    tipoVisitante: '',
-    areaVisitar: '',
+    destino: '',
   } as DatosVisita,
   datosVehiculo: {
     tipo: '',
@@ -334,26 +306,13 @@ const formData = reactive({
   observaciones: ''
 })
 
-// Opciones para selectores
-const tiposVisitante = [
-  'Funcionario Público',
-  'Proveedor/Contratista',
-  'Visitante Oficial',
-  'Personal Externo',
-  'Otro'
-]
 
-const areasVisitar = [
-  'Dirección General',
-  'Administración',
-  'Seguridad',
-  'Talleres',
-  'Cocina/Comedor',
-  'Enfermería',
-  'Biblioteca',
-  'Patio de Visitas',
-  'Depósito',
-  'Mantenimiento',
+const destinos = [
+  'IRCCA',
+  'Ligeral',
+  'Simbiosys',
+  'Jabelor',
+  'Otra'
 ]
 
 const tiposVehiculo = [
@@ -382,8 +341,7 @@ const isFormValid = computed(() => {
                         formData.datosPersonales.apellido.length >= 2
 
   // Validar datos de visita obligatorios
-  const visitaValid = formData.datosVisita.tipoVisitante.length > 0 &&
-                      formData.datosVisita.areaVisitar.length > 0
+  const visitaValid = formData.datosVisita.destino.length > 0
 
   // Si hay datos de vehículo, validar que estén completos
   let vehiculoValid = true
@@ -399,8 +357,7 @@ const isFormValid = computed(() => {
       acomp.cedula.length >= 7 &&
       acomp.nombre.length >= 2 &&
       acomp.apellido.length >= 2 &&
-      acomp.tipoVisitante.length > 0 &&
-      acomp.areaVisitar.length > 0
+      acomp.destino.length > 0
     )
   }
 
@@ -501,8 +458,7 @@ const addAcompanante = () => {
       cedula: '',
       nombre: '',
       apellido: '',
-      tipoVisitante: '',
-      areaVisitar: ''
+      destino: ''
     })
     
     console.log('✅ DEBUG addAcompanante - Acompañante agregado. Nueva cantidad:', formData.acompanantes.length)
@@ -527,7 +483,7 @@ const removeAcompanante = (index: number) => {
 
 const resetForm = () => {
   formData.datosPersonales = { cedula: '', nombre: '', apellido: '' }
-  formData.datosVisita = { tipoVisitante: '', areaVisitar: '' }
+  formData.datosVisita = { destino: '' }
   formData.datosVehiculo = { tipo: '', matricula: '' }
   formData.acompanantes = []
   formData.observaciones = ''

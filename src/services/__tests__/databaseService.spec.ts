@@ -49,8 +49,7 @@ const mockEncryptionService = {
           apellido: 'Pérez'
         },
         datosVisita: {
-          tipoVisitante: 'Funcionario',
-          areaVisitar: 'Administración'
+          destino: 'IRCCA'
         }
       }))
     }
@@ -209,8 +208,7 @@ describe('DatabaseService', () => {
         apellido: 'Pérez'
       },
       datosVisita: {
-        tipoVisitante: 'Funcionario',
-        areaVisitar: 'Administración'
+        destino: 'IRCCA'
       },
       datosVehiculo: {
         tipo: 'Auto',
@@ -290,8 +288,7 @@ describe('DatabaseService', () => {
               apellido: 'Pérez'
             },
             datosVisita: {
-              tipoVisitante: 'Funcionario',
-              areaVisitar: 'Administración'
+              destino: 'IRCCA'
             }
           }))
         }
@@ -394,7 +391,7 @@ describe('DatabaseService', () => {
         if (encrypted === 'mock-data-1' || encrypted === 'mock-data-3') {
           return Promise.resolve(JSON.stringify({
             datosPersonales: { cedula: '12345678', nombre: 'Test', apellido: 'User' },
-            datosVisita: { tipoVisitante: 'Funcionario', areaVisitar: 'Admin' }
+            datosVisita: { destino: 'IRCCA' }
           }))
         }
         if (encrypted === 'mock-data-2') {
@@ -455,7 +452,7 @@ describe('DatabaseService', () => {
       mockEncryptionService.decrypt.mockImplementation((encrypted) => {
         return Promise.resolve(JSON.stringify({
           datosPersonales: { cedula: '12345678', nombre: 'Test', apellido: 'User' },
-          datosVisita: { tipoVisitante: 'Funcionario', areaVisitar: 'Admin' }
+          datosVisita: { destino: 'IRCCA' }
         }))
       })
 

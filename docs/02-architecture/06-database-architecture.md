@@ -155,7 +155,7 @@ await indexedDB.put('registros', {
 
 **✅ Cifrados (Campos sensibles):**
 - `persona.datosPersonales` (cédula, nombre, apellido)
-- `persona.datosVisita` (tipo visitante, área)
+- `persona.datosVisita` (destino)
 - `vehiculo.datos` (tipo, matrícula)
 - `acompanantes[]` (array completo)
 

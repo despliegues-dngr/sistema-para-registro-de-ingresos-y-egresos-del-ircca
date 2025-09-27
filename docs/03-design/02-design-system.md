@@ -83,7 +83,7 @@ _(Implementación detallada en: `docs/02-architecture/04-vuetify-guidelines.md`)
 - **Contenedor:** Debe presentarse en un modal (`v-dialog`) que se superponga al Dashboard.
 - **Secciones del Formulario:**
   - **Datos Personales:** Cédula, Nombre, Apellido, Teléfono (opcional).
-  - **Datos de Visita:** Tipo de Visitante (selector), Área a Visitar (selector), Motivo (campo de texto).
+  - **Datos de Visita:** Destino (selector), Observaciones (campo de texto opcional).
   - **Datos de Vehículo (Opcional):** Una sección expandible para no sobrecargar la UI, que contendrá campos para Matricula, Modelo y Color.
 - **Acciones:** Botones para "Cancelar" y "Registrar Ingreso". El botón de registro debe estar deshabilitado si los campos obligatorios no son válidos.
 

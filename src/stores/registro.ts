@@ -16,8 +16,7 @@ export interface DatosPersonales {
 }
 
 export interface DatosAcompanante extends DatosPersonales {
-  tipoVisitante: string // Cada acompañante tiene su propio tipo
-  areaVisitar: string // Cada acompañante puede visitar diferente área
+  destino: string // Cada acompañante puede tener diferente destino
 }
 
 // ✅ NUEVA INTERFAZ: Para tracking avanzado de acompañantes
@@ -31,8 +30,7 @@ export interface AcompananteConMetadata extends DatosAcompanante {
 }
 
 export interface DatosVisita {
-  tipoVisitante: string // Selector - Campo obligatorio
-  areaVisitar: string // Selector - Campo obligatorio
+  destino: string // Selector - Campo obligatorio
 }
 
 export interface DatosVehiculo {
@@ -78,8 +76,7 @@ export interface PersonaDentro {
   nombre: string
   apellido: string
   ingresoTimestamp: Date
-  tipoVisitante: string
-  areaVisitar: string
+  destino: string
   conVehiculo: boolean
 }
 
@@ -186,8 +183,7 @@ export const useRegistroStore = defineStore('registro', () => {
           nombre: datos.datosPersonales.nombre,
           apellido: datos.datosPersonales.apellido,
           ingresoTimestamp: result.registro.timestamp,
-          tipoVisitante: datos.datosVisita.tipoVisitante,
-          areaVisitar: datos.datosVisita.areaVisitar,
+          destino: datos.datosVisita.destino,
           conVehiculo: !!datos.datosVehiculo
         }
         personasDentro.value.push(nuevaPersona)
@@ -200,8 +196,7 @@ export const useRegistroStore = defineStore('registro', () => {
               nombre: acompanante.nombre,
               apellido: acompanante.apellido,
               ingresoTimestamp: result.registro.timestamp,
-              tipoVisitante: acompanante.tipoVisitante,
-              areaVisitar: acompanante.areaVisitar,
+              destino: acompanante.destino,
               conVehiculo: false
             }
             personasDentro.value.push(nuevoAcompanante)
@@ -409,8 +404,7 @@ export const useRegistroStore = defineStore('registro', () => {
           nombre: ingreso.datosPersonales.nombre,
           apellido: ingreso.datosPersonales.apellido,
           ingresoTimestamp: ingreso.timestamp,
-          tipoVisitante: ingreso.datosVisita.tipoVisitante,
-          areaVisitar: ingreso.datosVisita.areaVisitar,
+          destino: ingreso.datosVisita.destino,
           conVehiculo: !!ingreso.datosVehiculo
         })
         
@@ -426,8 +420,7 @@ export const useRegistroStore = defineStore('registro', () => {
               nombre: acompanante.nombre,
               apellido: acompanante.apellido,
               ingresoTimestamp: ingreso.timestamp,
-              tipoVisitante: acompanante.tipoVisitante,
-              areaVisitar: acompanante.areaVisitar,
+              destino: acompanante.destino,
               conVehiculo: false
             })
           }

@@ -31,16 +31,16 @@ graph TD
     - Ingresa su `usuario` y `PIN`.
     - Al validar, el sistema lo redirige al **Dashboard Principal**.
 
-2.  **Registro de Ingreso de Visitante:**
+2.  **Registro de Ingreso de Persona:**
     - Desde el **Dashboard**, el operador presiona "Registrar Ingreso".
     - Se abre un **Modal de Ingreso**.
-    - El operador completa los datos del visitante y presiona "Registrar".
+    - El operador completa los datos de la persona y presiona "Registrar".
     - El modal se cierra, el registro se guarda en IndexedDB, y el **Dashboard** se actualiza con las nuevas estadísticas (ej. +1 Personas Dentro).
 
-3.  **Registro de Salida de Visitante:**
+3.  **Registro de Salida de Persona:**
     - Desde el **Dashboard**, el operador presiona "Registrar Salida".
     - Se abre un **Modal de Salida**.
-    - El operador busca al visitante por su C.I., lo selecciona de la lista y presiona "Registrar".
+    - El operador busca a la persona por su C.I., la selecciona de la lista y presiona "Registrar".
     - El modal se cierra, el registro se actualiza, y el **Dashboard** se actualiza nuevamente.
 
 4.  **Consulta Rápida:**
