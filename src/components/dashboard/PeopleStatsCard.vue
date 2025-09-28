@@ -107,14 +107,14 @@ function handleSalidasHoyClick() {
 <style scoped>
 /* Elegancia gubernamental para card de personas */
 .people-stats-card {
-  border-radius: 12px !important;
+  border-radius: 12px;
   border: 1px solid rgba(0, 0, 0, 0.06);
   transition: all 0.3s ease;
 }
 
 .people-stats-card:hover {
   transform: translateY(-2px);
-  box-shadow: 0 8px 25px rgba(0, 0, 0, 0.15) !important;
+  box-shadow: 0 8px 25px rgba(0, 0, 0, 0.15);
 }
 
 .h-100 {
@@ -168,7 +168,7 @@ function handleSalidasHoyClick() {
 }
 
 .clickable-activity:hover {
-  background-color: rgba(0, 0, 0, 0.06) !important;
+  background-color: rgba(0, 0, 0, 0.06);
   transform: scale(1.03);
   box-shadow: 0 6px 16px rgba(0, 0, 0, 0.12);
 }
@@ -191,7 +191,7 @@ function handleSalidasHoyClick() {
 /* Responsive adjustments */
 @media (max-width: 600px) {
   .text-h3 {
-    font-size: 2rem !important;
+    font-size: 2rem;
   }
   
   .current-status {
@@ -199,7 +199,7 @@ function handleSalidasHoyClick() {
   }
   
   .v-avatar {
-    margin-right: 0.5rem !important;
+    margin-right: 0.5rem;
   }
 }
 </style>

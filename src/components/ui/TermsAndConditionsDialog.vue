@@ -200,7 +200,7 @@ defineEmits<Emits>()
 
 <style scoped>
 .terms-dialog-card {
-  border-radius: 12px !important;
+  border-radius: 12px;
 }
 
 .terms-content {

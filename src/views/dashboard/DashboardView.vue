@@ -538,27 +538,27 @@ onUnmounted(() => {
 /* Layout refinado para el Dashboard gubernamental */
 .v-container {
   max-width: 1400px;
-  padding: 1.5rem !important;
+  padding: 1.5rem;
 }
 
 /* Mejorar espaciado en tablets y desktop */
 @media (min-width: 960px) {
   .v-container {
-    padding: 2rem !important;
+    padding: 2rem;
   }
 }
 
 /* Espaciado óptimo en pantallas grandes */
 @media (min-width: 1264px) {
   .v-container {
-    padding: 2.5rem !important;
+    padding: 2.5rem;
   }
 }
 
 /* Ajustes para móviles */
 @media (max-width: 600px) {
   .v-container {
-    padding: 1rem !important;
+    padding: 1rem;
   }
 }
 </style>

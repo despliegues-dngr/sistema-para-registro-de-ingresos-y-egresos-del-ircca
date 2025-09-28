@@ -149,14 +149,14 @@ function handleVehicleClick(tipoVehiculo: string) {
 <style scoped>
 /* Elegancia gubernamental para card de vehículos */
 .vehicle-stats-card {
-  border-radius: 12px !important;
+  border-radius: 12px;
   border: 1px solid rgba(0, 0, 0, 0.06);
   transition: all 0.3s ease;
 }
 
 .vehicle-stats-card:hover {
   transform: translateY(-2px);
-  box-shadow: 0 8px 25px rgba(0, 0, 0, 0.15) !important;
+  box-shadow: 0 8px 25px rgba(0, 0, 0, 0.15);
 }
 
 .h-100 {
@@ -184,7 +184,7 @@ function handleVehicleClick(tipoVehiculo: string) {
 }
 
 .clickable-vehicle:hover {
-  background-color: rgba(0, 0, 0, 0.06) !important;
+  background-color: rgba(0, 0, 0, 0.06);
   transform: scale(1.05);
   box-shadow: 0 6px 16px rgba(0, 0, 0, 0.15);
 }
@@ -210,13 +210,13 @@ function handleVehicleClick(tipoVehiculo: string) {
   }
 
   .v-avatar {
-    width: 42px !important;
-    height: 42px !important;
-    margin-right: 0.75rem !important;
+    width: 42px;
+    height: 42px;
+    margin-right: 0.75rem;
   }
 
   .text-h5 {
-    font-size: 1.3rem !important;
+    font-size: 1.3rem;
   }
 }
 </style>

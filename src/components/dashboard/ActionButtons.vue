@@ -73,22 +73,22 @@ defineEmits<{
 <style scoped>
 /* Elegancia gubernamental para botones de acción */
 .action-buttons-card {
-  border-radius: 12px !important;
+  border-radius: 12px;
   border: 1px solid rgba(0, 0, 0, 0.06);
 }
 
 .action-btn {
   /* Altura generosa para botones principales */
-  min-height: 100px !important;
-  border-radius: 12px !important;
+  min-height: 100px;
+  border-radius: 12px;
   transition: all 0.3s ease;
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1) !important;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
 }
 
 .action-btn:hover {
   /* Efecto hover elegante */
   transform: translateY(-2px);
-  box-shadow: 0 8px 25px rgba(0, 0, 0, 0.2) !important;
+  box-shadow: 0 8px 25px rgba(0, 0, 0, 0.2);
 }
 
 .action-btn .v-icon {
@@ -98,7 +98,7 @@ defineEmits<{
 
 .info-alert {
   /* Alert con bordes más suaves */
-  border-radius: 12px !important;
+  border-radius: 12px;
   border: 1px solid rgba(33, 150, 243, 0.12);
 }
 
@@ -109,13 +109,13 @@ defineEmits<{
 /* Mejorar spacing en tablet y mobile */
 @media (max-width: 960px) {
   .action-btn {
-    min-height: 90px !important;
+    min-height: 90px;
     font-size: 0.95rem;
   }
   
   .action-btn .v-icon {
-    margin-right: 0.75rem !important;
-    font-size: 28px !important;
+    margin-right: 0.75rem;
+    font-size: 28px;
   }
 }
 
@@ -129,13 +129,13 @@ defineEmits<{
 
 @media (max-width: 600px) {
   .action-btn {
-    min-height: 80px !important;
-    padding: 1rem !important;
+    min-height: 80px;
+    padding: 1rem;
   }
   
   .action-btn .v-icon {
-    margin-right: 0.5rem !important;
-    font-size: 24px !important;
+    margin-right: 0.5rem;
+    font-size: 24px;
   }
 }
 </style>
