@@ -368,13 +368,10 @@ export const useRegistroStore = defineStore('registro', () => {
       loading.value = false
     }
   }
-
   /**
    * ✅ RECONSTRUIR PERSONAS DENTRO DESDE DATOS REALES
    */
   function rebuildPersonasDentro() {
-    console.log('🔍 [DEBUG] Reconstruyendo personasDentro desde registros reales...')
-    
     personasDentro.value = []
     
     // Obtener solo ingresos sin salida correspondiente
@@ -389,48 +386,35 @@ export const useRegistroStore = defineStore('registro', () => {
       )
       
       if (!tieneSalida) {
-        // 🔍 DEBUG: Log del registro que se está procesando
-        console.log(`🏗️ [REBUILD DEBUG] Procesando ingreso ID: ${ingreso.id}`)
-        console.log(`🏗️ [REBUILD DEBUG] Persona: ${ingreso.datosPersonales.nombre} ${ingreso.datosPersonales.apellido}`)
-        console.log(`🏗️ [REBUILD DEBUG] ¿Tiene vehículo?`, !!ingreso.datosVehiculo)
-        if (ingreso.datosVehiculo) {
-          console.log(`🏗️ [REBUILD DEBUG] Tipo vehículo desde BD:`, ingreso.datosVehiculo.tipo)
-          console.log(`🏗️ [REBUILD DEBUG] Matrícula desde BD:`, ingreso.datosVehiculo.matricula)
-        }
-        
-        // Agregar titular
-        personasDentro.value.push({
+        // Añadir persona principal
+        const personaPrincipal = {
           cedula: ingreso.datosPersonales.cedula,
           nombre: ingreso.datosPersonales.nombre,
           apellido: ingreso.datosPersonales.apellido,
           ingresoTimestamp: ingreso.timestamp,
           destino: ingreso.datosVisita.destino,
           conVehiculo: !!ingreso.datosVehiculo
-        })
+        }
         
-        console.log(`🏗️ [REBUILD DEBUG] Titular agregado. Total personas dentro: ${personasDentro.value.length}`)
+        personasDentro.value.push(personaPrincipal)
         
-        // Agregar acompañantes
-        if (ingreso.acompanantes) {
-          console.log('🔍 [DEBUG] Procesando acompañantes para registro:', ingreso.id, 'Cantidad:', ingreso.acompanantes.length)
+        // Añadir acompañantes
+        if (ingreso.acompanantes && ingreso.acompanantes.length > 0) {
           for (const acompanante of ingreso.acompanantes) {
-            console.log('🔍 [DEBUG] Agregando acompañante:', acompanante.nombre, acompanante.apellido)
-            personasDentro.value.push({
+            const acompanantePersona = {
               cedula: acompanante.cedula,
               nombre: acompanante.nombre,
               apellido: acompanante.apellido,
               ingresoTimestamp: ingreso.timestamp,
               destino: acompanante.destino,
               conVehiculo: false
-            })
+            }
+            
+            personasDentro.value.push(acompanantePersona)
           }
-        } else {
-          console.log('🔍 [DEBUG] No hay acompañantes para registro:', ingreso.id)
         }
       }
     }
-    
-    console.log('✅ [DEBUG] personasDentro reconstruido:', personasDentro.value.length, 'personas')
   }
 
   // ========================================
