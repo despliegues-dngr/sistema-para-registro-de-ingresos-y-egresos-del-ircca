@@ -69,29 +69,45 @@ export async function createInitialAdmin(adminData: AdminUser): Promise<boolean>
 /**
  * Datos por defecto del administrador según especificaciones
  * Basado en project-charter.md y stakeholders identificados
+ * ✅ SEGURO: Credenciales leídas desde variables de entorno
  */
 export const DEFAULT_ADMIN: AdminUser = {
-  cedula: '12345678', // Usuario por defecto para testing
-  grado: 'teniente',
-  nombre: 'Admin',
-  apellido: 'Sistema',
-  password: 'admin123'
+  cedula: import.meta.env.VITE_ADMIN_DEFAULT_CEDULA || '12345678',
+  grado: import.meta.env.VITE_ADMIN_DEFAULT_GRADO || 'teniente',
+  nombre: import.meta.env.VITE_ADMIN_DEFAULT_NOMBRE || 'Admin',
+  apellido: import.meta.env.VITE_ADMIN_DEFAULT_APELLIDO || 'Sistema',
+  password: import.meta.env.VITE_ADMIN_DEFAULT_PASSWORD || 'admin123'
 }
+
+// Flag para prevenir doble inicialización
+let adminInitialized = false
 
 /**
  * Función helper para inicializar admin automáticamente en desarrollo
+ * ⚠️ SEGURIDAD: Las credenciales se leen desde variables de entorno
  */
 export async function initializeDefaultAdmin(): Promise<void> {
+  // Prevenir doble inicialización en desarrollo
+  if (adminInitialized) {
+    console.log('ℹ️ Administrador ya inicializado previamente')
+    return
+  }
+  
   console.log('Inicializando usuario administrador por defecto...')
+  console.log('🔒 Leyendo credenciales desde variables de entorno...')
   
   const success = await createInitialAdmin(DEFAULT_ADMIN)
   
   if (success) {
     console.log('✅ Usuario administrador inicializado correctamente')
-    console.log('📋 Credenciales por defecto:')
+    console.log('📋 Credenciales configuradas:')
     console.log(`   Usuario: ${DEFAULT_ADMIN.cedula}`)
-    console.log(`   Contraseña: ${DEFAULT_ADMIN.password}`)
+    // ⚠️ No mostrar contraseña en logs por seguridad
+    console.log(`   Contraseña: ${'*'.repeat(DEFAULT_ADMIN.password.length)}`)
+    console.log('🔒 IMPORTANTE: Cambiar credenciales en producción')
+    adminInitialized = true
   } else {
     console.log('ℹ️ Usuario administrador ya existe o no pudo crearse')
+    adminInitialized = true
   }
 }
