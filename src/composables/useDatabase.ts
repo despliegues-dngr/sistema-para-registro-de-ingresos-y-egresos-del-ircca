@@ -149,7 +149,10 @@ export const useDatabase = () => {
     indexName?: string,
     key?: IDBValidKey,
   ): Promise<unknown[]> => {
-    if (!db.value) return []
+    if (!db.value) {
+      console.warn(`Base de datos no inicializada para ${storeName}`)
+      return []
+    }
 
     try {
       return new Promise((resolve, reject) => {
@@ -167,7 +170,8 @@ export const useDatabase = () => {
         request.onsuccess = () => resolve(request.result || [])
         request.onerror = () => reject([])
       })
-    } catch {
+    } catch (error) {
+      console.error(`Error en getRecords para ${storeName}:`, error)
       return []
     }
   }
@@ -213,6 +217,28 @@ export const useDatabase = () => {
     }
   }
 
+  const deleteRecord = async (
+    storeName: string,
+    id: string
+  ): Promise<{ success: boolean; error?: string }> => {
+    if (!db.value) {
+      return { success: false, error: 'Base de datos no inicializada' }
+    }
+
+    try {
+      return new Promise((resolve, reject) => {
+        const transaction = db.value!.transaction([storeName], 'readwrite')
+        const store = transaction.objectStore(storeName)
+        const request = store.delete(id)
+
+        request.onsuccess = () => resolve({ success: true })
+        request.onerror = () => reject({ success: false, error: 'Error al eliminar registro' })
+      })
+    } catch {
+      return { success: false, error: 'Error en transacción de eliminación' }
+    }
+  }
+
   const clearStore = async (storeName: string): Promise<{ success: boolean; error?: string }> => {
     if (!db.value) {
       return { success: false, error: 'Base de datos no inicializada' }
@@ -240,6 +266,7 @@ export const useDatabase = () => {
     initDatabase,
     addRecord,
     updateRecord,
+    deleteRecord,
     getRecords,
     clearStore,
     // Storage Management
