@@ -72,6 +72,7 @@
       v-model="showIngresosHoyModal"
       title="Ingresos de Hoy"
       header-icon="mdi-login"
+      header-color="success"
       data-type="personas"
       :data="ingresosHoyData"
       empty-title="Sin ingresos hoy"
@@ -83,6 +84,7 @@
       v-model="showSalidasHoyModal"
       title="Salidas de Hoy"
       header-icon="mdi-logout"
+      header-color="warning"
       data-type="personas"
       :data="salidasHoyData"
       empty-title="Sin salidas hoy"
@@ -101,6 +103,9 @@
       :empty-subtitle="vehicleModalEmptySubtitle"
       :empty-icon="vehicleModalEmptyIcon"
     />
+
+    <!-- Pie de página gubernamental -->
+    <DashboardFooter />
   </v-container>
 </template>
 
@@ -120,6 +125,7 @@ import RegistroIngresoDialog from '@/components/ui/RegistroIngresoDialog.vue' //
 import RegistroSalidaDialog from '@/components/ui/RegistroSalidaDialog.vue' // Modal de registro de salida
 import SessionTimeoutDialog from '@/components/ui/SessionTimeoutDialog.vue' // Diálogo de timeout de sesión
 import DataListModal from '@/components/ui/DataListModal.vue' // Modal reutilizable para mostrar listas de datos
+import DashboardFooter from '@/components/layout/DashboardFooter.vue' // Pie de página institucional
 
 const router = useRouter()
 const authStore = useAuthStore()

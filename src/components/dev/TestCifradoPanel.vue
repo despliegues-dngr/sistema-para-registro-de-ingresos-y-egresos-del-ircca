@@ -175,7 +175,7 @@ const logMessages = ref<Array<{ time: string; text: string; type: string }>>([])
 // Computeds
 const ultimaSinc = computed(() => {
   if (!registroStore.lastSync) return 'Nunca'
-  return new Date(registroStore.lastSync).toLocaleTimeString()
+  return new Date(registroStore.lastSync).toLocaleTimeString('es-UY', { hour12: false })
 })
 
 const sistemaFunciona = computed(() => {
@@ -184,7 +184,7 @@ const sistemaFunciona = computed(() => {
 
 // Métodos de logging
 function addLog(message: string, type: 'info' | 'success' | 'error' | 'warning' = 'info') {
-  const time = new Date().toLocaleTimeString()
+  const time = new Date().toLocaleTimeString('es-UY', { hour12: false })
   logMessages.value.push({ time, text: message, type })
   
   // Mantener solo los últimos 50 mensajes

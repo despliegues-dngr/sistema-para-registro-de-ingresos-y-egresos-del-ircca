@@ -11,122 +11,19 @@ import type {
  */
 
 /**
- * Datos de prueba para desarrollo (solo cuando no estamos en tests)
+ * Inicialización con datos reales - Sin datos mockeados
  */
 export const getInitialRegistros = (): RegistroEntry[] => {
-  // Si estamos en un entorno de test, inicializar con array vacío
-  if (import.meta.env.VITEST || import.meta.env.NODE_ENV === 'test') {
-    return []
-  }
-  
-  // En desarrollo, incluir datos de prueba
-  return [
-    // Registro de ingreso para María (con vehículo y acompañantes)
-    {
-      id: 'ing-001',
-      tipo: 'ingreso' as const,
-      timestamp: new Date(Date.now() - 2 * 60 * 60 * 1000), // 2 horas atrás
-      datosPersonales: {
-        cedula: '12345678',
-        nombre: 'María',
-        apellido: 'González'
-      },
-      datosVisita: {
-        destino: 'IRCCA'
-      },
-      datosVehiculo: {
-        tipo: 'Auto',
-        matricula: 'ABC1234'
-      },
-      acompanantes: [
-        {
-          cedula: '23456789',
-          nombre: 'Juan',
-          apellido: 'Pérez',
-          destino: 'IRCCA'
-        }
-      ],
-      operadorId: 'op-001'
-    },
-    // Registro de ingreso para Ana (con vehículo, sin acompañantes)
-    {
-      id: 'ing-002',
-      tipo: 'ingreso' as const,
-      timestamp: new Date(Date.now() - 4 * 60 * 60 * 1000), // 4 horas atrás
-      datosPersonales: {
-        cedula: '11223344',
-        nombre: 'Ana',
-        apellido: 'Silva'
-      },
-      datosVisita: {
-        destino: 'Ligeral'
-      },
-      datosVehiculo: {
-        tipo: 'Camión',
-        matricula: 'SMO5678'
-      },
-      operadorId: 'op-001'
-    },
-    // Registro de ingreso para Carlos (sin vehículo)
-    {
-      id: 'ing-003',
-      tipo: 'ingreso' as const,
-      timestamp: new Date(Date.now() - 30 * 60 * 60 * 1000), // 30 minutos atrás
-      datosPersonales: {
-        cedula: '87654321',
-        nombre: 'Carlos',
-        apellido: 'Rodríguez'
-      },
-      datosVisita: {
-        destino: 'Simbiosys'
-      },
-      operadorId: 'op-001'
-    }
-  ]
+  // Siempre devolver array vacío - trabajar solo con datos reales
+  return []
 }
 
 /**
- * Datos de prueba para personas dentro (solo desarrollo)
+ * Inicialización con datos reales - Sin datos mockeados
  */
 export const getInitialPersonasDentro = (): PersonaDentro[] => {
-  if (import.meta.env.VITEST || import.meta.env.NODE_ENV === 'test') {
-    return []
-  }
-
-  return [
-    {
-      cedula: '12345678',
-      nombre: 'María',
-      apellido: 'González',
-      ingresoTimestamp: new Date(Date.now() - 2 * 60 * 60 * 1000), // 2 horas atrás
-      destino: 'IRCCA',
-      conVehiculo: true
-    },
-    {
-      cedula: '23456789',
-      nombre: 'Juan',
-      apellido: 'Pérez',
-      ingresoTimestamp: new Date(Date.now() - 2 * 60 * 60 * 1000), // 2 horas atrás  
-      destino: 'IRCCA',
-      conVehiculo: false // Acompañante, no tiene vehículo propio
-    },
-    {
-      cedula: '87654321',
-      nombre: 'Carlos',
-      apellido: 'Rodríguez',
-      ingresoTimestamp: new Date(Date.now() - 30 * 60 * 60 * 1000), // 30 minutos atrás
-      destino: 'Simbiosys',
-      conVehiculo: false
-    },
-    {
-      cedula: '11223344',
-      nombre: 'Ana',
-      apellido: 'Silva',
-      ingresoTimestamp: new Date(Date.now() - 4 * 60 * 60 * 1000), // 4 horas atrás
-      destino: 'IRCCA',
-      conVehiculo: true
-    }
-  ]
+  // Siempre devolver array vacío - trabajar solo con datos reales
+  return []
 }
 
 /**

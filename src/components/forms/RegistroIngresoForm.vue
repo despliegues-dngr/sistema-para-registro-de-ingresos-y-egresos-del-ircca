@@ -22,7 +22,7 @@
     >
       <v-row>
         <!-- Cédula -->
-        <v-col cols="12" md="6">
+        <v-col cols="12">
           <v-text-field
             v-model="formData.datosPersonales.cedula"
             label="Cédula de Identidad"
@@ -30,15 +30,16 @@
             :rules="cedulaRules"
             variant="outlined"
             density="comfortable"
-            hint="8 dígitos sin puntos ni guiones"
+            hint="Documento sin puntos ni guiones"
             persistent-hint
             required
             autofocus
+            @keypress="onlyNumbers"
           />
         </v-col>
 
-        <!-- Nombre -->
-        <v-col cols="12" md="6">
+        <!-- Nombre y Apellido en la misma línea -->
+        <v-col cols="12" sm="6">
           <v-text-field
             v-model="formData.datosPersonales.nombre"
             label="Nombre"
@@ -50,8 +51,7 @@
           />
         </v-col>
 
-        <!-- Apellido -->
-        <v-col cols="12" md="6">
+        <v-col cols="12" sm="6">
           <v-text-field
             v-model="formData.datosPersonales.apellido"
             label="Apellido"
@@ -92,7 +92,7 @@
     >
       <v-row>
         <!-- Tipo de Vehículo -->
-        <v-col cols="12" md="6">
+        <v-col cols="12" sm="6">
           <v-select
             v-model="formData.datosVehiculo.tipo"
             label="Tipo de Vehículo"
@@ -106,7 +106,7 @@
         </v-col>
 
         <!-- Matrícula -->
-        <v-col cols="12" md="6">
+        <v-col cols="12" sm="6">
           <v-text-field
             v-model="formData.datosVehiculo.matricula"
             label="Matrícula"
@@ -116,7 +116,8 @@
             density="comfortable"
             hint="Formato: ABC1234"
             persistent-hint
-            @input="onVehiculoChange"
+            @input="onMatriculaInput"
+            @keypress="onlyAlphaNumeric"
           />
         </v-col>
       </v-row>
@@ -166,7 +167,7 @@
           
           <v-row>
             <!-- Cédula del acompañante -->
-            <v-col cols="12" md="6">
+            <v-col cols="12">
               <v-text-field
                 v-model="acompanante.cedula"
                 label="Cédula"
@@ -174,14 +175,15 @@
                 :rules="cedulaRules"
                 variant="outlined"
                 density="comfortable"
-                hint="8 dígitos"
+                hint="Documento sin puntos ni guiones"
                 persistent-hint
                 required
+                @keypress="onlyNumbers"
               />
             </v-col>
 
-            <!-- Nombre -->
-            <v-col cols="12" md="6">
+            <!-- Nombre y Apellido del acompañante en la misma línea -->
+            <v-col cols="12" sm="6">
               <v-text-field
                 v-model="acompanante.nombre"
                 label="Nombre"
@@ -193,8 +195,7 @@
               />
             </v-col>
 
-            <!-- Apellido -->
-            <v-col cols="12" md="6">
+            <v-col cols="12" sm="6">
               <v-text-field
                 v-model="acompanante.apellido"
                 label="Apellido"
@@ -366,8 +367,8 @@ const isFormValid = computed(() => {
 
 // Reglas de validación
 const cedulaRules = [
-  (v: string) => !!v || 'La cédula es requerida',
-  (v: string) => /^\d{7,8}$/.test(v) || 'La cédula debe tener 7 u 8 dígitos',
+  (v: string) => !!v || 'El documento es requerido',
+  (v: string) => /^\d+$/.test(v) || 'Solo se permiten números',
 ]
 
 const nombreRules = [
@@ -386,7 +387,7 @@ const requiredRules = [
 
 
 const matriculaRules = [
-  (v: string) => !v || /^[A-Z]{3}\d{4}$/.test(v.toUpperCase()) || 'Formato inválido (ej: ABC1234)',
+  (v: string) => !v || /^[A-Za-z0-9]+$/.test(v) || 'Solo se permiten letras y números',
 ]
 
 const vehiculoFieldRules = [
@@ -407,6 +408,32 @@ const onVehiculoChange = () => {
   
   if (hasAnyData && vehiculoExpanded.value === undefined) {
     vehiculoExpanded.value = 0 // Auto-expandir si se empieza a llenar
+  }
+}
+
+const onMatriculaInput = (event: Event) => {
+  const target = event.target as HTMLInputElement
+  const value = target.value
+  
+  // Convertir a mayúsculas y actualizar el modelo
+  formData.datosVehiculo.matricula = value.toUpperCase()
+  
+  // Llamar al método de cambio de vehículo para auto-expandir si es necesario
+  onVehiculoChange()
+}
+
+// Filtros de entrada de caracteres
+const onlyNumbers = (event: KeyboardEvent) => {
+  const char = String.fromCharCode(event.which)
+  if (!/^\d$/.test(char)) {
+    event.preventDefault()
+  }
+}
+
+const onlyAlphaNumeric = (event: KeyboardEvent) => {
+  const char = String.fromCharCode(event.which)
+  if (!/^[a-zA-Z0-9]$/.test(char)) {
+    event.preventDefault()
   }
 }
 

@@ -1,4 +1,4 @@
-import { ref, computed } from 'vue'
+import { ref, computed, type Ref } from 'vue'
 import type { 
   RegistroEntry, 
   RegistroIngreso, 
@@ -127,43 +127,52 @@ export const useRegistrosSearch = () => {
 /**
  * Composable para estadísticas y computadas
  */
-export const useRegistrosStats = (registros: RegistroEntry[]) => {
-  const totalRegistros = computed(() => registros.length)
+export const useRegistrosStats = (registros: Ref<RegistroEntry[]>) => {
+  const totalRegistros = computed(() => registros.value.length)
+  
+  // ✅ FECHA REACTIVA que se actualiza automáticamente cada minuto
+  const fechaActual = ref(new Date())
+  
+  // Timer que actualiza la fecha cada minuto para detectar cambios de día
+  setInterval(() => {
+    fechaActual.value = new Date()
+  }, 60000) // 60 segundos
   
   const registrosHoy = computed(() => {
-    const hoy = new Date().toDateString()
-    return registros
-      .filter(r => new Date(r.timestamp).toDateString() === hoy)
+    const hoy = fechaActual.value.toDateString()
+    return registros.value
+      .filter((r: RegistroEntry) => new Date(r.timestamp).toDateString() === hoy)
       .map(createRegistroWrapper)
   })
 
   const ingresosHoy = computed(() => 
-    registros.filter(r => 
+    registros.value.filter((r: RegistroEntry) => 
       r.tipo === 'ingreso' && 
-      new Date(r.timestamp).toDateString() === new Date().toDateString()
+      new Date(r.timestamp).toDateString() === fechaActual.value.toDateString()
     ) as RegistroIngreso[]
   )
 
   const salidasHoy = computed(() => 
-    registros.filter(r => 
+    registros.value.filter((r: RegistroEntry) => 
       r.tipo === 'salida' && 
-      new Date(r.timestamp).toDateString() === new Date().toDateString()
+      new Date(r.timestamp).toDateString() === fechaActual.value.toDateString()
     ) as RegistroSalida[]
   )
 
   const estadisticasHoy = computed(() => ({
     totalRegistros: totalRegistros.value,
     ingresosHoy: ingresosHoy.value.length,
-    salidasHoy: salidasHoy.value.length
+    salidasHoy: salidasHoy.value.length,
+    fecha: fechaActual.value.toDateString() // Para debugging
   }))
 
   // Getter para tests: ingresos sin egreso correspondiente
   const ingresosPendientes = computed(() => {
-    const ingresos = registros.filter(r => r.tipo === 'ingreso') as RegistroIngreso[]
+    const ingresos = registros.value.filter((r: RegistroEntry) => r.tipo === 'ingreso') as RegistroIngreso[]
     
     const pendientes = ingresos.filter(ingreso => {
       // Buscar si hay un egreso posterior para la misma cédula
-      const tieneEgresoDestroyed = registros.some(r => 
+      const tieneEgresoDestroyed = registros.value.some((r: RegistroEntry) => 
         r.tipo === 'salida' && 
         (r as RegistroSalida).cedulaBuscada === ingreso.datosPersonales.cedula &&
         r.timestamp > ingreso.timestamp
@@ -189,10 +198,10 @@ export const useRegistrosStats = (registros: RegistroEntry[]) => {
 /**
  * Composable para compatibilidad con tests
  */
-export const useRegistrosCompatibility = (registros: RegistroEntry[]) => {
+export const useRegistrosCompatibility = (registros: Ref<RegistroEntry[]>) => {
   // Computed que siempre devuelve wrappers para compatibilidad con tests
   const registrosWrapped = computed(() => {
-    return registros.map(createRegistroWrapper)
+    return registros.value.map(createRegistroWrapper)
   })
 
   /**
@@ -205,7 +214,7 @@ export const useRegistrosCompatibility = (registros: RegistroEntry[]) => {
   }
 
   const getRegistrosByDocumento = (documento: string) => {
-    const filtered = registros.filter((r) => {
+    const filtered = registros.value.filter((r: RegistroEntry) => {
       if (r.tipo === 'ingreso') {
         return (r as RegistroIngreso).datosPersonales.cedula === documento
       } else {
@@ -216,7 +225,7 @@ export const useRegistrosCompatibility = (registros: RegistroEntry[]) => {
   }
 
   const getRegistrosByMatriculaTest = (matricula: string) => {
-    const filtered = registros.filter((r) => 
+    const filtered = registros.value.filter((r: RegistroEntry) => 
       r.tipo === 'ingreso' && (r as RegistroIngreso).datosVehiculo?.matricula === matricula
     )
     return filtered.map(createRegistroWrapper)
@@ -234,21 +243,21 @@ export const useRegistrosCompatibility = (registros: RegistroEntry[]) => {
  * Composable para helpers de vehículos y acompañantes
  */
 export const useRegistrosHelpers = (
-  registros: RegistroEntry[], 
-  personasDentro: PersonaDentro[]
+  registros: Ref<RegistroEntry[]>, 
+  personasDentro: Ref<PersonaDentro[]>
 ) => {
   /**
    * Obtiene información del vehículo de una persona
    */
   const getVehiculoInfoHelper = (cedula: string) => {
-    return getVehiculoInfo(cedula, registros)
+    return getVehiculoInfo(cedula, registros.value)
   }
 
   /**
    * Obtiene datos de acompañantes
    */
   const getAcompanantesDataHelper = (cedula: string) => {
-    return getAcompanantesData(cedula, personasDentro)
+    return getAcompanantesData(cedula, personasDentro.value)
   }
 
   return {

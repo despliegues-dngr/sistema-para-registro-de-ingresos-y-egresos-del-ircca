@@ -127,9 +127,9 @@ export const useRegistroStore = defineStore('registro', () => {
   
   const operations = useRegistrosOperations()
   const search = useRegistrosSearch()
-  const stats = useRegistrosStats(registrosRaw.value)
-  const compatibility = useRegistrosCompatibility(registrosRaw.value)
-  const helpers = useRegistrosHelpers(registrosRaw.value, personasDentro.value)
+  const stats = useRegistrosStats(registrosRaw)
+  const compatibility = useRegistrosCompatibility(registrosRaw)
+  const helpers = useRegistrosHelpers(registrosRaw, personasDentro)
 
   // ========================================
   // 📈 GETTERS COMPUTADOS BÁSICOS

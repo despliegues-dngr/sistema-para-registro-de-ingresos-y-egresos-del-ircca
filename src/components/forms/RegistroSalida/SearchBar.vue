@@ -54,7 +54,7 @@
           <!-- Título personalizado -->
           <template #title>
             <div class="d-flex justify-space-between align-start w-100">
-              
+
               <!-- Columna izquierda: Datos personales -->
               <div class="datos-personales flex-grow-1 pr-4">
                 <!-- Nombre completo con cédula -->
@@ -67,9 +67,9 @@
 
               <!-- Destino -->
               <div class="d-flex flex-wrap gap-1">
-                <v-chip 
-                  color="info" 
-                  variant="tonal" 
+                <v-chip
+                  color="info"
+                  variant="tonal"
                   size="x-small"
                   prepend-icon="mdi-domain"
                 >
@@ -96,10 +96,10 @@
                 <!-- Persona con vehículo propio -->
                 <div v-if="item.raw.persona.conVehiculo && getVehiculoInfo(item.raw.persona.cedula)" class="vehiculo-info">
                   <div class="d-flex align-center mb-1">
-                    <v-icon 
+                    <v-icon
                       :icon="getVehiculoIcon(getVehiculoInfo(item.raw.persona.cedula)?.tipo)"
-                      size="16" 
-                      color="primary" 
+                      size="16"
+                      color="primary"
                       class="mr-1"
                     ></v-icon>
                     <span class="text-body-2 font-weight-medium text-primary">
@@ -123,18 +123,15 @@
                     Acompañante
                   </div>
                   <div class="d-flex align-center justify-end mb-1">
-                    <v-icon 
+                    <v-icon
                       :icon="getVehiculoIcon(getVehiculoTitular(item.raw.persona.cedula)?.tipo)"
-                      size="14" 
-                      color="info" 
+                      size="14"
+                      color="info"
                       class="mr-1"
                     ></v-icon>
                     <span class="text-body-2 text-info">
                       {{ getVehiculoTitular(item.raw.persona.cedula)?.matricula }}
                     </span>
-                  </div>
-                  <div class="text-body-2 text-medium-emphasis text-right">
-                    Titular: {{ getNombreTitular(item.raw.persona.cedula) }}
                   </div>
                 </div>
 
@@ -145,7 +142,7 @@
                 </div>
               </div>
             </div>
-            
+
             </div>
           </template>
         </v-list-item>
@@ -192,10 +189,10 @@ const calcularTiempoEstadia = (ingresoTimestamp: Date): string => {
   const ahora = new Date()
   const ingreso = new Date(ingresoTimestamp)
   const diferenciaMs = ahora.getTime() - ingreso.getTime()
-  
+
   const horas = Math.floor(diferenciaMs / (1000 * 60 * 60))
   const minutos = Math.floor((diferenciaMs % (1000 * 60 * 60)) / (1000 * 60))
-  
+
   if (horas > 0) {
     return `${horas}h ${minutos}m`
   } else {
@@ -204,11 +201,11 @@ const calcularTiempoEstadia = (ingresoTimestamp: Date): string => {
 }
 
 const getVehiculoInfo = (cedula: string) => {
-  const registro = registroStore.registrosRaw.find(r => 
-    r.tipo === 'ingreso' && 
+  const registro = registroStore.registrosRaw.find(r =>
+    r.tipo === 'ingreso' &&
     (r as RegistroIngreso).datosPersonales?.cedula === cedula
   ) as RegistroIngreso | undefined
-  
+
   return registro?.datosVehiculo || null
 }
 
@@ -228,39 +225,21 @@ const getAcompanantesCount = (cedulaTitular: string): number => {
 }
 
 const getVehiculoTitular = (cedulaAcompanante: string) => {
-  const personaAcompanante = registroStore.personasDentro.find(p => 
+  const personaAcompanante = registroStore.personasDentro.find(p =>
     p.cedula === cedulaAcompanante
   )
-  
+
   if (!personaAcompanante) return null
-  
-  const registrosConVehiculo = registroStore.registrosRaw.filter(r => 
-    r.tipo === 'ingreso' && 
+
+  const registrosConVehiculo = registroStore.registrosRaw.filter(r =>
+    r.tipo === 'ingreso' &&
     (r as RegistroIngreso).datosVehiculo &&
     Math.abs(r.timestamp.getTime() - personaAcompanante.ingresoTimestamp.getTime()) < 60000
   ) as RegistroIngreso[]
-  
+
   return registrosConVehiculo[0]?.datosVehiculo || null
 }
 
-const getNombreTitular = (cedulaAcompanante: string): string => {
-  const personaAcompanante = registroStore.personasDentro.find(p => 
-    p.cedula === cedulaAcompanante
-  )
-  
-  if (!personaAcompanante) return 'Desconocido'
-  
-  const registroTitular = registroStore.registrosRaw.find(r => 
-    r.tipo === 'ingreso' && 
-    Math.abs(r.timestamp.getTime() - personaAcompanante.ingresoTimestamp.getTime()) < 60000 &&
-    (r as RegistroIngreso).datosPersonales?.cedula !== cedulaAcompanante
-  ) as RegistroIngreso | undefined
-  
-  if (registroTitular) {
-    return `${registroTitular.datosPersonales.nombre} ${registroTitular.datosPersonales.apellido}`
-  }
-  return 'Desconocido'
-}
 </script>
 
 <style scoped>
@@ -283,7 +262,7 @@ const getNombreTitular = (cedulaAcompanante: string): string => {
 }
 
 .persona-autocomplete-item:hover {
-  background-color: rgba(var(--v-theme-warning), 0.06) !important;
+  background-color: rgba(var(--v-theme-warning), 0.06);
   border-left: 3px solid rgb(var(--v-theme-warning));
 }
 
@@ -333,9 +312,9 @@ const getNombreTitular = (cedulaAcompanante: string): string => {
   .datos-vehiculo-tiempo {
     min-width: 100px;
   }
-  
+
   .persona-autocomplete-item .pa-4 {
-    padding: 12px !important;
+    padding: 12px;
   }
 }
 </style>

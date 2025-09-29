@@ -57,11 +57,12 @@ onUnmounted(() => {
   min-height: 100vh;
   background: v-bind('UI_CONFIG.BACKGROUND.GRADIENT_PRIMARY');
   overflow: hidden;
-  transition: filter 0.3s ease;
+  transition: filter 0.3s ease, transform 0.3s ease;
 }
 
 .auth-background--blurred {
-  filter: blur(6px);
+  filter: blur(4px) saturate(0.3) contrast(0.8);  /* Blur + desaturar + reducir contraste */
+  transform: scale(0.95);  /* Alejar ligeramente */
 }
 
 .background-overlay {

@@ -294,18 +294,18 @@ onUnmounted(() => {
 /* Header gubernamental moderno y elegante */
 .welcome-header {
   border-radius: 20px;
-  box-shadow: 0 8px 32px rgba(21, 101, 192, 0.25);
+  box-shadow: 0 8px 32px rgba(0, 105, 92, 0.25);
   transition: all 0.3s ease;
   overflow: hidden;
 }
 
 .welcome-header:hover {
-  box-shadow: 0 6px 20px rgba(21, 101, 192, 0.35);
+  box-shadow: 0 6px 20px rgba(0, 105, 92, 0.35);
 }
 
-/* Fondo azul gubernamental uruguayo - Autoridad institucional */
+/* Fondo verde gubernamental uruguayo - Autoridad institucional */
 .header-solid {
-  background: #1565C0;
+  background: rgb(var(--v-theme-accent));
   position: relative;
 }
 
