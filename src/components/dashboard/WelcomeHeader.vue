@@ -2,7 +2,7 @@
   <v-card class="mb-8 welcome-header" elevation="4">
     <v-card-item class="header-solid text-white py-6 px-8">
       <div class="d-flex align-center">
-        <!-- Avatar elegante con iniciales -->
+        <!-- Avatar elegante con icono de usuario -->
         <v-menu offset-y>
           <template v-slot:activator="{ props }">
             <v-avatar 
@@ -12,21 +12,18 @@
               v-bind="props"
               style="cursor: pointer; border: 3px solid rgba(255, 255, 255, 0.4); box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);"
             >
-              <span class="text-h5 font-weight-medium">{{ userInitials }}</span>
+              <v-icon size="32" color="accent">mdi-account</v-icon>
             </v-avatar>
           </template>
           
           <!-- Menú de usuario sobrio -->
-          <v-card class="user-menu" elevation="8" min-width="240">
-            <v-card-item class="pb-2">
-              <div class="d-flex align-center">
-                <v-avatar size="40" color="accent" class="text-white mr-3">
-                  <span class="text-h6">{{ userInitials }}</span>
-                </v-avatar>
-                <div>
-                  <div class="text-subtitle-1 font-weight-medium">{{ displayName }}</div>
-                  <div class="text-caption text-grey-darken-1">{{ gradeAndNameForMenu }}</div>
-                </div>
+          <v-card class="user-menu" elevation="8" min-width="240" rounded="lg">
+            <!-- Header del menú con fondo azul institucional -->
+            <v-card-item class="pb-3 pt-4 px-4 bg-primary rounded-t-lg">
+              <div>
+                <div class="text-subtitle-1 font-weight-bold text-white mb-1">{{ authStore.user?.username || authStore.user?.cedula }}</div>
+                <div class="text-caption text-white opacity-90 mb-1">{{ userGradeDisplay }}</div>
+                <div class="text-caption text-white opacity-90">{{ authStore.user?.nombre }} {{ authStore.user?.apellido }}</div>
               </div>
             </v-card-item>
             
@@ -107,37 +104,14 @@ const currentDate = ref('')
 const currentTime = ref('')
 let timeInterval: number | null = null
 
-// Información del usuario
-const displayName = computed(() => {
-  const user = authStore.user
-  if (user?.username) {
-    return user.username.charAt(0).toUpperCase() + user.username.slice(1)
-  }
-  return 'Usuario'
-})
+// Variable displayName eliminada (ya no se usa tras el rediseño)
 
-// Generar iniciales elegantes del usuario
-const userInitials = computed(() => {
+// Computed para mostrar el grado completo del usuario
+const userGradeDisplay = computed(() => {
   const user = authStore.user
-  if (user?.nombre && user?.apellido) {
-    return (user.nombre.charAt(0) + user.apellido.charAt(0)).toUpperCase()
-  } else if (user?.username) {
-    const username = user.username
-    if (username.length >= 2) {
-      return (username.charAt(0) + username.charAt(1)).toUpperCase()
-    }
-    return username.charAt(0).toUpperCase()
-  }
-  return 'U'
-})
-
-
-// Formato específico para el menú: Grado + Nombre Apellido (más compacto)
-const gradeAndNameForMenu = computed(() => {
-  const user = authStore.user
-  if (!user) return 'Usuario'
+  if (!user?.grado) return 'Usuario Sistema'
   
-  // Opciones de grado (mismas que en el formulario)
+  // Opciones de grado para mostrar el título completo
   const gradoOptions = [
     { title: 'Guardia Republicano', value: 'guardia_republicano' },
     { title: 'Cabo', value: 'cabo' },
@@ -151,23 +125,8 @@ const gradeAndNameForMenu = computed(() => {
     { title: 'Cte. General', value: 'comandante_general' },
   ]
   
-  // Buscar el título completo del grado
   const gradoOption = gradoOptions.find(option => option.value === user.grado)
-  const gradoDisplay = gradoOption?.title || user.grado || ''
-  
-  // Construir nombre completo
-  const nombreCompleto = `${user.nombre || ''} ${user.apellido || ''}`.trim()
-  
-  // Formato compacto para el menú
-  if (gradoDisplay && nombreCompleto) {
-    return `${gradoDisplay} ${nombreCompleto}`
-  } else if (nombreCompleto) {
-    return nombreCompleto
-  } else if (gradoDisplay) {
-    return gradoDisplay
-  } else {
-    return 'Usuario Sistema'
-  }
+  return gradoOption?.title || user.grado
 })
 
 // Saludo dinámico según la hora del día (se actualiza automáticamente con el tiempo)

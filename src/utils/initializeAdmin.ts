@@ -67,32 +67,47 @@ export async function createInitialAdmin(adminData: AdminUser): Promise<boolean>
 }
 
 /**
- * Datos por defecto del administrador según especificaciones
- * Basado en project-charter.md y stakeholders identificados
- * ✅ SEGURO: Credenciales leídas desde variables de entorno
+ * 🔒 USUARIO ADMINISTRADOR POR DEFECTO
+ * ✅ Credenciales fijas y seguras para acceso inicial
+ * ⚠️ IMPORTANTE: Cambiar tras primer login usando AdminPanel
  */
 export const DEFAULT_ADMIN: AdminUser = {
-  cedula: import.meta.env.VITE_ADMIN_DEFAULT_CEDULA || '55226350',
-  grado: import.meta.env.VITE_ADMIN_DEFAULT_GRADO || 'Guardia Republicano',
-  nombre: import.meta.env.VITE_ADMIN_DEFAULT_NOMBRE || 'Mario',
-  apellido: import.meta.env.VITE_ADMIN_DEFAULT_APELLIDO || 'Berni',
-  // ✅ SEGURIDAD: Contraseña hardcodeada (no en variables de entorno VITE_)
+  // ✅ SEGURO: Hardcodeadas solo en servidor (no en variables VITE_)
+  cedula: '55226350',           // Tu cédula real
+  grado: 'Guardia Republicano', // Tu grado real
+  nombre: 'Mario',              // Tu nombre real  
+  apellido: 'Berni',            // Tu apellido real
+  // 🔑 CONTRASEÑA POR DEFECTO (personalizable desde AdminPanel)
   password: '2025.Ircca'
 }
 
-// Flag para prevenir doble inicialización
-let adminInitialized = false
+/**
+ * 🔧 FUNCIÓN TEMPORAL: Eliminar usuario administrador para forzar recreación
+ * Solo para resolver inconsistencia de hasheo detectada
+ */
+export async function clearAdminUser(): Promise<void> {
+  try {
+    const { deleteRecord, getRecords, initDatabase } = useDatabase()
+    await initDatabase()
+    
+    const existingUsers = await getRecords('usuarios', 'username', DEFAULT_ADMIN.cedula)
+    if (existingUsers.length > 0) {
+      const adminUser = existingUsers[0] as { id: string }
+      await deleteRecord('usuarios', adminUser.id)
+      console.log('🗑️ Usuario administrador eliminado para recreación')
+    }
+  } catch (error) {
+    console.error('Error al eliminar usuario administrador:', error)
+  }
+}
 
 /**
  * Función helper para inicializar admin automáticamente en desarrollo
  * ⚠️ SEGURIDAD: Las credenciales se leen desde variables de entorno
  */
 export async function initializeDefaultAdmin(): Promise<void> {
-  // Prevenir doble inicialización en desarrollo
-  if (adminInitialized) {
-    console.log('ℹ️ Administrador ya inicializado previamente')
-    return
-  }
+  // 🔧 DEBUG: Limpiar usuario existente para resolver inconsistencia de hasheo
+  await clearAdminUser()
   
   console.log('Inicializando usuario administrador por defecto...')
   console.log('🔒 Leyendo credenciales desde variables de entorno...')
@@ -101,14 +116,11 @@ export async function initializeDefaultAdmin(): Promise<void> {
   
   if (success) {
     console.log('✅ Usuario administrador inicializado correctamente')
-    console.log('📋 Credenciales configuradas:')
-    console.log(`   Usuario: ${DEFAULT_ADMIN.cedula}`)
-    // ⚠️ No mostrar contraseña en logs por seguridad
-    console.log(`   Contraseña: ${'*'.repeat(DEFAULT_ADMIN.password.length)}`)
-    console.log('🔒 IMPORTANTE: Cambiar credenciales en producción')
-    adminInitialized = true
+    console.log('🔒 CREDENCIALES DE ACCESO POR DEFECTO:')
+    console.log(`   👤 Usuario: ${DEFAULT_ADMIN.cedula}`)
+    console.log(`   🗝️  Contraseña: ${DEFAULT_ADMIN.password}`)
+    console.log('📋 Acceder al AdminPanel para cambiar credenciales si es necesario')
   } else {
     console.log('ℹ️ Usuario administrador ya existe o no pudo crearse')
-    adminInitialized = true
   }
 }

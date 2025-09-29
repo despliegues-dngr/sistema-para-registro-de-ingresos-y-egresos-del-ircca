@@ -207,8 +207,8 @@ export const useAuthStore = defineStore('auth', () => {
         throw new Error('Ya existe un usuario registrado con esa cédula')
       }
 
-      // Hashear la contraseña
-      const { hash: hashedPassword, salt } = await encryptionService.hashPassword(userData.password)
+      // Hashear la contraseña usando método estático (consistencia con initializeAdmin)
+      const { hash: hashedPassword, salt } = await EncryptionService.hashPassword(userData.password)
 
       // Generar ID único para el usuario
       const userId = encryptionService.generateSecureId()
