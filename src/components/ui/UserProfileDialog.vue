@@ -11,7 +11,7 @@
           <v-icon size="24" color="white" class="mr-3">{{ headerIcon }}</v-icon>
           <div>
             <h3 class="text-h6 text-white mb-0">{{ headerTitle }}</h3>
-            <p class="text-caption text-blue-lighten-4 mb-0">Sistema para registros del IRCCA</p>
+            <p class="text-caption text-blue-lighten-4 mb-0">Sistema de Control de Accesos del IRCCA</p>
           </div>
         </div>
       </v-card-title>
@@ -31,27 +31,27 @@
       <!-- Actions -->
       <v-card-actions class="pa-4 pt-2">
         <v-spacer />
-        <v-btn 
-          color="secondary" 
-          variant="text" 
+        <v-btn
+          color="secondary"
+          variant="text"
           @click="currentMode === 'edit' ? cancelEdit() : closeDialog()"
           :disabled="loading"
         >
           {{ currentMode === 'view' ? 'Cerrar' : 'Cancelar' }}
         </v-btn>
-        <v-btn 
+        <v-btn
           v-if="currentMode === 'view'"
-          color="primary" 
-          variant="flat" 
+          color="primary"
+          variant="flat"
           prepend-icon="mdi-pencil"
           @click="currentMode = 'edit'"
         >
           Editar
         </v-btn>
-        <v-btn 
+        <v-btn
           v-if="currentMode === 'edit'"
-          color="primary" 
-          variant="flat" 
+          color="primary"
+          variant="flat"
           @click="handleSubmit"
           :loading="loading"
           :disabled="!isFormValid"

@@ -7,7 +7,7 @@
           <v-icon size="24" color="white" class="mr-3">mdi-file-document-outline</v-icon>
           <div>
             <h3 class="text-h6 text-white mb-0">Términos y Condiciones</h3>
-            <p class="text-caption text-blue-lighten-4 mb-0">Sistema para registros del IRCCA</p>
+            <p class="text-caption text-blue-lighten-4 mb-0">Sistema de Control de Accesos del IRCCA</p>
           </div>
         </div>
       </v-card-title>
@@ -19,12 +19,12 @@
           <section class="mb-6">
             <h4 class="text-h6 text-primary mb-3">1. INTRODUCCIÓN Y ACEPTACIÓN</h4>
             <p class="text-body-2 mb-3">
-              El presente documento establece los términos y condiciones para el uso del Sistema de Registro de Accesos 
-              desarrollado por la <strong>Dirección Nacional de la Guardia Republicana (DNGR)</strong> para el control de 
+              El presente documento establece los términos y condiciones para el uso del Sistema de Registro de Accesos
+              desarrollado por la <strong>Dirección Nacional de la Guardia Republicana (DNGR)</strong> para el control de
               accesos en las instalaciones del <strong>Instituto de Regulación y Control del Cannabis (IRCCA)</strong>.
             </p>
             <p class="text-body-2">
-              Al registrarse como operador del sistema, usted acepta expresamente todos los términos contenidos en este documento 
+              Al registrarse como operador del sistema, usted acepta expresamente todos los términos contenidos en este documento
               y se compromete a cumplir con la normativa nacional vigente en materia de protección de datos personales.
             </p>
           </section>
@@ -51,17 +51,17 @@
           <!-- Protección de Datos -->
           <section class="mb-6">
             <h4 class="text-h6 text-primary mb-3">3. PROTECCIÓN DE DATOS PERSONALES</h4>
-            
+
             <h5 class="text-subtitle-1 font-weight-medium mb-2">3.1 Finalidad del Tratamiento</h5>
             <p class="text-body-2 mb-3">
-              Los datos personales recolectados tienen como única finalidad el control de accesos a las instalaciones del IRCCA 
-              por razones de seguridad institucional y cumplimiento de los protocolos de seguridad establecidos por la DNGR 
+              Los datos personales recolectados tienen como única finalidad el control de accesos a las instalaciones del IRCCA
+              por razones de seguridad institucional y cumplimiento de los protocolos de seguridad establecidos por la DNGR
               en el marco del Servicio Art. 222.
             </p>
 
             <h5 class="text-subtitle-1 font-weight-medium mb-2">3.2 Base Legal</h5>
             <p class="text-body-2 mb-3 ml-4">
-              El tratamiento se fundamenta en el cumplimiento de obligaciones legales (Ley N° 18.331 y Decreto N° 64/020) 
+              El tratamiento se fundamenta en el cumplimiento de obligaciones legales (Ley N° 18.331 y Decreto N° 64/020)
               y el interés público en la seguridad de instalaciones gubernamentales.
             </p>
 
@@ -115,8 +115,8 @@
           <section class="mb-6">
             <h4 class="text-h6 text-primary mb-3">6. POLÍTICA DE RETENCIÓN</h4>
             <p class="text-body-2 mb-3">
-              Los datos operativos se conservan en el sistema durante 12 meses para fines de seguridad activa. 
-              Los respaldos se mantienen por 5 años para propósitos de auditoría institucional, después de los 
+              Los datos operativos se conservan en el sistema durante 12 meses para fines de seguridad activa.
+              Los respaldos se mantienen por 5 años para propósitos de auditoría institucional, después de los
               cuales son eliminados de forma segura.
             </p>
           </section>
@@ -125,7 +125,7 @@
           <section class="mb-6">
             <h4 class="text-h6 text-primary mb-3">7. CONTACTO</h4>
             <p class="text-body-2 mb-3">
-              Para ejercer sus derechos o realizar consultas sobre el tratamiento de datos personales, 
+              Para ejercer sus derechos o realizar consultas sobre el tratamiento de datos personales,
               puede contactar a la Dirección Nacional de la Guardia Republicana a través de:
             </p>
             <div class="ml-4">
@@ -148,7 +148,7 @@
           <section class="mb-6">
             <h4 class="text-h6 text-primary mb-3">8. LEY APLICABLE Y JURISDICCIÓN</h4>
             <p class="text-body-2 mb-3">
-              Los presentes términos se rigen por la legislación de la República Oriental del Uruguay, 
+              Los presentes términos se rigen por la legislación de la República Oriental del Uruguay,
               especialmente la Ley N° 18.331 de Protección de Datos Personales y sus decretos reglamentarios.
             </p>
             <p class="text-body-2">
@@ -160,8 +160,8 @@
           <section class="mb-4">
             <h4 class="text-h6 text-primary mb-3">9. MODIFICACIONES</h4>
             <p class="text-body-2">
-              La DNGR se reserva el derecho de modificar estos términos y condiciones cuando lo considere necesario 
-              para mejorar la seguridad o el funcionamiento del sistema, informando a los usuarios registrados con 
+              La DNGR se reserva el derecho de modificar estos términos y condiciones cuando lo considere necesario
+              para mejorar la seguridad o el funcionamiento del sistema, informando a los usuarios registrados con
               una antelación mínima de 30 días.
             </p>
           </section>
@@ -171,9 +171,9 @@
       <!-- Actions -->
       <v-card-actions class="pa-4 pt-2 bg-grey-lighten-5">
         <v-spacer />
-        <v-btn 
-          color="secondary" 
-          variant="text" 
+        <v-btn
+          color="secondary"
+          variant="text"
           @click="$emit('close')"
           prepend-icon="mdi-close"
         >

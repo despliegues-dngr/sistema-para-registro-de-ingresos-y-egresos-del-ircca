@@ -35,7 +35,7 @@ export class RegistroService {
       console.log('🔍 [DEBUG] Inicializando DatabaseService (idempotente)...')
       console.log('🔍 [DEBUG] Username a usar:', authStore.user.username)
       
-      await databaseService.initializeWithSessionKey(authStore.user.username)
+      await databaseService.initializeWithSessionKey()
       console.log('✅ [DEBUG] DatabaseService inicializado/verificado')
       
     } catch (error) {

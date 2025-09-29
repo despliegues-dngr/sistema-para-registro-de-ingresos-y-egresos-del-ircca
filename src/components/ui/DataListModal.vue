@@ -1,8 +1,8 @@
 <template>
-  <v-dialog 
-    v-model="modelValue" 
-    max-width="900" 
-    persistent 
+  <v-dialog
+    v-model="modelValue"
+    max-width="900"
+    persistent
     transition="dialog-bottom-transition"
     scrollable
   >
@@ -13,7 +13,7 @@
           <v-icon size="24" color="white" class="mr-3">{{ headerIcon }}</v-icon>
           <div>
             <h3 class="text-h6 text-white mb-0">{{ title }}</h3>
-            <p class="text-caption text-blue-lighten-4 mb-0">Sistema para registros del IRCCA</p>
+            <p class="text-caption text-blue-lighten-4 mb-0">Sistema de Control de Accesos del IRCCA</p>
           </div>
         </div>
       </v-card-title>
@@ -37,8 +37,8 @@
         <template v-if="dataType === 'personas'">
           <v-list class="py-0">
             <template v-for="(persona, index) in filteredData" :key="(persona as PersonaModalData)?.cedula || index">
-              <v-list-item 
-                class="py-3 px-6" 
+              <v-list-item
+                class="py-3 px-6"
                 :class="{ 'bg-grey-lighten-5': index % 2 === 1 }"
               >
                 <template #prepend>
@@ -70,13 +70,13 @@
 
                 <template #append>
                   <div class="text-center">
-                    <v-chip 
-                      :color="(persona as any)?.conVehiculo ? 'success' : 'default'" 
+                    <v-chip
+                      :color="(persona as any)?.conVehiculo ? 'success' : 'default'"
                       size="small"
                       variant="tonal"
                     >
-                      <v-icon 
-                        size="16" 
+                      <v-icon
+                        size="16"
                         :icon="(persona as any)?.conVehiculo ? 'mdi-car' : 'mdi-walk'"
                         class="mr-1"
                       />
@@ -85,7 +85,7 @@
                   </div>
                 </template>
               </v-list-item>
-              
+
               <v-divider v-if="index < filteredData.length - 1" />
             </template>
           </v-list>
@@ -95,8 +95,8 @@
         <template v-else-if="dataType === 'vehiculos'">
           <v-list class="py-0">
             <template v-for="(vehiculo, index) in filteredData" :key="(vehiculo as any)?.id || index">
-              <v-list-item 
-                class="py-3 px-6" 
+              <v-list-item
+                class="py-3 px-6"
                 :class="{ 'bg-grey-lighten-5': index % 2 === 1 }"
               >
                 <template #prepend>
@@ -123,13 +123,13 @@
                 </v-list-item-subtitle>
 
                 <template #append>
-                  <v-chip 
-                    :color="getVehicleColor((vehiculo as any)?.tipo)" 
+                  <v-chip
+                    :color="getVehicleColor((vehiculo as any)?.tipo)"
                     size="small"
                     variant="tonal"
                   >
-                    <v-icon 
-                      size="16" 
+                    <v-icon
+                      size="16"
                       :icon="getVehicleIcon((vehiculo as any)?.tipo)"
                       class="mr-1"
                     />
@@ -137,7 +137,7 @@
                   </v-chip>
                 </template>
               </v-list-item>
-              
+
               <v-divider v-if="index < filteredData.length - 1" />
             </template>
           </v-list>
@@ -159,9 +159,9 @@
           {{ searchQuery ? `${filteredData.length} de ${data.length}` : `Total: ${data.length}` }} {{ dataType === 'personas' ? 'personas' : 'vehículos' }}
         </span>
         <v-spacer />
-        <v-btn 
-          color="secondary" 
-          variant="text" 
+        <v-btn
+          color="secondary"
+          variant="text"
           @click="closeModal"
         >
           Cerrar
@@ -234,18 +234,18 @@ const filteredData = computed(() => {
   }
 
   const query = searchQuery.value.toLowerCase().trim()
-  
+
   return props.data.filter((item: unknown) => {
     const itemData = item as ModalData
-    
+
     if (props.dataType === 'personas') {
       const personaData = itemData as PersonaModalData
       const nombre = `${personaData?.nombre || ''} ${personaData?.apellido || ''}`.toLowerCase()
       const cedula = (personaData?.cedula || '').toString().toLowerCase()
       const destino = (personaData?.destino || '').toLowerCase()
-      
-      return nombre.includes(query) || 
-             cedula.includes(query) || 
+
+      return nombre.includes(query) ||
+             cedula.includes(query) ||
              destino.includes(query)
     } else {
       // Para vehículos
@@ -253,7 +253,7 @@ const filteredData = computed(() => {
       const tipo = (vehiculoData?.tipo || '').toLowerCase()
       const matricula = (vehiculoData?.matricula || '').toLowerCase()
       const conductor = (vehiculoData?.conductor || '').toLowerCase()
-      
+
       return tipo.includes(query) ||
              matricula.includes(query) ||
              conductor.includes(query)
@@ -276,7 +276,7 @@ function formatearHora(timestamp: Date): string {
 function getVehicleIcon(tipo: string): string {
   const iconos = {
     'Auto': 'mdi-car',
-    'Moto': 'mdi-motorbike', 
+    'Moto': 'mdi-motorbike',
     'Camión': 'mdi-truck',
     'Camion': 'mdi-truck', // Sin tilde para compatibilidad
     'Bus': 'mdi-bus'

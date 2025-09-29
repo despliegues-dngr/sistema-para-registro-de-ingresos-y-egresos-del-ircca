@@ -6,7 +6,7 @@
 
 // Sistema de información institucional
 export const SYSTEM_INFO = {
-  NAME: 'Sistema para registros del IRCCA',
+  NAME: 'Sistema de Control de Accesos del IRCCA',
   FULL_NAME: 'Instituto de Regulación y Control del Cannabis',
   GOVERNMENT: '@2025, Dirección Nacional Guardia Republicana',
   VERSION: '1.0.0',

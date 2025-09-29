@@ -60,7 +60,7 @@ _(Implementación detallada en: `docs/02-architecture/04-vuetify-guidelines.md`)
 
 - **Diseño:** Una vista centrada vertical y horizontalmente.
 - **Contenedor:** Una tarjeta (`v-card`) con elevación para destacar sobre el fondo.
-- **Header:** Un cabecero prominente usando el color `primary` de la paleta, que debe incluir un ícono representativo de seguridad (`mdi-shield-account`), el nombre del sistema ("Sistema para registros del IRCCA") y el nombre completo del instituto.
+- **Header:** Un cabecero prominente usando el color `primary` de la paleta, que debe incluir un ícono representativo de seguridad (`mdi-shield-account`), el nombre del sistema ("Sistema de Control de Accesos del IRCCA") y el nombre completo del instituto.
 - **Formulario:**
   - Campo de texto para "Usuario".
   - Campo de texto para "Contraseña" (tipo password).

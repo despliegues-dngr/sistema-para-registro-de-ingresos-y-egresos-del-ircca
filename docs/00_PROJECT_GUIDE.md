@@ -2,7 +2,7 @@
 
 ## 1. Bienvenida y Propósito del Proyecto
 
-Este documento es la guía central y el punto de partida para entender la estructura, el flujo de trabajo y las convenciones del proyecto **Sistema para registros del IRCCA**.
+Este documento es la guía central y el punto de partida para entender la estructura, el flujo de trabajo y las convenciones del proyecto **Sistema de Control de Accesos del IRCCA**.
 
 El objetivo del proyecto es desarrollar e implementar una Progressive Web App (PWA) para automatizar y modernizar el registro, control y consulta de accesos de personas y vehículos en el instituto.
 

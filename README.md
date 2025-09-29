@@ -1,4 +1,4 @@
-# Sistema para registros del IRCCA - Registro de Ingresos y Egresos
+# Sistema de Control de Accesos del IRCCA - Registro de Ingresos y Egresos
 
 Progressive Web App (PWA) para automatizar el registro, control y consulta de ingresos y egresos de personas y vehículos en el puesto de vigilancia del Instituto de Rehabilitación del Cuerpo de Comandos de Aeronáutica (IRCCA).
 
@@ -231,4 +231,4 @@ pnpm test:e2e --debug
 pnpm lint
 ```
 
-"# Sistema para registros del IRCCA - Registro de Ingresos y Egresos"
+"# Sistema de Control de Accesos del IRCCA - Registro de Ingresos y Egresos"

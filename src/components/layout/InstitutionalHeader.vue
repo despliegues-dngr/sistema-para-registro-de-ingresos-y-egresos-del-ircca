@@ -13,9 +13,6 @@
       <h1 class="text-h6 text-sm-h5 font-weight-bold text-white mb-2 text-center">
         {{ title }}
       </h1>
-      <h2 class="text-subtitle-2 font-weight-medium text-blue-lighten-3 mb-1">
-        {{ subtitle }}
-      </h2>
       <p class="text-caption text-blue-lighten-4">
         {{ country }}
       </p>
@@ -28,13 +25,11 @@ import { SYSTEM_INFO, ICONS } from '@/config/constants'
 
 interface Props {
   title?: string
-  subtitle?: string
   country?: string
 }
 
 withDefaults(defineProps<Props>(), {
   title: SYSTEM_INFO.NAME,
-  subtitle: 'IRCCA',
   country: SYSTEM_INFO.FULL_NAME,
 })
 </script>

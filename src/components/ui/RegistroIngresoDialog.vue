@@ -1,8 +1,8 @@
 <template>
-  <v-dialog 
-    v-model="modelValue" 
-    max-width="800" 
-    persistent 
+  <v-dialog
+    v-model="modelValue"
+    max-width="800"
+    persistent
     transition="dialog-bottom-transition"
     scrollable
   >
@@ -17,7 +17,7 @@
           <v-icon size="24" color="white" class="mr-3">mdi-account-plus</v-icon>
           <div>
             <h3 class="text-h6 text-white mb-0">Registrar Ingreso</h3>
-            <p class="text-caption text-blue-lighten-4 mb-0">Sistema para registros del IRCCA</p>
+            <p class="text-caption text-blue-lighten-4 mb-0">Sistema de Control de Accesos del IRCCA</p>
           </div>
         </div>
       </v-card-title>
@@ -35,17 +35,17 @@
       <!-- Actions -->
       <v-card-actions class="pa-4 pt-2">
         <v-spacer />
-        <v-btn 
-          color="secondary" 
-          variant="text" 
+        <v-btn
+          color="secondary"
+          variant="text"
           @click="closeDialog()"
           :disabled="loading"
         >
           Cancelar
         </v-btn>
-        <v-btn 
-          color="primary" 
-          variant="flat" 
+        <v-btn
+          color="primary"
+          variant="flat"
           prepend-icon="mdi-content-save"
           @click="handleSubmit"
           :loading="loading"
@@ -110,7 +110,7 @@ const onSubmit = async (registroData: RegistroIngresoData) => {
     console.log('🔍 DEBUG RegistroIngresoDialog - Datos antes de enviar al store:', registroData)
     console.log('🔍 DEBUG RegistroIngresoDialog - ¿Tiene acompañantes?', !!registroData.acompanantes)
     console.log('🔍 DEBUG RegistroIngresoDialog - Cantidad acompañantes:', registroData.acompanantes?.length || 0)
-    
+
     registroStore.registrarIngreso({
       datosPersonales: registroData.datosPersonales,
       datosVisita: registroData.datosVisita,

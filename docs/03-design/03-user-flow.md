@@ -1,4 +1,4 @@
-# Flujo de Usuario - Sistema para registros del IRCCA
+# Flujo de Usuario - Sistema de Control de Accesos del IRCCA
 
 **Versión:** 1.0  
 **Fecha:** 10-Sep-2025

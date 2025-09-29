@@ -72,11 +72,12 @@ export async function createInitialAdmin(adminData: AdminUser): Promise<boolean>
  * ✅ SEGURO: Credenciales leídas desde variables de entorno
  */
 export const DEFAULT_ADMIN: AdminUser = {
-  cedula: import.meta.env.VITE_ADMIN_DEFAULT_CEDULA || '12345678',
-  grado: import.meta.env.VITE_ADMIN_DEFAULT_GRADO || 'teniente',
-  nombre: import.meta.env.VITE_ADMIN_DEFAULT_NOMBRE || 'Admin',
-  apellido: import.meta.env.VITE_ADMIN_DEFAULT_APELLIDO || 'Sistema',
-  password: import.meta.env.VITE_ADMIN_DEFAULT_PASSWORD || 'admin123'
+  cedula: import.meta.env.VITE_ADMIN_DEFAULT_CEDULA || '55226350',
+  grado: import.meta.env.VITE_ADMIN_DEFAULT_GRADO || 'Guardia Republicano',
+  nombre: import.meta.env.VITE_ADMIN_DEFAULT_NOMBRE || 'Mario',
+  apellido: import.meta.env.VITE_ADMIN_DEFAULT_APELLIDO || 'Berni',
+  // ✅ SEGURIDAD: Contraseña hardcodeada (no en variables de entorno VITE_)
+  password: '2025.Ircca'
 }
 
 // Flag para prevenir doble inicialización

@@ -345,7 +345,7 @@ export const useRegistroStore = defineStore('registro', () => {
       const databaseModule = await import('@/services/databaseService')
       console.log('🔍 [DEBUG] Inicializando DatabaseService con usuario:', authStore.user.username)
       
-      await databaseModule.databaseService.initializeWithSessionKey(authStore.user.username)
+      await databaseModule.databaseService.initializeWithSessionKey()
       console.log('✅ [DEBUG] DatabaseService inicializado correctamente')
       
       // Obtener registros descifrados

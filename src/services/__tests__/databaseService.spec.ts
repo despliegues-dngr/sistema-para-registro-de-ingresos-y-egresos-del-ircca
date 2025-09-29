@@ -138,19 +138,17 @@ describe('DatabaseService', () => {
       expect(mockUseDatabase.initDatabase).toHaveBeenCalledTimes(1)
     })
 
-    it('debe inicializar con clave de sesión correctamente', async () => {
-      const userCredentials = 'admin:password123'
-      
+    it('debe inicializar con una clave de sesión', async () => {
       // Mock crypto operations
       const mockKeyMaterial = {}
       const mockSessionKey = {}
-      const mockSessionKeyBuffer = new ArrayBuffer(32)
+      const mockSessionKeyBuffer = new Uint8Array(32)
       
       mockCrypto.subtle.importKey.mockResolvedValue(mockKeyMaterial)
       mockCrypto.subtle.deriveKey.mockResolvedValue(mockSessionKey)
       mockCrypto.subtle.exportKey.mockResolvedValue(mockSessionKeyBuffer)
 
-      await service.initializeWithSessionKey(userCredentials)
+      await service.initializeWithSessionKey()
 
       expect(mockCrypto.subtle.importKey).toHaveBeenCalledWith(
         'raw',
@@ -186,7 +184,7 @@ describe('DatabaseService', () => {
       mockCrypto.subtle.deriveKey.mockResolvedValue(mockSessionKey)
       mockCrypto.subtle.exportKey.mockResolvedValue(mockSessionKeyBuffer)
       
-      await service.initializeWithSessionKey('test:credentials')
+      await service.initializeWithSessionKey()
       
       // Limpiar sesión
       service.clearSession()
@@ -228,7 +226,7 @@ describe('DatabaseService', () => {
       mockCrypto.subtle.exportKey.mockResolvedValue(mockSessionKeyBuffer)
 
       // Inicializar el servicio con clave de sesión
-      await service.initializeWithSessionKey('admin:password123')
+      await service.initializeWithSessionKey()
     })
 
     it('debe cifrar, guardar, obtener y descifrar un registro correctamente', async () => {

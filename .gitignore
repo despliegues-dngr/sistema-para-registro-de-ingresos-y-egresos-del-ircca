@@ -29,9 +29,32 @@ coverage
 
 *.tsbuildinfo
 
+# Testing
 test-results/
 playwright-report/
+.nyc_output
+
+# Caching
+.eslintcache
+.stylelintcache
+
+# Temporary files
+*.tmp
+*.temp
+.cache/
+
+# PWA related
+sw.js
+workbox-*.js
+
+# IRCCA App specific
+*.backup
+backups/
 
 # Vercel
 .vercel
 .env*.local
+
+# OS generated files
+Thumbs.db
+ehthumbs.db

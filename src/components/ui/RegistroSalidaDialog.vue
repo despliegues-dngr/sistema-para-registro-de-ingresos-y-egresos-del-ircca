@@ -1,8 +1,8 @@
 <template>
-  <v-dialog 
-    v-model="modelValue" 
-    max-width="700" 
-    persistent 
+  <v-dialog
+    v-model="modelValue"
+    max-width="700"
+    persistent
     transition="dialog-bottom-transition"
     scrollable
   >
@@ -17,7 +17,7 @@
           <v-icon size="24" color="white" class="mr-3">mdi-account-minus</v-icon>
           <div>
             <h3 class="text-h6 text-white mb-0">Registrar Salida</h3>
-            <p class="text-caption text-orange-lighten-4 mb-0">Sistema para registros del IRCCA</p>
+            <p class="text-caption text-orange-lighten-4 mb-0">Sistema de Control de Accesos del IRCCA</p>
           </div>
         </div>
       </v-card-title>
@@ -35,18 +35,18 @@
       <!-- Actions -->
       <v-card-actions class="pa-4 pt-2">
         <v-spacer />
-        <v-btn 
-          color="secondary" 
-          variant="text" 
+        <v-btn
+          color="secondary"
+          variant="text"
           @click="closeDialog()"
           :disabled="loading"
         >
           Cancelar
         </v-btn>
-        <v-btn 
+        <v-btn
           v-if="!isEditingMode"
-          color="warning" 
-          variant="flat" 
+          color="warning"
+          variant="flat"
           prepend-icon="mdi-logout"
           @click="handleSubmit"
           :loading="loading"

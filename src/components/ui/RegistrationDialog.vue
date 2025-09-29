@@ -11,7 +11,7 @@
           <v-icon size="24" color="white" class="mr-3">{{ ICONS.NAVIGATION.REGISTER }}</v-icon>
           <div>
             <h3 class="text-h6 text-white mb-0">Registro de Nuevo Operador</h3>
-            <p class="text-caption text-blue-lighten-4 mb-0">Sistema para registros del IRCCA</p>
+            <p class="text-caption text-blue-lighten-4 mb-0">Sistema de Control de Accesos del IRCCA</p>
           </div>
         </div>
       </v-card-title>
@@ -28,9 +28,9 @@
       <!-- Actions -->
       <v-card-actions class="pa-4 pt-2">
         <v-spacer />
-        <v-btn 
-          color="secondary" 
-          variant="text" 
+        <v-btn
+          color="secondary"
+          variant="text"
           @click="closeDialog"
           :disabled="loading"
         >

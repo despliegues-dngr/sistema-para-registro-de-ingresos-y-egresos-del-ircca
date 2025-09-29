@@ -11,7 +11,9 @@
           <v-icon size="24" color="white" class="mr-3">{{ ICONS.NAVIGATION.HELP }}</v-icon>
           <div>
             <h3 class="text-h6 text-white mb-0">Centro de Ayuda</h3>
-            <p class="text-caption text-blue-lighten-4 mb-0">Sistema para registros del IRCCA</p>
+            <p class="text-caption text-blue-lighten-4 mb-0">
+              Sistema de Control de Accesos del IRCCA
+            </p>
           </div>
         </div>
       </v-card-title>
@@ -137,7 +139,7 @@ const copyToClipboard = async (text: string) => {
 const openWhatsApp = () => {
   const cleanNumber = props.whatsappNumber.replace(/\s/g, '')
   const message = encodeURIComponent(
-    'Hola, necesito ayuda con el Sistema para registros del IRCCA.',
+    'Hola, necesito ayuda con el Sistema de Control de Accesos del IRCCAAccesos del IRCCA del IRCCA.',
   )
   window.open(`https://wa.me/598${cleanNumber}?text=${message}`, '_blank')
 }

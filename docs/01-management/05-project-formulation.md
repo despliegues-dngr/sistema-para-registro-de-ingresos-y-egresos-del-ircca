@@ -1,6 +1,6 @@
 # FORMULACIÓN DEL PROYECTO
 
-**PROYECTO:** Sistema para registros del IRCCA  
+**PROYECTO:** Sistema de Control de Accesos del IRCCA  
 **FECHA DE APROBACIÓN:** 08 de Septiembre de 2025  
 **VERSIÓN:** 1.0
 

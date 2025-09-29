@@ -1,6 +1,6 @@
 # 📋 SEGUIMIENTO DE TAREAS - PROYECTO PWA IRCCA
 
-**PROYECTO:** Sistema para registros del IRCCA  
+**PROYECTO:** Sistema de Control de Accesos del IRCCA  
 **DURACIÓN:** 4 semanas (09-Sep-2025 → 06-Oct-2025)  
 **RESPONSABLE:** Mario BERNI (Gerente de Proyecto/Desarrollador)
 

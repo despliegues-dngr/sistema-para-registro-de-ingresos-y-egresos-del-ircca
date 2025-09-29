@@ -7,20 +7,20 @@
           <v-icon size="24" color="white" class="mr-3">mdi-clock-alert</v-icon>
           <div>
             <h3 class="text-h6 text-white mb-0">Sesión por Expirar</h3>
-            <p class="text-caption text-amber-lighten-4 mb-0">Sistema para registros del IRCCA</p>
+            <p class="text-caption text-amber-lighten-4 mb-0">Sistema de Control de Accesos del IRCCA</p>
           </div>
         </div>
       </v-card-title>
 
       <v-card-text class="pa-6 text-center">
         <v-icon size="64" color="warning" class="mb-4">mdi-timer</v-icon>
-        
+
         <h4 class="text-h5 mb-3">Su sesión está por expirar</h4>
-        
+
         <p class="text-body-1 mb-4 text-grey-darken-1">
           Por motivos de seguridad, su sesión se cerrará automáticamente por inactividad.
         </p>
-        
+
         <div class="session-countdown mb-4">
           <div class="d-flex justify-center align-center">
             <v-icon size="20" color="error" class="mr-2">mdi-clock-outline</v-icon>
@@ -49,8 +49,8 @@
 
       <!-- Actions -->
       <v-card-actions class="pa-4 pt-0">
-        <v-btn 
-          color="error" 
+        <v-btn
+          color="error"
           variant="outlined"
           @click="$emit('logout')"
           class="flex-grow-1"
@@ -58,9 +58,9 @@
         >
           Cerrar Sesión
         </v-btn>
-        
-        <v-btn 
-          color="primary" 
+
+        <v-btn
+          color="primary"
           variant="flat"
           @click="$emit('extend')"
           class="flex-grow-1 ml-3"
