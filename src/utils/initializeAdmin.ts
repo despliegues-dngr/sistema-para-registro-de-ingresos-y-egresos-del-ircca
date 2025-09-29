@@ -102,6 +102,70 @@ export async function clearAdminUser(): Promise<void> {
 }
 
 /**
+ * 🔒 USUARIO SUPERVISOR POR DEFECTO
+ * ✅ Credenciales fijas para el rol supervisor según especificaciones
+ */
+export const DEFAULT_SUPERVISOR: AdminUser = {
+  cedula: '12345678',           // Cédula proporcionada
+  grado: 'Encargado',          // Grado no policial especificado
+  nombre: 'Carlos',            // Nombre proporcionado
+  apellido: 'Torres',          // Apellido proporcionado
+  password: '2025.Supervisor'  // Contraseña por defecto
+}
+
+/**
+ * Crea el usuario supervisor del sistema
+ */
+export async function createInitialSupervisor(supervisorData: AdminUser): Promise<boolean> {
+  try {
+    const { addRecord, getRecords, initDatabase } = useDatabase()
+    
+    // Inicializar BD
+    await initDatabase()
+
+    // Verificar si ya existe el supervisor
+    const existingUsers = await getRecords('usuarios', 'username', supervisorData.cedula)
+    if (existingUsers.length > 0) {
+      console.log('El usuario supervisor ya existe')
+      return false
+    }
+
+    // Generar ID único y hashear contraseña
+    const encryptionService = new EncryptionService()
+    const userId = encryptionService.generateSecureId()
+    const { hash: hashedPassword, salt } = await EncryptionService.hashPassword(supervisorData.password)
+
+    // Crear usuario supervisor
+    const supervisorUser = {
+      id: userId,
+      username: supervisorData.cedula,
+      role: 'supervisor' as const,
+      nombre: supervisorData.nombre,
+      apellido: supervisorData.apellido,
+      grado: supervisorData.grado,
+      hashedPassword,
+      salt,
+      createdAt: new Date().toISOString(),
+      lastLogin: null
+    }
+
+    // Guardar en BD
+    const result = await addRecord('usuarios', supervisorUser)
+    
+    if (!result.success) {
+      throw new Error(result.error || 'Error al crear usuario supervisor')
+    }
+
+    console.log('Usuario supervisor creado exitosamente:', supervisorData.cedula)
+    return true
+
+  } catch (error) {
+    console.error('Error al crear usuario supervisor:', error)
+    return false
+  }
+}
+
+/**
  * Función helper para inicializar admin automáticamente en desarrollo
  * ⚠️ SEGURIDAD: Las credenciales se leen desde variables de entorno
  */
@@ -122,5 +186,24 @@ export async function initializeDefaultAdmin(): Promise<void> {
     console.log('📋 Acceder al AdminPanel para cambiar credenciales si es necesario')
   } else {
     console.log('ℹ️ Usuario administrador ya existe o no pudo crearse')
+  }
+}
+
+/**
+ * Función helper para inicializar supervisor automáticamente
+ */
+export async function initializeDefaultSupervisor(): Promise<void> {
+  console.log('Inicializando usuario supervisor por defecto...')
+  
+  const success = await createInitialSupervisor(DEFAULT_SUPERVISOR)
+  
+  if (success) {
+    console.log('✅ Usuario supervisor inicializado correctamente')
+    console.log('🔒 CREDENCIALES DE SUPERVISOR:')
+    console.log(`   👤 Usuario: ${DEFAULT_SUPERVISOR.cedula}`)
+    console.log(`   🗝️  Contraseña: ${DEFAULT_SUPERVISOR.password}`)
+    console.log(`   👔 Grado: ${DEFAULT_SUPERVISOR.grado}`)
+  } else {
+    console.log('ℹ️ Usuario supervisor ya existe o no pudo crearse')
   }
 }

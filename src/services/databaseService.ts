@@ -497,6 +497,19 @@ export class DatabaseService {
       return { success: false, cleaned: 0 }
     }
   }
+
+  /**
+   * Obtiene usuarios de la base de datos (no cifrados)
+   */
+  async getUsuarios(): Promise<Array<{ id: string; nombre: string; apellido: string; grado: string }>> {
+    this.ensureInitialized()
+    try {
+      return await this.db.getRecords('usuarios') as Array<{ id: string; nombre: string; apellido: string; grado: string }>
+    } catch (error) {
+      console.error('❌ [PDF] Error obteniendo usuarios:', error)
+      return []
+    }
+  }
 }
 
 export const databaseService = new DatabaseService()

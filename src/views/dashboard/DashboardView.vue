@@ -15,8 +15,8 @@
       @manage-users="handleManageUsers"
     />
     
-    <!-- Supervisor Dashboard (TODO) -->
-    <!-- <SupervisorContent v-else-if="authStore.isSupervisor" /> -->
+    <!-- Supervisor Dashboard -->
+    <SupervisorContent v-else-if="authStore.isSupervisor" />
     
     <!-- Operador Dashboard (por defecto) -->
     <template v-else>
@@ -144,6 +144,7 @@ import DashboardFooter from '@/components/layout/DashboardFooter.vue'
 
 // Componentes específicos por rol
 import AdminContent from '@/components/dashboard/roles/AdminContent.vue'
+import SupervisorContent from '@/components/dashboard/roles/SupervisorContent.vue'
 
 // --- Inicialización de Stores y Router ---
 const router = useRouter()

@@ -84,7 +84,7 @@ export default defineConfig(({ mode }) => {
           description: 'Sistema para registro y control de ingresos y egresos del Instituto de Regulación y Control del Cannabis',
           theme_color: '#1565C0',
           background_color: '#FFFFFF',
-          display: 'fullscreen',
+          display: 'standalone',
           orientation: 'portrait',
           scope: '/',
           start_url: '/',

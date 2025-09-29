@@ -27,8 +27,8 @@
               </v-col>
               <v-col cols="6" md="3">
                 <div class="text-center">
-                  <div class="text-h3 font-weight-bold text-warning">{{ usersData.admins }}</div>
-                  <div class="text-body-2 text-grey-darken-1">Administradores</div>
+                  <div class="text-h3 font-weight-bold text-warning">{{ usersData.supervisors }}</div>
+                  <div class="text-body-2 text-grey-darken-1">Supervisores</div>
                 </div>
               </v-col>
               <v-col cols="6" md="3">
