@@ -20,10 +20,10 @@ import { SYSTEM_INFO } from '@/config/constants'
 }
 
 .footer-text {
-  color: rgb(var(--v-theme-on-primary)) !important;
+  color: rgb(var(--v-theme-on-primary));
 }
 
 .footer-divider {
-  border-color: rgb(var(--v-theme-on-primary)) !important;
+  border-color: rgb(var(--v-theme-on-primary));
 }
 </style>

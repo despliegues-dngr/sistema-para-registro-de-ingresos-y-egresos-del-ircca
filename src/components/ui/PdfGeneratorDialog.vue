@@ -44,27 +44,29 @@
         </v-row>
 
         <!-- Selección de fechas (solo si se selecciona fecha específica) -->
-        <v-row v-if="reportType === 'date-range'">
-          <v-col cols="12" md="6">
+        <v-row v-if="reportType === 'date-range'" class="mt-2">
+          <v-col cols="6">
             <v-text-field
               v-model="startDate"
               label="Fecha Inicio"
               type="date"
               variant="outlined"
-              density="compact"
-              prepend-inner-icon="mdi-calendar"
+              density="comfortable"
+              color="success"
+              prepend-inner-icon="mdi-calendar-start"
               :max="maxDate"
               :rules="dateRules"
             />
           </v-col>
-          <v-col cols="12" md="6">
+          <v-col cols="6">
             <v-text-field
               v-model="endDate"
               label="Fecha Fin"
               type="date"
               variant="outlined"
-              density="compact"
-              prepend-inner-icon="mdi-calendar"
+              density="comfortable"
+              color="success"
+              prepend-inner-icon="mdi-calendar-end"
               :min="startDate"
               :max="maxDate"
               :rules="dateRules"
@@ -90,33 +92,28 @@
         <v-row v-if="lastGeneratedPdf">
           <v-col cols="12" class="text-center">
             <v-divider class="my-4" />
-            <v-icon size="64" color="success" class="mb-3">mdi-file-pdf-box</v-icon>
-            <h5 class="text-subtitle-1 mb-3">PDF Generado Exitosamente</h5>
-            <v-card variant="outlined" class="pa-4 mx-auto" style="max-width: 500px;">
-              <p class="text-body-2 mb-3">
-                📋 <strong>Reporte {{ qrReportInfo }}</strong><br>
-                🔒 <strong>Datos seguros:</strong> Se mantienen localmente<br>
-                💬 <strong>WhatsApp:</strong> Listo para enviar
-              </p>
-              
-              <!-- Botón de WhatsApp -->
-              <v-btn
-                v-if="lastGeneratedPdf"
-                color="success"
-                variant="flat"
-                prepend-icon="mdi-whatsapp"
-                class="mb-3"
-                @click="shareViaWhatsApp"
-                :loading="sharingWhatsApp"
-              >
-                💬 Enviar por WhatsApp
-              </v-btn>
-              
-              <p class="text-caption text-grey-darken-1">
-                El PDF se ha generado de forma segura manteniendo todos los datos en el dispositivo local.
-                Use el botón de WhatsApp para enviar el archivo.
-              </p>
-            </v-card>
+            
+            <!-- ✅ Check verde en lugar de icono PDF -->
+            <v-avatar size="80" color="success" class="mb-3">
+              <v-icon size="48" color="white">mdi-check-bold</v-icon>
+            </v-avatar>
+            
+            <h5 class="text-h6 mb-2 text-success">PDF Generado Exitosamente</h5>
+            <p class="text-body-2 text-grey-darken-1 mb-4">
+              📋 Reporte <strong>{{ qrReportInfo }}</strong>
+            </p>
+            
+            <!-- Botón de WhatsApp -->
+            <v-btn
+              color="success"
+              variant="flat"
+              size="large"
+              prepend-icon="mdi-whatsapp"
+              @click="shareViaWhatsApp"
+              :loading="sharingWhatsApp"
+            >
+              Enviar por WhatsApp
+            </v-btn>
           </v-col>
         </v-row>
 
@@ -283,13 +280,11 @@ const generatePdf = async () => {
   }
 }
 
+// ✅ FIX: Formateo manual para evitar problemas de timezone
 const formatDate = (dateStr: string): string => {
-  const date = new Date(dateStr)
-  return date.toLocaleDateString('es-UY', {
-    day: '2-digit',
-    month: '2-digit',
-    year: 'numeric'
-  })
+  // dateStr viene en formato 'YYYY-MM-DD' desde input type="date"
+  const [year, month, day] = dateStr.split('-')
+  return `${day}/${month}/${year}`
 }
 
 const closeDialog = () => {
