@@ -204,35 +204,29 @@ const vehiculosData = vehiculosDataComputed(selectedVehicleType.value)
 const isLoggingOut = ref(false)
 
 // Handlers para los eventos de éxito de los modales
-const handleRegistroIngresoSuccess = (message: string) => {
-  console.log('Registro de ingreso exitoso:', message)
+const handleRegistroIngresoSuccess = () => {
   // TODO: Mostrar notificación de éxito global
 }
 
-const handleRegistroSalidaSuccess = (message: string) => {
-  console.log('Registro de salida exitoso:', message)
+const handleRegistroSalidaSuccess = () => {
   // TODO: Mostrar notificación de éxito global
 }
 
 // Handler para gestión de usuarios (Admin)
 const handleManageUsers = () => {
-  console.log('Administrador solicita gestionar usuarios')
   // TODO: Abrir modal con tabla de usuarios
 }
 
 // Handlers para el menú de perfil
 const handleViewProfile = () => {
-  console.log('Ver perfil del usuario')
   // TODO: Abrir modal de ver perfil
 }
 
 const handleEditProfile = () => {
-  console.log('Editar perfil del usuario')
   // TODO: Abrir modal de editar perfil
 }
 
 const handleChangePassword = () => {
-  console.log('Cambiar contraseña')
   // TODO: Abrir modal de cambio de contraseña
 }
 
@@ -243,8 +237,8 @@ const handleLogout = async () => {
     cleanupTimeout()
     await authStore.logout()
     await router.push('/login')
-  } catch (error) {
-    console.error('Error durante el logout:', error)
+  } catch {
+    // Error silencioso
   } finally {
     isLoggingOut.value = false
   }
@@ -252,13 +246,11 @@ const handleLogout = async () => {
 
 // Handlers para el sistema de timeout de sesión
 const handleExtendSession = () => {
-  console.log('Usuario extendió la sesión desde el dashboard')
   extendSession()
   resetTimer()
 }
 
 const handleSessionTimeout = async () => {
-  console.log('Sesión cerrada por timeout desde el dashboard')
   await handleLogout()
 }
 

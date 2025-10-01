@@ -27,8 +27,8 @@ export const useStorageMonitor = () => {
       if ('storage' in navigator && 'persisted' in navigator.storage) {
         return await navigator.storage.persisted()
       }
-    } catch (error) {
-      console.error('Error al verificar estado de persistencia:', error)
+    } catch {
+      // Error silencioso
     }
     return false
   }
@@ -67,15 +67,10 @@ export const useStorageMonitor = () => {
           )
         }
 
-        console.log(`📊 Storage Monitor:
-          Uso: ${(usage / 1024 / 1024).toFixed(2)} MB (${usagePercentage.toFixed(1)}%)
-          Disponible: ${(quota / 1024 / 1024).toFixed(2)} MB
-          Persistente: ${isPersistent ? '✅' : '❌'}`)
-
         return info
       }
-    } catch (error) {
-      console.error('Error al obtener información de almacenamiento:', error)
+    } catch {
+      // Error silencioso
     }
 
     return storageInfo.value
@@ -126,8 +121,7 @@ export const useStorageMonitor = () => {
         
         return isPersistent
       }
-    } catch (error) {
-      console.error('Error al solicitar persistencia:', error)
+    } catch {
       appStore.addNotification('Error al configurar persistencia de almacenamiento', 'error')
     }
     

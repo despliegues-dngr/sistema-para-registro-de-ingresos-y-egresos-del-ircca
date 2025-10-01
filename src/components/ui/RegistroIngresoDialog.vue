@@ -107,10 +107,6 @@ const onSubmit = async (registroData: RegistroIngresoData) => {
     const operadorId = authStore.user?.id || 'unknown'
 
     // Registrar ingreso en el store
-    console.log('🔍 DEBUG RegistroIngresoDialog - Datos antes de enviar al store:', registroData)
-    console.log('🔍 DEBUG RegistroIngresoDialog - ¿Tiene acompañantes?', !!registroData.acompanantes)
-    console.log('🔍 DEBUG RegistroIngresoDialog - Cantidad acompañantes:', registroData.acompanantes?.length || 0)
-
     registroStore.registrarIngreso({
       datosPersonales: registroData.datosPersonales,
       datosVisita: registroData.datosVisita,
@@ -129,7 +125,6 @@ const onSubmit = async (registroData: RegistroIngresoData) => {
     }, 1500)
 
   } catch (error: unknown) {
-    console.error('Error al registrar ingreso:', error)
     message.value = error instanceof Error ? error.message : 'Error al registrar el ingreso'
   } finally {
     loading.value = false

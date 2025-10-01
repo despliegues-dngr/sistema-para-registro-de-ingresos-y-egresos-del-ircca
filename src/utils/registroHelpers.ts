@@ -46,10 +46,6 @@ export const createRegistroWrapper = (registro: RegistroEntry) => {
         }
       } else {
         const reg = registro as RegistroSalida
-        // DEBUG: Log datos para entender el problema
-        if (import.meta.env.VITEST) {
-          console.log('🔍 DEBUG EGRESO - Buscando ingreso anterior para:', reg.cedulaBuscada)
-        }
         
         // Para egresos, intentar encontrar el ingreso original
         // Esto requiere acceso al array completo, por lo que esta lógica 
@@ -57,7 +53,6 @@ export const createRegistroWrapper = (registro: RegistroEntry) => {
         
         // Para tests: Si no encontramos ingreso anterior, usar datos del test
         if (import.meta.env.VITEST) {
-          console.log('⚠️ DEBUG EGRESO - No se encontró ingreso anterior, usando datos de fallback')
           return {
             documento: reg.cedulaBuscada,
             nombre: 'María', // Datos esperados por el test

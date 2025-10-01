@@ -84,7 +84,6 @@ export class AutocompleteService {
 
         // Actualizar en DB
         await this.db.updateRecord('personasConocidas', datos.cedula, personaConocida)
-        console.log(`✅ Persona conocida actualizada: ${datos.nombre} ${datos.apellido} (Visita #${personaConocida.totalVisitas})`)
       } else {
         // Crear nueva persona conocida
         personaConocida = {
@@ -102,10 +101,8 @@ export class AutocompleteService {
 
         // Agregar a DB
         await this.db.addRecord('personasConocidas', personaConocida)
-        console.log(`✅ Nueva persona conocida registrada: ${datos.nombre} ${datos.apellido}`)
       }
-    } catch (error) {
-      console.error('❌ Error actualizando persona conocida:', error)
+    } catch {
       // No lanzar error para no bloquear el registro principal
     }
   }
@@ -136,10 +133,8 @@ export class AutocompleteService {
         })
         .slice(0, 5) // Máximo 5 resultados
 
-      console.log(`🔍 Búsqueda "${cedulaParcial}": ${resultados.length} resultados`)
       return resultados
-    } catch (error) {
-      console.error('❌ Error buscando personas conocidas:', error)
+    } catch {
       return []
     }
   }
@@ -152,8 +147,7 @@ export class AutocompleteService {
       await this.db.initDatabase()
       const personas = (await this.db.getRecords('personasConocidas')) as PersonaConocida[]
       return personas.find(p => p.cedula === cedula) || null
-    } catch (error) {
-      console.error('❌ Error obteniendo persona conocida:', error)
+    } catch {
       return null
     }
   }
@@ -177,10 +171,8 @@ export class AutocompleteService {
         .sort((a, b) => new Date(b.ultimaVisita).getTime() - new Date(a.ultimaVisita).getTime())
         .slice(0, 5)
 
-      console.log(`🚗 Búsqueda matrícula "${matriculaParcial}": ${resultados.length} resultados`)
       return resultados
-    } catch (error) {
-      console.error('❌ Error buscando por matrícula:', error)
+    } catch {
       return []
     }
   }
@@ -208,8 +200,7 @@ export class AutocompleteService {
           new Date(p.ultimaVisita).getFullYear() === anoActual
         ).length
       }
-    } catch (error) {
-      console.error('❌ Error obteniendo estadísticas:', error)
+    } catch {
       return { total: 0, frecuentesAlta: 0, frecuentesMedia: 0, visitasEsteAno: 0 }
     }
   }
@@ -226,8 +217,6 @@ export class AutocompleteService {
     acompanantes?: Array<{ cedula: string; nombre: string; apellido: string; destino: string }>
     timestamp: Date
   }>): Promise<{ sincronizados: number; errores: number }> {
-    console.log('🔄 [AUTOCOMPLETE] Iniciando sincronización desde registros existentes...')
-    
     let sincronizados = 0
     let errores = 0
 
@@ -240,19 +229,15 @@ export class AutocompleteService {
       try {
         personasExistentes = (await this.db.getRecords('personasConocidas')) as PersonaConocida[]
       } catch {
-        console.warn('⚠️ [AUTOCOMPLETE] Store "personasConocidas" no existe. Por favor, borre la base de datos y recargue.')
-        console.warn('⚠️ [AUTOCOMPLETE] Ejecute en consola: indexedDB.deleteDatabase("IRCCA_Sistema_DB") y luego F5')
         return { sincronizados: 0, errores: 0 }
       }
       
       if (personasExistentes.length > 0) {
-        console.log(`ℹ️ [AUTOCOMPLETE] Ya existen ${personasExistentes.length} personas conocidas. Saltando sincronización inicial.`)
         return { sincronizados: 0, errores: 0 }
       }
 
       // Procesar solo registros de ingreso
       const registrosIngreso = registrosDescifrados.filter(r => r.tipo === 'ingreso')
-      console.log(`🔍 [AUTOCOMPLETE] Procesando ${registrosIngreso.length} registros de ingreso...`)
 
       for (const registro of registrosIngreso) {
         try {
@@ -280,17 +265,14 @@ export class AutocompleteService {
               sincronizados++
             }
           }
-        } catch (error) {
-          console.error('❌ [AUTOCOMPLETE] Error procesando registro:', error)
+        } catch {
           errores++
         }
       }
 
-      console.log(`✅ [AUTOCOMPLETE] Sincronización completada: ${sincronizados} personas, ${errores} errores`)
       return { sincronizados, errores }
       
-    } catch (error) {
-      console.error('❌ [AUTOCOMPLETE] Error en sincronización:', error)
+    } catch {
       return { sincronizados, errores }
     }
   }

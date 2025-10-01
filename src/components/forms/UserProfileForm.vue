@@ -331,24 +331,9 @@ defineExpose({
 watch(
   () => props.userData,
   (newData) => {
-    console.log('🔍 DEBUG UserProfileForm - Datos recibidos:', newData)
-    console.log('🔍 DEBUG UserProfileForm - Grado en datos:', newData.grado)
     formData.value = { ...newData }
-    console.log('🔍 DEBUG UserProfileForm - formData actualizado:', formData.value)
   },
   { immediate: true, deep: true },
-)
-
-// Debug adicional para el v-select del grado
-watch(
-  () => formData.value.grado,
-  (newGrado) => {
-    console.log('🔍 DEBUG UserProfileForm - Grado cambiado a:', newGrado)
-    const option = gradoOptions.find(opt => opt.value === newGrado)
-    console.log('🔍 DEBUG UserProfileForm - Opción encontrada:', option)
-    console.log('🔍 DEBUG UserProfileForm - gradeDisplay actual:', gradeDisplay.value)
-  },
-  { immediate: true }
 )
 </script>
 

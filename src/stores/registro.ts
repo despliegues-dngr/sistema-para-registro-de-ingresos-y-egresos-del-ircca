@@ -150,32 +150,12 @@ export const useRegistroStore = defineStore('registro', () => {
   async function registrarIngreso(datos: RegistroIngresoData, operadorId: string = 'op-001') {
     loading.value = true
     
-    // 🔍 DEBUG: Log de datos de entrada
-    console.log('🚀 [STORE DEBUG] === REGISTRANDO INGRESO ===')
-    console.log('🚀 [STORE DEBUG] Datos completos recibidos:', JSON.stringify(datos, null, 2))
-    console.log('🚀 [STORE DEBUG] ¿Tiene vehículo?', !!datos.datosVehiculo)
-    if (datos.datosVehiculo) {
-      console.log('🚀 [STORE DEBUG] Tipo de vehículo:', datos.datosVehiculo.tipo)
-      console.log('🚀 [STORE DEBUG] Matrícula:', datos.datosVehiculo.matricula)
-    }
-    console.log('🚀 [STORE DEBUG] ==========================================')
-    
     try {
       const result = await operations.registrarIngreso(datos, operadorId)
       
       if (result.success && result.registro) {
         // Actualizar estado local solo si BD fue exitosa
         registrosRaw.value.unshift(result.registro)
-        
-        // 🔍 DEBUG: Log de registro guardado
-        console.log('✅ [STORE DEBUG] === REGISTRO GUARDADO EXITOSO ===')
-        console.log('✅ [STORE DEBUG] Registro completo guardado:', JSON.stringify(result.registro, null, 2))
-        const registroIngreso = result.registro as RegistroIngreso
-        if (registroIngreso.datosVehiculo) {
-          console.log('✅ [STORE DEBUG] Vehículo guardado - Tipo:', registroIngreso.datosVehiculo.tipo)
-          console.log('✅ [STORE DEBUG] Vehículo guardado - Matrícula:', registroIngreso.datosVehiculo.matricula)
-        }
-        console.log('✅ [STORE DEBUG] =======================================')
         
         // Agregar persona principal a personas dentro
         const nuevaPersona: PersonaDentro = {
@@ -229,10 +209,8 @@ export const useRegistroStore = defineStore('registro', () => {
               })
             }
           }
-          
-          console.log('✅ [AUTOCOMPLETE] Persona conocida actualizada para autocompletado futuro')
-        } catch (autocompleteError) {
-          console.warn('⚠️ [AUTOCOMPLETE] Error actualizando persona conocida (no crítico):', autocompleteError)
+        } catch {
+          // Error no crítico en autocomplete
         }
         
         return result.registro
@@ -361,7 +339,6 @@ export const useRegistroStore = defineStore('registro', () => {
    */
   async function loadRegistrosFromDB() {
     try {
-      console.log('🔍 [DEBUG] Cargando registros reales de IndexedDB...')
       loading.value = true
       
       // ✅ VERIFICAR AUTENTICACIÓN ANTES DE INTENTAR CARGAR DATOS
@@ -369,21 +346,16 @@ export const useRegistroStore = defineStore('registro', () => {
       const authStore = useAuthStore()
       
       if (!authStore.isAuthenticated || !authStore.user) {
-        console.log('🔍 [DEBUG] Usuario no autenticado, no se cargan datos')
         return
       }
       
       // ✅ INICIALIZAR DATABASESERVICE CON CLAVE DE SESIÓN
       const databaseModule = await import('@/services/databaseService')
-      console.log('🔍 [DEBUG] Inicializando DatabaseService con usuario:', authStore.user.username)
       
       await databaseModule.databaseService.initializeWithSessionKey()
-      console.log('✅ [DEBUG] DatabaseService inicializado correctamente')
       
       // Obtener registros descifrados
       const registrosDescifrados = await databaseModule.databaseService.getRegistrosDescifrados()
-      
-      console.log('✅ [DEBUG] Registros descifrados obtenidos:', registrosDescifrados.length)
       
       // Actualizar store con datos reales
       registrosRaw.value = registrosDescifrados
@@ -394,20 +366,15 @@ export const useRegistroStore = defineStore('registro', () => {
       // ✅ SINCRONIZAR AUTOCOMPLETADO: Migrar registros existentes a personasConocidas
       try {
         const autocompleteModule = await import('@/services/autocompleteService')
-        const resultado = await autocompleteModule.autocompleteService.sincronizarDesdeRegistros(registrosDescifrados)
-        
-        if (resultado.sincronizados > 0) {
-          console.log(`✅ [AUTOCOMPLETE] ${resultado.sincronizados} personas sincronizadas para autocompletado`)
-        }
-      } catch (autocompleteError) {
-        console.warn('⚠️ [AUTOCOMPLETE] Error en sincronización inicial:', autocompleteError)
+        await autocompleteModule.autocompleteService.sincronizarDesdeRegistros(registrosDescifrados)
+      } catch {
+        // Error no crítico en sincronización
       }
       
       lastSync.value = new Date()
-      console.log('✅ [DEBUG] Store actualizado con datos reales')
       
-    } catch (error) {
-      console.error('❌ [DEBUG] Error cargando datos reales:', error)
+    } catch {
+      // Error silencioso
     } finally {
       loading.value = false
     }
@@ -470,10 +437,8 @@ export const useRegistroStore = defineStore('registro', () => {
    */
   async function initializeStore() {
     try {
-      console.log('🚀 [STORE] Inicializando con datos reales...')
       await loadRegistrosFromDB()
-    } catch (error) {
-      console.warn('⚠️ [STORE] No se pudieron cargar datos iniciales (normal si es primera vez):', error)
+    } catch {
       // En caso de error, mantener arrays vacíos
     }
   }

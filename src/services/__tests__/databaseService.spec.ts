@@ -439,12 +439,6 @@ describe('DatabaseService', () => {
         }
       ]
 
-      console.log('🕒 DEBUG - Fechas con UTC explícito:')
-      console.log('   Fecha filtro:', fecha.toDateString(), '(UTC):', fecha.toISOString())
-      console.log('   Registro 1:', registrosCifrados[0].timestamp.toDateString(), '- Match:', registrosCifrados[0].timestamp.toDateString() === fecha.toDateString())
-      console.log('   Registro 2:', registrosCifrados[1].timestamp.toDateString(), '- Match:', registrosCifrados[1].timestamp.toDateString() === fecha.toDateString())
-      console.log('   Registro 3:', registrosCifrados[2].timestamp.toDateString(), '- Match:', registrosCifrados[2].timestamp.toDateString() === fecha.toDateString())
-
       // ✅ Mock para descifrado de registros de fecha
       // eslint-disable-next-line @typescript-eslint/no-unused-vars
       mockEncryptionService.decrypt.mockImplementation((encrypted) => {
@@ -458,8 +452,6 @@ describe('DatabaseService', () => {
       mockUseDatabase.getRecords.mockResolvedValue(registrosCifrados)
 
       const result = await service.getRegistros({ fecha })
-      
-      console.log('✅ DEBUG - Resultado final:', result.length, 'registros filtrados')
       
       // Verificar que se llamó getRecords sin filtros (obtiene todos)
       expect(mockUseDatabase.getRecords).toHaveBeenCalledWith('registros')

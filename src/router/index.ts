@@ -65,7 +65,6 @@ router.beforeEach(async (to, from, next) => {
 
   // Si el usuario está autenticado y intenta ir a login, redirigir al dashboard
   if (to.meta.requiresGuest && authStore.isAuthenticated) {
-    console.log('Usuario autenticado redirigido a dashboard desde:', to.path)
     next({ name: 'Dashboard' })
     return
   }
@@ -78,7 +77,6 @@ router.beforeEach(async (to, from, next) => {
 
   // Verificar autenticación
   if (!authStore.isAuthenticated) {
-    console.log('Usuario no autenticado intentó acceder a:', to.path)
     next({ 
       name: 'Login',
       query: { redirect: to.fullPath } // Guardar la ruta de destino
@@ -88,7 +86,6 @@ router.beforeEach(async (to, from, next) => {
 
   // Verificar permisos de administrador si es requerido
   if (to.meta.requiresAdmin && !authStore.isAdmin) {
-    console.log('Usuario sin permisos de admin intentó acceder a:', to.path)
     // Redirigir al dashboard con mensaje de error
     next({ 
       name: 'Dashboard',
@@ -99,7 +96,6 @@ router.beforeEach(async (to, from, next) => {
 
   // Verificar permisos específicos de supervisor si es requerido
   if (to.meta.requiresSupervisor && !authStore.isAdmin && authStore.user?.role !== 'supervisor') {
-    console.log('Usuario sin permisos de supervisor intentó acceder a:', to.path)
     next({ 
       name: 'Dashboard',
       query: { error: 'insufficient_permissions' }
@@ -108,7 +104,6 @@ router.beforeEach(async (to, from, next) => {
   }
 
   // Si llegamos aquí, el usuario tiene permisos para acceder
-  console.log('Acceso permitido a:', to.path, 'para usuario:', authStore.user?.username)
   next()
 })
 

@@ -171,14 +171,12 @@ const handleInput = (value: string | AutocompleteItem) => {
     emit('update:search', persona.cedula)
     emit('update:modelValue', persona)
     emit('persona-selected', persona)
-    console.log('✅ [AUTOCOMPLETE] Persona conocida seleccionada:', persona.nombre)
   } 
   // Si es string (entrada manual)
   else {
     const cedulaTexto = String(value || '').replace(/\D/g, '') // Solo números
     emit('update:search', cedulaTexto)
     emit('update:modelValue', null) // Limpiar selección de objeto
-    console.log('✅ [AUTOCOMPLETE] Entrada manual:', cedulaTexto)
   }
 }
 

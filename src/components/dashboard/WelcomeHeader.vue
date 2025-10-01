@@ -216,36 +216,28 @@ const gradeAndName = computed(() => {
 
 // Datos del usuario actual para los modales
 const currentUserData = computed(() => {
-  console.log('🔍 DEBUG WelcomeHeader - authStore.user completo:', authStore.user)
-  console.log('🔍 DEBUG WelcomeHeader - authStore.user.grado:', authStore.user?.grado)
-  console.log('🔍 DEBUG WelcomeHeader - authStore.user.role:', authStore.user?.role)
-  
   const userData = {
     cedula: authStore.user?.cedula || '12345678',
-    grado: authStore.user?.grado || '',  // ✅ USAR GRADO MILITAR, NO ROL
+    grado: authStore.user?.grado || '',
     nombre: authStore.user?.nombre || 'Usuario',
     apellido: authStore.user?.apellido || 'Sistema',
     fechaRegistro: authStore.user?.fechaRegistro || '2025-09-01',
   }
   
-  console.log('🔍 DEBUG WelcomeHeader - currentUserData generado:', userData)
   return userData
 })
 
 // Handlers para los modales
-const handleProfileSuccess = (message: string) => {
-  console.log('Perfil actualizado:', message)
+const handleProfileSuccess = () => {
   // TODO: Mostrar notificación de éxito
 }
 
-const handlePasswordSuccess = (message: string) => {
-  console.log('Contraseña cambiada:', message)
+const handlePasswordSuccess = () => {
   // TODO: Mostrar notificación de éxito
 }
 
 const handleDialogClose = () => {
   // Los modales se cerrarán automáticamente por el v-model
-  console.log('Modal cerrado')
 }
 
 // Función para actualizar fecha y hora

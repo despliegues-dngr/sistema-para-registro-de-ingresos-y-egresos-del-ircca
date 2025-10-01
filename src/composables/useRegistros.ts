@@ -92,8 +92,7 @@ export const useRegistrosSearch = () => {
   const searchByCedula = async (cedula: string) => {
     try {
       return await registroService.getRegistrosByCedula(cedula)
-    } catch (error) {
-      console.error('Error buscando por cédula:', error)
+    } catch {
       return []
     }
   }
@@ -104,8 +103,7 @@ export const useRegistrosSearch = () => {
   const searchByMatricula = async (matricula: string) => {
     try {
       return await registroService.getRegistrosByMatricula(matricula)
-    } catch (error) {
-      console.error('Error buscando por matrícula:', error)
+    } catch {
       return []
     }
   }
@@ -207,10 +205,9 @@ export const useRegistrosCompatibility = (registros: Ref<RegistroEntry[]>) => {
   /**
    * Métodos para compatibilidad con tests
    */
-  const addRegistro = (registro: RegistroEntry) => {
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
+  const addRegistro = (_registro: RegistroEntry) => {
     // Esta lógica se implementará en el store principal
-    console.log('📝 DEBUG ADD REGISTRO - Tipo:', registro.tipo)
-    console.log('📝 DEBUG ADD REGISTRO - ID:', registro.id)
   }
 
   const getRegistrosByDocumento = (documento: string) => {

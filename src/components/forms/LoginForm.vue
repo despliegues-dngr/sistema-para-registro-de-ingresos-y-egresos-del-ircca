@@ -131,7 +131,6 @@ const clearFormOnFocus = () => {
   if (isKioskMode) {
     // En modo kiosko, limpiar cualquier dato residual al hacer focus
     clearSensitiveData()
-    console.log('Modo kiosko: datos sensibles limpiados en focus')
   }
 }
 
@@ -164,15 +163,7 @@ const handleSubmit = () => {
 
 // Inicialización
 onMounted(() => {
-  if (isKioskMode) {
-    console.log('🔒 Modo KIOSKO activado - Medidas de seguridad aplicadas:')
-    console.log('  ✅ Autocompletado deshabilitado')
-    console.log('  ✅ Guardado de contraseñas bloqueado')
-    console.log('  ✅ Limpieza automática de datos sensibles')
-    console.log('  ✅ Eventos de seguridad configurados')
-  } else {
-    console.log('🏠 Modo NORMAL - Seguridad estándar aplicada')
-  }
+  // Modo kiosko configurado silenciosamente
 })
 </script>
 

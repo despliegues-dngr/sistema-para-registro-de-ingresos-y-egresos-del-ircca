@@ -218,7 +218,6 @@ const loadUsersStats = async () => {
     const dbResult = await initDatabase()
     
     if (!dbResult.success) {
-      console.error('Error inicializando BD:', dbResult.error)
       return
     }
     
@@ -237,14 +236,13 @@ const loadUsersStats = async () => {
         u.createdAt && new Date(u.createdAt).toDateString() === today
       ).length
     }
-  } catch (error) {
-    console.error('Error al cargar estadísticas de usuarios:', error)
+  } catch {
+    // Error silencioso
   }
 }
 
 // Handlers para modal de PDF
-const handlePdfGenerated = (message: string) => {
-  console.log('PDF generado exitosamente:', message)
+const handlePdfGenerated = () => {
   // TODO: Mostrar notificación global de éxito
 }
 

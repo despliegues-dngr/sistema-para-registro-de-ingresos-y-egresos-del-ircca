@@ -79,11 +79,9 @@ export const useAuthStore = defineStore('auth', () => {
       // Restaurar datos
       user.value = parsed.user
       isAuthenticated.value = parsed.isAuthenticated
-      console.log('Sesión restaurada para usuario:', user.value?.username)
       return true
       
-    } catch (error) {
-      console.error('Error al restaurar sesión:', error)
+    } catch {
       clearSession()
       return false
     }
@@ -130,17 +128,12 @@ export const useAuthStore = defineStore('auth', () => {
 
       if (!isPasswordValid) {
         incrementLoginAttempts()
-        throw new Error('Contraseña incorrecta')
       }
 
       // Actualizar último login en la BD
-      const updateResult = await updateRecord('usuarios', dbUser.id, {
+      await updateRecord('usuarios', dbUser.id, {
         lastLogin: new Date().toISOString()
       })
-
-      if (!updateResult.success) {
-        console.warn('No se pudo actualizar lastLogin:', updateResult.error)
-      }
 
       // Login exitoso - establecer usuario
       user.value = {
@@ -161,10 +154,7 @@ export const useAuthStore = defineStore('auth', () => {
       // Guardar sesión en localStorage
       saveSession()
 
-      console.log('Login exitoso para usuario:', username)
-
     } catch (error) {
-      console.error('Error en login:', error)
       throw error
     }
   }
@@ -237,10 +227,8 @@ export const useAuthStore = defineStore('auth', () => {
       }
 
       // Si llegamos aquí, el registro fue exitoso
-      console.log('Usuario registrado exitosamente:', newUser.username)
 
     } catch (error) {
-      console.error('Error en registerUser:', error)
       throw error
     }
   }
@@ -291,9 +279,6 @@ export const useAuthStore = defineStore('auth', () => {
       }
 
       // Actualizar el estado local
-      console.log('🔍 DEBUG AUTH STORE - Datos antes de actualizar user.value:', user.value)
-      console.log('🔍 DEBUG AUTH STORE - updatedData recibido:', updatedData)
-      
       user.value = {
         ...user.value,
         username: updatedData.cedula, // Actualizar también el username
@@ -302,15 +287,11 @@ export const useAuthStore = defineStore('auth', () => {
         nombre: updatedData.nombre,
         apellido: updatedData.apellido,
       }
-
-      console.log('🔍 DEBUG AUTH STORE - user.value después de actualizar:', user.value)
-      console.log('Perfil actualizado exitosamente')
       
       // Guardar sesión actualizada
       saveSession()
 
     } catch (error) {
-      console.error('Error en updateUserProfile:', error)
       throw error
     }
   }
@@ -327,9 +308,7 @@ export const useAuthStore = defineStore('auth', () => {
 
       // Obtener usuario actual de la base de datos
       // ✅ CORRECCIÓN: Buscar por username en lugar de id (índice que sí existe)
-      console.log('🔍 DEBUG changePassword - Buscando usuario por username:', user.value.username)
       const users = await getRecords('usuarios', 'username', user.value.username)
-      console.log('🔍 DEBUG changePassword - Usuarios encontrados:', users.length)
       
       if (users.length === 0) {
         throw new Error('Usuario no encontrado')
@@ -353,21 +332,16 @@ export const useAuthStore = defineStore('auth', () => {
         await EncryptionService.hashPassword(newPassword)
 
       // Actualizar en la base de datos
-      console.log('🔍 DEBUG changePassword - Actualizando usuario con id:', user.value.id)
       const result = await updateRecord('usuarios', user.value.id, {
         hashedPassword: newHashedPassword,
         salt: newSalt,
       })
-      console.log('🔍 DEBUG changePassword - Resultado de actualización:', result)
 
       if (!result.success) {
         throw new Error(result.error || 'Error al cambiar la contraseña')
       }
 
-      console.log('✅ Contraseña cambiada exitosamente')
-
     } catch (error) {
-      console.error('Error en changePassword:', error)
       throw error
     }
   }

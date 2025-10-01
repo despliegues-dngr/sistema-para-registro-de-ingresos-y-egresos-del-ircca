@@ -162,7 +162,7 @@
 </template>
 
 <script setup lang="ts">
-import { ref, computed, onMounted } from 'vue'
+import { ref, computed } from 'vue'
 import { useRegistroStore } from '@/stores/registro'
 import { TestCifradoCompleto } from '@/utils/testCifradoCompleto'
 
@@ -202,30 +202,6 @@ function getLogClass(msg: { type: string }) {
   }
   return classes[msg.type as keyof typeof classes] || 'text-primary'
 }
-
-// Hook del console.log para capturar mensajes
-const originalConsoleLog = console.log
-const originalConsoleError = console.error
-
-onMounted(() => {
-  // Interceptar console.log para mostrar en UI
-  console.log = (...args) => {
-    originalConsoleLog(...args)
-    const message = args.join(' ')
-    
-    let type: 'info' | 'success' | 'error' | 'warning' = 'info'
-    if (message.includes('✅') || message.includes('SUCCESS')) type = 'success'
-    else if (message.includes('❌') || message.includes('ERROR')) type = 'error'
-    else if (message.includes('⚠️') || message.includes('WARNING')) type = 'warning'
-    
-    addLog(message, type)
-  }
-  
-  console.error = (...args) => {
-    originalConsoleError(...args)
-    addLog(args.join(' '), 'error')
-  }
-})
 
 // Métodos de prueba
 async function ejecutarPruebaCompleta() {

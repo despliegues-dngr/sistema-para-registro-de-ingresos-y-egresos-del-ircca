@@ -20,11 +20,7 @@ export class RegistroService {
    * Inicializa DatabaseService con clave de sesión del usuario autenticado
    */
   private async ensureDatabaseServiceInitialized() {
-    console.log('🔍 [DEBUG] ensureDatabaseServiceInitialized() - INICIO')
-    
     const authStore = useAuthStore()
-    console.log('🔍 [DEBUG] authStore.isAuthenticated:', authStore.isAuthenticated)
-    console.log('🔍 [DEBUG] authStore.user exists:', !!authStore.user)
     
     if (!authStore.isAuthenticated || !authStore.user) {
       throw new Error('Usuario no autenticado. Inicie sesión para continuar.')
@@ -33,18 +29,10 @@ export class RegistroService {
     // Approach más simple: siempre intentar inicializar DatabaseService
     // Si ya está inicializado, el método debería ser idempotente
     try {
-      console.log('🔍 [DEBUG] Inicializando DatabaseService (idempotente)...')
-      console.log('🔍 [DEBUG] Username a usar:', authStore.user.username)
-      
       await databaseService.initializeWithSessionKey()
-      console.log('✅ [DEBUG] DatabaseService inicializado/verificado')
-      
     } catch (error) {
-      console.error('❌ [DEBUG] Error inicializando DatabaseService:', error)
       throw error
     }
-    
-    console.log('🔍 [DEBUG] ensureDatabaseServiceInitialized() - FIN')
   }
 
   /**
@@ -63,53 +51,22 @@ export class RegistroService {
     }
 
     try {
-      console.log('🔍 [DEBUG] registrarIngreso() - INICIO')
-      console.log('🔍 [DEBUG] Datos recibidos:', { 
-        cedula: datos.datosPersonales.cedula, 
-        nombre: datos.datosPersonales.nombre,
-        operadorId: operadorId
-      })
-      console.log('🔍 [DEBUG] Datos COMPLETOS recibidos:', JSON.stringify(datos, null, 2))
-      console.log('🔍 [DEBUG] ¿Tiene acompañantes?', !!datos.acompanantes)
-      console.log('🔍 [DEBUG] Cantidad acompañantes:', datos.acompanantes?.length || 0)
-      if (datos.acompanantes && datos.acompanantes.length > 0) {
-        console.log('🔍 [DEBUG] Detalles de acompañantes:', datos.acompanantes.map(a => `${a.nombre} ${a.apellido} (${a.cedula})`))
-      }
-      
       // ✅ INICIALIZAR INDEXEDDB BÁSICO PRIMERO
-      console.log('🔍 [DEBUG] Paso 1: Inicializando IndexedDB básico...')
       const dbResult = await this.db.initDatabase()
-      console.log('🔍 [DEBUG] Resultado initDatabase:', dbResult)
       
       if (!dbResult.success) {
-        console.error('❌ [DEBUG] Error en initDatabase:', dbResult.error)
         throw new Error(dbResult.error || 'Error inicializando IndexedDB')
       }
-      console.log('✅ [DEBUG] IndexedDB básico inicializado')
       
       // ✅ ASEGURAR INICIALIZACIÓN DE DATABASESERVICE (capa de cifrado)
-      console.log('🔍 [DEBUG] Paso 2: Inicializando DatabaseService...')
       await this.ensureDatabaseServiceInitialized()
-      console.log('✅ [DEBUG] DatabaseService listo')
       
       // ✅ GUARDAR EN INDEXEDDB CIFRADO
-      console.log('🔍 [DEBUG] Paso 3: Guardando registro cifrado...')
-      console.log('🔍 [DEBUG] Registro a guardar:', {
-        id: nuevoRegistro.id,
-        tipo: nuevoRegistro.tipo,
-        cedula: nuevoRegistro.datosPersonales.cedula
-      })
-      
       const result = await databaseService.saveRegistro(nuevoRegistro)
-      console.log('🔍 [DEBUG] Resultado saveRegistro:', result)
       
       if (!result.success) {
-        console.error('❌ [DEBUG] Error en saveRegistro:', result.error)
         throw new Error(result.error || 'Error al guardar registro de ingreso en base de datos')
       }
-      
-      console.log('✅ [DEBUG] Registro guardado exitosamente en BD')
-      console.log('✅ Registro de ingreso guardado exitosamente:', nuevoRegistro.id)
       
       // ✅ ACTUALIZAR PERSONAS CONOCIDAS (para autocompletado futuro)
       try {
@@ -132,16 +89,13 @@ export class RegistroService {
             })
           }
         }
-      } catch (autocompleteError) {
+      } catch {
         // No bloquear registro si falla autocompletado
-        console.warn('⚠️ Error actualizando personas conocidas:', autocompleteError)
       }
       
       return nuevoRegistro
       
     } catch (error) {
-      console.error('❌ [DEBUG] Error completo en registrarIngreso:', error)
-      console.error('❌ [DEBUG] Stack trace:', error instanceof Error ? error.stack : 'No stack available')
       throw error
     }
   }
@@ -179,11 +133,9 @@ export class RegistroService {
         throw new Error(result.error || 'Error al guardar registro de salida en base de datos')
       }
       
-      console.log('✅ Registro de salida guardado exitosamente:', nuevoRegistro.id)
       return nuevoRegistro
       
     } catch (error) {
-      console.error('❌ Error guardando registro de salida:', error)
       throw error
     }
   }
@@ -205,13 +157,11 @@ export class RegistroService {
       // ✅ CARGAR REGISTROS DESDE BD
       const registrosFromDB = await databaseService.getRegistros()
       if (registrosFromDB.length > 0) {
-        console.log(`✅ Sincronizados ${registrosFromDB.length} registros desde IndexedDB`)
         return registrosFromDB
       }
       return []
       
     } catch (error) {
-      console.error('Error sincronizando datos:', error)
       throw error
     }
   }
@@ -223,8 +173,7 @@ export class RegistroService {
     try {
       await this.db.initDatabase()
       return await databaseService.searchByDocumento(cedula)
-    } catch (error) {
-      console.error('Error buscando registros por cédula:', error)
+    } catch {
       return []
     }
   }
@@ -236,8 +185,7 @@ export class RegistroService {
     try {
       await this.db.initDatabase()
       return await databaseService.searchByMatricula(matricula)
-    } catch (error) {
-      console.error('Error buscando registros por matrícula:', error)
+    } catch {
       return []
     }
   }
@@ -249,7 +197,6 @@ export class RegistroService {
     try {
       return await databaseService.createBackup()
     } catch (error) {
-      console.error('Error creando backup:', error)
       return { success: false, error: String(error) }
     }
   }
@@ -260,8 +207,7 @@ export class RegistroService {
   async cleanOldData(daysToKeep: number = 365): Promise<{ success: boolean; cleaned: number }> {
     try {
       return await databaseService.cleanOldData(daysToKeep)
-    } catch (error) {
-      console.error('Error limpiando datos antiguos:', error)
+    } catch {
       return { success: false, cleaned: 0 }
     }
   }

@@ -22,7 +22,6 @@ export function useSessionTimeout() {
   
   // Timer para el logout automático después de mostrar advertencia
   const { start: startLogoutTimer, stop: stopLogoutTimer } = useTimeoutFn(() => {
-    console.log('Sesión expirada por inactividad - cerrando sesión automáticamente')
     logout()
   }, WARNING_TIME, { immediate: false })
   
@@ -50,7 +49,6 @@ export function useSessionTimeout() {
   watch(idle, (isIdle) => {
     // Solo procesar si el usuario está autenticado y realmente está inactivo
     if (isIdle && authStore.isAuthenticated && authStore.user) {
-      console.log('Usuario inactivo detectado - mostrando advertencia de sesión')
       showWarning()
     }
   })
@@ -72,7 +70,6 @@ export function useSessionTimeout() {
   
   // Función para extender la sesión
   function extendSession() {
-    console.log('Sesión extendida por el usuario')
     showWarningDialog.value = false
     remainingTime.value = 0
     stopLogoutTimer()
@@ -82,7 +79,6 @@ export function useSessionTimeout() {
   
   // Función para cerrar sesión
   function logout() {
-    console.log('Cerrando sesión por timeout de inactividad')
     showWarningDialog.value = false
     remainingTime.value = 0
     stopLogoutTimer()
@@ -103,14 +99,12 @@ export function useSessionTimeout() {
   // Función para inicializar el sistema de timeout
   function initializeTimeout() {
     if (authStore.isAuthenticated) {
-      console.log('Sistema de timeout de sesión inicializado')
       reset() // Iniciar el timer
     }
   }
   
   // Función para limpiar todos los timers
   function cleanup() {
-    console.log('Limpiando timers de sesión')
     showWarningDialog.value = false
     remainingTime.value = 0
     stopLogoutTimer()

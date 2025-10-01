@@ -155,8 +155,6 @@ watch(() => props.datosPersonales.cedula, (newValue) => {
  * Autocompletar datos cuando se selecciona una persona conocida
  */
 const autocompletarDatos = (persona: PersonaConocida) => {
-  console.log('✅ [AUTOCOMPLETE] Persona seleccionada:', persona)
-  
   // Autocompletar todos los campos
   emit('update:cedula', persona.cedula)
   emit('update:nombre', persona.nombre)
@@ -167,7 +165,5 @@ const autocompletarDatos = (persona: PersonaConocida) => {
   if (persona.ultimoVehiculo) {
     emit('update:vehiculo', persona.ultimoVehiculo)
   }
-  
-  console.log('✅ [AUTOCOMPLETE] Datos autocompletados')
 }
 </script>

@@ -145,15 +145,11 @@ watch(() => props.acompanante.cedula, (newValue) => {
  * ✅ REUTILIZAR: Autocompletar datos (misma lógica que DatosPersonalesSection)
  */
 const autocompletarDatos = (persona: PersonaConocida) => {
-  console.log(`✅ [AUTOCOMPLETE] Acompañante ${props.index + 1} seleccionado:`, persona)
-  
   // Autocompletar todos los campos del acompañante
   emit('update:cedula', persona.cedula)
   emit('update:nombre', persona.nombre)
   emit('update:apellido', persona.apellido)
   emit('update:destino', persona.ultimoDestino)
-  
-  console.log(`✅ [AUTOCOMPLETE] Datos de acompañante ${props.index + 1} autocompletados`)
 }
 
 // Reglas de validación

@@ -210,7 +210,6 @@ const updateAcompanante = (index: number, field: string, value: string) => {
  * Autocompletar datos de vehículo desde persona conocida
  */
 const autocompletarVehiculo = (vehiculo: DatosVehiculo) => {
-  console.log('✅ [FORM] Autocompletando vehículo:', vehiculo)
   formData.datosVehiculo.tipo = vehiculo.tipo
   formData.datosVehiculo.matricula = vehiculo.matricula
   

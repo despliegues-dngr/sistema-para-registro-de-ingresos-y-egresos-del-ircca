@@ -17,8 +17,6 @@ export class TestCifradoCompleto {
    * 🧪 PRUEBA INTEGRAL: Registro completo con acompañantes
    */
   static async pruebaRegistroCompletoConAcompanantes() {
-    console.log('🧪 [TEST] INICIANDO PRUEBA INTEGRAL DE CIFRADO/DESCIFRADO')
-    
     try {
       const registroStore = useRegistroStore()
       
@@ -59,24 +57,13 @@ export class TestCifradoCompleto {
         observaciones: 'Visita de inspección técnica programada. Vehículo oficial con 3 acompañantes del equipo técnico.'
       }
       
-      console.log('📊 [TEST] Datos de entrada preparados:')
-      console.log('  - Titular:', datosRegistro.datosPersonales.nombre, datosRegistro.datosPersonales.apellido)
-      console.log('  - Vehículo:', datosRegistro.datosVehiculo?.tipo, datosRegistro.datosVehiculo?.matricula)
-      console.log('  - Acompañantes:', datosRegistro.acompanantes?.length || 0)
-      console.log('  - Observaciones:', datosRegistro.observaciones?.length, 'chars')
-      
       // 2. REGISTRAR EN SISTEMA (CIFRADO AUTOMÁTICO)
-      console.log('🔐 [TEST] Registrando datos (se cifrarán automáticamente)...')
       const registroCompleto = await registroStore.registrarIngreso(datosRegistro)
       
-      console.log('✅ [TEST] Registro guardado con ID:', registroCompleto.id)
-      
       // 3. CARGAR DATOS REALES DESDE INDEXEDDB (DESCIFRADO)
-      console.log('🔓 [TEST] Cargando datos reales desde IndexedDB...')
       await registroStore.loadRegistrosFromDB()
       
       // 4. VERIFICAR DESCIFRADO CORRECTO
-      console.log('🔍 [TEST] Verificando descifrado de datos...')
       const registrosDescifrados = registroStore.registros
       const ultimoRegistro = registrosDescifrados[0] // El más reciente
       
@@ -87,7 +74,6 @@ export class TestCifradoCompleto {
       const registroIngreso = ultimoRegistro as RegistroIngreso // Type assertion for test validation
       
       // VALIDACIONES DE DESCIFRADO
-      console.log('✅ [TEST] Validando datos personales...')
       if (registroIngreso.datosPersonales?.cedula !== datosRegistro.datosPersonales.cedula) {
         throw new Error('❌ Cédula no descifrada correctamente')
       }
@@ -95,14 +81,10 @@ export class TestCifradoCompleto {
         throw new Error('❌ Nombre no descifrado correctamente')
       }
       
-      console.log('✅ [TEST] Validando datos de visita...')
-      
-      console.log('✅ [TEST] Validando datos de vehículo...')
       if (registroIngreso.datosVehiculo?.matricula !== datosRegistro.datosVehiculo?.matricula) {
         throw new Error('❌ Matrícula no descifrada correctamente')
       }
       
-      console.log('✅ [TEST] Validando acompañantes...')
       if (!registroIngreso.acompanantes || registroIngreso.acompanantes.length !== 3) {
         throw new Error('❌ Acompañantes no descifrados correctamente')
       }
@@ -113,24 +95,18 @@ export class TestCifradoCompleto {
         throw new Error('❌ Primer acompañante no descifrado correctamente')
       }
       
-      console.log('✅ [TEST] Validando observaciones...')
       if (registroIngreso.observaciones !== datosRegistro.observaciones) {
         throw new Error('❌ Observaciones no descifradas correctamente')
       }
       
       // 5. VERIFICAR ESTADO DE PERSONAS DENTRO
-      console.log('👥 [TEST] Verificando personas dentro...')
       const personasDentro = registroStore.personasDentro
-      console.log('  - Total personas dentro:', personasDentro.length)
-      console.log('  - Esperadas: 4 (titular + 3 acompañantes)')
       
       if (personasDentro.length !== 4) {
         throw new Error(`❌ Se esperaban 4 personas dentro, se encontraron ${personasDentro.length}`)
       }
       
       // 6. PROBAR BÚSQUEDAS
-      console.log('🔍 [TEST] Probando búsquedas...')
-      
       // Búsqueda por cédula del titular
       const encontradoTitular = await registroStore.getRegistrosByCedula('55226350')
       if (encontradoTitular.length === 0) {
@@ -143,18 +119,6 @@ export class TestCifradoCompleto {
         throw new Error('❌ Búsqueda por cédula acompañante falló')
       }
       
-      console.log('🎉 [TEST] ¡TODAS LAS PRUEBAS PASARON EXITOSAMENTE!')
-      console.log('📊 [TEST] Resumen de la prueba:')
-      console.log('  ✅ Cifrado automático funcionando')
-      console.log('  ✅ Descifrado completo funcionando')
-      console.log('  ✅ Datos personales descifrados correctamente')
-      console.log('  ✅ Datos de visita descifrados correctamente')
-      console.log('  ✅ Datos de vehículo descifrados correctamente')
-      console.log('  ✅ 3 acompañantes descifrados correctamente')
-      console.log('  ✅ Observaciones descifradas correctamente')
-      console.log('  ✅ Estado personas dentro actualizado (4 personas)')
-      console.log('  ✅ Búsquedas funcionando con datos descifrados')
-      
       return {
         success: true,
         registroId: registroCompleto.id,
@@ -163,7 +127,6 @@ export class TestCifradoCompleto {
       }
       
     } catch (error) {
-      console.error('❌ [TEST] ERROR EN PRUEBA:', error)
       return {
         success: false,
         error: error instanceof Error ? error.message : 'Error desconocido'
@@ -175,8 +138,6 @@ export class TestCifradoCompleto {
    * 🧪 PRUEBA DE RENDIMIENTO: Múltiples registros
    */
   static async pruebaRendimientoMultiplesRegistros(cantidad: number = 5) {
-    console.log(`🚀 [TEST] PRUEBA DE RENDIMIENTO - ${cantidad} registros`)
-    
     const startTime = performance.now()
     const registroStore = useRegistroStore()
     
@@ -203,7 +164,6 @@ export class TestCifradoCompleto {
         }
         
         await registroStore.registrarIngreso(datos)
-        console.log(`  ✅ Registro ${i + 1}/${cantidad} completado`)
       }
       
       // Cargar y descifrar todos
@@ -212,11 +172,6 @@ export class TestCifradoCompleto {
       const endTime = performance.now()
       const tiempoTotal = Math.round(endTime - startTime)
       const promedioPorRegistro = Math.round(tiempoTotal / cantidad)
-      
-      console.log(`🎯 [TEST] RENDIMIENTO - Resultados:`)
-      console.log(`  📊 ${cantidad} registros procesados en ${tiempoTotal}ms`)
-      console.log(`  ⚡ Promedio por registro: ${promedioPorRegistro}ms`)
-      console.log(`  👥 Total personas en sistema: ${registroStore.personasDentro.length}`)
       
       return {
         success: true,
@@ -227,7 +182,6 @@ export class TestCifradoCompleto {
       }
       
     } catch (error) {
-      console.error('❌ [TEST] Error en prueba de rendimiento:', error)
       return {
         success: false,
         error: error instanceof Error ? error.message : 'Error desconocido'

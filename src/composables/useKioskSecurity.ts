@@ -73,25 +73,13 @@ export function useKioskSecurity() {
     passwordFields.forEach(field => {
       (field as HTMLInputElement).value = ''
     })
-
-    console.log('Datos sensibles limpiados para seguridad de kiosko')
   }
 
   // Configuración específica para modo kiosko
   const configureKioskMode = () => {
     const kioskActive = isKioskMode()
-    const environment = import.meta.env.DEV ? 'DESARROLLO' : 'PRODUCCIÓN'
-    
-    console.log(`🔧 Entorno: ${environment}`)
-    console.log(`🔒 Modo Kiosko: ${kioskActive ? 'ACTIVADO' : 'DESACTIVADO'}`)
     
     if (kioskActive) {
-      console.log('📋 Aplicando medidas de seguridad kiosko:')
-      console.log('  - Clic derecho deshabilitado')
-      console.log('  - Selección de texto deshabilitada') 
-      console.log('  - Drag & drop deshabilitado')
-      console.log('  - Limpieza automática cada 5 minutos')
-      
       // Deshabilitar clic derecho
       document.addEventListener('contextmenu', (e) => e.preventDefault())
       

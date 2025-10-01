@@ -247,22 +247,10 @@ const generatePdf = async () => {
       ? 'de hoy' 
       : `del ${formatDate(startDate.value)} al ${formatDate(endDate.value)}`
     
-    console.log('🔍 [Modal] Generando PDF con opciones:', options)
-    
     // Generar PDF usando el servicio real
     const result = await PdfService.generateReport(options)
     
     if (result.success && result.dataUri) {
-      console.log('📄 [PDF] PDF generado exitosamente')
-      console.log('📄 [PDF] Tamaño:', ((result.size || 0) / 1024).toFixed(1), 'KB')
-      console.log('📄 [PDF] Archivo:', result.filename)
-      
-      // ✅ SOLUCIÓN MEJORADA: Usar descarga directa y fallbacks
-      console.log('💾 [PDF] Iniciando descarga directa y visualización alternativa...')
-      
-      // ✅ PDF GENERADO - Preparar para WhatsApp
-      console.log('💬 [WhatsApp] PDF generado, preparando para compartir...')
-      
       showPdfPreview(result.dataUri, result.filename || 'reporte-ircca.pdf')
       
       emit('pdf-generated', result.message)
@@ -271,10 +259,9 @@ const generatePdf = async () => {
       messageType.value = 'error'
     }
     
-  } catch (error) {
+  } catch {
     message.value = 'Error al generar el reporte PDF. Intente nuevamente.'
     messageType.value = 'error'
-    console.error('❌ Error generando PDF:', error)
   } finally {
     loading.value = false
   }
@@ -316,8 +303,6 @@ const dataURItoBlob = (dataURI: string): Blob => {
 
 // Función para mostrar preview del PDF en el modal
 const showPdfPreview = (dataUri: string, filename: string) => {
-  console.log('🖥️ [PDF] Mostrando preview del PDF en modal')
-  
   // Guardar datos del PDF para descarga manual
   lastGeneratedPdf.value = { dataUri, filename }
   
@@ -340,7 +325,6 @@ const shareViaWhatsApp = async () => {
   
   try {
     sharingWhatsApp.value = true
-    console.log('💬 [WhatsApp] Iniciando envío PDF...')
     
     // Crear blob del PDF
     const blob = dataURItoBlob(lastGeneratedPdf.value.dataUri)
@@ -355,13 +339,12 @@ const shareViaWhatsApp = async () => {
           text: `Reporte del Instituto IRCCA - ${qrReportInfo.value}`
         })
         
-        console.log('✅ [WhatsApp] PDF compartido exitosamente via Web Share API')
         message.value = '✅ PDF enviado por WhatsApp'
         messageType.value = 'success'
         
       } catch (shareError) {
         if (shareError instanceof Error && shareError.name === 'AbortError') {
-          console.log('ℹ️ [WhatsApp] Usuario canceló el compartir')
+          // Usuario canceló el compartir
         } else {
           throw shareError
         }
@@ -369,8 +352,6 @@ const shareViaWhatsApp = async () => {
     } 
     // OPCIÓN 2: URL de WhatsApp Web (fallback)
     else {
-      console.log('ℹ️ [WhatsApp] Web Share API no disponible, usando WhatsApp Web')
-      
       // Mensaje para WhatsApp
       const text = `📄 *Reporte IRCCA* ${qrReportInfo.value}%0A%0A_El archivo PDF será enviado en el siguiente mensaje_`
       
@@ -380,12 +361,9 @@ const shareViaWhatsApp = async () => {
       
       message.value = 'ℹ️ WhatsApp Web abierto. Envía el PDF manualmente desde tu dispositivo.'
       messageType.value = 'info'
-      
-      console.log('ℹ️ [WhatsApp] WhatsApp Web abierto')
     }
     
-  } catch (error) {
-    console.error('❌ [WhatsApp] Error al compartir:', error)
+  } catch {
     message.value = '❌ Error al enviar por WhatsApp'
     messageType.value = 'error'
   } finally {

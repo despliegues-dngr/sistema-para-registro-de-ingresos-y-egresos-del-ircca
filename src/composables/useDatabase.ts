@@ -24,11 +24,9 @@ export const useDatabase = () => {
         
         return isPersistent
       } else {
-        console.warn('Storage API de persistencia no soportada')
         return false
       }
-    } catch (error) {
-      console.error('Error al solicitar persistencia:', error)
+    } catch {
       return false
     }
   }
@@ -42,8 +40,6 @@ export const useDatabase = () => {
         const quota = estimate.quota || 0
         const available = quota - usage
         
-        console.log(`📊 Almacenamiento: ${(usage / 1024 / 1024).toFixed(2)} MB usados de ${(quota / 1024 / 1024).toFixed(2)} MB disponibles`)
-        
         // Alertar si queda poco espacio (menos del 10%)
         if (available < quota * 0.1) {
           appStore.addNotification('Espacio de almacenamiento bajo', 'warning')
@@ -51,8 +47,8 @@ export const useDatabase = () => {
         
         return { usage, quota, available }
       }
-    } catch (error) {
-      console.error('Error al obtener información de cuota:', error)
+    } catch {
+      // Error silencioso
     }
     
     return { usage: 0, quota: 0, available: 0 }
@@ -158,7 +154,6 @@ export const useDatabase = () => {
     key?: IDBValidKey,
   ): Promise<unknown[]> => {
     if (!db.value) {
-      console.warn(`Base de datos no inicializada para ${storeName}`)
       return []
     }
 
@@ -178,8 +173,7 @@ export const useDatabase = () => {
         request.onsuccess = () => resolve(request.result || [])
         request.onerror = () => reject([])
       })
-    } catch (error) {
-      console.error(`Error en getRecords para ${storeName}:`, error)
+    } catch {
       return []
     }
   }

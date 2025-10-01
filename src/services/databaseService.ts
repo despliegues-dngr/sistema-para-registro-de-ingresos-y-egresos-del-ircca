@@ -58,9 +58,7 @@ export class DatabaseService {
    * Inicializa la base de datos
    */
   async initialize(): Promise<{ success: boolean; error?: string }> {
-    console.log('🔍 [DEBUG] DatabaseService.initialize() - Inicializando IndexedDB interno...')
     const result = await this.db.initDatabase()
-    console.log('🔍 [DEBUG] DatabaseService.initialize() resultado:', result)
     return result
   }
 
@@ -70,31 +68,21 @@ export class DatabaseService {
    * 🔍 AUDITORÍA: Se mantiene operadorId en claro para trazabilidad
    */
   async initializeWithSessionKey(): Promise<void> {
-    console.log('🔍 [DEBUG] DatabaseService.initializeWithSessionKey() - INICIO')
-    console.log('🔍 [DEBUG] isInitialized actual:', this.isInitialized)
-    console.log('🔍 [DEBUG] sessionKey existe:', !!this.sessionKey)
-    
     // Si ya está inicializado, no hacer nada (la clave es compartida del sistema)
     if (this.isInitialized && this.sessionKey) {
-      console.log('✅ [DEBUG] DatabaseService YA está inicializado - saltando')
       return
     }
     
-    console.log('🔍 [DEBUG] Procediendo con inicialización...')
-    
     // ✅ PRIMERO: Inicializar IndexedDB interno del DatabaseService
-    console.log('🔍 [DEBUG] Inicializando IndexedDB interno del DatabaseService...')
     const dbResult = await this.initialize()
     if (!dbResult.success) {
       throw new Error(`Error inicializando IndexedDB interno: ${dbResult.error}`)
     }
-    console.log('✅ [DEBUG] IndexedDB interno del DatabaseService inicializado')
     
     // 🔄 NUEVO: Generar clave maestra determinística (no expuesta en variables de entorno)
     // Esto permite que todos los operadores vean todos los registros
     // ✅ SEGURO: Clave generada en tiempo de ejecución, no hardcodeada
     const systemMasterKey = 'IRCCA_PROD_2024_' + btoa('sistema_accesos_mario_berni_55226350').slice(0, 32)
-    console.log('🔍 [DEBUG] Usando clave maestra generada para cifrado compartido')
     
     const encoder = new TextEncoder()
     const masterKeyBuffer = encoder.encode(systemMasterKey)
@@ -127,10 +115,6 @@ export class DatabaseService {
     const sessionKeyBuffer = await window.crypto.subtle.exportKey('raw', sessionKeyMaterial)
     this.sessionKey = btoa(String.fromCharCode(...new Uint8Array(sessionKeyBuffer)))
     this.isInitialized = true
-    
-    console.log('✅ [DEBUG] DatabaseService inicializado con clave maestra del sistema')
-    console.log('🔍 [DEBUG] SessionKey compartida longitud:', this.sessionKey.length)
-    console.log('🔍 [DEBUG] Todos los operadores podrán ver todos los registros')
   }
 
   /**
@@ -170,7 +154,6 @@ export class DatabaseService {
           datosVisita: registroIngreso.datosVisita,
           observaciones: registroIngreso.observaciones
         }
-        console.log('🔍 [DEBUG] Cifrando datos persona completos:', JSON.stringify(datosPersonaCompletos, null, 2))
         
         encryptedPersona = await encryptionService.encrypt(
           JSON.stringify(datosPersonaCompletos), 
@@ -187,7 +170,6 @@ export class DatabaseService {
         
         // ✅ CIFRAR ACOMPAÑANTES si existen (COMPLIANCE LEY 18.331)
         if (registroIngreso.acompanantes && registroIngreso.acompanantes.length > 0) {
-          console.log('🔍 [DEBUG] Cifrando acompañantes:', registroIngreso.acompanantes.length, 'personas')
           
           // ✅ ESTRUCTURA MEJORADA: Cada acompañante con metadata para consultas futuras
           const acompanantesConMetadata = registroIngreso.acompanantes.map((acompanante, index) => ({
@@ -202,9 +184,6 @@ export class DatabaseService {
             JSON.stringify(acompanantesConMetadata), 
             this.sessionKey!
           )
-          console.log('✅ [DEBUG] Acompañantes cifrados con metadata para consultas futuras')
-        } else {
-          console.log('🔍 [DEBUG] No hay acompañantes para este registro')
         }
       } else {
         // Para registros de salida, cifrar la cédula buscada
@@ -241,16 +220,12 @@ export class DatabaseService {
   async getRegistrosDescifrados(filters?: { tipo?: string; fecha?: Date }): Promise<RegistroEntry[]> {
     this.ensureInitialized()
     try {
-      console.log('🔍 [DEBUG] getRegistrosDescifrados() - INICIO')
-      
       // Obtener registros cifrados de IndexedDB
       let registrosCifrados = (await this.db.getRecords('registros')) as (RegistroIngresoCifrado | RegistroSalidaCifrado)[]
-      console.log('🔍 [DEBUG] Registros obtenidos de IndexedDB:', registrosCifrados.length)
 
       // Aplicar filtros si se especifica
       if (filters?.tipo) {
         registrosCifrados = registrosCifrados.filter((r) => r.tipo === filters.tipo)
-        console.log('🔍 [DEBUG] Después filtro tipo:', registrosCifrados.length)
       }
 
       if (filters?.fecha) {
@@ -258,7 +233,6 @@ export class DatabaseService {
         registrosCifrados = registrosCifrados.filter((r) => 
           new Date(r.timestamp).toDateString() === fechaStr
         )
-        console.log('🔍 [DEBUG] Después filtro fecha:', registrosCifrados.length)
       }
 
       // ✅ DESCIFRAR CADA REGISTRO COMPLETAMENTE
@@ -266,13 +240,10 @@ export class DatabaseService {
         registrosCifrados.map(async (registroCifrado) => {
           try {
             if (!registroCifrado.encrypted) {
-              console.log('⚠️ [DEBUG] Registro sin cifrar encontrado:', registroCifrado.id)
               // Para registros sin cifrar, necesitamos convertirlos al formato correcto
               // Por ahora, los omitimos ya que todos deberían estar cifrados
               return null
             }
-
-            console.log('🔓 [DEBUG] Descifrando registro:', registroCifrado.id)
             
             // Descifrar según tipo de registro
             if (registroCifrado.tipo === 'ingreso') {
@@ -280,12 +251,9 @@ export class DatabaseService {
             } else if (registroCifrado.tipo === 'salida') {
               return await this.descifrarRegistroSalida(registroCifrado as RegistroSalidaCifrado)
             } else {
-              // eslint-disable-next-line @typescript-eslint/no-explicit-any
-              console.error('❌ [DEBUG] Tipo de registro desconocido:', (registroCifrado as any).tipo)
               return null // Retornar null para registros inválidos
             }
-          } catch (error) {
-            console.error('❌ [DEBUG] Error descifrando registro:', registroCifrado.id, error)
+          } catch {
             return null // Omitir registros que no se pueden descifrar
           }
         })
@@ -293,11 +261,9 @@ export class DatabaseService {
 
       // Filtrar registros nulos (errores de descifrado)
       const registrosValidos = registrosDescifrados.filter((r): r is RegistroEntry => r !== null)
-      console.log('✅ [DEBUG] Registros descifrados exitosamente:', registrosValidos.length)
       
       return registrosValidos
     } catch (error) {
-      console.error('❌ [DEBUG] Error en getRegistrosDescifrados:', error)
       throw new Error(`Error obteniendo registros: ${error}`)
     }
   }
@@ -306,8 +272,6 @@ export class DatabaseService {
    * ✅ DESCIFRA REGISTRO DE INGRESO COMPLETO
    */
   private async descifrarRegistroIngreso(registroCifrado: RegistroIngresoCifrado): Promise<RegistroIngreso> {
-    console.log('🔓 [DEBUG] Descifrando registro de ingreso:', registroCifrado.id)
-    
     // 1. Descifrar datos de persona (datosPersonales + datosVisita + observaciones)
     let datosPersonaCompletos: Record<string, unknown> | null = null
     if (registroCifrado.persona) {
@@ -318,7 +282,6 @@ export class DatabaseService {
         registroCifrado.persona.iv
       )
       datosPersonaCompletos = JSON.parse(personaDescifrada) as Record<string, unknown>
-      console.log('✅ [DEBUG] Datos persona descifrados')
     }
 
     // 2. Descifrar datos de vehículo (si existe)
@@ -331,7 +294,6 @@ export class DatabaseService {
         registroCifrado.vehiculo.iv
       )
       datosVehiculo = JSON.parse(vehiculoDescifrado) as Record<string, unknown>
-      console.log('✅ [DEBUG] Datos vehículo descifrados')
     }
 
     // 3. Descifrar acompañantes (si existen)
@@ -344,7 +306,6 @@ export class DatabaseService {
         registroCifrado.acompanantes.iv
       )
       acompanantes = JSON.parse(acompanantesDescifrados)
-      console.log('✅ [DEBUG] Acompañantes descifrados:', acompanantes.length)
     }
 
     // 4. Construir registro completo descifrado
@@ -363,7 +324,6 @@ export class DatabaseService {
       acompanantes: acompanantes.length > 0 ? acompanantes : undefined
     }
 
-    console.log('✅ [DEBUG] Registro ingreso descifrado completamente')
     return registroDescifrado
   }
 
@@ -371,8 +331,6 @@ export class DatabaseService {
    * ✅ DESCIFRA REGISTRO DE SALIDA
    */
   private async descifrarRegistroSalida(registroCifrado: RegistroSalidaCifrado): Promise<RegistroSalida> {
-    console.log('🔓 [DEBUG] Descifrando registro de salida:', registroCifrado.id)
-    
     // Descifrar cédula buscada
     let cedulaBuscada = ''
     if (registroCifrado.persona) {
@@ -382,7 +340,6 @@ export class DatabaseService {
         registroCifrado.persona.salt,
         registroCifrado.persona.iv
       )
-      console.log('✅ [DEBUG] Cédula buscada descifrada')
     }
 
     const registroDescifrado: RegistroSalida = {
@@ -410,7 +367,6 @@ export class DatabaseService {
    * ✅ BÚSQUEDA POR CÉDULA (con descifrado)
    */
   async searchByDocumento(documento: string): Promise<RegistroEntry[]> {
-    console.log('🔍 [DEBUG] Buscando por cédula:', documento)
     const registros = await this.getRegistrosDescifrados()
     
     return registros.filter((r) => {
@@ -428,7 +384,6 @@ export class DatabaseService {
    * ✅ BÚSQUEDA POR MATRÍCULA (con descifrado)
    */
   async searchByMatricula(matricula: string): Promise<RegistroEntry[]> {
-    console.log('🔍 [DEBUG] Buscando por matrícula:', matricula)
     const registros = await this.getRegistrosDescifrados()
     
     return registros.filter((r) => {
@@ -505,8 +460,7 @@ export class DatabaseService {
     this.ensureInitialized()
     try {
       return await this.db.getRecords('usuarios') as Array<{ id: string; nombre: string; apellido: string; grado: string }>
-    } catch (error) {
-      console.error('❌ [PDF] Error obteniendo usuarios:', error)
+    } catch {
       return []
     }
   }

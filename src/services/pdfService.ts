@@ -90,11 +90,8 @@ export class PdfService {
    */
   static async generateReport(options: PdfReportOptions): Promise<{ success: boolean; message: string; filename?: string; dataUri?: string; size?: number }> {
     try {
-      console.log('🔍 [PDF] Iniciando generación con opciones:', options)
-
       // 1. Obtener datos del reporte
       const data = await this.getReportData(options)
-      console.log('🔍 [PDF] Datos obtenidos:', data)
 
       // 2. Generar PDF con los datos reales
       const pdfResult = await this.generatePdfDocument(data)
@@ -107,8 +104,7 @@ export class PdfService {
         size: pdfResult.size
       }
 
-    } catch (error) {
-      console.error('❌ [PDF] Error generando PDF:', error)
+    } catch {
       return {
         success: false,
         message: 'Error al generar el reporte PDF'
@@ -120,7 +116,6 @@ export class PdfService {
    * Genera el documento PDF físico
    */
   private static async generatePdfDocument(data: ReportData): Promise<{ filename: string; dataUri: string; size: number }> {
-    console.log('📄 [PDF] Generando documento para:', data.registros.length, 'registros')
 
     // Crear documento PDF en orientación horizontal
     const doc = new jsPDF({
@@ -189,12 +184,8 @@ export class PdfService {
     const timestamp = new Date().toISOString().replace(/[:.]/g, '-')
     const filename = `reporte-ircca-${timestamp}.pdf`
 
-    console.log('🔍 [PDF] PDF generado exitosamente - Listo para nueva ventana')
-    console.log('🔍 [PDF] Filename:', filename)
-
     // ✅ SOLUCIÓN SIMPLE Y SEGURA: Solo generar Data URI para nueva ventana
     const pdfDataUri = doc.output('datauristring')
-    console.log('📄 [PDF] Data URI generado - Tamaño:', Math.round(pdfDataUri.length * 0.75 / 1024), 'KB')
 
     return {
       filename,
@@ -222,8 +213,8 @@ export class PdfService {
         logoGRWidth,
         0 // 👈 0 = jsPDF calcula altura automáticamente según aspect ratio original
       )
-    } catch (error) {
-      console.warn('⚠️ No se pudo cargar logo Guardia Republicana:', error)
+    } catch {
+      // Error silencioso
     }
 
     // Logo IRCCA (derecha) - alineado con logo GR
@@ -236,8 +227,8 @@ export class PdfService {
         logoIRCCAWidth,
         0 // 👈 0 = jsPDF calcula altura automáticamente según aspect ratio original
       )
-    } catch (error) {
-      console.warn('⚠️ No se pudo cargar logo IRCCA:', error)
+    } catch {
+      // Error silencioso
     }
 
     // Título principal centrado
@@ -336,8 +327,6 @@ export class PdfService {
    */
   static async getReportData(options: PdfReportOptions): Promise<ReportData> {
     try {
-      console.log('🔍 [PDF] Obteniendo datos de BD para:', options)
-
       // Inicializar servicios de base de datos
       const dbService = new DatabaseService()
       await dbService.initialize()
@@ -348,7 +337,6 @@ export class PdfService {
 
       // Obtener registros del rango de fechas usando DatabaseService
       const registros = await this.getRegistrosFromDatabase(startDate, endDate, dbService)
-      console.log('🔍 [PDF] Registros obtenidos de BD:', registros.length)
 
       // Obtener información de operadores
       const operadores = await this.getOperadoresFromDatabase(dbService)
@@ -365,8 +353,7 @@ export class PdfService {
         registros: registrosProcesados
       }
 
-    } catch (error) {
-      console.error('❌ [PDF] Error obteniendo datos:', error)
+    } catch {
       // Fallback a datos simulados
       return this.getFallbackData(options)
     }
@@ -415,11 +402,8 @@ export class PdfService {
    */
   private static async getRegistrosFromDatabase(startDate: Date, endDate: Date, dbService: DatabaseService): Promise<RegistroEntry[]> {
     try {
-      console.log('🔍 [PDF] Obteniendo registros descifrados de DatabaseService...')
-
       // Usar DatabaseService que ya está inicializado y puede descifrar
       const allRegistros = await dbService.getRegistrosDescifrados()
-      console.log('🔍 [PDF] Registros descifrados obtenidos:', allRegistros.length)
 
       // Filtrar por rango de fechas
       const filteredRegistros = allRegistros.filter(registro => {
@@ -427,11 +411,9 @@ export class PdfService {
         return timestamp >= startDate && timestamp <= endDate
       })
 
-      console.log('🔍 [PDF] Registros filtrados por fecha:', filteredRegistros.length)
       return filteredRegistros
 
-    } catch (error) {
-      console.error('❌ [PDF] Error obteniendo registros descifrados:', error)
+    } catch {
       return []
     }
   }
@@ -449,8 +431,7 @@ export class PdfService {
         apellido: usuario.apellido,
         grado: usuario.grado
       }))
-    } catch (error) {
-      console.error('❌ [PDF] Error obteniendo operadores:', error)
+    } catch {
       return []
     }
   }

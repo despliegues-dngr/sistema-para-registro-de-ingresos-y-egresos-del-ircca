@@ -371,15 +371,14 @@ const userToDelete = ref<UserTableRow | null>(null)
 const isDeleting = ref(false)
 
 // Funciones para acciones de la tabla
-const handleEditUser = (user: UserTableRow) => {
-  console.log('Editar usuario:', user)
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
+const handleEditUser = (_item: UserTableRow) => {
   // TODO: Implementar lógica de edición más adelante si es necesario
 }
 
 const handleDeleteUser = (user: UserTableRow) => {
   // Validación: No permitir eliminar el último administrador
   if (user.role === 'admin' && usersData.value.admins <= 1) {
-    console.warn('No se puede eliminar el último administrador del sistema')
     // TODO: Mostrar notificación de error
     return
   }
@@ -394,14 +393,10 @@ const confirmDeleteUser = async () => {
   isDeleting.value = true
   
   try {
-    console.log('Eliminando usuario de la base de datos:', userToDelete.value)
-    
     // Eliminar de la base de datos IndexedDB
     const result = await deleteRecord('usuarios', userToDelete.value.id)
     
     if (result.success) {
-      console.log('Usuario eliminado exitosamente de la base de datos')
-      
       // Actualizar el array local
       const index = usersTableData.value.findIndex(u => u.id === userToDelete.value!.id)
       if (index > -1) {
@@ -420,12 +415,10 @@ const confirmDeleteUser = async () => {
         ).length
       }
     } else {
-      console.error('Error al eliminar usuario de la base de datos:', result.error)
       throw new Error(result.error || 'Error desconocido')
     }
     
   } catch (error) {
-    console.error('Error al eliminar usuario:', error)
     // TODO: Mostrar notificación de error al usuario
     alert('Error al eliminar usuario: ' + (error instanceof Error ? error.message : 'Error desconocido'))
   } finally {
@@ -450,7 +443,6 @@ const loadUsersStats = async () => {
     const dbResult = await initDatabase()
     
     if (!dbResult.success) {
-      console.error('Error inicializando BD:', dbResult.error)
       return
     }
     
@@ -481,8 +473,8 @@ const loadUsersStats = async () => {
         id: user.id
       }))
     }
-  } catch (error) {
-    console.error('Error al cargar estadísticas de usuarios:', error)
+  } catch {
+    // Error silencioso
   }
 }
 

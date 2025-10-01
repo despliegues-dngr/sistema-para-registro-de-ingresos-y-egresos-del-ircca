@@ -41,11 +41,8 @@ vi.stubGlobal('localStorage', mockLocalStorage)
 
 describe('useAuthStore', () => {
   beforeEach(() => {
-    console.log('🔄 DEBUG BEFOREEACH - Inicializando test...')
-    
     // Configurar Pinia antes de cada prueba
     setActivePinia(createPinia())
-    console.log('🔄 DEBUG BEFOREEACH - Pinia configurada')
     
     // Reset all mocks - patrón oficial Vitest
     vi.clearAllMocks()
@@ -54,7 +51,6 @@ describe('useAuthStore', () => {
     mockLocalStorage.getItem.mockReturnValue(null)
     mockLocalStorage.setItem.mockClear()
     mockLocalStorage.removeItem.mockClear()
-    console.log('🔄 DEBUG BEFOREEACH - Mocks limpiados + localStorage mockeado')
     
     // Configurar valores por defecto para mocks exitosos
     mockInitDatabase.mockResolvedValue({ success: true })
@@ -62,9 +58,6 @@ describe('useAuthStore', () => {
     mockUpdateRecord.mockResolvedValue({ success: true }) // ✅ CONFIGURADO
     mockGetRecords.mockResolvedValue([]) // Importante: lista vacía por defecto
     mockClearStore.mockResolvedValue({ success: true })
-    
-    console.log('🔄 DEBUG BEFOREEACH - Mocks configurados con valores por defecto')
-    console.log('   mockGetRecords devolverá:', [])
   })
 
   describe('Estado inicial', () => {
@@ -151,9 +144,7 @@ describe('useAuthStore', () => {
 
   describe('Acción logout()', () => {
     it('debe limpiar sesión correctamente', async () => {
-      console.log('📝 DEBUG LOGOUT TEST - Iniciando...')
       const authStore = useAuthStore()
-      console.log('📝 DEBUG LOGOUT TEST - Estado inicial:', { user: authStore.user, isAuth: authStore.isAuthenticated })
       
       // Configurar mock para login exitoso ANTES del login
       mockGetRecords.mockResolvedValue([
@@ -168,27 +159,21 @@ describe('useAuthStore', () => {
         }
       ])
       vi.spyOn(EncryptionService, 'verifyPassword').mockResolvedValue(true)
-      console.log('📝 DEBUG LOGOUT TEST - Mocks configurados para login exitoso')
       
       // Hacer login con API CORRECTA
       await authStore.login('admin', 'password123')
-      console.log('📝 DEBUG LOGOUT TEST - Después del login:', { user: authStore.user, isAuth: authStore.isAuthenticated })
       
       // Verificar que está autenticado
       expect(authStore.isAuthenticated).toBe(true)
       expect(authStore.user).toBeTruthy()
       expect(authStore.user?.username).toBe('admin')
       expect(authStore.user?.role).toBe('admin')
-      console.log('📝 DEBUG LOGOUT TEST - Login verificado exitosamente')
 
       // Hacer logout
-      console.log('📝 DEBUG LOGOUT TEST - Ejecutando logout...')
       authStore.logout()
-      console.log('📝 DEBUG LOGOUT TEST - Logout ejecutado, estado final:', { user: authStore.user, isAuth: authStore.isAuthenticated })
 
       expect(authStore.user).toBeNull()
       expect(authStore.isAuthenticated).toBe(false)
-      console.log('📝 DEBUG LOGOUT TEST - Test completado exitosamente')
       expect(authStore.loginAttempts).toBe(0)
       expect(authStore.isAdmin).toBe(false)
       expect(authStore.isOperador).toBe(false)

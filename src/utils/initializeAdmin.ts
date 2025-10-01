@@ -29,7 +29,6 @@ export async function createInitialAdmin(adminData: AdminUser): Promise<boolean>
     const existingAdmin = allUsers.find(user => user.role === 'admin')
     
     if (existingAdmin) {
-      console.log('Ya existe un usuario administrador en el sistema')
       return false
     }
 
@@ -59,11 +58,9 @@ export async function createInitialAdmin(adminData: AdminUser): Promise<boolean>
       throw new Error(result.error || 'Error al crear usuario administrador')
     }
 
-    console.log('Usuario administrador creado exitosamente:', adminData.cedula)
     return true
 
-  } catch (error) {
-    console.error('Error al crear usuario administrador:', error)
+  } catch {
     return false
   }
 }
@@ -101,10 +98,9 @@ export async function clearAdminUser(): Promise<void> {
     if (existingUsers.length > 0) {
       const adminUser = existingUsers[0] as { id: string }
       await deleteRecord('usuarios', adminUser.id)
-      console.log('🗑️ Usuario administrador eliminado para recreación')
     }
-  } catch (error) {
-    console.error('Error al eliminar usuario administrador:', error)
+  } catch {
+    // Error silencioso
   }
 }
 
@@ -142,7 +138,6 @@ export async function createInitialSupervisor(supervisorData: AdminUser): Promis
     const existingSupervisor = allUsers.find(user => user.role === 'supervisor')
     
     if (existingSupervisor) {
-      console.log('Ya existe un usuario supervisor en el sistema')
       return false
     }
 
@@ -172,11 +167,9 @@ export async function createInitialSupervisor(supervisorData: AdminUser): Promis
       throw new Error(result.error || 'Error al crear usuario supervisor')
     }
 
-    console.log('Usuario supervisor creado exitosamente:', supervisorData.cedula)
     return true
 
-  } catch (error) {
-    console.error('Error al crear usuario supervisor:', error)
+  } catch {
     return false
   }
 }
@@ -187,29 +180,7 @@ export async function createInitialSupervisor(supervisorData: AdminUser): Promis
  * ⚠️ SEGURIDAD: Solo muestra credenciales en modo desarrollo
  */
 export async function initializeDefaultAdmin(): Promise<void> {
-  const isDev = import.meta.env.DEV
-  
-  if (isDev) {
-    console.log('🔧 [DEV] Inicializando usuario administrador por defecto...')
-  }
-  
-  const success = await createInitialAdmin(DEFAULT_ADMIN)
-  
-  if (success) {
-    if (isDev) {
-      console.log('✅ Usuario administrador inicializado correctamente')
-      console.log('🔒 CREDENCIALES DE ACCESO POR DEFECTO:')
-      console.log(`   👤 Usuario: ${DEFAULT_ADMIN.cedula}`)
-      console.log(`   🗝️  Contraseña: ${DEFAULT_ADMIN.password}`)
-      console.log('📋 Acceder al AdminPanel para cambiar credenciales si es necesario')
-    } else {
-      console.log('✅ Sistema inicializado correctamente')
-    }
-  } else {
-    if (isDev) {
-      console.log('ℹ️ Usuario administrador ya existe o no pudo crearse')
-    }
-  }
+  await createInitialAdmin(DEFAULT_ADMIN)
 }
 
 /**
@@ -218,27 +189,5 @@ export async function initializeDefaultAdmin(): Promise<void> {
  * ⚠️ SEGURIDAD: Solo muestra credenciales en modo desarrollo
  */
 export async function initializeDefaultSupervisor(): Promise<void> {
-  const isDev = import.meta.env.DEV
-  
-  if (isDev) {
-    console.log('🔧 [DEV] Inicializando usuario supervisor por defecto...')
-  }
-  
-  const success = await createInitialSupervisor(DEFAULT_SUPERVISOR)
-  
-  if (success) {
-    if (isDev) {
-      console.log('✅ Usuario supervisor inicializado correctamente')
-      console.log('🔒 CREDENCIALES DE SUPERVISOR:')
-      console.log(`   👤 Usuario: ${DEFAULT_SUPERVISOR.cedula}`)
-      console.log(`   🗝️  Contraseña: ${DEFAULT_SUPERVISOR.password}`)
-      console.log(`   👔 Grado: ${DEFAULT_SUPERVISOR.grado}`)
-    } else {
-      console.log('✅ Sistema inicializado correctamente')
-    }
-  } else {
-    if (isDev) {
-      console.log('ℹ️ Usuario supervisor ya existe o no pudo crearse')
-    }
-  }
+  await createInitialSupervisor(DEFAULT_SUPERVISOR)
 }
