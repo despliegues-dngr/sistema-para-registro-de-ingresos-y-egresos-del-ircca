@@ -53,6 +53,12 @@ backups/
 
 # Vercel
 .vercel
+
+# Environment variables (SEGURIDAD)
+.env
+.env.local
+.env.production
+.env.development
 .env*.local
 
 # OS generated files

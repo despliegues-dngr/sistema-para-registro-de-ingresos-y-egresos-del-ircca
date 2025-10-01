@@ -12,10 +12,9 @@ app.use(createPinia())
 app.use(router)
 app.use(vuetify)
 
-// Inicializar usuarios por defecto en desarrollo
-if (import.meta.env.DEV) {
-  initializeDefaultAdmin().catch(console.error)
-  initializeDefaultSupervisor().catch(console.error)
-}
+// ✅ SOLUCIÓN: Inicializar usuarios por defecto en TODOS los entornos
+// Se ejecuta solo si no existen (verificación interna en las funciones)
+initializeDefaultAdmin().catch(console.error)
+initializeDefaultSupervisor().catch(console.error)
 
 app.mount('#app')

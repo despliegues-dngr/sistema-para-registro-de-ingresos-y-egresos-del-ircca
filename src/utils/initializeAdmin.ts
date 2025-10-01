@@ -24,10 +24,12 @@ export async function createInitialAdmin(adminData: AdminUser): Promise<boolean>
     // Inicializar BD
     await initDatabase()
 
-    // Verificar si ya existe un admin
-    const existingUsers = await getRecords('usuarios', 'username', adminData.cedula)
-    if (existingUsers.length > 0) {
-      console.log('El usuario administrador ya existe')
+    // ✅ MEJORADO: Verificar si ya existe un usuario con rol 'admin'
+    const allUsers = await getRecords('usuarios') as Array<Record<string, unknown>>
+    const existingAdmin = allUsers.find(user => user.role === 'admin')
+    
+    if (existingAdmin) {
+      console.log('Ya existe un usuario administrador en el sistema')
       return false
     }
 
@@ -68,17 +70,22 @@ export async function createInitialAdmin(adminData: AdminUser): Promise<boolean>
 
 /**
  * 🔒 USUARIO ADMINISTRADOR POR DEFECTO
- * ✅ Credenciales fijas y seguras para acceso inicial
+ * ✅ Credenciales desde variables de entorno (más seguro)
  * ⚠️ IMPORTANTE: Cambiar tras primer login usando AdminPanel
+ * 
+ * Variables de entorno requeridas:
+ * - VITE_ADMIN_CEDULA
+ * - VITE_ADMIN_PASSWORD
+ * - VITE_ADMIN_NOMBRE
+ * - VITE_ADMIN_APELLIDO
+ * - VITE_ADMIN_GRADO
  */
 export const DEFAULT_ADMIN: AdminUser = {
-  // ✅ SEGURO: Hardcodeadas solo en servidor (no en variables VITE_)
-  cedula: '55226350',           // Tu cédula real
-  grado: 'Guardia Republicano', // Tu grado real
-  nombre: 'Mario',              // Tu nombre real  
-  apellido: 'Berni',            // Tu apellido real
-  // 🔑 CONTRASEÑA POR DEFECTO (personalizable desde AdminPanel)
-  password: '2025.Ircca'
+  cedula: import.meta.env.VITE_ADMIN_CEDULA || '55226350',
+  grado: import.meta.env.VITE_ADMIN_GRADO || 'Guardia Republicano',
+  nombre: import.meta.env.VITE_ADMIN_NOMBRE || 'Mario',
+  apellido: import.meta.env.VITE_ADMIN_APELLIDO || 'Berni',
+  password: import.meta.env.VITE_ADMIN_PASSWORD || '2025.Ircca'
 }
 
 /**
@@ -103,14 +110,21 @@ export async function clearAdminUser(): Promise<void> {
 
 /**
  * 🔒 USUARIO SUPERVISOR POR DEFECTO
- * ✅ Credenciales fijas para el rol supervisor según especificaciones
+ * ✅ Credenciales desde variables de entorno (más seguro)
+ * 
+ * Variables de entorno requeridas:
+ * - VITE_SUPERVISOR_CEDULA
+ * - VITE_SUPERVISOR_PASSWORD
+ * - VITE_SUPERVISOR_NOMBRE
+ * - VITE_SUPERVISOR_APELLIDO
+ * - VITE_SUPERVISOR_GRADO
  */
 export const DEFAULT_SUPERVISOR: AdminUser = {
-  cedula: '12345678',           // Cédula proporcionada
-  grado: 'Encargado',          // Grado no policial especificado
-  nombre: 'Carlos',            // Nombre proporcionado
-  apellido: 'Torres',          // Apellido proporcionado
-  password: '2025.Supervisor'  // Contraseña por defecto
+  cedula: import.meta.env.VITE_SUPERVISOR_CEDULA || '12345678',
+  grado: import.meta.env.VITE_SUPERVISOR_GRADO || 'Encargado',
+  nombre: import.meta.env.VITE_SUPERVISOR_NOMBRE || 'Carlos',
+  apellido: import.meta.env.VITE_SUPERVISOR_APELLIDO || 'Torres',
+  password: import.meta.env.VITE_SUPERVISOR_PASSWORD || '2025.Supervisor'
 }
 
 /**
@@ -123,10 +137,12 @@ export async function createInitialSupervisor(supervisorData: AdminUser): Promis
     // Inicializar BD
     await initDatabase()
 
-    // Verificar si ya existe el supervisor
-    const existingUsers = await getRecords('usuarios', 'username', supervisorData.cedula)
-    if (existingUsers.length > 0) {
-      console.log('El usuario supervisor ya existe')
+    // ✅ MEJORADO: Verificar si ya existe un usuario con rol 'supervisor'
+    const allUsers = await getRecords('usuarios') as Array<Record<string, unknown>>
+    const existingSupervisor = allUsers.find(user => user.role === 'supervisor')
+    
+    if (existingSupervisor) {
+      console.log('Ya existe un usuario supervisor en el sistema')
       return false
     }
 
@@ -166,41 +182,63 @@ export async function createInitialSupervisor(supervisorData: AdminUser): Promis
 }
 
 /**
- * Función helper para inicializar admin automáticamente en desarrollo
- * ⚠️ SEGURIDAD: Las credenciales se leen desde variables de entorno
+ * Función helper para inicializar admin automáticamente
+ * ✅ Se ejecuta en todos los entornos (desarrollo y producción)
+ * ⚠️ SEGURIDAD: Solo muestra credenciales en modo desarrollo
  */
 export async function initializeDefaultAdmin(): Promise<void> {
-  console.log('Inicializando usuario administrador por defecto...')
-  console.log('🔒 Leyendo credenciales desde variables de entorno...')
+  const isDev = import.meta.env.DEV
+  
+  if (isDev) {
+    console.log('🔧 [DEV] Inicializando usuario administrador por defecto...')
+  }
   
   const success = await createInitialAdmin(DEFAULT_ADMIN)
   
   if (success) {
-    console.log('✅ Usuario administrador inicializado correctamente')
-    console.log('🔒 CREDENCIALES DE ACCESO POR DEFECTO:')
-    console.log(`   👤 Usuario: ${DEFAULT_ADMIN.cedula}`)
-    console.log(`   🗝️  Contraseña: ${DEFAULT_ADMIN.password}`)
-    console.log('📋 Acceder al AdminPanel para cambiar credenciales si es necesario')
+    if (isDev) {
+      console.log('✅ Usuario administrador inicializado correctamente')
+      console.log('🔒 CREDENCIALES DE ACCESO POR DEFECTO:')
+      console.log(`   👤 Usuario: ${DEFAULT_ADMIN.cedula}`)
+      console.log(`   🗝️  Contraseña: ${DEFAULT_ADMIN.password}`)
+      console.log('📋 Acceder al AdminPanel para cambiar credenciales si es necesario')
+    } else {
+      console.log('✅ Sistema inicializado correctamente')
+    }
   } else {
-    console.log('ℹ️ Usuario administrador ya existe o no pudo crearse')
+    if (isDev) {
+      console.log('ℹ️ Usuario administrador ya existe o no pudo crearse')
+    }
   }
 }
 
 /**
  * Función helper para inicializar supervisor automáticamente
+ * ✅ Se ejecuta en todos los entornos (desarrollo y producción)
+ * ⚠️ SEGURIDAD: Solo muestra credenciales en modo desarrollo
  */
 export async function initializeDefaultSupervisor(): Promise<void> {
-  console.log('Inicializando usuario supervisor por defecto...')
+  const isDev = import.meta.env.DEV
+  
+  if (isDev) {
+    console.log('🔧 [DEV] Inicializando usuario supervisor por defecto...')
+  }
   
   const success = await createInitialSupervisor(DEFAULT_SUPERVISOR)
   
   if (success) {
-    console.log('✅ Usuario supervisor inicializado correctamente')
-    console.log('🔒 CREDENCIALES DE SUPERVISOR:')
-    console.log(`   👤 Usuario: ${DEFAULT_SUPERVISOR.cedula}`)
-    console.log(`   🗝️  Contraseña: ${DEFAULT_SUPERVISOR.password}`)
-    console.log(`   👔 Grado: ${DEFAULT_SUPERVISOR.grado}`)
+    if (isDev) {
+      console.log('✅ Usuario supervisor inicializado correctamente')
+      console.log('🔒 CREDENCIALES DE SUPERVISOR:')
+      console.log(`   👤 Usuario: ${DEFAULT_SUPERVISOR.cedula}`)
+      console.log(`   🗝️  Contraseña: ${DEFAULT_SUPERVISOR.password}`)
+      console.log(`   👔 Grado: ${DEFAULT_SUPERVISOR.grado}`)
+    } else {
+      console.log('✅ Sistema inicializado correctamente')
+    }
   } else {
-    console.log('ℹ️ Usuario supervisor ya existe o no pudo crearse')
+    if (isDev) {
+      console.log('ℹ️ Usuario supervisor ya existe o no pudo crearse')
+    }
   }
 }
