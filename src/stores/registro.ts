@@ -203,6 +203,38 @@ export const useRegistroStore = defineStore('registro', () => {
           }
         }
         
+        // ✅ AUTOCOMPLETE: Actualizar persona conocida en IndexedDB
+        try {
+          const autocompleteModule = await import('@/services/autocompleteService')
+          
+          // Actualizar titular (NO es acompañante)
+          await autocompleteModule.autocompleteService.actualizarPersonaConocida({
+            cedula: datos.datosPersonales.cedula,
+            nombre: datos.datosPersonales.nombre,
+            apellido: datos.datosPersonales.apellido,
+            destino: datos.datosVisita.destino,
+            vehiculo: datos.datosVehiculo,
+            esAcompanante: false
+          })
+          
+          // Actualizar acompañantes (SÍ son acompañantes)
+          if (datos.acompanantes) {
+            for (const acomp of datos.acompanantes) {
+              await autocompleteModule.autocompleteService.actualizarPersonaConocida({
+                cedula: acomp.cedula,
+                nombre: acomp.nombre,
+                apellido: acomp.apellido,
+                destino: acomp.destino,
+                esAcompanante: true
+              })
+            }
+          }
+          
+          console.log('✅ [AUTOCOMPLETE] Persona conocida actualizada para autocompletado futuro')
+        } catch (autocompleteError) {
+          console.warn('⚠️ [AUTOCOMPLETE] Error actualizando persona conocida (no crítico):', autocompleteError)
+        }
+        
         return result.registro
       } else {
         throw new Error(result.error || 'Error desconocido')

@@ -15,18 +15,14 @@
     </div>
     
     <v-row>
-      <!-- Cédula con Autocomplete -->
+      <!-- Cédula - CON AUTOCOMPLETE DE PERSONAS CONOCIDAS (REUTILIZANDO COMPONENTE) -->
       <v-col cols="12">
-        <PersonaAutocomplete
-          :model-value="autocomplete.personaSeleccionada.value"
-          @update:model-value="onPersonaSelect"
-          :search="autocomplete.searchText.value"
-          @update:search="autocomplete.onSearchUpdate"
-          :items="autocomplete.sugerenciasFormateadas.value"
-          :loading="autocomplete.buscandoCedula.value"
-          label="Cédula del Acompañante"
-          :rules="cedulaRules"
-          :show-destino="false"
+        <CedulaAutocomplete
+          v-model="personaSeleccionada"
+          v-model:search="cedulaBusqueda"
+          :items="sugerenciasMapeadas"
+          :loading="buscando"
+          @persona-selected="autocompletarDatos"
         />
       </v-col>
 
@@ -76,10 +72,15 @@
 </template>
 
 <script setup lang="ts">
-import PersonaAutocomplete from '@/components/forms/PersonaAutocomplete.vue'
-import { usePersonaAutocomplete } from '@/composables/usePersonaAutocomplete'
+import { ref, computed, watch } from 'vue'
+import CedulaAutocomplete from './CedulaAutocomplete.vue'
+import { useAutocomplete } from '@/composables/useAutocomplete'
 import type { DatosAcompanante } from '@/stores/registro'
 import type { PersonaConocida } from '@/services/autocompleteService'
+
+interface AutocompleteItem extends PersonaConocida {
+  displayText: string
+}
 
 interface Props {
   acompanante: DatosAcompanante
@@ -88,28 +89,74 @@ interface Props {
 }
 
 interface Emits {
+  'update:cedula': [value: string]
   'update:nombre': [value: string]
   'update:apellido': [value: string]
   'update:destino': [value: string]
   'remove': []
-  'persona-selected': [persona: PersonaConocida]
 }
 
 const props = defineProps<Props>()
 const emit = defineEmits<Emits>()
 
-// Autocomplete reutilizable
-const autocomplete = usePersonaAutocomplete()
+// ✅ REUTILIZAR: Composable de autocomplete (misma lógica que DatosPersonalesSection)
+const { sugerenciasCedula, buscando, buscarPorCedula, limpiarSugerencias } = useAutocomplete()
+
+// Estado local
+const personaSeleccionada = ref<AutocompleteItem | null>(null)
+const cedulaBusqueda = ref('')
 
 // Constantes
 const destinos = ['IRCCA', 'Ligeral', 'Simbiosys', 'Jabelor', 'Otra']
 
-// Reglas de validación
-const cedulaRules = [
-  () => !!props.acompanante.cedula || 'El documento es requerido',
-  () => /^\d+$/.test(props.acompanante.cedula) || 'Solo se permiten números',
-]
+// ✅ REUTILIZAR: Mapeo de sugerencias (misma lógica)
+const sugerenciasMapeadas = computed<AutocompleteItem[]>(() => {
+  return sugerenciasCedula.value.map(persona => ({
+    ...persona,
+    displayText: `${persona.nombre} ${persona.apellido} (${persona.cedula})`
+  }))
+})
 
+/**
+ * ✅ REUTILIZAR: Watch para búsqueda automática (misma lógica que DatosPersonalesSection)
+ */
+watch(cedulaBusqueda, async (newValue) => {
+  // Actualizar cédula en el formulario padre
+  emit('update:cedula', newValue)
+  
+  // Buscar sugerencias si hay al menos 1 dígito
+  if (newValue && newValue.length >= 1) {
+    await buscarPorCedula(newValue)
+  } else {
+    limpiarSugerencias()
+  }
+})
+
+/**
+ * Watch: Sincronizar cédula del padre con búsqueda local
+ */
+watch(() => props.acompanante.cedula, (newValue) => {
+  if (newValue !== cedulaBusqueda.value) {
+    cedulaBusqueda.value = newValue
+  }
+})
+
+/**
+ * ✅ REUTILIZAR: Autocompletar datos (misma lógica que DatosPersonalesSection)
+ */
+const autocompletarDatos = (persona: PersonaConocida) => {
+  console.log(`✅ [AUTOCOMPLETE] Acompañante ${props.index + 1} seleccionado:`, persona)
+  
+  // Autocompletar todos los campos del acompañante
+  emit('update:cedula', persona.cedula)
+  emit('update:nombre', persona.nombre)
+  emit('update:apellido', persona.apellido)
+  emit('update:destino', persona.ultimoDestino)
+  
+  console.log(`✅ [AUTOCOMPLETE] Datos de acompañante ${props.index + 1} autocompletados`)
+}
+
+// Reglas de validación
 const nombreRules = [
   (v: string) => !!v || 'El nombre es requerido',
   (v: string) => v.length >= 2 || 'El nombre debe tener al menos 2 caracteres',
@@ -123,14 +170,6 @@ const apellidoRules = [
 const requiredRules = [
   (v: string) => !!v || 'Este campo es requerido',
 ]
-
-// Manejar selección de persona
-const onPersonaSelect = (item: { persona: PersonaConocida; displayText: string; searchText: string } | null) => {
-  const persona = autocomplete.onPersonaSelect(item)
-  if (persona) {
-    emit('persona-selected', persona)
-  }
-}
 </script>
 
 <style scoped>

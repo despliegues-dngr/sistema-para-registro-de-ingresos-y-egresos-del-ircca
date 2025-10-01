@@ -16,6 +16,7 @@ export interface PersonaConocida extends Record<string, unknown> {
   ultimaVisita: Date
   totalVisitas: number
   frecuencia: 'alta' | 'media' | 'baja' // Basado en totalVisitas
+  esAcompanante: boolean // Indica si el último registro fue como acompañante
 }
 
 /**
@@ -54,6 +55,7 @@ export class AutocompleteService {
     apellido: string
     destino: string
     vehiculo?: DatosVehiculo
+    esAcompanante?: boolean
   }): Promise<void> {
     try {
       await this.db.initDatabase()
@@ -76,7 +78,8 @@ export class AutocompleteService {
           ultimoVehiculo: datos.vehiculo,
           ultimaVisita: new Date(),
           totalVisitas: existente.totalVisitas + 1,
-          frecuencia: this.calcularFrecuencia(existente.totalVisitas + 1)
+          frecuencia: this.calcularFrecuencia(existente.totalVisitas + 1),
+          esAcompanante: datos.esAcompanante ?? false
         }
 
         // Actualizar en DB
@@ -93,7 +96,8 @@ export class AutocompleteService {
           ultimoVehiculo: datos.vehiculo,
           ultimaVisita: new Date(),
           totalVisitas: 1,
-          frecuencia: 'baja'
+          frecuencia: 'baja',
+          esAcompanante: datos.esAcompanante ?? false
         }
 
         // Agregar a DB

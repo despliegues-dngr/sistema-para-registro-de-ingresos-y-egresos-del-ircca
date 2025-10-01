@@ -12,13 +12,14 @@
     :label="label"
     :prepend-inner-icon="icon"
     :rules="rules"
+    :placeholder="placeholder"
     variant="outlined"
     density="comfortable"
+    clearable
+    :autofocus="autofocus"
+    hide-details="auto"
     :hint="hint"
     persistent-hint
-    required
-    :autofocus="autofocus"
-    clearable
     :custom-filter="() => true"
     no-filter
     @keypress="onlyNumbers"
@@ -50,6 +51,16 @@
         </template>
       </v-list-item>
     </template>
+
+    <!-- Slot cuando no hay resultados -->
+    <template #no-data>
+      <div class="text-center pa-4">
+        <v-icon size="48" color="grey-lighten-1" class="mb-2">mdi-account-search</v-icon>
+        <p class="text-body-2 text-medium-emphasis mb-0">
+          No se encontraron visitas previas
+        </p>
+      </div>
+    </template>
   </v-autocomplete>
 </template>
 
@@ -57,7 +68,7 @@
 import type { PersonaConocida } from '@/services/autocompleteService'
 
 /**
- * Componente reutilizable de autocompletado de personas
+ * Componente SIMPLIFICADO de autocompletado de personas
  * Usado en formularios de ingreso (titular y acompañantes)
  */
 
@@ -77,6 +88,7 @@ interface Props {
   icon?: string
   autofocus?: boolean
   showDestino?: boolean
+  placeholder?: string
   rules?: ((value: SearchItem | null) => boolean | string)[]
 }
 
@@ -87,6 +99,7 @@ withDefaults(defineProps<Props>(), {
   icon: 'mdi-card-account-details',
   autofocus: false,
   showDestino: true,
+  placeholder: 'Escriba la cédula...',
   rules: () => []
 })
 

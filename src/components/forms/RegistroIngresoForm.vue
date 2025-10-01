@@ -22,7 +22,7 @@
       @update:nombre="formData.datosPersonales.nombre = $event"
       @update:apellido="formData.datosPersonales.apellido = $event"
       @update:destino="formData.datosVisita.destino = $event"
-      @persona-selected="onTitularSelected"
+      @update:vehiculo="autocompletarVehiculo"
     />
 
     <v-divider class="my-6" />
@@ -48,7 +48,6 @@
       @add-acompanante="addAcompanante"
       @remove-acompanante="removeAcompanante"
       @update-acompanante="updateAcompanante"
-      @acompanante-persona-selected="onAcompananteSelected"
     />
 
     <v-divider class="my-6" />
@@ -73,7 +72,6 @@
 <script setup lang="ts">
 import { ref, computed, reactive } from 'vue'
 import { type RegistroIngresoData, type DatosPersonales, type DatosVisita, type DatosVehiculo, type DatosAcompanante } from '@/stores/registro'
-import type { PersonaConocida } from '@/services/autocompleteService'
 import DatosPersonalesSection from './sections/DatosPersonalesSection.vue'
 import DatosVehiculoSection from './sections/DatosVehiculoSection.vue'
 import AcompanantesSection from './sections/AcompanantesSection.vue'
@@ -162,23 +160,6 @@ const isFormValid = computed(() => {
 // ========================================
 
 /**
- * Maneja selección de titular desde autocomplete
- */
-const onTitularSelected = (persona: PersonaConocida) => {
-  formData.datosPersonales.cedula = persona.cedula
-  formData.datosPersonales.nombre = persona.nombre
-  formData.datosPersonales.apellido = persona.apellido
-  formData.datosVisita.destino = persona.ultimoDestino
-  
-  // Precargar vehículo si existe
-  if (persona.ultimoVehiculo) {
-    formData.datosVehiculo.tipo = persona.ultimoVehiculo.tipo
-    formData.datosVehiculo.matricula = persona.ultimoVehiculo.matricula || ''
-    vehiculoExpanded.value = 0
-  }
-}
-
-/**
  * Maneja cambios en datos de vehículo
  */
 const onVehiculoDataChange = (hasData: boolean) => {
@@ -226,19 +207,15 @@ const updateAcompanante = (index: number, field: string, value: string) => {
 }
 
 /**
- * Maneja selección de persona para acompañante
+ * Autocompletar datos de vehículo desde persona conocida
  */
-const onAcompananteSelected = (index: number, persona: PersonaConocida) => {
-  if (formData.acompanantes[index]) {
-    formData.acompanantes[index].cedula = persona.cedula
-    formData.acompanantes[index].nombre = persona.nombre
-    formData.acompanantes[index].apellido = persona.apellido
-    
-    // Destino por defecto igual al titular
-    if (!formData.acompanantes[index].destino) {
-      formData.acompanantes[index].destino = formData.datosVisita.destino || persona.ultimoDestino
-    }
-  }
+const autocompletarVehiculo = (vehiculo: DatosVehiculo) => {
+  console.log('✅ [FORM] Autocompletando vehículo:', vehiculo)
+  formData.datosVehiculo.tipo = vehiculo.tipo
+  formData.datosVehiculo.matricula = vehiculo.matricula
+  
+  // Auto-expandir la sección de vehículo
+  vehiculoExpanded.value = 0
 }
 
 /**

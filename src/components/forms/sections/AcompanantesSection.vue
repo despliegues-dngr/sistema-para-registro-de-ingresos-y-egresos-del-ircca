@@ -28,10 +28,10 @@
         :acompanante="acompanante"
         :index="index"
         :destino-titular="destinoTitular"
+        @update:cedula="updateAcompanante(index, 'cedula', $event)"
         @update:nombre="updateAcompanante(index, 'nombre', $event)"
         @update:apellido="updateAcompanante(index, 'apellido', $event)"
         @update:destino="updateAcompanante(index, 'destino', $event)"
-        @persona-selected="onPersonaSelected(index, $event)"
         @remove="$emit('remove-acompanante', index)"
       />
     </div>
@@ -58,7 +58,6 @@
 import FormSection from '@/components/forms/FormSection.vue'
 import AcompananteCard from './AcompananteCard.vue'
 import type { DatosAcompanante } from '@/stores/registro'
-import type { PersonaConocida } from '@/services/autocompleteService'
 
 interface Props {
   acompanantes: DatosAcompanante[]
@@ -67,11 +66,10 @@ interface Props {
 }
 
 interface Emits {
-  'update:expanded': [value: number | undefined]
   'add-acompanante': []
   'remove-acompanante': [index: number]
   'update-acompanante': [index: number, field: string, value: string]
-  'acompanante-persona-selected': [index: number, persona: PersonaConocida]
+  'update:expanded': [value: number | undefined]
 }
 
 defineProps<Props>()
@@ -79,9 +77,5 @@ const emit = defineEmits<Emits>()
 
 const updateAcompanante = (index: number, field: string, value: string) => {
   emit('update-acompanante', index, field, value)
-}
-
-const onPersonaSelected = (index: number, persona: PersonaConocida) => {
-  emit('acompanante-persona-selected', index, persona)
 }
 </script>

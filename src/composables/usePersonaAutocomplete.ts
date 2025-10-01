@@ -43,9 +43,11 @@ export function usePersonaAutocomplete() {
   const onSearchUpdate = (valor: string) => {
     searchText.value = valor
     
-    if (valor) {
+    if (valor && valor.trim().length > 0) {
       buscarPorCedula(valor)
     }
+    // ✅ NO limpiar cuando está vacío, dejar las sugerencias previas
+    // Esto hace que se comporte igual que SearchBar
   }
 
   /**
