@@ -170,9 +170,6 @@ export async function createInitialSupervisor(supervisorData: AdminUser): Promis
  * ⚠️ SEGURIDAD: Las credenciales se leen desde variables de entorno
  */
 export async function initializeDefaultAdmin(): Promise<void> {
-  // 🔧 DEBUG: Limpiar usuario existente para resolver inconsistencia de hasheo
-  await clearAdminUser()
-  
   console.log('Inicializando usuario administrador por defecto...')
   console.log('🔒 Leyendo credenciales desde variables de entorno...')
   

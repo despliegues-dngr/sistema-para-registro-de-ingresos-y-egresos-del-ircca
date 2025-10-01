@@ -359,6 +359,18 @@ export const useRegistroStore = defineStore('registro', () => {
       // Reconstruir personasDentro desde registros reales
       rebuildPersonasDentro()
       
+      // ✅ SINCRONIZAR AUTOCOMPLETADO: Migrar registros existentes a personasConocidas
+      try {
+        const autocompleteModule = await import('@/services/autocompleteService')
+        const resultado = await autocompleteModule.autocompleteService.sincronizarDesdeRegistros(registrosDescifrados)
+        
+        if (resultado.sincronizados > 0) {
+          console.log(`✅ [AUTOCOMPLETE] ${resultado.sincronizados} personas sincronizadas para autocompletado`)
+        }
+      } catch (autocompleteError) {
+        console.warn('⚠️ [AUTOCOMPLETE] Error en sincronización inicial:', autocompleteError)
+      }
+      
       lastSync.value = new Date()
       console.log('✅ [DEBUG] Store actualizado con datos reales')
       

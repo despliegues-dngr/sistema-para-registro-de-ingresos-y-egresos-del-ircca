@@ -1,64 +1,97 @@
 <template>
-  <v-card class="mb-8 welcome-header" elevation="4">
-    <v-card-item class="header-solid text-white py-6 px-8">
-      <div class="d-flex align-center">
-        <!-- Avatar elegante con icono de usuario -->
-        <v-menu offset-y>
-          <template v-slot:activator="{ props }">
-            <v-avatar 
-              size="64" 
-              color="white" 
-              class="text-accent mr-4 user-avatar"
-              v-bind="props"
-              style="cursor: pointer; border: 3px solid rgba(255, 255, 255, 0.4); box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);"
-            >
-              <v-icon size="32" color="accent">mdi-account</v-icon>
-            </v-avatar>
-          </template>
-          
-          <!-- Menú de usuario sobrio -->
-          <v-card class="user-menu" elevation="8" min-width="240" rounded="lg">
-            <!-- Header del menú con fondo azul institucional -->
-            <v-card-item class="pb-3 pt-4 px-4 bg-primary rounded-t-lg">
-              <div>
-                <div class="text-subtitle-1 font-weight-bold text-white mb-1">{{ authStore.user?.username || authStore.user?.cedula }}</div>
-                <div class="text-caption text-white opacity-90 mb-1">{{ userGradeDisplay }}</div>
-                <div class="text-caption text-white opacity-90">{{ authStore.user?.nombre }} {{ authStore.user?.apellido }}</div>
-              </div>
-            </v-card-item>
+  <v-card class="mb-8 welcome-header" elevation="3">
+    <!-- Navbar Verde Gubernamental - Layout Simple y Limpio -->
+    <v-card-item class="bg-accent text-white pa-4" style="border: 2px solid rgba(255, 255, 255, 0.3);">
+      <!-- Fila Superior: Info Usuario | Servicio -->
+      <div class="d-flex justify-space-between align-start mb-2">
+        <!-- Izquierda: Avatar + Info -->
+        <div class="d-flex align-start">
+          <!-- Avatar con Menú -->
+          <v-menu location="bottom">
+            <template v-slot:activator="{ props }">
+              <v-avatar 
+                size="56" 
+                color="white" 
+                class="user-avatar mr-3"
+                v-bind="props"
+                style="margin-top: 20px;"
+              >
+                <v-icon size="28" color="primary">mdi-account</v-icon>
+              </v-avatar>
+            </template>
             
-            <v-list density="compact" class="pt-0">
-              <v-list-item @click="showViewProfile = true" prepend-icon="mdi-account-circle">
-                <v-list-item-title>Ver Perfil</v-list-item-title>
-              </v-list-item>
+            <!-- Menú Desplegable Refinado -->
+            <v-card class="user-menu" elevation="12" min-width="280" rounded="lg">
+              <!-- Header del menú con fondo azul -->
+              <v-card-item class="bg-primary text-white py-4 px-5">
+                <div class="d-flex align-center">
+                  <v-avatar size="56" color="white" class="mr-3">
+                    <v-icon size="28" color="primary">mdi-account-circle</v-icon>
+                  </v-avatar>
+                  <div class="flex-grow-1">
+                    <div class="text-body-1 font-weight-bold mb-1">{{ authStore.user?.nombre }} {{ authStore.user?.apellido }}</div>
+                    <div class="text-caption opacity-90 mb-0">{{ userGradeDisplay }}</div>
+                  </div>
+                </div>
+              </v-card-item>
               
-              <v-list-item @click="showChangePassword = true" prepend-icon="mdi-lock-reset">
-                <v-list-item-title>Cambiar Contraseña</v-list-item-title>
-              </v-list-item>
-              
-              <v-divider class="my-1"></v-divider>
-              
-              <v-list-item @click="$emit('logout')" prepend-icon="mdi-logout" class="text-error">
-                <v-list-item-title>Cerrar Sesión</v-list-item-title>
-              </v-list-item>
-            </v-list>
-          </v-card>
-        </v-menu>
+              <!-- Opciones del menú con íconos Material -->
+              <v-list density="comfortable" class="py-2">
+                <v-list-item 
+                  @click="showViewProfile = true" 
+                  prepend-icon="mdi-account-circle-outline"
+                  class="menu-item"
+                >
+                  <v-list-item-title class="font-weight-medium">Ver Perfil Completo</v-list-item-title>
+                  <v-list-item-subtitle class="text-caption">Información personal</v-list-item-subtitle>
+                </v-list-item>
+                
+                <v-list-item 
+                  @click="showChangePassword = true" 
+                  prepend-icon="mdi-lock-reset"
+                  class="menu-item"
+                >
+                  <v-list-item-title class="font-weight-medium">Cambiar Contraseña</v-list-item-title>
+                  <v-list-item-subtitle class="text-caption">Seguridad de cuenta</v-list-item-subtitle>
+                </v-list-item>
+                
+                <v-divider class="my-2 mx-3"></v-divider>
+                
+                <v-list-item 
+                  @click="$emit('logout')" 
+                  prepend-icon="mdi-logout"
+                  class="menu-item text-error"
+                >
+                  <v-list-item-title class="font-weight-bold">Cerrar Sesión</v-list-item-title>
+                  <v-list-item-subtitle class="text-caption">Salir del sistema</v-list-item-subtitle>
+                </v-list-item>
+              </v-list>
+            </v-card>
+          </v-menu>
+          
+          <div>
+            <div class="text-caption opacity-75 text-uppercase mb-2" style="line-height: 1.2;">IRCCA - Control de Accesos</div>
+            <div class="text-body-2 mb-1">{{ dynamicGreeting }}</div>
+            <div class="text-h6 font-weight-bold mb-1" style="line-height: 1.3;">{{ gradeAndName }}</div>
+          </div>
+        </div>
 
-        <!-- Información textual con saludo dinámico -->
-        <div class="flex-grow-1">
-          <div class="d-flex justify-space-between align-center mb-1">
-            <h2 class="text-body-2 mb-0 opacity-75 font-weight-medium">{{ dynamicGreeting }}</h2>
-            <div class="text-h6 font-weight-medium opacity-90 text-right">{{ currentDate }}</div>
+        <!-- Derecha: Fecha -->
+        <div class="text-right">
+          <div class="d-flex align-center justify-end">
+            <v-icon size="18" class="mr-2 opacity-75">mdi-calendar-today</v-icon>
+            <span class="text-body-2 opacity-90 font-weight-medium">{{ currentDate }}</span>
           </div>
-          <h3 class="text-h5 font-weight-bold opacity-95 mb-2">{{ gradeAndName }}</h3>
-          <div class="d-flex justify-space-between align-center">
-            <p class="text-body-2 mb-0 opacity-75 font-weight-medium">Serv. Art. 222 - IRCCA</p>
-            <div class="text-body-1 opacity-90 font-mono time-display text-right">
-              <v-icon size="16" class="mr-1 opacity-75">mdi-clock-outline</v-icon>
-              {{ currentTime }}
-            </div>
-          </div>
+        </div>
+      </div>
+
+      <!-- Fila Inferior: Servicio | Hora -->
+      <div class="d-flex justify-space-between align-center">
+        <div class="text-caption opacity-50">Serv. Art. 222 - IRCCA</div>
+        
+        <div class="d-flex align-center">
+          <v-icon size="18" class="mr-2 opacity-75">mdi-clock-outline</v-icon>
+          <span class="text-h6 font-weight-bold font-mono">{{ currentTime }}</span>
         </div>
       </div>
     </v-card-item>
@@ -180,6 +213,7 @@ const gradeAndName = computed(() => {
   }
 })
 
+
 // Datos del usuario actual para los modales
 const currentUserData = computed(() => {
   console.log('🔍 DEBUG WelcomeHeader - authStore.user completo:', authStore.user)
@@ -250,75 +284,45 @@ onUnmounted(() => {
 </script>
 
 <style scoped>
-/* Header gubernamental moderno y elegante */
+/* Navbar limpio y profesional */
 .welcome-header {
-  border-radius: 20px;
-  box-shadow: 0 8px 32px rgba(0, 105, 92, 0.25);
-  transition: all 0.3s ease;
+  border-radius: 12px;
   overflow: hidden;
 }
 
-.welcome-header:hover {
-  box-shadow: 0 6px 20px rgba(0, 105, 92, 0.35);
-}
-
-/* Fondo verde gubernamental uruguayo - Autoridad institucional */
-.header-solid {
-  background: rgb(var(--v-theme-accent));
-  position: relative;
-}
-
-.v-card-item {
-  /* Border institucional sutil */
-  border-bottom: 1px solid rgba(255, 255, 255, 0.2);
-}
-
+/* Avatar interactivo */
 .user-avatar {
-  /* Transición suave para interacción */
-  transition: all 0.2s ease;
+  cursor: pointer;
+  border: 3px solid rgba(255, 255, 255, 0.3);
+  transition: transform 0.2s ease;
 }
 
 .user-avatar:hover {
-  /* Efecto hover elegante y discreto */
   transform: scale(1.05);
-  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
 }
 
+/* Menú desplegable premium */
 .user-menu {
-  /* Menú con sombra profesional */
-  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.15);
+  box-shadow: 0 12px 32px rgba(0, 0, 0, 0.12);
+  border: 1px solid rgba(0, 0, 0, 0.08);
+}
+
+/* Items del menú con hover elegante */
+.menu-item {
+  transition: all 0.2s ease;
   border-radius: 8px;
+  margin: 0 8px;
 }
 
+.menu-item:hover {
+  background-color: rgba(21, 101, 192, 0.08);
+  transform: translateX(4px);
+}
+
+/* Fuente monospace para hora */
 .font-mono {
-  /* Fuente monospace para hora más legible */
-  font-family: 'Consolas', 'Monaco', monospace;
-}
-
-/* Mejorar legibilidad con opacidad */
-.opacity-90 {
-  opacity: 0.9;
-}
-
-/* Hover effects sutiles para items del menú */
-.v-list-item:hover {
-  background-color: rgba(0, 0, 0, 0.04);
-}
-
-/* Refinamientos adicionales */
-.date-time-section {
-  min-width: 200px;
-}
-
-.time-display {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-}
-
-@media (min-width: 600px) {
-  .time-display {
-    justify-content: flex-end;
-  }
+  font-family: 'Consolas', 'Monaco', 'Courier New', monospace;
+  letter-spacing: 0.5px;
 }
 </style>

@@ -23,6 +23,7 @@ La documentación de este proyecto está centralizada en la carpeta `/docs` y se
   - **Cuándo consultarla:** Para entender la estructura técnica, las tecnologías, la base de datos IndexedDB y las decisiones de alto nivel sin necesidad de leer el código fuente.
   - **📋 Documentos clave:**
     - `06-database-architecture.md` - Estructura completa de IndexedDB, stores, índices y patrones de consulta
+    - `07-implemented-features.md` - ✨ **NUEVO** - Catálogo completo de todas las funcionalidades implementadas (actualizado al 30-Sep)
 
 - ### 📁 `03-design/`
   - **Contiene:** Todo lo relacionado con la **APARIENCIA** y la **EXPERIENCIA DE USUARIO** (UI/UX).
@@ -31,6 +32,7 @@ La documentación de este proyecto está centralizada en la carpeta `/docs` y se
 - ### 📁 `04-tasks/`
   - **Contiene:** Los documentos para la **EJECUCIÓN Y SEGUIMIENTO** del día a día.
   - **Cuándo consultarla:** Para saber en qué tarea trabajar y ver el progreso general del proyecto en el `00-tasks-tracker.md`.
+  - **📊 Estado actual:** 79% completado (19/24 tareas) - Actualizado al 30-Sep-2025
 
 ## 4. El Flujo de Trabajo (Cómo Aportar al Proyecto)
 

@@ -60,8 +60,8 @@ export const useDatabase = () => {
 
   const config: DatabaseConfig = {
     dbName: 'IRCCA_Sistema_DB',
-    version: 1,
-    stores: ['registros', 'usuarios', 'configuracion', 'backups'],
+    version: 2, // ✅ INCREMENTADO: Nuevo store de personas conocidas
+    stores: ['registros', 'usuarios', 'configuracion', 'backups', 'personasConocidas'],
   }
 
   const initDatabase = async (): Promise<{ success: boolean; error?: string }> => {
@@ -112,6 +112,14 @@ export const useDatabase = () => {
           if (!database.objectStoreNames.contains('backups')) {
             const backupsStore = database.createObjectStore('backups', { keyPath: 'id' })
             backupsStore.createIndex('timestamp', 'timestamp', { unique: false })
+          }
+
+          // ✅ NUEVO: Crear store de personas conocidas (para autocompletado)
+          if (!database.objectStoreNames.contains('personasConocidas')) {
+            const personasStore = database.createObjectStore('personasConocidas', { keyPath: 'cedula' })
+            personasStore.createIndex('cedulaHash', 'cedulaHash', { unique: false })
+            personasStore.createIndex('ultimaVisita', 'ultimaVisita', { unique: false })
+            personasStore.createIndex('totalVisitas', 'totalVisitas', { unique: false })
           }
         }
       })

@@ -1,5 +1,6 @@
 import { useDatabase } from '@/composables/useDatabase'
 import { databaseService } from '@/services/databaseService'
+import { autocompleteService } from '@/services/autocompleteService'
 import { useAuthStore } from '@/stores/auth'
 import type { 
   RegistroIngresoData, 
@@ -109,6 +110,33 @@ export class RegistroService {
       
       console.log('✅ [DEBUG] Registro guardado exitosamente en BD')
       console.log('✅ Registro de ingreso guardado exitosamente:', nuevoRegistro.id)
+      
+      // ✅ ACTUALIZAR PERSONAS CONOCIDAS (para autocompletado futuro)
+      try {
+        await autocompleteService.actualizarPersonaConocida({
+          cedula: datos.datosPersonales.cedula,
+          nombre: datos.datosPersonales.nombre,
+          apellido: datos.datosPersonales.apellido,
+          destino: datos.datosVisita.destino,
+          vehiculo: datos.datosVehiculo
+        })
+        
+        // También actualizar acompañantes
+        if (datos.acompanantes && datos.acompanantes.length > 0) {
+          for (const acomp of datos.acompanantes) {
+            await autocompleteService.actualizarPersonaConocida({
+              cedula: acomp.cedula,
+              nombre: acomp.nombre,
+              apellido: acomp.apellido,
+              destino: acomp.destino
+            })
+          }
+        }
+      } catch (autocompleteError) {
+        // No bloquear registro si falla autocompletado
+        console.warn('⚠️ Error actualizando personas conocidas:', autocompleteError)
+      }
+      
       return nuevoRegistro
       
     } catch (error) {
