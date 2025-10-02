@@ -34,6 +34,9 @@ interface AutoTableOptions {
   styles?: Record<string, unknown>
   headStyles?: Record<string, unknown>
   bodyStyles?: Record<string, unknown>
+  alternateRowStyles?: Record<string, unknown>
+  columnStyles?: Record<number, Record<string, unknown>>
+  margin?: { left?: number; right?: number; top?: number; bottom?: number }
 }
 
 export interface PdfReportOptions {
@@ -43,7 +46,8 @@ export interface PdfReportOptions {
 }
 
 export interface ReportData {
-  ingresos: number
+  totalRegistros: number // Total de registros (ingresos + salidas)
+  ingresos: number // Total de personas (titular + acompañantes)
   salidas: number
   dentro: number
   vehiculos?: {
@@ -68,6 +72,7 @@ export interface RegistroParaPdf {
   matricula: string
   horaSalida: string
   responsable: string // "Grado Nombre"
+  observaciones: string // "Ingreso: ... / Salida: ..."
 }
 
 // Interfaz para operador (para mostrar responsable)
@@ -138,7 +143,7 @@ export class PdfService {
     // Preparar datos para la tabla
     const tableColumns = [
       'N°', 'Fecha', 'H. Ingreso', 'Cédula', 'Nombre',
-      'Destino', 'Vehículo', 'Matrícula', 'H. Salida', 'Responsable'
+      'Destino', 'Vehículo', 'Matrícula', 'H. Salida', 'Responsable', 'Observ.'
     ]
 
     const tableRows = data.registros.map(registro => [
@@ -151,7 +156,8 @@ export class PdfService {
       registro.vehiculo,
       registro.matricula,
       registro.horaSalida,
-      registro.responsable
+      registro.responsable,
+      registro.observaciones
     ])
 
     // Agregar tabla con autoTable (con efecto cebra)
@@ -174,15 +180,28 @@ export class PdfService {
       },
       alternateRowStyles: {
         fillColor: [245, 245, 245] // ✅ Gris claro para filas alternas (efecto cebra)
+      },
+      // ✅ Anchos optimizados de columnas (en mm)
+      columnStyles: {
+        0: { cellWidth: 8 },   // N° - Muy estrecha
+        1: { cellWidth: 20 },  // Fecha - Reducida (DD/MM/YYYY)
+        2: { cellWidth: 18 },  // H. Ingreso - AUMENTADA (15 → 18)
+        3: { cellWidth: 18 },  // Cédula - Mantener
+        4: { cellWidth: 35 },  // Nombre - AUMENTADA
+        5: { cellWidth: 22 },  // Destino - Mantener
+        6: { cellWidth: 24 },  // Vehículo - AUMENTADA (20 → 24)
+        7: { cellWidth: 18 },  // Matrícula - Mantener
+        8: { cellWidth: 18 },  // H. Salida - AUMENTADA (15 → 18)
+        9: { cellWidth: 35 },  // Responsable - AUMENTADA (30 → 35)
+        10: { cellWidth: 'auto' } // Observ. - Flexible (usa espacio restante)
       }
     })
 
     // ✅ Footer simplificado (sin estadísticas, ya están arriba)
     this.addPdfFooter(doc, pageWidth, pageHeight, margin)
 
-    // Generar nombre de archivo
-    const timestamp = new Date().toISOString().replace(/[:.]/g, '-')
-    const filename = `reporte-ircca-${timestamp}.pdf`
+    // ✅ Generar nombre de archivo descriptivo con período de datos
+    const filename = this.generateFilename(data.dateRange)
 
     // ✅ SOLUCIÓN SIMPLE Y SEGURA: Solo generar Data URI para nueva ventana
     const pdfDataUri = doc.output('datauristring')
@@ -277,9 +296,10 @@ export class PdfService {
     doc.setFont('helvetica', 'normal')
     doc.setTextColor(0, 0, 0)
 
+    // ✅ Estadísticas clarificadas según nueva definición
     const totalVehiculos = (data.vehiculos?.autos || 0) + (data.vehiculos?.motos || 0)
     const stats = [
-      `Cant. registros: ${data.registros.length}`,
+      `Cant. registros: ${data.totalRegistros}`,
       `Ingresos personas: ${data.ingresos}`,
       `Ingresos vehículos: ${totalVehiculos}`
     ].join(' | ')
@@ -438,6 +458,7 @@ export class PdfService {
 
   /**
    * Procesa registros descifrados para formato PDF
+   * ✅ FIX: Asignar número correlativo DESPUÉS de ordenar para mantener secuencia correcta
    */
   private static async processRegistrosForPdf(registros: RegistroEntry[], operadores: OperadorInfo[]): Promise<RegistroParaPdf[]> {
     const registrosProcesados: RegistroParaPdf[] = []
@@ -456,16 +477,20 @@ export class PdfService {
       }
     })
 
-    let numero = 1
-
-    // Procesar cada ingreso
+    // Procesar cada ingreso (sin asignar número todavía)
     for (const [cedula, ingreso] of ingresosMap) {
       const operador = operadores.find(op => op.id === ingreso.operadorId)
       const salida = salidas.find(s => s.cedulaBuscada === cedula)
 
+      // ✅ Construir campo de observaciones combinado
+      const observacionesCombinadas = this.formatObservaciones(
+        ingreso.observaciones,
+        salida?.observaciones
+      )
+
       // Registro del titular
       registrosProcesados.push({
-        numero: numero++,
+        numero: 0, // ✅ Temporal, se asignará después de ordenar
         fecha: this.formatDate(new Date(ingreso.timestamp)),
         horaIngreso: this.formatTime(new Date(ingreso.timestamp)),
         cedula: ingreso.datosPersonales.cedula,
@@ -474,14 +499,15 @@ export class PdfService {
         vehiculo: ingreso.datosVehiculo?.tipo || '',
         matricula: ingreso.datosVehiculo?.matricula || '',
         horaSalida: salida ? this.formatTime(new Date(salida.timestamp)) : '',
-        responsable: formatResponsable(operador?.grado, operador?.nombre, operador?.apellido) // ✅ G1-G10 + Nombre + Apellido
+        responsable: formatResponsable(operador?.grado, operador?.nombre, operador?.apellido),
+        observaciones: observacionesCombinadas
       })
 
       // Registros de acompañantes (si los hay)
       if (ingreso.acompanantes && ingreso.acompanantes.length > 0) {
         for (const acompanante of ingreso.acompanantes) {
           registrosProcesados.push({
-            numero: numero++,
+            numero: 0, // ✅ Temporal, se asignará después de ordenar
             fecha: this.formatDate(new Date(ingreso.timestamp)),
             horaIngreso: this.formatTime(new Date(ingreso.timestamp)),
             cedula: acompanante.cedula,
@@ -490,31 +516,59 @@ export class PdfService {
             vehiculo: 'Acompañante',
             matricula: ingreso.datosVehiculo?.matricula || '',
             horaSalida: salida ? this.formatTime(new Date(salida.timestamp)) : '',
-            responsable: formatResponsable(operador?.grado, operador?.nombre, operador?.apellido) // ✅ G1-G10 + Nombre + Apellido
+            responsable: formatResponsable(operador?.grado, operador?.nombre, operador?.apellido),
+            observaciones: observacionesCombinadas
           })
         }
       }
     }
 
-    // Ordenar por fecha y hora
-    return registrosProcesados.sort((a, b) => {
+    // ✅ Ordenar por fecha y hora PRIMERO
+    const registrosOrdenados = registrosProcesados.sort((a, b) => {
       const dateA = new Date(`${a.fecha} ${a.horaIngreso}`)
       const dateB = new Date(`${b.fecha} ${b.horaIngreso}`)
       return dateA.getTime() - dateB.getTime()
     })
+
+    // ✅ Asignar números correlativos DESPUÉS de ordenar
+    registrosOrdenados.forEach((registro, index) => {
+      registro.numero = index + 1
+    })
+
+    return registrosOrdenados
   }
 
   /**
    * Calcula estadísticas de los registros
+   * ✅ FIX: Lógica simplificada según propuesta del usuario
+   * - Ingresos personas = cantidad de personas (titular + acompañantes)
+   * - Cant. registros = Ingresos personas + cantidad de salidas
    */
-  private static calculateStats(registros: RegistroEntry[]): { ingresos: number; salidas: number; dentro: number; vehiculos: { autos: number; motos: number; camiones: number; buses: number } } {
-    const ingresos = registros.filter(r => r.tipo === 'ingreso').length
-    const salidas = registros.filter(r => r.tipo === 'salida').length
-    const dentro = Math.max(0, ingresos - salidas) // Personas que siguen dentro
+  private static calculateStats(registros: RegistroEntry[]): { totalRegistros: number; ingresos: number; salidas: number; dentro: number; vehiculos: { autos: number; motos: number; camiones: number; buses: number } } {
+    // Contar registros de ingreso y salida
+    const registrosIngreso = registros.filter(r => r.tipo === 'ingreso')
+    const registrosSalida = registros.filter(r => r.tipo === 'salida')
+    const salidas = registrosSalida.length
 
+    // ✅ Contar PERSONAS individuales (titular + acompañantes) = "Ingresos personas"
+    let totalPersonas = 0
+    registrosIngreso.forEach(registro => {
+      const ingreso = registro as RegistroIngreso
+      totalPersonas++ // Contar titular
+      if (ingreso.acompanantes && ingreso.acompanantes.length > 0) {
+        totalPersonas += ingreso.acompanantes.length // Sumar acompañantes
+      }
+    })
+
+    // ✅ Total de registros = Ingresos personas + Salidas
+    const totalRegistros = totalPersonas + salidas
+
+    const dentro = Math.max(0, totalPersonas - salidas) // Personas que siguen dentro
+
+    // ✅ Contar vehículos (solo registros con vehículo)
     const vehiculos = { autos: 0, motos: 0, camiones: 0, buses: 0 }
 
-    registros.filter(r => r.tipo === 'ingreso').forEach(registro => {
+    registrosIngreso.forEach(registro => {
       const ingreso = registro as RegistroIngreso
       if (ingreso.datosVehiculo) {
         switch (ingreso.datosVehiculo.tipo.toLowerCase()) {
@@ -534,7 +588,7 @@ export class PdfService {
       }
     })
 
-    return { ingresos, salidas, dentro, vehiculos }
+    return { totalRegistros, ingresos: totalPersonas, salidas, dentro, vehiculos }
   }
 
   /**
@@ -542,6 +596,7 @@ export class PdfService {
    */
   private static getFallbackData(options: PdfReportOptions): ReportData {
     return {
+      totalRegistros: 0,
       ingresos: 0,
       salidas: 0,
       dentro: 0,
@@ -584,6 +639,45 @@ export class PdfService {
       minute: '2-digit',
       hour12: false
     })
+  }
+
+  /**
+   * Formatea observaciones de ingreso y salida en una sola celda
+   * @param observacionesIngreso Observaciones del registro de ingreso
+   * @param observacionesSalida Observaciones del registro de salida
+   * @returns String formateado con ambas observaciones o vacío
+   */
+  private static formatObservaciones(
+    observacionesIngreso?: string,
+    observacionesSalida?: string
+  ): string {
+    const partes: string[] = []
+
+    if (observacionesIngreso && observacionesIngreso.trim()) {
+      partes.push(`Ingreso: ${observacionesIngreso.trim()}`)
+    }
+
+    if (observacionesSalida && observacionesSalida.trim()) {
+      partes.push(`Salida: ${observacionesSalida.trim()}`)
+    }
+
+    return partes.join('\n')
+  }
+
+  /**
+   * Genera nombre de archivo descriptivo basado en el período de datos
+   * @param dateRange Rango de fechas del reporte (ej: "01-10-2025" o "01-10-2025 al 05-10-2025")
+   * @returns Nombre de archivo formateado
+   */
+  private static generateFilename(dateRange: string): string {
+    // Sanitizar el dateRange para usar en nombre de archivo
+    // Reemplazar espacios y caracteres especiales por guiones bajos
+    const periodoSanitizado = dateRange
+      .replace(/ al /g, '_al_')
+      .replace(/\s+/g, '_')
+      .replace(/[/\\:*?"<>|]/g, '-')
+
+    return `Registros_de_accesos_del_IRCCA_${periodoSanitizado}.pdf`
   }
 
   /**

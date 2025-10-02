@@ -19,152 +19,100 @@
           <section class="mb-6">
             <h4 class="text-h6 text-primary mb-3">1. INTRODUCCIÓN Y ACEPTACIÓN</h4>
             <p class="text-body-2 mb-3">
-              El presente documento establece los términos y condiciones para el uso del Sistema de Registro de Accesos
-              desarrollado por la <strong>Dirección Nacional de la Guardia Republicana (DNGR)</strong> para el control de
+              El presente documento establece los términos y condiciones para el uso del Sistema de Registro de Accesos 
+              desarrollado por la <strong>Dirección Nacional de la Guardia Republicana (DNGR)</strong> para el control de 
               accesos en las instalaciones del <strong>Instituto de Regulación y Control del Cannabis (IRCCA)</strong>.
             </p>
             <p class="text-body-2">
-              Al registrarse como operador del sistema, usted acepta expresamente todos los términos contenidos en este documento
-              y se compromete a cumplir con la normativa nacional vigente en materia de protección de datos personales.
+              Al registrarse como operador del sistema, usted acepta expresamente todos los términos contenidos en este documento 
+              y se compromete a cumplir con la normativa nacional vigente en materia de protección de datos personales 
+              (Ley N° 18.331).
             </p>
-          </section>
-
-          <!-- Definiciones -->
-          <section class="mb-6">
-            <h4 class="text-h6 text-primary mb-3">2. DEFINICIONES BÁSICAS</h4>
-            <div class="ml-4">
-              <p class="text-body-2 mb-2">
-                <strong>Datos Personales:</strong> Información de cualquier tipo referida a personas físicas identificadas o identificables.
-              </p>
-              <p class="text-body-2 mb-2">
-                <strong>Usuario/Operador:</strong> Funcionario autorizado para operar el sistema de registro de accesos.
-              </p>
-              <p class="text-body-2 mb-2">
-                <strong>Responsable del Tratamiento:</strong> Dirección Nacional de la Guardia Republicana (DNGR), como organismo responsable de determinar los fines y medios del tratamiento de datos en el sistema.
-              </p>
-              <p class="text-body-2">
-                <strong>Titular de Datos:</strong> Persona física cuyos datos personales son objeto de tratamiento.
-              </p>
-            </div>
           </section>
 
           <!-- Protección de Datos -->
           <section class="mb-6">
-            <h4 class="text-h6 text-primary mb-3">3. PROTECCIÓN DE DATOS PERSONALES</h4>
+            <h4 class="text-h6 text-primary mb-3">2. PROTECCIÓN DE DATOS PERSONALES</h4>
 
-            <h5 class="text-subtitle-1 font-weight-medium mb-2">3.1 Finalidad del Tratamiento</h5>
+            <h5 class="text-subtitle-1 font-weight-medium mb-2">¿Qué datos se recolectan?</h5>
             <p class="text-body-2 mb-3">
-              Los datos personales recolectados tienen como única finalidad el control de accesos a las instalaciones del IRCCA
-              por razones de seguridad institucional y cumplimiento de los protocolos de seguridad establecidos por la DNGR
-              en el marco del Servicio Art. 222.
+              El sistema registra: nombre completo, cédula de identidad, destino de la visita, 
+              fecha y hora de ingreso/egreso, y opcionalmente datos de vehículo (tipo y matrícula).
             </p>
 
-            <h5 class="text-subtitle-1 font-weight-medium mb-2">3.2 Base Legal</h5>
-            <p class="text-body-2 mb-3 ml-4">
-              El tratamiento se fundamenta en el cumplimiento de obligaciones legales (Ley N° 18.331 y Decreto N° 64/020)
-              y el interés público en la seguridad de instalaciones gubernamentales.
+            <h5 class="text-subtitle-1 font-weight-medium mb-2">¿Para qué se usan los datos?</h5>
+            <p class="text-body-2 mb-3">
+              Los datos se utilizan exclusivamente para el control de accesos a las instalaciones 
+              del IRCCA por razones de seguridad institucional. No se utilizarán para otros fines.
             </p>
 
-            <h5 class="text-subtitle-1 font-weight-medium mb-2">3.3 Derechos de los Titulares</h5>
-            <div class="ml-4">
-              <p class="text-body-2 mb-2">Los titulares de datos tienen derecho a:</p>
-              <ul class="text-body-2 ml-4 mb-3">
-                <li>Acceso: Conocer qué datos se procesan</li>
-                <li>Rectificación: Solicitar corrección de datos inexactos</li>
-                <li>Actualización: Mantener los datos vigentes</li>
-                <li>Supresión: Eliminar datos cuando sea legalmente procedente</li>
-                <li>Inclusión: Agregar datos faltantes relevantes</li>
-                <li>Oposición: Objetar el tratamiento en casos específicos</li>
-              </ul>
-            </div>
-          </section>
-
-          <!-- Seguridad -->
-          <section class="mb-6">
-            <h4 class="text-h6 text-primary mb-3">4. MEDIDAS DE SEGURIDAD</h4>
-            <p class="text-body-2 mb-3">
-              El sistema implementa medidas técnicas y organizativas apropiadas para garantizar un nivel de seguridad adecuado:
+            <h5 class="text-subtitle-1 font-weight-medium mb-2">Derechos de las personas</h5>
+            <p class="text-body-2 mb-2">
+              Toda persona cuyos datos sean registrados tiene derecho a:
             </p>
             <ul class="text-body-2 ml-4 mb-3">
-              <li>Cifrado AES-256 de todos los datos almacenados</li>
-              <li>Autenticación robusta de operadores</li>
-              <li>Control de acceso basado en roles (RBAC)</li>
-              <li>Registro de auditoría inmutable</li>
-              <li>Estrategia de respaldo 3-2-1</li>
-              <li>Gestión segura de sesiones de usuario</li>
+              <li><strong>Acceso:</strong> Conocer qué datos se registraron</li>
+              <li><strong>Rectificación:</strong> Solicitar corrección de datos incorrectos</li>
+              <li><strong>Actualización:</strong> Mantener los datos vigentes</li>
+              <li><strong>Supresión:</strong> Solicitar eliminación cuando sea legalmente procedente</li>
             </ul>
+            <p class="text-body-2 text-grey-darken-1">
+              El ejercicio de estos derechos es gratuito y debe ser respondido en un plazo máximo de 5 días hábiles.
+            </p>
           </section>
 
           <!-- Obligaciones del Operador -->
           <section class="mb-6">
-            <h4 class="text-h6 text-primary mb-3">5. OBLIGACIONES DEL OPERADOR</h4>
-            <div class="ml-4">
-              <p class="text-body-2 mb-2">Como operador del sistema, usted se compromete a:</p>
-              <ul class="text-body-2 ml-4 mb-3">
-                <li>Usar el sistema exclusivamente para fines institucionales autorizados</li>
-                <li>Mantener la confidencialidad de sus credenciales de acceso</li>
-                <li>Registrar información veraz y completa</li>
-                <li>Reportar inmediatamente cualquier incidente de seguridad</li>
-                <li>Cumplir con los procedimientos establecidos para el tratamiento de datos</li>
-                <li>No acceder a datos sin autorización expresa</li>
-              </ul>
-            </div>
+            <h4 class="text-h6 text-primary mb-3">3. SUS OBLIGACIONES COMO OPERADOR</h4>
+            <p class="text-body-2 mb-2">Al usar este sistema, usted debe:</p>
+            <ul class="text-body-2 ml-4 mb-3">
+              <li>Usar el sistema solo para fines institucionales autorizados</li>
+              <li>Mantener en secreto su usuario y contraseña</li>
+              <li>Registrar información verdadera y completa</li>
+              <li>Reportar inmediatamente cualquier problema de seguridad</li>
+              <li>No acceder a datos sin autorización</li>
+            </ul>
           </section>
 
           <!-- Retención de Datos -->
           <section class="mb-6">
-            <h4 class="text-h6 text-primary mb-3">6. POLÍTICA DE RETENCIÓN</h4>
+            <h4 class="text-h6 text-primary mb-3">4. CONSERVACIÓN Y SEGURIDAD DE DATOS</h4>
             <p class="text-body-2 mb-3">
-              Los datos operativos se conservan en el sistema durante 12 meses para fines de seguridad activa.
-              Los respaldos se mantienen por 5 años para propósitos de auditoría institucional, después de los
-              cuales son eliminados de forma segura.
+              Los registros se conservan en el sistema durante <strong>12 meses</strong>. 
+              Los respaldos se mantienen por <strong>5 años</strong> para auditorías institucionales, 
+              luego son eliminados de forma segura.
+            </p>
+            <p class="text-body-2">
+              Se han adoptado medidas técnicas y organizativas para garantizar la seguridad, 
+              integridad y confidencialidad de los datos personales, evitando su alteración, 
+              pérdida o acceso no autorizado.
             </p>
           </section>
 
           <!-- Contacto -->
-          <section class="mb-6">
-            <h4 class="text-h6 text-primary mb-3">7. CONTACTO</h4>
+          <section class="mb-4">
+            <h4 class="text-h6 text-primary mb-3">5. CONTACTO</h4>
             <p class="text-body-2 mb-3">
-              Para ejercer sus derechos o realizar consultas sobre el tratamiento de datos personales,
-              puede contactar a la Dirección Nacional de la Guardia Republicana a través de:
+              Para ejercer sus derechos o realizar consultas sobre datos personales, contacte a:
             </p>
             <div class="ml-4">
               <p class="text-body-2 mb-2">
                 <strong>Email:</strong> gr-deptoinfoygc@minterior.gub.uy
               </p>
               <p class="text-body-2 mb-2">
-                <strong>Dirección:</strong> Av. José Pedro Varela S/N, Montevideo, Uruguay
-              </p>
-              <p class="text-body-2 mb-2">
                 <strong>Teléfono:</strong> 099 505 227
               </p>
               <p class="text-body-2">
-                <strong>Institución:</strong> Dirección Nacional Guardia Republicana - Departamento de Información y Gestión de Calidad
+                <strong>Dirección:</strong> Av. José Pedro Varela S/N, Montevideo
               </p>
             </div>
           </section>
 
-          <!-- Ley Aplicable -->
-          <section class="mb-6">
-            <h4 class="text-h6 text-primary mb-3">8. LEY APLICABLE Y JURISDICCIÓN</h4>
-            <p class="text-body-2 mb-3">
-              Los presentes términos se rigen por la legislación de la República Oriental del Uruguay,
-              especialmente la Ley N° 18.331 de Protección de Datos Personales y sus decretos reglamentarios.
-            </p>
-            <p class="text-body-2">
-              Cualquier controversia será sometida a la competencia de los Tribunales de Montevideo, Uruguay.
-            </p>
-          </section>
-
-          <!-- Modificaciones -->
-          <section class="mb-4">
-            <h4 class="text-h6 text-primary mb-3">9. MODIFICACIONES</h4>
-            <p class="text-body-2">
-              La DNGR se reserva el derecho de modificar estos términos y condiciones cuando lo considere necesario
-              para mejorar la seguridad o el funcionamiento del sistema, informando a los usuarios registrados con
-              una antelación mínima de 30 días.
-            </p>
-          </section>
+          <!-- Nota legal al pie -->
+          <v-divider class="my-4" />
+          <p class="text-caption text-center text-grey">
+            Sistema regido por la Ley N° 18.331 de Protección de Datos Personales de Uruguay
+          </p>
         </div>
       </v-card-text>
 

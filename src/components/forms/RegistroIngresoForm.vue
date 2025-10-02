@@ -56,13 +56,14 @@
     <div class="form-section mt-6">
       <v-textarea
         v-model="formData.observaciones"
-        label="Observaciones Adicionales (Opcional)"
+        label="Observaciones sobre el Ingreso (Opcional)"
         prepend-inner-icon="mdi-note-text"
         variant="outlined"
         density="comfortable"
         rows="2"
-        counter="300"
-        hint="Información adicional relevante para el registro"
+        counter="100"
+        maxlength="100"
+        hint="Información adicional relevante sobre el ingreso"
         persistent-hint
       />
     </div>

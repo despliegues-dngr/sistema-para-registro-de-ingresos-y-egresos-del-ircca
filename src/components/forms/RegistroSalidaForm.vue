@@ -33,7 +33,8 @@
         variant="outlined"
         density="comfortable"
         rows="2"
-        counter="200"
+        counter="100"
+        maxlength="100"
         hint="Información adicional relevante sobre la salida"
         persistent-hint
       />
