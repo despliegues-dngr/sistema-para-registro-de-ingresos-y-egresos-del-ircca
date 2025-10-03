@@ -14,7 +14,7 @@ export const useAppStore = defineStore('app', () => {
   const config = ref<AppConfig>({
     kioskMode: true,
     autoBackup: true,
-    backupInterval: 30,
+    backupInterval: 120, // Intervalo en minutos para backups automáticos (2 horas)
     maxRegistrosMemoria: 1000,
     theme: 'light',
   })

@@ -90,9 +90,15 @@ const encrypted = await encryptionService.encrypt(data)
 - ✅ Backups automáticos
 
 **Datos NO cifrados:**
-- ✅ `personasConocidas` (solo para autocomplete)
-- ✅ Configuración del sistema
-- ✅ Logs de auditoría
+- ✅ Configuración del sistema (sin datos personales)
+- ✅ Logs de auditoría (metadatos operacionales)
+- ✅ Metadata en `personasConocidas` (ultimaVisita, totalVisitas, frecuencia)
+
+**⚠️ IMPORTANTE:** El store `personasConocidas` ahora cifra TODOS los datos personales:
+- ✅ Cédula, nombre, apellido → CIFRADO AES-256-GCM
+- ✅ Destino, vehículo → CIFRADO AES-256-GCM
+- ✅ Búsqueda por hash SHA-256 (sin exponer cédula)
+- ⚪ Solo metadata operacional sin cifrar (fechas, contadores)
 
 ---
 

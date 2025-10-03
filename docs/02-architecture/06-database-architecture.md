@@ -1,7 +1,7 @@
-# Arquitectura de Base de Datos IndexedDB
+# Arquitectura de Base de Datos (IndexedDB)
 
-**Versión:** 1.0  
 **Fecha:** 24-Sep-2025  
+**Versión DB:** 3 (Actualizado: Seguridad personasConocidas)  
 **Compliance:** Ley N° 18.331 Protección de Datos Personales (Uruguay)
 
 Este documento describe la arquitectura completa de almacenamiento local del Sistema IRCCA, implementada con IndexedDB y cifrado AES-256-GCM.
@@ -279,9 +279,26 @@ class DatabaseService {
 - **Acceso:** Inmediato para operadores
 
 ### 6.2 Respaldos Automáticos
-- **Nivel 1:** Backup diario (últimos 7 días)
-- **Nivel 2:** Backup semanal (últimas 4 semanas)  
-- **Nivel 3:** Backup mensual manual exportable
+
+**Sistema Automático Implementado:**
+- **Intervalo:** Cada 2 horas (configurable en `appStore.config.backupInterval`)
+- **Verificación:** Cada 30 minutos para evaluar si debe ejecutar backup
+- **Retención:** Últimos 5 backups automáticamente guardados
+- **Almacenamiento:** IndexedDB local con cifrado AES-256-GCM
+- **Limpieza automática:** Elimina backups antiguos al crear uno nuevo
+- **Cobertura temporal:** Aproximadamente 10 horas de historial (cubre turno completo)
+
+**Contenido de Cada Backup:**
+- Todos los registros de ingresos/egresos (cifrados)
+- Usuarios del sistema
+- Configuración de la aplicación
+- Personas conocidas (cache de autocompletado cifrado)
+- Metadata: timestamp, versión, tamaño
+
+**Política de Retención:**
+- **Nivel 1:** Backup automático cada 2 horas (local)
+- **Nivel 2:** Backup manual bajo demanda (local)
+- **Nivel 3:** Exportación manual para archivo externo (planificado)
 
 ### 6.3 Archivado
 - **Duración:** 5 años en backups externos

@@ -71,7 +71,7 @@ export const useDatabase = () => {
 
   const config: DatabaseConfig = {
     dbName: 'IRCCA_Sistema_DB',
-    version: 2, // ✅ INCREMENTADO: Nuevo store de personas conocidas
+    version: 3, // ✅ INCREMENTADO: Refactorización de seguridad personasConocidas
     stores: ['registros', 'usuarios', 'configuracion', 'backups', 'personasConocidas'],
   }
 
@@ -125,12 +125,23 @@ export const useDatabase = () => {
             backupsStore.createIndex('timestamp', 'timestamp', { unique: false })
           }
 
-          // ✅ NUEVO: Crear store de personas conocidas (para autocompletado)
+          // ✅ CIFRADO: Store de personas conocidas con datos cifrados
+          // Version 3: Cambio de keyPath de 'cedula' a 'id' + datos cifrados
           if (!database.objectStoreNames.contains('personasConocidas')) {
-            const personasStore = database.createObjectStore('personasConocidas', { keyPath: 'cedula' })
-            personasStore.createIndex('cedulaHash', 'cedulaHash', { unique: false })
+            const personasStore = database.createObjectStore('personasConocidas', { keyPath: 'id' })
+            personasStore.createIndex('cedulaHash', 'cedulaHash', { unique: true }) // Hash único por cédula
             personasStore.createIndex('ultimaVisita', 'ultimaVisita', { unique: false })
             personasStore.createIndex('totalVisitas', 'totalVisitas', { unique: false })
+            personasStore.createIndex('frecuencia', 'frecuencia', { unique: false })
+          } else {
+            // ✅ MIGRACIÓN: Si existe el store viejo, eliminarlo y recrear
+            // (Solo se ejecuta si estamos actualizando desde versión 2)
+            database.deleteObjectStore('personasConocidas')
+            const personasStore = database.createObjectStore('personasConocidas', { keyPath: 'id' })
+            personasStore.createIndex('cedulaHash', 'cedulaHash', { unique: true })
+            personasStore.createIndex('ultimaVisita', 'ultimaVisita', { unique: false })
+            personasStore.createIndex('totalVisitas', 'totalVisitas', { unique: false })
+            personasStore.createIndex('frecuencia', 'frecuencia', { unique: false })
           }
         }
       })
@@ -196,7 +207,7 @@ export const useDatabase = () => {
   const updateRecord = async (
     storeName: string,
     id: string,
-    data: Record<string, unknown>,
+    data: Record<string, unknown>
   ): Promise<{ success: boolean; error?: string }> => {
     if (!db.value) {
       return { success: false, error: 'Base de datos no inicializada' }
@@ -217,10 +228,11 @@ export const useDatabase = () => {
             return
           }
           
-          // Combinar datos existentes con los nuevos
-          const updatedRecord = { ...existingRecord, ...data }
+          // ✅ IMPORTANTE: Para personasConocidas, reemplazar completamente
+          const updatedRecord = storeName === 'personasConocidas' 
+            ? { ...data, id }
+            : { ...existingRecord, ...data }
           
-          // Actualizar el registro
           const putRequest = store.put(updatedRecord)
           
           putRequest.onsuccess = () => resolve({ success: true })

@@ -4,9 +4,13 @@
 import { onMounted } from 'vue'
 import AuthBackground from '@/components/layout/AuthBackground.vue'
 import { useStorageMonitor } from '@/composables/useStorageMonitor'
+import { useAutoBackup } from '@/composables/useAutoBackup'
 
 // Inicializar monitor de almacenamiento a nivel de aplicación
 const { ensurePersistence, startMonitoring } = useStorageMonitor()
+
+// Inicializar sistema de backups automáticos
+useAutoBackup()
 
 onMounted(async () => {
   // Asegurar persistencia de almacenamiento al iniciar la aplicación

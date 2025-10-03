@@ -36,13 +36,16 @@ Sistema de autocompletado inteligente basado en **componentes reutilizables** y 
 └─────────────────┬──────────────────────────────┘
                   │
 ┌─────────────────▼──────────────────────────────┐
-│  CAPA 4: SERVICIOS DE DATOS                   │
+│  CAPA 4: SERVICIOS DE DATOS + CIFRADO         │
 │  - AutocompleteService (Singleton)            │
+│  - EncryptionService (AES-256-GCM)            │
 └─────────────────┬──────────────────────────────┘
                   │
 ┌─────────────────▼──────────────────────────────┐
-│  CAPA 5: PERSISTENCIA                         │
+│  CAPA 5: PERSISTENCIA CIFRADA                 │
 │  - IndexedDB Store: personasConocidas         │
+│  - ✅ Datos personales CIFRADOS               │
+│  - ✅ Búsqueda por hash SHA-256               │
 └────────────────────────────────────────────────┘
 ```
 

@@ -79,11 +79,11 @@ export default defineConfig(({ mode }) => {
           ]
         },
         manifest: {
-          name: 'IRCCA - Sistema de Registro de Accesos',
-          short_name: 'IRCCA Access',
+          name: 'Sistema de Control de Accesos del IRCCA',
+          short_name: 'IRCCA Control',
           description: 'Sistema para registro y control de ingresos y egresos del Instituto de Regulación y Control del Cannabis',
           theme_color: '#1565C0',
-          background_color: '#FFFFFF',
+          background_color: '#000000',
           display: 'standalone',
           orientation: 'portrait',
           scope: '/',
