@@ -139,7 +139,9 @@ export default defineConfig(({ mode }) => {
     
     // Optimizaciones adicionales
     esbuild: {
-      drop: isProduction ? ['console', 'debugger'] : [],
+      // ⚠️ TEMPORALMENTE deshabilitado para debugging de persistencia
+      // TODO: Restaurar después de verificar funcionamiento en producción
+      drop: isProduction ? ['debugger'] : [], // Solo elimina debugger, mantiene console
     },
   }
 })
