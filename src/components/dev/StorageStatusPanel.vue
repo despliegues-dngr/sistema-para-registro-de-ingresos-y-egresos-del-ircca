@@ -1,10 +1,15 @@
 <script setup lang="ts">
-import { ref, onMounted } from 'vue'
+import { ref, onMounted, computed } from 'vue'
 import { useStorageMonitor } from '@/composables/useStorageMonitor'
 
 const { storageInfo, updateStorageInfo, ensurePersistence, getStorageSummary } = useStorageMonitor()
 const isRefreshing = ref(false)
 const isRequestingPersistence = ref(false)
+
+// Verificar si la API está disponible
+const isStorageApiAvailable = computed(() => {
+  return typeof window !== 'undefined' && 'storage' in navigator
+})
 
 const formatBytes = (bytes: number): string => {
   if (bytes === 0) return '0 B'
@@ -134,7 +139,7 @@ onMounted(() => {
               <strong>Versión:</strong> 2<br>
               <strong>Stores:</strong> registros, usuarios, configuracion, backups, personasConocidas<br>
               <strong>Cifrado:</strong> AES-256-GCM activo<br>
-              <strong>API:</strong> Storage Persistence API {{ 'storage' in navigator ? '✅ Disponible' : '❌ No Disponible' }}
+              <strong>API:</strong> Storage Persistence API {{ isStorageApiAvailable ? '✅ Disponible' : '❌ No Disponible' }}
             </div>
           </v-expansion-panel-text>
         </v-expansion-panel>

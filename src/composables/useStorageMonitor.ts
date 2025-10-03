@@ -110,11 +110,20 @@ export const useStorageMonitor = () => {
       if ('storage' in navigator && 'persist' in navigator.storage) {
         // 1. Verificar estado actual ANTES de solicitar
         const wasPersistent = await navigator.storage.persisted()
-        console.log(`📊 [StorageMonitor] Estado ANTES de solicitar persistencia: ${wasPersistent}`)
+        console.log(`📊 [StorageMonitor] Estado inicial: ${wasPersistent}`)
         
-        // 2. Solicitar persistencia
+        // ✅ Si ya es persistente, no solicitar de nuevo
+        if (wasPersistent) {
+          console.log('✅ [StorageMonitor] Almacenamiento YA es persistente - no se requiere solicitud')
+          await updateStorageInfo()
+          appStore.addNotification('Almacenamiento persistente confirmado', 'info')
+          return true
+        }
+        
+        // 2. Solo solicitar si NO es persistente
+        console.log('🔄 [StorageMonitor] Solicitando persistencia al navegador...')
         const isPersistent = await navigator.storage.persist()
-        console.log(`📊 [StorageMonitor] Estado DESPUÉS de solicitar persistencia: ${isPersistent}`)
+        console.log(`📊 [StorageMonitor] Resultado de solicitud: ${isPersistent}`)
         
         // 3. Actualizar información después de solicitar persistencia
         await updateStorageInfo()

@@ -16,6 +16,15 @@ export const useDatabase = () => {
   const requestPersistentStorage = async (): Promise<boolean> => {
     try {
       if ('storage' in navigator && 'persist' in navigator.storage) {
+        // 1. Verificar si ya es persistente
+        const alreadyPersistent = await navigator.storage.persisted()
+        
+        if (alreadyPersistent) {
+          console.log('✅ [useDatabase] Almacenamiento YA es persistente')
+          return true
+        }
+        
+        // 2. Si no es persistente, solicitar
         console.log('🔐 [useDatabase] Solicitando almacenamiento persistente...')
         const isPersistent = await navigator.storage.persist()
         console.log(`🔐 [useDatabase] Resultado: ${isPersistent ? 'OTORGADO ✅' : 'DENEGADO ⚠️'}`)
