@@ -123,7 +123,7 @@ Para garantizar la resiliencia y la continuidad operativa, el sistema implementa
 
 Se aplican políticas estrictas de gestión de sesiones para minimizar el riesgo de acceso no autorizado a una sesión activa.
 
-*   **Timeout por Inactividad:** Las sesiones de usuario expiran automáticamente después de un período de inactividad predefinido (ej. 30 minutos).
+*   **Timeout por Inactividad:** Las sesiones de usuario expiran automáticamente después de un período de inactividad de 3 horas.
 *   **Advertencia de Expiración:** El sistema notifica al usuario antes de que la sesión expire, dándole la oportunidad de continuar trabajando.
 *   **Cierre de Sesión Seguro:** El proceso de cierre de sesión invalida la sesión activa y redirige al usuario a la pantalla de Login.
 

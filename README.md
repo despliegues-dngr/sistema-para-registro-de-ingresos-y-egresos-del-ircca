@@ -126,6 +126,25 @@ pnpm deps:update      # Actualizar dependencias
 3. Confirmar instalación
 4. La app estará disponible como aplicación nativa
 
+### ⚠️ Importante: Persistencia de Datos
+
+La aplicación **solicita automáticamente almacenamiento persistente** al navegador para proteger los datos contra eliminación automática. Sin embargo, el navegador puede **denegar** esta solicitud según sus políticas.
+
+**Para GARANTIZAR persistencia (CRÍTICO en producción):**
+
+1. **Instalar la PWA** (método más confiable)
+   - Chrome otorga persistencia automáticamente a PWAs instaladas ✅
+   
+2. **Agregar a favoritos** (alternativa)
+   - Presionar `Ctrl+D` y guardar en favoritos
+   
+3. **Verificar estado** (en consola del navegador):
+   ```javascript
+   await navigator.storage.persisted() // Debe retornar: true
+   ```
+
+**Documentación completa:** Ver `docs/02-architecture/10-storage-persistence-guide.md`
+
 ## 🔧 Configuración de Kiosco
 
 Para tablet Android en modo kiosco:

@@ -82,9 +82,10 @@ _(Implementación detallada en: `docs/02-architecture/04-vuetify-guidelines.md`)
 
 - **Contenedor:** Debe presentarse en un modal (`v-dialog`) que se superponga al Dashboard.
 - **Secciones del Formulario:**
-  - **Datos Personales:** Cédula, Nombre, Apellido, Teléfono (opcional).
-  - **Datos de Visita:** Destino (selector), Observaciones (campo de texto opcional).
-  - **Datos de Vehículo (Opcional):** Una sección expandible para no sobrecargar la UI, que contendrá campos para Matricula, Modelo y Color.
+  - **Datos Personales:** Cédula, Nombre, Apellido.
+  - **Datos de Visita:** Destino (selector), Observaciones (campo de texto opcional, max 100 caracteres).
+  - **Datos de Vehículo (Opcional):** Una sección expandible para no sobrecargar la UI, que contendrá campos para Tipo de vehículo (selector) y Matrícula.
+  - **Acompañantes (Opcional):** Sección expandible para registrar hasta 20 acompañantes, cada uno con Cédula, Nombre, Apellido y Destino.
 - **Acciones:** Botones para "Cancelar" y "Registrar Ingreso". El botón de registro debe estar deshabilitado si los campos obligatorios no son válidos.
 
 ### 3.4. Modal de Registro de Salida
@@ -102,6 +103,6 @@ _(Implementación detallada en: `docs/02-architecture/04-vuetify-guidelines.md`)
 ## 4. Requisitos de Validación
 
 - Los campos obligatorios no pueden estar vacíos.
-- El campo Cédula debe aceptar un formato numérico de 8 dígitos.
-- El campo Teléfono, si se ingresa, debe seguir un formato válido (ej. `09X XXX XXX`).
-- El campo Matricula de vehículo, si se ingresa, debe seguir el formato `ABC1234`.
+- El campo Cédula debe aceptar un formato numérico de 7-8 dígitos.
+- El campo Matrícula de vehículo, si se ingresa, debe tener mínimo 6 caracteres (formato estándar uruguayo).
+- El campo Observaciones tiene un límite de 100 caracteres.

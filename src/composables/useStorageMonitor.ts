@@ -108,20 +108,45 @@ export const useStorageMonitor = () => {
   const ensurePersistence = async (): Promise<boolean> => {
     try {
       if ('storage' in navigator && 'persist' in navigator.storage) {
-        const isPersistent = await navigator.storage.persist()
+        // 1. Verificar estado actual ANTES de solicitar
+        const wasPersistent = await navigator.storage.persisted()
+        console.log(`📊 [StorageMonitor] Estado ANTES de solicitar persistencia: ${wasPersistent}`)
         
-        // Actualizar información después de solicitar persistencia
+        // 2. Solicitar persistencia
+        const isPersistent = await navigator.storage.persist()
+        console.log(`📊 [StorageMonitor] Estado DESPUÉS de solicitar persistencia: ${isPersistent}`)
+        
+        // 3. Actualizar información después de solicitar persistencia
         await updateStorageInfo()
         
+        // 4. Notificar resultado
         if (isPersistent) {
-          appStore.addNotification('Almacenamiento persistente activado exitosamente', 'info')
+          if (wasPersistent) {
+            console.log('✅ [StorageMonitor] El almacenamiento ya era persistente')
+            appStore.addNotification('Almacenamiento persistente confirmado', 'info')
+          } else {
+            console.log('✅ [StorageMonitor] Persistencia otorgada exitosamente')
+            appStore.addNotification('Almacenamiento persistente activado exitosamente', 'info')
+          }
         } else {
-          appStore.addNotification('No se pudo activar almacenamiento persistente. Los datos podrían eliminarse automáticamente.', 'warning')
+          console.warn('⚠️ [StorageMonitor] El navegador NO otorgó persistencia')
+          console.warn('💡 Razones posibles:')
+          console.warn('  - Sitio no está en favoritos')
+          console.warn('  - PWA no instalada')
+          console.warn('  - Navegador en modo incógnito/privado')
+          console.warn('  - Política del navegador')
+          appStore.addNotification(
+            'No se pudo activar almacenamiento persistente. Los datos podrían eliminarse automáticamente. Instale la PWA para garantizar persistencia.',
+            'warning'
+          )
         }
         
         return isPersistent
+      } else {
+        console.error('❌ [StorageMonitor] Storage Persistence API no disponible en este navegador')
       }
-    } catch {
+    } catch (error) {
+      console.error('❌ [StorageMonitor] Error al configurar persistencia:', error)
       appStore.addNotification('Error al configurar persistencia de almacenamiento', 'error')
     }
     

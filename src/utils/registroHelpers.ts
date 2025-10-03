@@ -73,10 +73,8 @@ export const createRegistroWrapper = (registro: RegistroEntry) => {
       if (registro.tipo === 'ingreso') {
         const reg = registro as RegistroIngreso
         return reg.datosVehiculo ? {
-          tipo: reg.datosVehiculo.tipo, // Incluir tipo del vehículo
+          tipo: reg.datosVehiculo.tipo,
           matricula: reg.datosVehiculo.matricula,
-          marca: 'Toyota', // valor por defecto para tests
-          modelo: 'Corolla', // valor por defecto para tests
           conductor: reg.datosPersonales.nombre + ' ' + reg.datosPersonales.apellido
         } : undefined
       }
@@ -101,6 +99,7 @@ export const buscarPersonasDentro = (personas: PersonaDentro[], termino: string)
 
 /**
  * Obtiene información del vehículo de una persona
+ * NOTA: El sistema solo captura tipo y matrícula (NO marca, modelo o color)
  */
 export const getVehiculoInfo = (
   cedula: string, 

@@ -142,9 +142,9 @@ Los registros se mantendrán en el dispositivo por un período de 12 meses.
 
 Los respaldos mensuales se conservarán por un período de 5 años.
 
-#### c) Purga Automática
+#### c) Purga Manual Supervisada
 
-El sistema implementará una rutina para eliminar de la tablet los registros con una antigüedad mayor a 12 meses.
+Los registros con antigüedad mayor a 12 meses serán eliminados de la tablet mediante proceso manual ejecutado por administrador autorizado, posterior a verificación de exportación exitosa del archivo histórico a dispositivo externo.
 
 ---
 
@@ -152,7 +152,7 @@ El sistema implementará una rutina para eliminar de la tablet los registros con
 
 | Riesgo                                      | Probabilidad | Impacto | Plan de Mitigación                                                                                                                                                                                                                                                                                        |
 | ------------------------------------------- | ------------ | ------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| **Baja adopción por parte de los usuarios** | Media        | Alto    | La PWA se diseñará con una interfaz extremadamente simple e intuitiva. Se proveerá un manual de usuario claro y se implementará un módulo de feedback mensual.                                                                                                                                            |
+| **Baja adopción por parte de los usuarios** | Media        | Alto    | La PWA se diseñará con una interfaz extremadamente simple e intuitiva. Se proveerá un manual de usuario claro. El feedback operativo se gestionará mediante canales institucionales formales de la DNGR (teléfono, correo electrónico y cadena de mando).                                                                                                                                            |
 | **Pérdida o rotura del hardware (Tablet)**  | Baja         | Alto    | Se implementará una estrategia de respaldos 3-2-1: 1. Automáticos diarios y semanales dentro del dispositivo. 2. Manual mensual a un pendrive externo cifrado, bajo custodia del Estado Mayor de la DNGR. 3. Se autoriza al Jefe de Seguridad del IRCCA a mantener una segunda copia de respaldo cifrada. |
 
 ---

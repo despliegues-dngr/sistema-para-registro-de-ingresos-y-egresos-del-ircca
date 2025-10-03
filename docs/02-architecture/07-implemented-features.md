@@ -475,7 +475,7 @@ router.beforeEach(async (to, from, next) => {
 **Campos Cifrados:**
 - Datos personales completos (nombre, apellido, cédula)
 - Datos de visita (destino)
-- Datos de vehículo (tipo, matrícula, modelo, color)
+- Datos de vehículo (tipo, matrícula)
 - Array completo de acompañantes
 
 **Campos en Claro (Metadatos Operacionales):**

@@ -41,18 +41,25 @@
   - [x] Estados de carga y mensajes de error/éxito
 
 - [x] **1.2 Implementar formulario de datos personales**
-  - [x] Campos: Cédula (8 dígitos), Nombre, Apellido, Teléfono (opcional)
-  - [x] Validación de formato de cédula y teléfono
+  - [x] Campos: Cédula (7-8 dígitos), Nombre, Apellido
+  - [x] Validación de formato de cédula
   - [x] Campo de cédula como foco inicial
+  - [x] Autocompletado de nombre y apellido al buscar cédula en registros previos
 
 - [x] **1.3 Implementar formulario de datos de visita**
-  - [x] Selector de destino
-  - [x] Campo de observaciones opcional
+  - [x] Selector de destino (IRCCA, Ligeral, Simbiosys, Jabelor, Otra)
+  - [x] Campo de observaciones opcional (máx 100 caracteres)
 
 - [x] **1.4 Implementar sección de vehículo (expandible)**
-  - [x] Campos: Matricula (ABC1234), Modelo, Color
-  - [x] Validación de formato de Matricula
+  - [x] Campos: Tipo (Auto/Moto/Camión/Bus), Matrícula (mín 6 caracteres)
+  - [x] Validación de formato de Matrícula
   - [x] Sección colapsable para no sobrecargar UI
+  - [x] Autocompletado de vehículo al buscar persona conocida
+
+- [x] **1.5 Implementar sección de acompañantes (expandible)**
+  - [x] Permite agregar hasta 20 acompañantes
+  - [x] Cada acompañante: Cédula, Nombre, Apellido, Destino
+  - [x] Sección colapsable con botón "Agregar Acompañante"
 
 ### Fase 2: Modal de Registro de Salida
 
