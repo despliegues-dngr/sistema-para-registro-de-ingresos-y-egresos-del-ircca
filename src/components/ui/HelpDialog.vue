@@ -42,7 +42,6 @@
             color="green"
             prepend-icon="mdi-whatsapp"
             size="small"
-            @click="openWhatsApp"
           >
             WhatsApp: {{ whatsappNumber }}
           </v-btn>
@@ -134,14 +133,6 @@ const copyToClipboard = async (text: string) => {
   } catch (error) {
     console.error('Error al copiar:', error)
   }
-}
-
-const openWhatsApp = () => {
-  const cleanNumber = props.whatsappNumber.replace(/\s/g, '')
-  const message = encodeURIComponent(
-    'Hola, necesito ayuda con el Sistema de Control de Accesos del IRCCAAccesos del IRCCA del IRCCA.',
-  )
-  window.open(`https://wa.me/598${cleanNumber}?text=${message}`, '_blank')
 }
 </script>
 

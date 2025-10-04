@@ -20,28 +20,21 @@ export const useDatabase = () => {
         const alreadyPersistent = await navigator.storage.persisted()
         
         if (alreadyPersistent) {
-          console.log('✅ [useDatabase] Almacenamiento YA es persistente')
           return true
         }
         
         // 2. Si no es persistente, solicitar
-        console.log('🔐 [useDatabase] Solicitando almacenamiento persistente...')
         const isPersistent = await navigator.storage.persist()
-        console.log(`🔐 [useDatabase] Resultado: ${isPersistent ? 'OTORGADO ✅' : 'DENEGADO ⚠️'}`)
         
         if (isPersistent) {
           appStore.addNotification('Almacenamiento persistente activado', 'info')
-        } else {
-          console.warn('⚠️ [useDatabase] Persistencia NO otorgada - los datos pueden ser eliminados por el navegador')
         }
         
         return isPersistent
       } else {
-        console.warn('⚠️ [useDatabase] Storage Persistence API no disponible')
         return false
       }
-    } catch (error) {
-      console.error('❌ [useDatabase] Error solicitando persistencia:', error)
+    } catch {
       return false
     }
   }

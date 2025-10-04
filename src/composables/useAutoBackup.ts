@@ -1,5 +1,6 @@
 import { ref, watch, onMounted, onUnmounted } from 'vue'
 import { useAppStore } from '@/stores/app'
+import { useAuthStore } from '@/stores/auth'
 import { databaseService } from '@/services/databaseService'
 
 /**
@@ -10,6 +11,7 @@ import { databaseService } from '@/services/databaseService'
  */
 export function useAutoBackup() {
   const appStore = useAppStore()
+  const authStore = useAuthStore()
   const isBackingUp = ref(false)
   const lastBackupId = ref<string | null>(null)
   let backupTimer: number | null = null
@@ -18,6 +20,11 @@ export function useAutoBackup() {
    * Ejecuta backup automático si es necesario
    */
   const ejecutarBackupAutomatico = async (): Promise<void> => {
+    // ✅ VERIFICAR AUTENTICACIÓN: No hacer backup si no hay usuario logueado
+    if (!authStore.isAuthenticated) {
+      return
+    }
+    
     // Verificar si debe hacer backup
     if (!appStore.shouldBackup || isBackingUp.value) {
       return
@@ -149,8 +156,9 @@ export function useAutoBackup() {
     if (appStore.config.autoBackup) {
       iniciarTimer()
       
-      // Ejecutar backup inicial si es necesario (sin último backup)
-      if (!appStore.lastBackup) {
+      // ✅ EJECUTAR BACKUP INICIAL SOLO SI ESTÁ AUTENTICADO
+      // El timer verificará la autenticación en cada ejecución
+      if (!appStore.lastBackup && authStore.isAuthenticated) {
         console.info('📦 Sin backup previo, ejecutando backup inicial...')
         setTimeout(() => ejecutarBackupAutomatico(), 5000) // 5 segundos después del mount
       }
