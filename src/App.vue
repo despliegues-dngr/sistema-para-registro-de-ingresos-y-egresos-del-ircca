@@ -5,8 +5,10 @@ import { onMounted } from 'vue'
 import AuthBackground from '@/components/layout/AuthBackground.vue'
 import { useStorageMonitor } from '@/composables/useStorageMonitor'
 import { useAutoBackup } from '@/composables/useAutoBackup'
+import { useAppStore } from '@/stores/app'
 
-// Inicializar monitor de almacenamiento a nivel de aplicación
+// Inicializar stores y composables
+const appStore = useAppStore()
 const { ensurePersistence, startMonitoring } = useStorageMonitor()
 
 // Inicializar sistema de backups automáticos
@@ -15,6 +17,9 @@ useAutoBackup()
 onMounted(async () => {
   // Asegurar persistencia de almacenamiento al iniciar la aplicación
   await ensurePersistence()
+  
+  // ⭐ NUEVO: Cargar configuración desde IndexedDB (incluyendo destinos)
+  await appStore.loadConfigFromDB()
   
   // Iniciar monitoreo automático cada 30 minutos
   startMonitoring(30)

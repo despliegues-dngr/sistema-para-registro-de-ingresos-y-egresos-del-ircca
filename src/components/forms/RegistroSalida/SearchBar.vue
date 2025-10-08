@@ -47,7 +47,7 @@
       </template>
       <!-- ✅ Diseño copiado del autocomplete de ingreso -->
       <template #item="{ props: itemProps, item }">
-        <v-list-item 
+        <v-list-item
           v-bind="itemProps"
           class="persona-list-item"
         >
@@ -67,7 +67,7 @@
                   (C.I: {{ item.raw.persona.cedula }})
                 </span>
               </div>
-              
+
               <!-- Columna derecha: Chip de tiempo -->
               <v-chip
                 color="warning"
@@ -86,7 +86,7 @@
                 <v-icon size="12">mdi-domain</v-icon>
                 {{ item.raw.persona.destino }}
               </span>
-              
+
               <!-- Columna derecha: Vehículo/Estado (diseño elegante con outlined) -->
               <div>
                 <!-- Titular con vehículo -->
@@ -106,7 +106,7 @@
                     (+{{ getAcompanantesCount(item.raw.persona.cedula) }})
                   </span>
                 </v-chip>
-                
+
                 <!-- Acompañante -->
                 <v-chip
                   v-else-if="getVehiculoTitular(item.raw.persona.cedula)"
@@ -118,7 +118,7 @@
                   <v-icon start size="14">mdi-account-arrow-right</v-icon>
                   Acompañante
                 </v-chip>
-                
+
                 <!-- A pie -->
                 <v-chip
                   v-else
@@ -245,7 +245,7 @@ const getVehiculoTitular = (cedulaAcompanante: string) => {
 /* ✅ Estilos para items de la lista (igual que autocomplete de ingreso) */
 .persona-list-item {
   border-bottom: 1px solid rgba(0, 0, 0, 0.12);
-  padding: 12px 16px !important;
+  padding: 12px 16px;
   min-height: 72px;
 }
 

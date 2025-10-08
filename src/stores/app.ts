@@ -1,5 +1,6 @@
 import { ref, computed } from 'vue'
 import { defineStore } from 'pinia'
+import { useDatabase } from '@/composables/useDatabase'
 
 export interface AppConfig {
   kioskMode: boolean
@@ -7,6 +8,7 @@ export interface AppConfig {
   backupInterval: number // minutos
   maxRegistrosMemoria: number
   theme: 'light' | 'dark'
+  destinos: string[] // ⭐ NUEVO: Lista dinámica de destinos
 }
 
 export const useAppStore = defineStore('app', () => {
@@ -17,6 +19,7 @@ export const useAppStore = defineStore('app', () => {
     backupInterval: 120, // Intervalo en minutos para backups automáticos (2 horas)
     maxRegistrosMemoria: 1000,
     theme: 'light',
+    destinos: ['IRCCA', 'Ligeral', 'Simbiosys', 'Jabelor', 'Otra'], // ⭐ Valores por defecto
   })
 
   const isOnline = ref(navigator.onLine)
@@ -81,6 +84,55 @@ export const useAppStore = defineStore('app', () => {
     lastBackup.value = new Date()
   }
 
+  // ⭐ NUEVO: Actualizar destinos y guardar en IndexedDB
+  async function updateDestinos(nuevosDestinos: string[]) {
+    // ✅ Convertir a array plano para evitar DataCloneError
+    const destinosPlanos = [...nuevosDestinos]
+    config.value.destinos = destinosPlanos
+    
+    const { saveRecord, initDatabase } = useDatabase()
+    
+    try {
+      // Asegurar que la base de datos esté inicializada
+      await initDatabase()
+      
+      // Guardar en IndexedDB (datos planos, no reactivos)
+      await saveRecord('configuracion', {
+        key: 'destinos',
+        value: destinosPlanos,  // ✅ Array plano, no Proxy
+        updatedAt: new Date().toISOString()
+      })
+      
+      return { success: true }
+    } catch (error) {
+      console.error('Error al guardar destinos:', error)
+      return { success: false, error: error instanceof Error ? error.message : 'Error desconocido' }
+    }
+  }
+
+  // ⭐ NUEVO: Cargar destinos desde IndexedDB
+  async function loadConfigFromDB() {
+    const { getRecord, initDatabase } = useDatabase()
+    
+    try {
+      // Asegurar que la base de datos esté inicializada
+      await initDatabase()
+      
+      // Intentar cargar destinos desde IndexedDB
+      const destinosConfig = await getRecord('configuracion', 'destinos') as { key: string; value: string[] } | undefined
+      
+      if (destinosConfig && Array.isArray(destinosConfig.value) && destinosConfig.value.length > 0) {
+        // ✅ Convertir a array plano al cargar
+        config.value.destinos = [...destinosConfig.value]
+      }
+      
+      return { success: true }
+    } catch (error) {
+      console.error('Error al cargar configuración:', error)
+      return { success: false, error: error instanceof Error ? error.message : 'Error desconocido' }
+    }
+  }
+
   return {
     // State
     config,
@@ -97,5 +149,7 @@ export const useAppStore = defineStore('app', () => {
     removeNotification,
     clearNotifications,
     markBackupCompleted,
+    updateDestinos,
+    loadConfigFromDB,
   }
 })

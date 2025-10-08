@@ -2,24 +2,10 @@
   <div class="supervisor-content">
     <!-- Dashboard Supervisor - Vista Operacional sin Acciones de Registro -->
     
-    <!-- Estadísticas principales del operador (reutilizables) -->
+    <!-- ⭐ NUEVA SECCIÓN: Gestión de Destinos -->
     <v-row class="mb-8">
-      <!-- Card de Personas y Actividad -->
-      <v-col cols="12" lg="4" class="mb-4 mb-lg-0">
-        <PeopleStatsCard 
-          :people-data="peopleData" 
-          @personas-dentro-click="handlePersonasDentroClick"
-          @ingresos-hoy-click="handleIngresosHoyClick"
-          @salidas-hoy-click="handleSalidasHoyClick"
-        />
-      </v-col>
-
-      <!-- Card de Vehículos Detallada -->
-      <v-col cols="12" lg="8">
-        <VehicleStatsCard 
-          :vehicle-data="vehicleData" 
-          @vehicle-click="handleVehicleClick"
-        />
+      <v-col cols="12">
+        <DestinosManager />
       </v-col>
     </v-row>
 
@@ -80,54 +66,6 @@
       </v-col>
     </v-row>
 
-    <!-- Modales de datos para consulta (mismo comportamiento que operador) -->
-    <DataListModal
-      v-model="showPersonasDentroModal"
-      title="Personas Dentro del Predio"
-      header-icon="mdi-account-multiple"
-      data-type="personas"
-      :data="personasDentroData"
-      empty-title="No hay personas dentro"
-      empty-subtitle="Actualmente no hay personas registradas en el predio"
-      empty-icon="mdi-account-off"
-    />
-
-    <DataListModal
-      v-model="showIngresosHoyModal"
-      title="Ingresos de Hoy"
-      header-icon="mdi-login"
-      header-color="success"
-      data-type="personas"
-      :data="ingresosHoyData"
-      empty-title="Sin ingresos hoy"
-      empty-subtitle="No se han registrado ingresos el día de hoy"
-      empty-icon="mdi-login-variant"
-    />
-
-    <DataListModal
-      v-model="showSalidasHoyModal"
-      title="Salidas de Hoy"
-      header-icon="mdi-logout"
-      header-color="warning"
-      data-type="personas"
-      :data="salidasHoyData"
-      empty-title="Sin salidas hoy"
-      empty-subtitle="No se han registrado salidas el día de hoy"
-      empty-icon="mdi-logout-variant"
-    />
-
-    <DataListModal
-      v-model="showVehiculosModal"
-      :title="vehicleModalTitle"
-      :header-icon="vehicleModalIcon"
-      :header-color="vehicleModalHeaderColor"
-      data-type="vehiculos"
-      :data="vehiculosData"
-      empty-title="Sin vehículos"
-      :empty-subtitle="vehicleModalEmptySubtitle"
-      :empty-icon="vehicleModalEmptyIcon"
-    />
-
     <!-- Modal de Generación PDF -->
     <PdfGeneratorDialog
       v-model="showPdfDialog"
@@ -138,16 +76,12 @@
 </template>
 
 <script setup lang="ts">
-import { ref, onMounted } from 'vue'
-import { useRegistroStore } from '@/stores/registro'
-import { useDashboardStats } from '@/composables/useDashboardStats'
-import { useDashboardModals } from '@/composables/useDashboardModals'
+import { ref, onMounted, computed } from 'vue'
 import { useDatabase } from '@/composables/useDatabase'
+import { useMultipleCounters } from '@/composables/useCounterAnimation'
 
-// Componentes reutilizables del dashboard operador
-import PeopleStatsCard from '@/components/dashboard/PeopleStatsCard.vue'
-import VehicleStatsCard from '@/components/dashboard/VehicleStatsCard.vue'
-import DataListModal from '@/components/ui/DataListModal.vue'
+// Componentes del supervisor
+import DestinosManager from './sections/DestinosManager.vue'
 import PdfGeneratorDialog from '@/components/ui/PdfGeneratorDialog.vue'
 
 // Interface para usuarios de la BD
@@ -162,51 +96,38 @@ interface User {
   lastLogin?: string
 }
 
-// Store de registros para estadísticas
-const registroStore = useRegistroStore()
-
 // Composables
 const { getRecords, initDatabase } = useDatabase()
 
-// Composable para estadísticas (mismas que operador)
-const {
-  peopleData,
-  vehicleData,
-  personasDentroData,
-  ingresosHoyData,
-  salidasHoyData,
-  vehiculosData: vehiculosDataComputed
-} = useDashboardStats(registroStore)
-
-// Composable para modales (sin registro, solo consulta)
-const {
-  showPersonasDentroModal,
-  showIngresosHoyModal,
-  showSalidasHoyModal,
-  showVehiculosModal,
-  selectedVehicleType,
-  handlePersonasDentroClick,
-  handleIngresosHoyClick,
-  handleSalidasHoyClick,
-  handleVehicleClick,
-  vehicleModalTitle,
-  vehicleModalIcon,
-  vehicleModalEmptySubtitle,
-  vehicleModalEmptyIcon,
-  vehicleModalHeaderColor
-} = useDashboardModals()
-
-// Datos específicos de vehículos
-const vehiculosData = vehiculosDataComputed(selectedVehicleType.value)
-
-// Estado reactivo para estadísticas de usuarios
-const usersData = ref({
+// Estado reactivo para estadísticas de usuarios (valores reales)
+const usersDataRaw = ref({
   totalUsers: 0,
   admins: 0,
   supervisors: 0,
   operators: 0,
   newUsersToday: 0
 })
+
+// ⭐ NUEVO: Contadores animados usando composable genérico
+const { createCounter, startAll: startUsersAnimation } = useMultipleCounters({
+  duration: 2000,
+  autoWatch: false // Control manual porque usersDataRaw es ref
+})
+
+// Crear contadores individuales
+const totalUsersCounter = createCounter(() => usersDataRaw.value.totalUsers, { autoWatch: true })
+const operatorsCounter = createCounter(() => usersDataRaw.value.operators, { autoWatch: true })
+const supervisorsCounter = createCounter(() => usersDataRaw.value.supervisors, { autoWatch: true })
+const newUsersTodayCounter = createCounter(() => usersDataRaw.value.newUsersToday, { autoWatch: true })
+
+// ⭐ Datos finales con animación para mostrar en UI
+const usersData = computed(() => ({
+  totalUsers: totalUsersCounter.animatedValue.value,
+  admins: usersDataRaw.value.admins, // Sin animación (no se muestra)
+  supervisors: supervisorsCounter.animatedValue.value,
+  operators: operatorsCounter.animatedValue.value,
+  newUsersToday: newUsersTodayCounter.animatedValue.value
+}))
 
 // Estado para modal de PDF
 const showPdfDialog = ref(false)
@@ -224,15 +145,15 @@ const loadUsersStats = async () => {
     const users = await getRecords('usuarios') as User[]
     
     if (users && Array.isArray(users)) {
-      // Actualizar estadísticas
-      usersData.value.totalUsers = users.length
-      usersData.value.admins = users.filter((u: User) => u.role === 'admin').length
-      usersData.value.supervisors = users.filter((u: User) => u.role === 'supervisor').length
-      usersData.value.operators = users.filter((u: User) => u.role === 'operador').length
+      // Actualizar estadísticas (datos reales sin animación)
+      usersDataRaw.value.totalUsers = users.length
+      usersDataRaw.value.admins = users.filter((u: User) => u.role === 'admin').length
+      usersDataRaw.value.supervisors = users.filter((u: User) => u.role === 'supervisor').length
+      usersDataRaw.value.operators = users.filter((u: User) => u.role === 'operador').length
       
       // Usuarios creados hoy
       const today = new Date().toDateString()
-      usersData.value.newUsersToday = users.filter((u: User) => 
+      usersDataRaw.value.newUsersToday = users.filter((u: User) => 
         u.createdAt && new Date(u.createdAt).toDateString() === today
       ).length
     }
@@ -251,8 +172,13 @@ const handlePdfDialogClose = () => {
 }
 
 // Lifecycle
-onMounted(() => {
-  loadUsersStats()
+onMounted(async () => {
+  await loadUsersStats()
+  
+  // ⭐ NUEVO: Iniciar animación de contadores después de cargar datos
+  setTimeout(() => {
+    startUsersAnimation()
+  }, 100) // Pequeño delay para asegurar que los datos estén cargados
 })
 </script>
 

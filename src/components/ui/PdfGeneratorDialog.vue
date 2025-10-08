@@ -319,9 +319,12 @@ const regeneratePdf = () => {
   generatePdf()
 }
 
-// Función para compartir PDF via WhatsApp
+// ✅ MEJORADO: Función para compartir PDF via WhatsApp con manejo detallado de errores
 const shareViaWhatsApp = async () => {
   if (!lastGeneratedPdf.value) return
+  
+  // Limpiar mensajes previos
+  clearMessage()
   
   try {
     sharingWhatsApp.value = true
@@ -330,41 +333,68 @@ const shareViaWhatsApp = async () => {
     const blob = dataURItoBlob(lastGeneratedPdf.value.dataUri)
     const file = new File([blob], lastGeneratedPdf.value.filename, { type: 'application/pdf' })
     
-    // OPCIÓN 1: Web Share API (si está disponible)
-    if (navigator.share && navigator.canShare && navigator.canShare({ files: [file] })) {
-      try {
-        await navigator.share({
-          files: [file],
-          title: 'Reporte IRCCA',
-          text: `Reporte del Instituto IRCCA - ${qrReportInfo.value}`
-        })
-        
-        message.value = '✅ PDF enviado por WhatsApp'
-        messageType.value = 'success'
-        
-      } catch (shareError) {
-        if (shareError instanceof Error && shareError.name === 'AbortError') {
-          // Usuario canceló el compartir
-        } else {
-          throw shareError
-        }
-      }
-    } 
-    // OPCIÓN 2: URL de WhatsApp Web (fallback)
-    else {
-      // Mensaje para WhatsApp
-      const text = `📄 *Reporte IRCCA* ${qrReportInfo.value}%0A%0A_El archivo PDF será enviado en el siguiente mensaje_`
-      
-      // Abrir WhatsApp Web
-      const whatsappUrl = `https://wa.me/?text=${text}`
-      window.open(whatsappUrl, '_blank')
-      
-      message.value = 'ℹ️ WhatsApp Web abierto. Envía el PDF manualmente desde tu dispositivo.'
-      messageType.value = 'info'
+    // Verificar si Web Share API está disponible
+    if (!navigator.share) {
+      message.value = '⚠️ Tu navegador no soporta compartir archivos. Por favor, contacta al administrador del sistema.'
+      messageType.value = 'warning'
+      return
     }
     
-  } catch {
-    message.value = '❌ Error al enviar por WhatsApp'
+    // Verificar si puede compartir archivos
+    if (!navigator.canShare || !navigator.canShare({ files: [file] })) {
+      message.value = '⚠️ Tu dispositivo no está configurado para compartir archivos PDF. Asegúrate de tener WhatsApp instalado.'
+      messageType.value = 'warning'
+      return
+    }
+    
+    // Intentar compartir
+    try {
+      await navigator.share({
+        files: [file],
+        title: 'Reporte IRCCA',
+        text: `Reporte del Instituto IRCCA - ${qrReportInfo.value}`
+      })
+      
+      // ✅ Éxito confirmado
+      message.value = '✅ PDF compartido exitosamente por WhatsApp'
+      messageType.value = 'success'
+      
+    } catch (shareError) {
+      // Manejar errores específicos del share
+      if (shareError instanceof Error) {
+        console.error('Error al compartir:', shareError.name, shareError.message)
+        
+        // Usuario canceló el compartir
+        if (shareError.name === 'AbortError') {
+          message.value = 'ℹ️ Compartir cancelado. No se envió el PDF.'
+          messageType.value = 'info'
+        }
+        // No hay app instalada o permisos denegados
+        else if (shareError.name === 'NotAllowedError') {
+          message.value = '⚠️ No se pudo compartir. Asegúrate de tener WhatsApp instalado y vinculado en tu dispositivo.'
+          messageType.value = 'warning'
+        }
+        // Error de tipo no soportado
+        else if (shareError.name === 'TypeError') {
+          message.value = '⚠️ El tipo de archivo no es soportado. Contacta al administrador del sistema.'
+          messageType.value = 'warning'
+        }
+        // Otros errores
+        else {
+          message.value = `❌ Error al compartir: ${shareError.message}. Intenta nuevamente.`
+          messageType.value = 'error'
+        }
+      } else {
+        // Error desconocido
+        message.value = '❌ Error desconocido al compartir. Intenta nuevamente.'
+        messageType.value = 'error'
+      }
+    }
+    
+  } catch (error) {
+    // Error general (no debería llegar aquí normalmente)
+    console.error('Error inesperado:', error)
+    message.value = '❌ Error inesperado. Por favor, recarga la página e intenta nuevamente.'
     messageType.value = 'error'
   } finally {
     sharingWhatsApp.value = false

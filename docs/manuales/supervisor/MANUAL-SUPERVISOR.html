@@ -1,0 +1,549 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Manual de Supervisor - Sistema IRCCA</title>
+    <link rel="stylesheet" href="../estilos.css">
+</head>
+<body>
+    <div class="header-institucional">
+        <div class="logo-placeholder">[Logo IRCCA]</div>
+        <h1 class="titulo-principal">Manual del Supervisor</h1>
+        <p class="subtitulo">Sistema de Control de Accesos del IRCCA</p>
+        <p class="version-fecha">
+            <strong>Versión:</strong> 1.0 | <strong>Fecha:</strong> Octubre 2025 | 
+            <strong>Rol:</strong> <span class="badge badge-supervisor">SUPERVISOR</span>
+        </p>
+    </div>
+
+    <div class="indice">
+        <h2>📑 Índice de Contenidos</h2>
+        <ul>
+            <li><a href="#introduccion">1. Introducción y Responsabilidades</a></li>
+            <li><a href="#inicio-sesion">2. Acceso al Sistema</a></li>
+            <li><a href="#dashboard">3. Dashboard del Supervisor</a></li>
+            <li><a href="#reportes">4. Generación de Reportes PDF</a></li>
+            <li><a href="#consultas">5. Consultas y Estadísticas Avanzadas</a></li>
+            <li><a href="#supervision">6. Supervisión de Operadores</a></li>
+            <li><a href="#auditoria">7. Auditoría y Trazabilidad</a></li>
+            <li><a href="#arco">8. Gestión de Solicitudes ARCO</a></li>
+            <li><a href="#respaldos">9. Procedimientos de Respaldo</a></li>
+            <li><a href="#troubleshooting">10. Solución de Problemas Operativos</a></li>
+            <li><a href="#contacto">11. Contacto y Escalación</a></li>
+        </ul>
+    </div>
+
+    <h1 id="introduccion">1. Introducción y Responsabilidades</h1>
+    
+    <p>
+        Como <strong>Supervisor</strong> del Sistema de Control de Accesos del IRCCA, usted tiene 
+        un rol estratégico de supervisión, análisis y generación de reportes. A diferencia del 
+        operador, <strong>no registra ingresos ni salidas</strong>, sino que monitorea la operación 
+        y extrae información para toma de decisiones.
+    </p>
+
+    <h2>1.1. Sus Responsabilidades Principales</h2>
+    <ul>
+        <li><strong>Supervisión Operativa:</strong> Monitorear estadísticas de accesos en tiempo real</li>
+        <li><strong>Generación de Reportes:</strong> Crear informes PDF para análisis y auditoría</li>
+        <li><strong>Consultas Avanzadas:</strong> Acceder a información histórica detallada</li>
+        <li><strong>Gestión de Solicitudes ARCO:</strong> Atender derechos de acceso, rectificación y supresión de datos</li>
+        <li><strong>Apoyo a Operadores:</strong> Resolver dudas y problemas del personal de turno</li>
+        <li><strong>Custodia de Respaldos:</strong> Ejecutar y verificar procedimientos de backup manual mensual</li>
+    </ul>
+
+    <div class="caja-info">
+        <p><span class="icono-caja">📊</span><strong>Rol de Solo Lectura:</strong></p>
+        <p>
+            Como supervisor, tiene <strong>acceso completo a datos y estadísticas</strong>, pero 
+            <strong>no puede crear ni modificar registros</strong> de ingresos/salidas. Solo puede 
+            visualizar, consultar y generar reportes.
+        </p>
+    </div>
+
+    <h1 id="inicio-sesion">2. Acceso al Sistema</h1>
+
+    <h2>2.1. Credenciales de Supervisor</h2>
+    <p>Inicie sesión con:</p>
+    <ul>
+        <li><strong>Usuario:</strong> Su número de cédula</li>
+        <li><strong>PIN:</strong> Su clave personal de supervisor</li>
+    </ul>
+
+    <div class="imagen-placeholder">
+        [Insertar imagen: Pantalla de login con rol supervisor]
+    </div>
+    <p class="imagen-caption">Figura 1: Inicio de sesión del supervisor</p>
+
+    <h2>2.2. Diferencias con el Rol Operador</h2>
+    <table>
+        <thead>
+            <tr>
+                <th>Funcionalidad</th>
+                <th>Operador</th>
+                <th>Supervisor</th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr>
+                <td>Registrar ingresos/salidas</td>
+                <td>✅ Sí</td>
+                <td>❌ No</td>
+            </tr>
+            <tr>
+                <td>Ver estadísticas</td>
+                <td>✅ Básicas</td>
+                <td>✅ Completas</td>
+            </tr>
+            <tr>
+                <td>Generar reportes PDF</td>
+                <td>❌ No</td>
+                <td>✅ Sí</td>
+            </tr>
+            <tr>
+                <td>Ver auditoría</td>
+                <td>❌ No</td>
+                <td>✅ Sí</td>
+            </tr>
+            <tr>
+                <td>Gestión de usuarios</td>
+                <td>❌ No</td>
+                <td>❌ No (solo Admin)</td>
+            </tr>
+        </tbody>
+    </table>
+
+    <h1 id="dashboard">3. Dashboard del Supervisor</h1>
+
+    <p>
+        El Dashboard del supervisor muestra las mismas estadísticas que el operador, pero 
+        <strong>sin los botones de registro</strong>. En su lugar, tiene acceso a reportes avanzados.
+    </p>
+
+    <div class="imagen-placeholder">
+        [Insertar imagen: Dashboard del supervisor con botón de reportes]
+    </div>
+    <p class="imagen-caption">Figura 2: Dashboard del supervisor</p>
+
+    <h2>3.1. Elementos Principales</h2>
+    <ul>
+        <li><strong>Tarjeta de Personas:</strong> Muestra personas dentro, ingresos hoy, salidas hoy (clickeable)</li>
+        <li><strong>Tarjeta de Vehículos:</strong> Desglose por tipo de vehículo</li>
+        <li><strong>Panel de Estadísticas de Usuarios:</strong> Información sobre actividad de operadores</li>
+        <li><strong>Botón "Descargar PDF":</strong> Acceso directo a generación de reportes</li>
+    </ul>
+
+    <h1 id="reportes">4. Generación de Reportes PDF</h1>
+
+    <p>
+        Esta es una de sus funciones más importantes: generar informes profesionales para 
+        auditoría, análisis o presentación a superiores.
+    </p>
+
+    <h2>4.1. Tipos de Reportes Disponibles</h2>
+
+    <table>
+        <thead>
+            <tr>
+                <th>Tipo de Reporte</th>
+                <th>Contenido</th>
+                <th>Caso de Uso</th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr>
+                <td><strong>Personas Dentro</strong></td>
+                <td>Lista de todas las personas actualmente en el predio</td>
+                <td>Control en tiempo real, situaciones de emergencia</td>
+            </tr>
+            <tr>
+                <td><strong>Ingresos del Día</strong></td>
+                <td>Todos los ingresos registrados en fecha específica</td>
+                <td>Reporte diario de actividad</td>
+            </tr>
+            <tr>
+                <td><strong>Salidas del Día</strong></td>
+                <td>Todas las salidas registradas en fecha específica</td>
+                <td>Análisis de flujo de salida</td>
+            </tr>
+            <tr>
+                <td><strong>Reporte General</strong></td>
+                <td>Consolidado completo: personas dentro + ingresos + salidas</td>
+                <td>Informe ejecutivo completo</td>
+            </tr>
+        </tbody>
+    </table>
+
+    <h2>4.2. Cómo Generar un Reporte</h2>
+
+    <div class="paso">
+        <span class="paso-numero">1</span>
+        <div class="paso-contenido">
+            <p class="paso-titulo">Abrir Generador de PDF</p>
+            <p>Desde el Dashboard, presione el botón <strong>"Descargar PDF"</strong>.</p>
+        </div>
+    </div>
+
+    <div class="paso">
+        <span class="paso-numero">2</span>
+        <div class="paso-contenido">
+            <p class="paso-titulo">Seleccionar Tipo de Reporte</p>
+            <p>Elija el tipo de reporte que necesita del menú desplegable.</p>
+        </div>
+    </div>
+
+    <div class="paso">
+        <span class="paso-numero">3</span>
+        <div class="paso-contenido">
+            <p class="paso-titulo">Configurar Rango de Fechas</p>
+            <p>
+                Seleccione la fecha o rango de fechas para el reporte. Por defecto, 
+                muestra el día actual.
+            </p>
+        </div>
+    </div>
+
+    <div class="paso">
+        <span class="paso-numero">4</span>
+        <div class="paso-contenido">
+            <p class="paso-titulo">Generar y Descargar</p>
+            <p>
+                Presione <strong>"Generar PDF"</strong>. El sistema creará el documento 
+                y le ofrecerá tres opciones de descarga:
+            </p>
+            <ul>
+                <li><strong>Compartir:</strong> Usar función nativa de compartir de Android</li>
+                <li><strong>Guardar en archivos:</strong> Guardar directamente en carpeta de descargas</li>
+                <li><strong>Descargar tradicional:</strong> Descarga estándar del navegador</li>
+            </ul>
+        </div>
+    </div>
+
+    <div class="imagen-placeholder">
+        [Insertar imagen: Modal de generación de PDF con opciones]
+    </div>
+    <p class="imagen-caption">Figura 3: Generador de reportes PDF</p>
+
+    <div class="caja-exito">
+        <p><span class="icono-caja">📄</span><strong>Formato Profesional:</strong></p>
+        <p>
+            Los PDF generados incluyen: logo institucional, fecha de generación, 
+            tablas formateadas y paginación automática. Son aptos para presentación oficial.
+        </p>
+    </div>
+
+    <h1 id="consultas">5. Consultas y Estadísticas Avanzadas</h1>
+
+    <h2>5.1. Consulta de Personas Dentro</h2>
+    <p>Toque la tarjeta "Personas Dentro" para ver:</p>
+    <ul>
+        <li>Listado completo con nombre, apellido, cédula</li>
+        <li>Hora exacta de ingreso</li>
+        <li>Tiempo de permanencia actualizado en tiempo real</li>
+        <li>Vehículo asociado (si aplica)</li>
+        <li>Campo de búsqueda para filtrado rápido</li>
+    </ul>
+
+    <h2>5.2. Análisis de Vehículos</h2>
+    <p>Toque la tarjeta de vehículos para ver:</p>
+    <ul>
+        <li>Desglose detallado: Autos, Motos, Camiones, Buses</li>
+        <li>Matrículas de vehículos dentro del predio</li>
+        <li>Propietarios asociados</li>
+    </ul>
+
+    <h2>5.3. Estadísticas de Usuarios (Operadores)</h2>
+    <p>El panel de estadísticas de usuarios muestra:</p>
+    <ul>
+        <li>Cantidad de operadores registrados en el sistema</li>
+        <li>Listado de usuarios activos</li>
+        <li>Información general de actividad</li>
+    </ul>
+
+    <div class="caja-info">
+        <p><span class="icono-caja">🔍</span><strong>Búsqueda Avanzada:</strong></p>
+        <p>
+            En todos los modales de consulta, use el campo de búsqueda para filtrar por 
+            nombre, apellido o cédula. La búsqueda es instantánea y no distingue mayúsculas.
+        </p>
+    </div>
+
+    <h1 id="supervision">6. Supervisión de Operadores</h1>
+
+    <h2>6.1. Monitoreo de Actividad</h2>
+    <p>Como supervisor, debe:</p>
+    <ul>
+        <li>Verificar que los operadores registren ingresos y salidas correctamente</li>
+        <li>Asegurar que no haya personas "olvidadas" en el sistema (ingresos sin salida)</li>
+        <li>Revisar la calidad de los datos ingresados</li>
+        <li>Resolver dudas operativas del personal de turno</li>
+    </ul>
+
+    <h2>6.2. Gestión de Problemas Comunes</h2>
+
+    <h3>Operador olvidó su PIN</h3>
+    <p><strong>Solución:</strong> Contacte al administrador del sistema para reseteo de contraseña.</p>
+
+    <h3>Cuenta de operador bloqueada</h3>
+    <p><strong>Causa:</strong> 3 intentos fallidos de login.</p>
+    <p><strong>Solución:</strong> El administrador debe desbloquear la cuenta.</p>
+
+    <h3>Registro de salida sin ingreso previo</h3>
+    <p><strong>Causa:</strong> La persona ingresó pero no se registró.</p>
+    <p><strong>Solución:</strong> Orientar al operador a buscar alternativas (verificar con otro turno, consultar registros históricos).</p>
+
+    <h1 id="auditoria">7. Auditoría y Trazabilidad</h1>
+
+    <p>
+        El sistema registra automáticamente todas las acciones críticas en un log de auditoría inmutable.
+    </p>
+
+    <h2>7.1. Eventos Auditados</h2>
+    <ul>
+        <li><strong>Autenticación:</strong> Logins exitosos y fallidos</li>
+        <li><strong>Operaciones de Datos:</strong> Creación y modificación de registros</li>
+        <li><strong>Gestión de Usuarios:</strong> Creación, bloqueo de cuentas</li>
+        <li><strong>Respaldos:</strong> Backups generados y restauraciones</li>
+        <li><strong>Errores del Sistema:</strong> Fallos críticos</li>
+    </ul>
+
+    <h2>7.2. Información de Cada Evento</h2>
+    <p>Cada registro de auditoría incluye:</p>
+    <ul>
+        <li>ID del usuario responsable</li>
+        <li>Tipo de evento</li>
+        <li>Fecha y hora exacta</li>
+        <li>Datos relevantes de la acción</li>
+        <li>ID de sesión</li>
+    </ul>
+
+    <div class="caja-critico">
+        <p><span class="icono-caja">🔒</span><strong>Inmutabilidad:</strong></p>
+        <p>
+            Los registros de auditoría <strong>no pueden ser modificados ni eliminados</strong>, 
+            garantizando trazabilidad completa para investigaciones o auditorías externas.
+        </p>
+    </div>
+
+    <h1 id="arco">8. Gestión de Solicitudes ARCO</h1>
+
+    <p>
+        Como supervisor, usted es responsable de atender las solicitudes de Derechos ARCO 
+        (Acceso, Rectificación, Cancelación, Oposición) de los titulares de datos según 
+        la Ley N° 18.331.
+    </p>
+
+    <h2>8.1. Derecho de Acceso</h2>
+    <p><strong>Solicitud:</strong> "Quiero ver qué información tienen sobre mí."</p>
+    <p><strong>Procedimiento:</strong></p>
+    <ol>
+        <li>Verificar identidad del solicitante (cédula)</li>
+        <li>Buscar sus registros en el sistema por número de cédula</li>
+        <li>Generar reporte con sus datos personales</li>
+        <li>Entregar copia al solicitante (plazo: 15 días hábiles)</li>
+    </ol>
+
+    <h2>8.2. Derecho de Rectificación</h2>
+    <p><strong>Solicitud:</strong> "Mi nombre está mal escrito."</p>
+    <p><strong>Procedimiento:</strong></p>
+    <ol>
+        <li>Verificar identidad y solicitud formal por escrito</li>
+        <li>Coordinar con el administrador para corrección en base de datos</li>
+        <li>Documentar la rectificación en auditoría</li>
+        <li>Notificar al solicitante (plazo: 15 días hábiles)</li>
+    </ol>
+
+    <h2>8.3. Derecho de Supresión</h2>
+    <p><strong>Solicitud:</strong> "Quiero que eliminen mis datos."</p>
+    <p><strong>Procedimiento:</strong></p>
+    <ol>
+        <li>Recibir solicitud formal por escrito</li>
+        <li>Evaluar si existen obligaciones legales de retención</li>
+        <li>Si procede: coordinar eliminación con administrador</li>
+        <li>Si no procede: notificar fundamentos legales al solicitante</li>
+        <li>Responder en plazo de 15 días hábiles</li>
+    </ol>
+
+    <div class="caja-advertencia">
+        <p><span class="icono-caja">⚖️</span><strong>Consideración Legal:</strong></p>
+        <p>
+            El IRCCA debe conservar datos por razones de seguridad y auditoría. 
+            La supresión inmediata puede no ser posible dentro del período de retención activa (12 meses).
+        </p>
+    </div>
+
+    <h1 id="respaldos">9. Procedimientos de Respaldo</h1>
+
+    <h2>9.1. Estrategia 3-2-1</h2>
+    <p>El sistema implementa una estrategia de respaldo triple:</p>
+    <ul>
+        <li><strong>Nivel 1:</strong> Respaldos automáticos diarios (últimos 7 días)</li>
+        <li><strong>Nivel 2:</strong> Respaldos automáticos semanales (últimas 4 semanas)</li>
+        <li><strong>Nivel 3:</strong> Respaldo manual mensual a medio externo (SU responsabilidad)</li>
+    </ul>
+
+    <h2>9.2. Procedimiento de Backup Manual Mensual</h2>
+
+    <div class="paso">
+        <span class="paso-numero">1</span>
+        <div class="paso-contenido">
+            <p class="paso-titulo">Preparación</p>
+            <ul>
+                <li>Conecte un pendrive USB cifrado a la tablet</li>
+                <li>Programe el backup para horario de baja actividad (ej: fin de turno)</li>
+            </ul>
+        </div>
+    </div>
+
+    <div class="paso">
+        <span class="paso-numero">2</span>
+        <div class="paso-contenido">
+            <p class="paso-titulo">Exportación</p>
+            <p>Como supervisor, acceda al módulo de administración y seleccione "Exportar Backup".</p>
+        </div>
+    </div>
+
+    <div class="paso">
+        <span class="paso-numero">3</span>
+        <div class="paso-contenido">
+            <p class="paso-titulo">Verificación</p>
+            <ul>
+                <li>Confirme que el archivo se generó correctamente</li>
+                <li>Verifique el tamaño del archivo (debe ser coherente con cantidad de datos)</li>
+                <li>Anote fecha y hora del backup</li>
+            </ul>
+        </div>
+    </div>
+
+    <div class="paso">
+        <span class="paso-numero">4</span>
+        <div class="paso-contenido">
+            <p class="paso-titulo">Custodia</p>
+            <ul>
+                <li>Guarde el pendrive en lugar seguro (caja fuerte institucional)</li>
+                <li>Registre el backup en bitácora de respaldos</li>
+                <li>Informe al Encargado de Seguridad del IRCCA</li>
+            </ul>
+        </div>
+    </div>
+
+    <div class="caja-critico">
+        <p><span class="icono-caja">💾</span><strong>CRÍTICO - Backup Mensual:</strong></p>
+        <p>
+            El backup manual mensual es <strong>obligatorio</strong>. Es la única protección 
+            contra pérdida total del hardware. Debe realizarse el primer lunes de cada mes.
+        </p>
+    </div>
+
+    <h1 id="troubleshooting">10. Solución de Problemas Operativos</h1>
+
+    <h3>Sistema lento o no responde</h3>
+    <p><strong>Causas posibles:</strong></p>
+    <ul>
+        <li>Base de datos muy grande (cerca del límite de almacenamiento)</li>
+        <li>Múltiples modales abiertos simultáneamente</li>
+    </ul>
+    <p><strong>Solución:</strong></p>
+    <ol>
+        <li>Cerrar todos los modales abiertos</li>
+        <li>Cerrar y reabrir la aplicación</li>
+        <li>Si persiste: considerar purga de datos antiguos (requiere administrador)</li>
+    </ol>
+
+    <h3>Reportes PDF no se generan</h3>
+    <p><strong>Solución:</strong></p>
+    <ul>
+        <li>Verifique que haya datos en el rango de fechas seleccionado</li>
+        <li>Intente con un rango de fechas menor</li>
+        <li>Cierre otros procesos que consuman memoria</li>
+    </ul>
+
+    <h3>Discrepancia en estadísticas</h3>
+    <p><strong>Ejemplo:</strong> "Dice 5 personas dentro, pero cuento solo 3."</p>
+    <p><strong>Solución:</strong></p>
+    <ol>
+        <li>Abra el modal "Personas Dentro" para verificar el detalle</li>
+        <li>Identifique registros sin salida correspondiente</li>
+        <li>Coordine con operadores para regularizar la situación</li>
+        <li>Si es un error histórico, documente y reporte al administrador</li>
+    </ol>
+
+    <h1 id="contacto">11. Contacto y Escalación</h1>
+
+    <div class="seccion-contacto">
+        <h3>Contactos Clave:</h3>
+        
+        <div class="contacto-item">
+            <span class="contacto-icono">👤</span>
+            <strong>Responsable Operativo:</strong> Tte. Rodrigo LOPEZ - Jefe del Servicio 222
+        </div>
+        
+        <div class="contacto-item">
+            <span class="contacto-icono">💻</span>
+            <strong>Administrador del Sistema:</strong> Mario BERNI - Soporte Técnico
+        </div>
+        
+        <div class="contacto-item">
+            <span class="contacto-icono">📧</span>
+            <strong>Correo DNGR:</strong> gr-depto.infoygc@minterior.gub.uy
+        </div>
+        
+        <div class="contacto-item">
+            <span class="contacto-icono">🏛️</span>
+            <strong>Encargado de Seguridad IRCCA:</strong> [Contactar vía institucional]
+        </div>
+    </div>
+
+    <h2>11.1. Escalación de Problemas</h2>
+    <table>
+        <thead>
+            <tr>
+                <th>Tipo de Problema</th>
+                <th>Contactar a</th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr>
+                <td>Dudas operativas de operadores</td>
+                <td>Resolver localmente (Supervisor)</td>
+            </tr>
+            <tr>
+                <td>Problemas técnicos menores</td>
+                <td>Jefe del Servicio 222</td>
+            </tr>
+            <tr>
+                <td>Fallas críticas del sistema</td>
+                <td>Administrador + DNGR</td>
+            </tr>
+            <tr>
+                <td>Solicitudes ARCO complejas</td>
+                <td>Encargado de Seguridad IRCCA</td>
+            </tr>
+            <tr>
+                <td>Pérdida/robo de hardware</td>
+                <td>Jefe Servicio 222 + IRCCA (URGENTE)</td>
+            </tr>
+        </tbody>
+    </table>
+
+    <hr class="separador">
+
+    <div class="caja-exito texto-centrado">
+        <h2>Su Rol es Fundamental</h2>
+        <p>
+            Como supervisor, usted garantiza el correcto funcionamiento del sistema, 
+            la calidad de los datos y el cumplimiento normativo. Este manual es su 
+            herramienta de referencia permanente.
+        </p>
+    </div>
+
+    <div class="footer">
+        <p><strong>Sistema de Control de Accesos - IRCCA</strong></p>
+        <p>Manual del Supervisor - Versión 1.0</p>
+        <p>© 2025 - Instituto de Regulación y Control del Cannabis</p>
+        <p>Cumplimiento Ley N° 18.331 - Protección de Datos Personales</p>
+    </div>
+
+</body>
+</html>

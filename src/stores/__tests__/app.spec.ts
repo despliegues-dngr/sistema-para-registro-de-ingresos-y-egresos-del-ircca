@@ -23,9 +23,10 @@ describe('useAppStore', () => {
       expect(appStore.config).toEqual({
         kioskMode: true,
         autoBackup: true,
-        backupInterval: 30,
+        backupInterval: 120,
         maxRegistrosMemoria: 1000,
-        theme: 'light'
+        theme: 'light',
+        destinos: ['IRCCA', 'Ligeral', 'Simbiosys', 'Jabelor', 'Otra']
       })
     })
 
@@ -59,9 +60,10 @@ describe('useAppStore', () => {
       expect(appStore.config).toEqual({
         kioskMode: false,
         autoBackup: true,
-        backupInterval: 30,
+        backupInterval: 120,
         maxRegistrosMemoria: 1000,
-        theme: 'dark'
+        theme: 'dark',
+        destinos: ['IRCCA', 'Ligeral', 'Simbiosys', 'Jabelor', 'Otra']
       })
     })
 
@@ -73,7 +75,8 @@ describe('useAppStore', () => {
         autoBackup: false,
         backupInterval: 60,
         maxRegistrosMemoria: 500,
-        theme: 'dark'
+        theme: 'dark',
+        destinos: ['Personalizado']
       }
 
       appStore.updateConfig(newConfig)

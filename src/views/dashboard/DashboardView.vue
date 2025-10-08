@@ -1,12 +1,13 @@
 <template>
-  <v-container fluid class="pa-6">
-    <!-- Header de bienvenida con tiempo real -->
-    <WelcomeHeader
-      @view-profile="handleViewProfile"
-      @edit-profile="handleEditProfile"
-      @change-password="handleChangePassword"
-      @logout="handleLogout"
-    />
+  <v-container fluid class="pa-6 dashboard-wrapper">
+    <div class="dashboard-content">
+      <!-- Header de bienvenida con tiempo real -->
+      <WelcomeHeader
+        @view-profile="handleViewProfile"
+        @edit-profile="handleEditProfile"
+        @change-password="handleChangePassword"
+        @logout="handleLogout"
+      />
 
     <!-- ✅ DASHBOARD DINÁMICO POR ROL -->
     <!-- Admin Dashboard -->
@@ -116,6 +117,7 @@
       :empty-subtitle="vehicleModalEmptySubtitle"
       :empty-icon="vehicleModalEmptyIcon"
     />
+    </div>
 
     <!-- Pie de página gubernamental -->
     <DashboardFooter />
@@ -193,7 +195,9 @@ const {
   personasDentroData,
   ingresosHoyData,
   salidasHoyData,
-  vehiculosData: vehiculosDataComputed
+  vehiculosData: vehiculosDataComputed,
+  startAnimation,
+  updateVehicleAnimation
 } = useDashboardStats(registroStore)
 
 // Adaptador para vehiculosData que depende de un estado local (selectedVehicleType)
@@ -258,6 +262,12 @@ const handleSessionTimeout = async () => {
 onMounted(async () => {
   initializeTimeout()
   await registroStore.initializeStoreWhenAuthenticated()
+  
+  // ⭐ NUEVO: Iniciar animación de contadores cada vez que se carga el dashboard
+  setTimeout(() => {
+    startAnimation()
+    updateVehicleAnimation()
+  }, 100) // Pequeño delay para asegurar que los datos estén cargados
 })
 
 onUnmounted(() => {
@@ -270,6 +280,17 @@ onUnmounted(() => {
 .v-container {
   max-width: 1400px;
   padding: 1.5rem;
+}
+
+/* ✅ Sticky Footer - El footer siempre al final de la pantalla */
+.dashboard-wrapper {
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+}
+
+.dashboard-content {
+  flex: 1;
 }
 
 /* Mejorar espaciado en tablets y desktop */

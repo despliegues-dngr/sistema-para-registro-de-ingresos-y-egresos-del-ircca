@@ -69,6 +69,7 @@ import { ref, computed, watch } from 'vue'
 import FormSection from '@/components/forms/FormSection.vue'
 import CedulaAutocomplete from './CedulaAutocomplete.vue'
 import { useAutocomplete } from '@/composables/useAutocomplete'
+import { useAppStore } from '@/stores/app'
 import type { DatosPersonales, DatosVisita } from '@/stores/registro'
 import type { PersonaConocida } from '@/services/autocompleteService'
 
@@ -95,14 +96,15 @@ const props = defineProps<Props>()
 const emit = defineEmits<Emits>()
 
 // Composables
+const appStore = useAppStore()
 const { sugerenciasCedula, buscando, buscarPorCedula, limpiarSugerencias } = useAutocomplete()
 
 // Estado local
 const personaSeleccionada = ref<AutocompleteItem | null>(null)
 const cedulaBusqueda = ref('')
 
-// Constantes
-const destinos = ['IRCCA', 'Ligeral', 'Simbiosys', 'Jabelor', 'Otra']
+// ⭐ NUEVO: Destinos dinámicos desde el store (reactivo)
+const destinos = computed(() => appStore.config.destinos)
 
 // Computed: Mapear sugerencias a formato del autocomplete
 const sugerenciasMapeadas = computed<AutocompleteItem[]>(() => {

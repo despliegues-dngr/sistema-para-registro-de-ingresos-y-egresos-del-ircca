@@ -280,6 +280,52 @@ export const useDatabase = () => {
     }
   }
 
+  // ⭐ NUEVO: Obtener un registro específico por ID
+  const getRecord = async (
+    storeName: string,
+    id: string | number
+  ): Promise<unknown | undefined> => {
+    if (!db.value) {
+      return undefined
+    }
+
+    try {
+      return new Promise((resolve, reject) => {
+        const transaction = db.value!.transaction([storeName], 'readonly')
+        const store = transaction.objectStore(storeName)
+        const request = store.get(id)
+
+        request.onsuccess = () => resolve(request.result)
+        request.onerror = () => reject(undefined)
+      })
+    } catch {
+      return undefined
+    }
+  }
+
+  // ⭐ NUEVO: Guardar o actualizar un registro (put)
+  const saveRecord = async (
+    storeName: string,
+    data: Record<string, unknown>
+  ): Promise<{ success: boolean; error?: string }> => {
+    if (!db.value) {
+      return { success: false, error: 'Base de datos no inicializada' }
+    }
+
+    try {
+      return new Promise((resolve, reject) => {
+        const transaction = db.value!.transaction([storeName], 'readwrite')
+        const store = transaction.objectStore(storeName)
+        const request = store.put(data) // put reemplaza o crea si no existe
+
+        request.onsuccess = () => resolve({ success: true })
+        request.onerror = () => reject({ success: false, error: 'Error al guardar registro' })
+      })
+    } catch {
+      return { success: false, error: 'Error en transacción de guardado' }
+    }
+  }
+
   return {
     // State
     isConnected,
@@ -290,6 +336,8 @@ export const useDatabase = () => {
     updateRecord,
     deleteRecord,
     getRecords,
+    getRecord,
+    saveRecord,
     clearStore,
     // Storage Management
     requestPersistentStorage,
