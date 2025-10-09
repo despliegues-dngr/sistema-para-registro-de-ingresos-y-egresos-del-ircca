@@ -1,0 +1,12 @@
+# robots.txt - Sistema de Control de Accesos IRCCA
+# Fecha: 2025-10-09
+
+User-agent: *
+Allow: /
+
+# Bloquear acceso a rutas protegidas
+Disallow: /dashboard
+Disallow: /admin
+
+# Metadata
+# Sitemap: https://ircca-sistema.vercel.app/sitemap.xml

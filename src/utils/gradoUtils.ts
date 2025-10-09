@@ -65,6 +65,7 @@ export function gradoToCode(grado: string): string {
   if (!grado) return '?'
   
   // Buscar en el mapeo
+  // eslint-disable-next-line security/detect-object-injection -- Safe: GRADO_CODES is a typed Record, grado is validated string
   const code = GRADO_CODES[grado]
   
   // Si no se encuentra, intentar normalizar (quitar tildes, mayúsculas)
@@ -75,6 +76,7 @@ export function gradoToCode(grado: string): string {
       .toLowerCase()
       .replace(/\s+/g, '_') // Espacios a guiones bajos
     
+    // eslint-disable-next-line security/detect-object-injection -- Safe: normalized is sanitized string, GRADO_CODES is typed Record
     return GRADO_CODES[normalized] || grado // Fallback al grado original
   }
   

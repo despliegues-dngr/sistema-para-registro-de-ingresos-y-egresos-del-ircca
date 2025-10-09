@@ -15,7 +15,7 @@
     </v-alert>
 
     <!-- Título del formulario -->
-    <h3 class="text-subtitle-1 font-weight-medium text-grey-darken-3 mb-4">Datos del nuevo operador</h3>
+    <h2 class="text-subtitle-1 font-weight-medium text-grey-darken-4 mb-4">Datos del nuevo operador</h2>
 
     <!-- Campo Cédula -->
     <v-text-field

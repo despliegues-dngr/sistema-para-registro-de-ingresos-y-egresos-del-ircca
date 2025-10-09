@@ -184,12 +184,13 @@ const handleInput = (value: string | AutocompleteItem) => {
  * Obtiene el color según la frecuencia de visita
  */
 const getFrecuenciaColor = (frecuencia: 'alta' | 'media' | 'baja'): string => {
-  const colores = {
+  const colores: Record<string, string> = {
     alta: 'success',
     media: 'info',
     baja: 'warning'
   }
-  return colores[frecuencia]
+  // eslint-disable-next-line security/detect-object-injection -- Safe: frecuencia is 'alta' | 'media' | 'baja' from system
+  return colores[frecuencia] || 'default'
 }
 
 /**

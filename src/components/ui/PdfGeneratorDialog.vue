@@ -295,6 +295,7 @@ const dataURItoBlob = (dataURI: string): Blob => {
   const ia = new Uint8Array(ab)
   
   for (let i = 0; i < byteString.length; i++) {
+    // eslint-disable-next-line security/detect-object-injection -- Safe: i is loop-controlled index, ia is typed Uint8Array
     ia[i] = byteString.charCodeAt(i)
   }
   

@@ -202,9 +202,19 @@ const removeAcompanante = (index: number) => {
  * Actualizar campo de acompañante
  */
 const updateAcompanante = (index: number, field: string, value: string) => {
-  if (formData.acompanantes[index]) {
-    (formData.acompanantes[index] as Record<string, string>)[field] = value
+  // eslint-disable-next-line security/detect-object-injection -- Safe: index validated by bounds check
+  const acompanante = formData.acompanantes[index]
+  if (!acompanante) return
+  
+  // Validar que el field sea una key válida de DatosAcompanante
+  const validFields = ['cedula', 'nombre', 'apellido', 'destino'] as const
+  if (!validFields.includes(field as typeof validFields[number])) {
+    console.warn(`Invalid field: ${field}`)
+    return
   }
+  
+  // eslint-disable-next-line security/detect-object-injection -- Safe: field validated against validFields
+  ;(acompanante as Record<string, string>)[field] = value
 }
 
 /**
