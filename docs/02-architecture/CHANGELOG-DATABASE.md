@@ -1,10 +1,26 @@
-# Changelog - Base de Datos
+# Changelog - Base de Datos IndexedDB
 
-Registro de cambios en la arquitectura de base de datos del Sistema IRCCA.
+Este archivo registra todos los cambios en la estructura de la base de datos IndexedDB del sistema.
 
 ---
 
-## [1.0.0] - 2025-09-24
+## [Version 4] - 2025-10-09
+
+### ✅ Agregado
+- **Store `audit_logs`:** Sistema de auditoría para cumplimiento AGESIC SO.7
+  - Registra eventos de seguridad: autenticación, gestión usuarios, operaciones datos, backups, errores
+  - 4 índices: userId, eventType, timestamp, action
+  - Logs inmutables con metadata completa (quien, cuando, que)
+
+### 📝 Motivo
+- Cumplimiento obligatorio AGESIC (Requisito SO.7: Registro y Monitoreo)
+- Ley 18.331: Trazabilidad de acceso a datos personales
+- Investigación de incidentes de seguridad
+- Respuesta a solicitudes ARCO
+
+---
+
+## [Version 3] - 2025-09-24
 
 ### ✅ Implementado
 - **IndexedDB Foundation**: Base de datos `IRCCA_Sistema_DB` completamente funcional

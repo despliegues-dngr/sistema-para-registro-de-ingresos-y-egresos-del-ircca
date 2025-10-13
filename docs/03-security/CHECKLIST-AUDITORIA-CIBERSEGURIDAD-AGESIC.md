@@ -12,9 +12,9 @@ Esta es la sección más crítica para cualquier proyecto de software. Se enfoca
 
 | Requisito | Descripción de lo que se espera | Estado | Notas / Evidencia |
 |-----------|----------------------------------|--------|-------------------|
-| **AD.1-A: Guía de Codificación Segura** | El proyecto debe seguir un estándar reconocido para evitar vulnerabilidades comunes. Se espera que el desarrollador conozca y aplique prácticas como las del OWASP Top 10 (ej. evitar inyección SQL, XSS, etc.). | ✅ Cumple<br>☐ En Proceso<br>☐ Pendiente | Documento: `02-architecture/10-secure-coding-guidelines.md`<br>- Referencia explícita a OWASP Top 10:2021<br>- Mapeo de cada vulnerabilidad con implementación del proyecto<br>- Checklist para desarrolladores<br>- Ejemplos de código seguro vs inseguro |
-| **AD.1-B: Proceso de Revisión de Código** | Antes de que el código nuevo pase a producción, debe ser revisado por otra persona (o mediante herramientas automáticas). Evidencia clave: Historial de Pull/Merge Requests en Git con comentarios y aprobaciones. | ✅ Cumple<br>☐ En Proceso<br>☐ Pendiente | Documento: `02-architecture/11-code-review-process.md`<br>**Herramientas automatizadas:**<br>- ESLint + eslint-plugin-security (configurado y validado)<br>- TypeScript strict mode<br>- Vitest (218 tests unitarios)<br>- npm audit<br>**Scripts:** `pre-build`, `security:check`, `audit`, `check`<br>**Proceso documentado** para desarrollador único con checklist de auto-review<br>**Verificación:** ✅ 0 errores, 0 warnings de seguridad |
-| **AD.1-C: Pruebas de Seguridad** | El plan de pruebas debe incluir casos específicos para validar la seguridad, no solo la funcionalidad. Evidencia clave: Un plan de pruebas que mencione la validación de roles, intentos de inyección de datos, etc. Para sistemas críticos, se espera un informe de ethical hacking (CN.3). | ✅ Cumple<br>☐ En Proceso<br>☐ Pendiente | Documento: `02-architecture/12-security-testing-plan.md`<br>**Tests implementados:**<br>- 218 tests unitarios automatizados<br>- 26 tests de autenticación (AUTH-001 a 008, HASH-001 a 005)<br>- 22 tests de cifrado (ENC-001 a 008)<br>- 15 tests RBAC (RBAC-001 a 009)<br>- 29 tests de auditoría (AUD-001 a 008)<br>- 5 tests E2E críticos con Playwright<br>**Cobertura OWASP Top 10:2021:** 9/10 vulnerabilidades cubiertas<br>**Herramientas:** Vitest, Playwright, ESLint Security, npm audit<br>**Última ejecución:** 08-Oct-2025 - 100% tests PASS |
+| **AD.1-A: Guía de Codificación Segura** | El proyecto debe seguir un estándar reconocido para evitar vulnerabilidades comunes. Se espera que el desarrollador conozca y aplique prácticas como las del OWASP Top 10 (ej. evitar inyección SQL, XSS, etc.). | ✅ Cumple<br>☐ En Proceso<br>☐ Pendiente | Documento: `02-architecture/05-security-guide.md` (Sección 3)<br>- Referencia explícita a OWASP Top 10:2021<br>- Mapeo de cada vulnerabilidad con implementación del proyecto<br>- Checklist para desarrolladores<br>- Ejemplos de código seguro vs inseguro |
+| **AD.1-B: Proceso de Revisión de Código** | Antes de que el código nuevo pase a producción, debe ser revisado por otra persona (o mediante herramientas automáticas). Evidencia clave: Historial de Pull/Merge Requests en Git con comentarios y aprobaciones. | ✅ Cumple<br>☐ En Proceso<br>☐ Pendiente | Documento: `02-architecture/05-security-guide.md` (Sección 4)<br>**Herramientas automatizadas:**<br>- ESLint + eslint-plugin-security (configurado y validado)<br>- TypeScript strict mode<br>- Vitest (218 tests unitarios)<br>- npm audit<br>**Scripts:** `pre-build`, `security:check`, `audit`, `check`<br>**Proceso documentado** para desarrollador único con checklist de auto-review<br>**Verificación:** ✅ 0 errores, 0 warnings de seguridad |
+| **AD.1-C: Pruebas de Seguridad** | El plan de pruebas debe incluir casos específicos para validar la seguridad, no solo la funcionalidad. Evidencia clave: Un plan de pruebas que mencione la validación de roles, intentos de inyección de datos, etc. Para sistemas críticos, se espera un informe de ethical hacking (CN.3). | ✅ Cumple<br>☐ En Proceso<br>☐ Pendiente | Documento: `02-architecture/05-security-guide.md` (Sección 5)<br>**Tests implementados:**<br>- 218 tests unitarios automatizados<br>- 26 tests de autenticación (AUTH-001 a 008, HASH-001 a 005)<br>- 22 tests de cifrado (ENC-001 a 008)<br>- 15 tests RBAC (RBAC-001 a 009)<br>- 29 tests de auditoría (AUD-001 a 008)<br>- 5 tests E2E críticos con Playwright<br>**Cobertura OWASP Top 10:2021:** 9/10 vulnerabilidades cubiertas<br>**Herramientas:** Vitest, Playwright, ESLint Security, npm audit<br>**Última ejecución:** 08-Oct-2025 - 100% tests PASS |
 
 ---
 
@@ -23,9 +23,9 @@ Esta sección se centra en las prácticas que mantienen el sistema seguro una ve
 
 | Requisito | Descripción de lo que se espera | Estado | Notas / Evidencia |
 |-----------|----------------------------------|--------|-------------------|
-| **SO.1: Gestión de Vulnerabilidades** | Debe existir un proceso para detectar y corregir vulnerabilidades en dependencias y en el código. Evidencia clave: Uso de herramientas como `npm audit` y documentación del proceso. | ✅ Cumple | Documento: `02-architecture/13-vulnerability-management.md`<br>**Herramientas:**<br>- npm audit (semanal)<br>- ESLint Security Plugin<br>- TypeScript strict mode<br>**Scripts:** `audit`, `audit:fix`, `audit:report`, `security:check`<br>**Estado actual:** ✅ 0 vulnerabilidades críticas/altas |
-| **SO.7: Registro y Monitoreo (Logs)** | La aplicación debe generar registros (logs) de eventos de seguridad importantes para poder investigar un incidente. **Qué registrar:** Inicios de sesión (exitosos y fallidos), acciones de administradores, errores críticos. Evidencia clave: Muestra de los archivos de log o configuración del sistema de logging. | ✅ Cumple<br>☐ En Proceso<br>☐ Pendiente | Documento: `02-architecture/14-logging-monitoring.md`<br>**Sistema implementado:**<br>- Store de auditoría (`src/stores/audit.ts`)<br>- 5 tipos de eventos: auth, user_management, data_operation, backup, system_error<br>- Logs cifrados (AES-256-GCM)<br>- Logs inmutables (no editables)<br>**Eventos registrados:**<br>- ✅ Login exitosos/fallidos<br>- ✅ Gestión de usuarios<br>- ✅ Operaciones con datos<br>- ✅ Backups<br>- ✅ Errores críticos<br>**Metadata:** timestamp, userId, sessionId, IP, userAgent |
-| **SO.4: Separación de Entornos** | Debe existir una separación estricta entre los ambientes de Desarrollo, Pruebas y Producción. **Regla de oro:** Nunca usar datos personales reales en los entornos de desarrollo o pruebas. | ✅ Cumple<br>☐ En Proceso<br>☐ Pendiente | Documento: `02-architecture/15-environment-separation.md`<br>**Entornos separados:**<br>- Desarrollo: localhost con datos ficticios<br>- Producción: Vercel con datos reales<br>**Archivos:**<br>- `.env.local` (desarrollo, no en Git)<br>- `.env.production` (producción, no en Git)<br>- `.env.example` y `.env.production.example` (templates en Git)<br>**Controles:**<br>- ✅ Sin datos reales en desarrollo<br>- ✅ Contraseñas diferentes por entorno<br>- ✅ Debug solo en desarrollo |
+| **SO.1: Gestión de Vulnerabilidades** | Debe existir un proceso para detectar y corregir vulnerabilidades en dependencias y en el código. Evidencia clave: Uso de herramientas como `npm audit` y documentación del proceso. | ✅ Cumple | Documento: `02-architecture/05-security-guide.md` (Sección 6)<br>**Herramientas:**<br>- npm audit (semanal)<br>- ESLint Security Plugin<br>- TypeScript strict mode<br>**Scripts:** `audit`, `audit:fix`, `audit:report`, `security:check`<br>**Estado actual:** ✅ 0 vulnerabilidades críticas/altas |
+| **SO.7: Registro y Monitoreo (Logs)** | La aplicación debe generar registros (logs) de eventos de seguridad importantes para poder investigar un incidente. **Qué registrar:** Inicios de sesión (exitosos y fallidos), acciones de administradores, errores críticos. Evidencia clave: Muestra de los archivos de log o configuración del sistema de logging. | ✅ Cumple<br>☐ En Proceso<br>☐ Pendiente | Documento: `02-architecture/05-security-guide.md` (Sección 7)<br>**Sistema implementado (09-Oct-2025):**<br>- Store IndexedDB `audit_logs` (v4)<br>- Store Pinia `audit.ts` con 5 tipos de eventos<br>- Logs cifrados (AES-256-GCM)<br>- Logs inmutables (no editables/eliminables)<br>**Integración completada:**<br>- ✅ `auth.ts`: login.success, login.failed, login.blocked, logout<br>- ✅ `registro.ts`: registro.created, registro.modified<br>- ✅ Errores en operaciones críticas<br>**Metadata:** timestamp, userId, username, sessionId, eventType, action, details<br>**Privacidad:** Solo IDs y metadata (sin datos personales en logs)<br>**Estado:** ✅ Funcionando en producción |
+| **SO.4: Separación de Entornos** | Debe existir una separación estricta entre los ambientes de Desarrollo, Pruebas y Producción. **Regla de oro:** Nunca usar datos personales reales en los entornos de desarrollo o pruebas. | ✅ Cumple<br>☐ En Proceso<br>☐ Pendiente | Documento: `02-architecture/05-security-guide.md` (Sección 8)<br>**Entornos separados:**<br>- Desarrollo: localhost con datos ficticios<br>- Producción: Vercel con datos reales<br>**Archivos:**<br>- `.env.local` (desarrollo, no en Git)<br>- `.env.production` (producción, no en Git)<br>- `.env.example` y `.env.production.example` (templates en Git)<br>**Controles:**<br>- ✅ Sin datos reales en desarrollo<br>- ✅ Contraseñas diferentes por entorno<br>- ✅ Debug solo en desarrollo |
 
 ---
 
@@ -83,7 +83,10 @@ Validación de cumplimiento de estándares PWA según Google Lighthouse y mejore
 
 1. ✅ **Documentación técnica AD.1** completada
 2. ✅ **Proceso de gestión de dependencias** implementado
-3. ✅ **Sistema de logging** implementado y documentado
+3. ✅ **Sistema de logging** implementado, integrado y funcionando (09-Oct-2025)
+   - Store IndexedDB `audit_logs` creado
+   - Integración en `auth.ts` y `registro.ts`
+   - Política de privacidad en logs aplicada
 4. ✅ **Procedimiento ARCO** documentado
 5. ✅ **Auditoría PWA** completada (Lighthouse v9)
 6. ✅ **Correcciones de accesibilidad** aplicadas
@@ -93,6 +96,7 @@ Validación de cumplimiento de estándares PWA según Google Lighthouse y mejore
 
 1. **Plan de Respuesta a Incidentes formal** (GI.1) - NO crítico para MVP
 2. **Tramitar inscripción URCDP** (PD.1) - Trámite administrativo (Dirección IRCCA)
+3. **Interface de visualización de logs** (Fase 4) - Para Admin/Supervisor
 
 ---
 
@@ -100,6 +104,7 @@ Validación de cumplimiento de estándares PWA según Google Lighthouse y mejore
 
 | Versión | Fecha | Autor | Cambios |
 |---------|-------|-------|---------|
+| 1.1 | 09-10-2025 | Sistema IRCCA | Actualización SO.7: Sistema de logging implementado y funcionando |
 | 1.0 | 07-10-2025 | Sistema IRCCA | Versión inicial del checklist |
 
 ---

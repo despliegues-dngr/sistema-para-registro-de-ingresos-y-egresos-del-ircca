@@ -111,6 +111,57 @@ const backupsStore = database.createObjectStore('backups', { keyPath: 'id' })
 backupsStore.createIndex('timestamp', 'timestamp', { unique: false })
 ```
 
+### 2.5 Store de Auditoría: `audit_logs`
+
+**Propósito:** Registro inmutable de eventos de seguridad para cumplimiento AGESIC SO.7
+
+**Configuración:**
+```typescript
+const auditStore = database.createObjectStore('audit_logs', { keyPath: 'id' })
+auditStore.createIndex('userId', 'userId', { unique: false })
+auditStore.createIndex('eventType', 'eventType', { unique: false })
+auditStore.createIndex('timestamp', 'timestamp', { unique: false })
+auditStore.createIndex('action', 'action', { unique: false })
+```
+
+**Estructura:**
+```typescript
+interface AuditEvent {
+  id: string                    // UUID único del evento
+  userId: string                // ID del usuario que realizó la acción
+  username: string              // Username del usuario (para consultas)
+  eventType: 'auth' | 'user_management' | 'data_operation' | 'backup' | 'system_error'
+  action: string                // Acción específica (ej: 'login.success', 'registro.created')
+  details: Record<string, unknown>  // Detalles adicionales del evento
+  timestamp: string             // ISO 8601 timestamp
+  sessionId: string             // ID de sesión para trazabilidad
+  ipAddress?: string            // IP del cliente (opcional)
+  userAgent?: string            // User agent del navegador (opcional)
+}
+```
+
+**Índices Implementados:**
+```typescript
+// Índice por userId - Para rastrear actividad de usuario específico
+auditStore.createIndex('userId', 'userId', { unique: false })
+
+// Índice por eventType - Para filtrar por tipo de evento
+auditStore.createIndex('eventType', 'eventType', { unique: false })
+
+// Índice por timestamp - Para consultas temporales
+auditStore.createIndex('timestamp', 'timestamp', { unique: false })
+
+// Índice por action - Para buscar acciones específicas
+auditStore.createIndex('action', 'action', { unique: false })
+```
+
+**Eventos Registrados:**
+- **auth:** login.success, login.failed, logout, session.timeout
+- **user_management:** user.created, user.updated, password.changed
+- **data_operation:** registro.created, registro.modified, data.export
+- **backup:** backup.created, backup.restored
+- **system_error:** encryption.failed, database.error
+
 ---
 
 ## 3. Cifrado y Seguridad

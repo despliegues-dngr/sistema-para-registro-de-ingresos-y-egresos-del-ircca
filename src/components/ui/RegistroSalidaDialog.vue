@@ -2,7 +2,6 @@
   <v-dialog
     v-model="modelValue"
     max-width="700"
-    persistent
     transition="dialog-bottom-transition"
     scrollable
   >

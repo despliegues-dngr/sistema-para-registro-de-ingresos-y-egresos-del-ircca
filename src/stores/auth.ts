@@ -2,6 +2,7 @@ import { ref, computed } from 'vue'
 import { defineStore } from 'pinia'
 import { EncryptionService } from '@/services/encryptionService'
 import { useDatabase } from '@/composables/useDatabase'
+import { useAuditStore } from './audit'
 
 // Interfaz para usuario almacenado en BD
 interface StoredUser {
@@ -102,8 +103,19 @@ export const useAuthStore = defineStore('auth', () => {
    * Login con verificación de credenciales en base de datos
    */
   async function login(username: string, password: string): Promise<void> {
+    const auditStore = useAuditStore()
+    const sessionId = crypto.randomUUID()
+    
     try {
       if (!canAttemptLogin.value) {
+        // Log de cuenta bloqueada
+        await auditStore.logAuthEvent(
+          'unknown',
+          username,
+          'login.blocked',
+          sessionId,
+          { reason: 'max_attempts_exceeded', attempts: loginAttempts.value }
+        )
         throw new Error('Máximo número de intentos de login excedido. Contacte al administrador.')
       }
 
@@ -114,6 +126,14 @@ export const useAuthStore = defineStore('auth', () => {
       const users = await getRecords('usuarios', 'username', username)
       if (users.length === 0) {
         incrementLoginAttempts()
+        // Log de login fallido - usuario no encontrado
+        await auditStore.logAuthEvent(
+          'unknown',
+          username,
+          'login.failed',
+          sessionId,
+          { reason: 'user_not_found', attempts: loginAttempts.value }
+        )
         throw new Error('Usuario no encontrado')
       }
 
@@ -128,6 +148,15 @@ export const useAuthStore = defineStore('auth', () => {
 
       if (!isPasswordValid) {
         incrementLoginAttempts()
+        // Log de login fallido - contraseña incorrecta
+        await auditStore.logAuthEvent(
+          dbUser.id,
+          dbUser.username,
+          'login.failed',
+          sessionId,
+          { reason: 'invalid_password', attempts: loginAttempts.value }
+        )
+        throw new Error('Contraseña incorrecta')
       }
 
       // Actualizar último login en la BD
@@ -154,17 +183,62 @@ export const useAuthStore = defineStore('auth', () => {
       // Guardar sesión en localStorage
       saveSession()
 
+      // ✅ Log de login exitoso
+      await auditStore.logAuthEvent(
+        dbUser.id,
+        dbUser.username,
+        'login.success',
+        sessionId,
+        { 
+          role: dbUser.role,
+          nombre: `${dbUser.nombre} ${dbUser.apellido}`,
+          previousLogin: dbUser.lastLogin
+        }
+      )
+
     } catch (error) {
       throw error
     }
   }
 
-  function logout() {
+  async function logout() {
+    console.log('🟢 [AuthStore] logout() iniciado')
+    const auditStore = useAuditStore()
+    
+    // ✅ Log de logout antes de limpiar datos
+    if (user.value) {
+      console.log('🟢 [AuthStore] Usuario actual:', user.value.username)
+      console.log('🟢 [AuthStore] Registrando evento de auditoría...')
+      
+      // Calcular duración de sesión (manejar lastLogin como Date o string)
+      let sessionDuration = 0
+      if (user.value.lastLogin) {
+        const lastLoginTime = user.value.lastLogin instanceof Date 
+          ? user.value.lastLogin.getTime() 
+          : new Date(user.value.lastLogin).getTime()
+        sessionDuration = Date.now() - lastLoginTime
+      }
+      
+      await auditStore.logAuthEvent(
+        user.value.id,
+        user.value.username,
+        'logout',
+        'manual',
+        { 
+          role: user.value.role,
+          sessionDuration
+        }
+      )
+      console.log('🟢 [AuthStore] Evento de auditoría registrado')
+    }
+    
+    console.log('🟢 [AuthStore] Limpiando estado del usuario...')
     user.value = null
     isAuthenticated.value = false
     loginAttempts.value = 0
-    // Limpiar sesión de localStorage
+    console.log('🟢 [AuthStore] Limpiando sesión de localStorage...')
     clearSession()
+    console.log('🟢 [AuthStore] logout() completado')
     // TODO: Limpiar datos cifrados
   }
 

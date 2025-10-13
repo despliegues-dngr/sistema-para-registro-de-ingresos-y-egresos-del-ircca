@@ -33,6 +33,7 @@ La documentación de este proyecto está centralizada en la carpeta `/docs` y se
   - **Contiene:** Los documentos para la **EJECUCIÓN Y SEGUIMIENTO** del día a día.
   - **Cuándo consultarla:** Para saber en qué tarea trabajar y ver el progreso general del proyecto en el `00-tasks-tracker.md`.
   - **📊 Estado actual:** 79% completado (19/24 tareas) - Actualizado al 30-Sep-2025
+  - **🔒 Seguridad:** Sistema de auditoría implementado (09-Oct-2025) - Cumple AGESIC SO.7
 
 ## 4. El Flujo de Trabajo (Cómo Aportar al Proyecto)
 

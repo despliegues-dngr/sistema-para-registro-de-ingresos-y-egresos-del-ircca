@@ -89,21 +89,30 @@ interface User {
 ```
 
 #### ✅ `audit.ts` - Store de Auditoría
-**Estado:** COMPLETADO
+**Estado:** COMPLETADO + INTEGRADO + UI IMPLEMENTADA
 
 **Funcionalidades:**
 - Registro inmutable de eventos críticos
 - 5 tipos de eventos: `auth`, `user_management`, `data_operation`, `backup`, `system_error`
 - Filtrado y búsqueda de logs
 - Trazabilidad completa con userId, timestamp, sessionId
-- Logs cifrados en IndexedDB
+- Logs cifrados en IndexedDB (store `audit_logs`)
 
 **Eventos Registrados:**
-- Login/logout exitoso y fallido
-- Creación/modificación/eliminación de registros
-- Operaciones de backup/restore
-- Cambios de configuración
-- Errores críticos del sistema
+- ✅ Login exitoso/fallido/bloqueado (INTEGRADO en auth.ts)
+- ✅ Logout manual (INTEGRADO en auth.ts)
+- ✅ Creación de registros de ingreso (INTEGRADO en registro.ts)
+- ✅ Modificación de registros - salida (INTEGRADO en registro.ts)
+- ✅ Errores en operaciones críticas (INTEGRADO en auth.ts y registro.ts)
+- ⏳ Creación/modificación de usuarios (pendiente)
+- ⏳ Operaciones de backup/restore (pendiente)
+
+**Integración Actual (09-Oct-2025):**
+- ✅ Store IndexedDB `audit_logs` creado (v4)
+- ✅ Logs de autenticación funcionando
+- ✅ Logs de operaciones de datos funcionando
+- ✅ **Interface de visualización completa (Dashboard Admin)**
+- ✅ **Sistema modular de auditoría implementado**
 
 #### ✅ `app.ts` - Store de Aplicación
 **Estado:** COMPLETADO
@@ -239,6 +248,25 @@ Bloqueo de navegación y teclas del sistema para modo kiosco
 #### ✅ `useStorageMonitor.ts`
 Monitoreo de cuota de almacenamiento IndexedDB
 
+#### ✅ `useAuditFilters.ts` (09-Oct-2025)
+**Composable centralizado para sistema de auditoría**
+
+**Responsabilidad:** Lógica reutilizable de filtrado, búsqueda y formateo de eventos de auditoría
+
+**Funcionalidades:**
+- Filtros avanzados (fechas, tipos, usuarios, acciones)
+- Búsqueda de texto libre en todos los campos
+- Filtros de tiempo rápido (hoy/ayer/semana)
+- Helpers de formateo (timestamps, fechas, tiempo)
+- Helpers de UI (colores, íconos, descripciones)
+- Conversión a formato AuditFilter para store
+
+**Ventajas:**
+- ✅ 100% reutilizable entre componentes
+- ✅ Lógica centralizada (300 líneas)
+- ✅ Testing simplificado
+- ✅ Consistencia garantizada
+
 ---
 
 ## 🎨 COMPONENTES IMPLEMENTADOS (35 total)
@@ -277,6 +305,11 @@ Dashboard del administrador con:
 - Búsqueda y filtrado
 - Botón "Gestionar Usuarios"
 - Panel de control de operadores
+- **✅ Sistema de Auditoría Modular (09-Oct-2025)**
+  - Card de actividad del día con métricas
+  - Tabla completa con filtros avanzados
+  - Modal de detalles de eventos
+  - Exportación PDF/CSV (preparado)
 
 ##### `SupervisorContent.vue`
 Dashboard del supervisor con:
@@ -386,6 +419,49 @@ Card del formulario de login
 
 #### ✅ `TestCifradoPanel.vue`
 Panel de pruebas de cifrado para desarrollo
+
+### Admin/Audit (3 componentes) - 09-Oct-2025
+
+#### ✅ `AuditActivityCard.vue`
+**Card de resumen de actividad del día**
+
+**Ubicación:** Dashboard Admin (primera sección de auditoría)
+
+**Características:**
+- 4 métricas principales (usuarios activos, registros creados, salidas, eventos importantes)
+- Filtros simples (Hoy/Ayer/Semana + Usuario)
+- Lista de últimos 20 eventos con íconos visuales
+- Actualización automática desde store
+
+**Líneas de código:** ~200
+
+#### ✅ `AuditTableSection.vue`
+**Tabla completa con filtros avanzados**
+
+**Ubicación:** Dashboard Admin (segunda sección de auditoría)
+
+**Características:**
+- Tabla paginada (25 eventos/página)
+- Filtros avanzados colapsables (7 criterios)
+- Búsqueda de texto libre
+- Botones exportación PDF/CSV
+- Emite evento para ver detalles
+
+**Líneas de código:** ~250
+
+#### ✅ `EventDetailDialog.vue`
+**Modal de detalles completos de evento**
+
+**Ubicación:** Modal activado desde AuditTableSection
+
+**Características:**
+- Información completa del evento
+- JSON raw expandible
+- Copiar al portapapeles (ID, Session ID)
+- Exportar evento individual (JSON)
+- Formateo legible de timestamps
+
+**Líneas de código:** ~250
 
 ---
 
@@ -589,12 +665,12 @@ Composable `useKioskSecurity.ts` con:
 ## 📊 MÉTRICAS DEL PROYECTO
 
 ### Código Fuente
-- **Componentes Vue:** 35 archivos
+- **Componentes Vue:** 38 archivos (+3 auditoría)
 - **Servicios TypeScript:** 4 archivos (46,046 bytes)
 - **Stores Pinia:** 4 archivos (35,365 bytes)
-- **Composables:** 8 archivos (40,408 bytes)
+- **Composables:** 9 archivos (+1 useAuditFilters ~300 líneas)
 - **Tests:** 218 tests en 10+ archivos
-- **Líneas de código:** ~15,000 líneas (estimado)
+- **Líneas de código:** ~16,000 líneas (estimado)
 
 ### Funcionalidades
 - **Vistas principales:** 2 (Login, Dashboard)
@@ -621,5 +697,5 @@ Composable `useKioskSecurity.ts` con:
 ---
 
 **Documento preparado por:** Sistema de Auditoría Automática  
-**Última actualización:** 30-Sep-2025 00:38  
-**Próxima revisión:** 01-Oct-2025
+**Última actualización:** 09-Oct-2025 17:30 (Sistema de Auditoría Modular implementado)  
+**Próxima revisión:** 10-Oct-2025

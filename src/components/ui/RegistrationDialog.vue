@@ -1,5 +1,5 @@
 <template>
-  <v-dialog v-model="modelValue" max-width="600" persistent transition="dialog-bottom-transition">
+  <v-dialog v-model="modelValue" max-width="600" transition="dialog-bottom-transition">
     <template #activator="{ props }">
       <slot name="activator" v-bind="props" />
     </template>

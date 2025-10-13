@@ -64,8 +64,8 @@ export const useDatabase = () => {
 
   const config: DatabaseConfig = {
     dbName: 'IRCCA_Sistema_DB',
-    version: 3, // ✅ INCREMENTADO: Refactorización de seguridad personasConocidas
-    stores: ['registros', 'usuarios', 'configuracion', 'backups', 'personasConocidas'],
+    version: 4, // ✅ INCREMENTADO: Agregado store de auditoría (audit_logs)
+    stores: ['registros', 'usuarios', 'configuracion', 'backups', 'personasConocidas', 'audit_logs'],
   }
 
   const initDatabase = async (): Promise<{ success: boolean; error?: string }> => {
@@ -135,6 +135,16 @@ export const useDatabase = () => {
             personasStore.createIndex('ultimaVisita', 'ultimaVisita', { unique: false })
             personasStore.createIndex('totalVisitas', 'totalVisitas', { unique: false })
             personasStore.createIndex('frecuencia', 'frecuencia', { unique: false })
+          }
+
+          // ✅ AUDITORÍA: Store de logs de auditoría (Version 4)
+          // Registra eventos de seguridad para cumplimiento AGESIC SO.7
+          if (!database.objectStoreNames.contains('audit_logs')) {
+            const auditStore = database.createObjectStore('audit_logs', { keyPath: 'id' })
+            auditStore.createIndex('userId', 'userId', { unique: false })
+            auditStore.createIndex('eventType', 'eventType', { unique: false })
+            auditStore.createIndex('timestamp', 'timestamp', { unique: false })
+            auditStore.createIndex('action', 'action', { unique: false })
           }
         }
       })

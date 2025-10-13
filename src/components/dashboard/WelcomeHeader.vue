@@ -58,7 +58,7 @@
                 <v-divider class="my-2 mx-3"></v-divider>
                 
                 <v-list-item 
-                  @click="$emit('logout')" 
+                  @click="handleLogoutClick" 
                   prepend-icon="mdi-logout"
                   class="menu-item text-error"
                 >
@@ -125,12 +125,20 @@ const showViewProfile = ref(false)
 const showChangePassword = ref(false)
 
 // Definir eventos que emite este componente
-defineEmits<{
+const emit = defineEmits<{
   'view-profile': []
   'edit-profile': []
   'change-password': []
   'logout': []
 }>()
+
+// Handler para logout con logs
+const handleLogoutClick = () => {
+  console.log('🔴 [WelcomeHeader] Botón Cerrar Sesión clickeado')
+  console.log('🔴 [WelcomeHeader] Emitiendo evento logout...')
+  emit('logout')
+  console.log('🔴 [WelcomeHeader] Evento logout emitido')
+}
 
 // Estado reactivo para fecha y hora
 const currentDate = ref('')

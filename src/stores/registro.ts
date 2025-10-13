@@ -7,6 +7,8 @@ import {
   useRegistrosCompatibility,
   useRegistrosHelpers
 } from '@/composables/useRegistros'
+import { useAuditStore } from './audit'
+import { useAuthStore } from './auth'
 
 // Tipos según especificación del modal de ingreso
 export interface DatosPersonales {
@@ -149,6 +151,8 @@ export const useRegistroStore = defineStore('registro', () => {
    */
   async function registrarIngreso(datos: RegistroIngresoData, operadorId: string = 'op-001') {
     loading.value = true
+    const auditStore = useAuditStore()
+    const authStore = useAuthStore()
     
     try {
       const result = await operations.registrarIngreso(datos, operadorId)
@@ -213,10 +217,44 @@ export const useRegistroStore = defineStore('registro', () => {
           // Error no crítico en autocomplete
         }
         
+        // ✅ AUDITORÍA: Log de registro creado (sin datos personales)
+        if (authStore.user) {
+          await auditStore.logDataOperation(
+            authStore.user.id,
+            authStore.user.username,
+            'registro.created',
+            crypto.randomUUID(),
+            {
+              registroId: result.registro.id,
+              tipo: 'ingreso',
+              tieneVehiculo: !!datos.datosVehiculo,
+              tipoVehiculo: datos.datosVehiculo?.tipo,
+              cantidadAcompanantes: datos.acompanantes?.length || 0,
+              timestamp: result.registro.timestamp
+              // ℹ️ Destino NO se registra (dato sensible). Usar registroId para consultar detalles.
+            }
+          )
+        }
+        
         return result.registro
       } else {
         throw new Error(result.error || 'Error desconocido')
       }
+    } catch (error) {
+      // ✅ AUDITORÍA: Log de error
+      if (authStore.user) {
+        await auditStore.logSystemError(
+          authStore.user.id,
+          authStore.user.username,
+          'Error al crear registro de ingreso',
+          crypto.randomUUID(),
+          {
+            error: error instanceof Error ? error.message : 'Error desconocido',
+            operation: 'registrarIngreso'
+          }
+        )
+      }
+      throw error
     } finally {
       loading.value = false
     }
@@ -232,6 +270,9 @@ export const useRegistroStore = defineStore('registro', () => {
     observaciones?: string
   }) {
     loading.value = true
+    const auditStore = useAuditStore()
+    const authStore = useAuthStore()
+    
     try {
       const result = await operations.registrarSalida(datos)
       
@@ -245,10 +286,44 @@ export const useRegistroStore = defineStore('registro', () => {
           personasDentro.value.splice(index, 1)
         }
         
+        // ✅ AUDITORÍA: Log de registro modificado (salida)
+        if (authStore.user) {
+          await auditStore.logDataOperation(
+            authStore.user.id,
+            authStore.user.username,
+            'registro.modified',
+            crypto.randomUUID(),
+            {
+              registroId: result.registro.id,
+              tipo: 'salida',
+              tiempoEstadia: datos.tiempoEstadia,
+              tiempoEstadiaHoras: Math.floor(datos.tiempoEstadia / (1000 * 60 * 60)),
+              observaciones: datos.observaciones || 'Sin observaciones',
+              timestamp: result.registro.timestamp
+            }
+          )
+        }
+        
         return result.registro
       } else {
         throw new Error(result.error || 'Error desconocido')
       }
+    } catch (error) {
+      // ✅ AUDITORÍA: Log de error
+      if (authStore.user) {
+        await auditStore.logSystemError(
+          authStore.user.id,
+          authStore.user.username,
+          'Error al registrar salida',
+          crypto.randomUUID(),
+          {
+            error: error instanceof Error ? error.message : 'Error desconocido',
+            operation: 'registrarSalida',
+            cedulaBuscada: datos.cedulaBuscada
+          }
+        )
+      }
+      throw error
     } finally {
       loading.value = false
     }

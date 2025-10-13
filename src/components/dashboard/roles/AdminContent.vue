@@ -178,6 +178,15 @@
       </v-col>
     </v-row>
 
+    <!-- Sección de Auditoría -->
+    <AuditActivityCard class="mb-8" />
+    
+    <AuditTableSection
+      @ver-detalles="handleVerDetalles"
+      @exportar-pdf="handleExportarPDF"
+      @exportar-csv="handleExportarCSV"
+    />
+
     <!-- Modal de confirmación para eliminación de usuario -->
     <v-dialog
       v-model="showDeleteDialog"
@@ -247,12 +256,25 @@
         </v-card-actions>
       </v-card>
     </v-dialog>
+
+    <!-- Modal de detalles de evento -->
+    <EventDetailDialog
+      v-model="showEventDetailDialog"
+      :evento="eventoSeleccionado"
+      @close="showEventDetailDialog = false"
+    />
   </div>
 </template>
 
 <script setup lang="ts">
 import { ref, computed, onMounted } from 'vue'
 import { useDatabase } from '@/composables/useDatabase'
+import type { AuditEvent } from '@/stores/audit'
+
+// Componentes de auditoría
+import AuditActivityCard from '../admin/audit/AuditActivityCard.vue'
+import AuditTableSection from '../admin/audit/AuditTableSection.vue'
+import EventDetailDialog from '../admin/audit/EventDetailDialog.vue'
 
 // Interface para usuarios de la BD
 interface User {
@@ -370,6 +392,10 @@ const showDeleteDialog = ref(false)
 const userToDelete = ref<UserTableRow | null>(null)
 const isDeleting = ref(false)
 
+// Estado para modal de detalles de auditoría
+const showEventDetailDialog = ref(false)
+const eventoSeleccionado = ref<AuditEvent | null>(null)
+
 // Funciones para acciones de la tabla
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
 const handleEditUser = (_item: UserTableRow) => {
@@ -431,6 +457,22 @@ const confirmDeleteUser = async () => {
 const cancelDeleteUser = () => {
   showDeleteDialog.value = false
   userToDelete.value = null
+}
+
+// Handlers para auditoría
+const handleVerDetalles = (evento: AuditEvent) => {
+  eventoSeleccionado.value = evento
+  showEventDetailDialog.value = true
+}
+
+const handleExportarPDF = () => {
+  // TODO: Implementar exportación PDF
+  alert('Exportación PDF en desarrollo')
+}
+
+const handleExportarCSV = () => {
+  // TODO: Implementar exportación CSV
+  alert('Exportación CSV en desarrollo')
 }
 
 // Método de manejo de eventos

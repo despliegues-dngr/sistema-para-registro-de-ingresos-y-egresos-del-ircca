@@ -2,7 +2,6 @@
   <v-dialog
     v-model="modelValue"
     max-width="600"
-    persistent
     transition="dialog-bottom-transition"
   >
     <v-card class="pdf-generator-dialog-card">
