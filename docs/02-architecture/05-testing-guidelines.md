@@ -1,9 +1,12 @@
 # 🧪 GUÍA DE TESTING - PWA IRCCA
 
-**Versión:** 2.1
+**Versión:** 2.2 (Optimizado)
 **Fecha:** 20-Sep-2025
-**Última actualización:** 23-Oct-2025 - TypeScript errors resolution
-**Propósito:** Este documento establece la estrategia, herramientas y convenciones para la realización de pruebas de software en el proyecto PWA IRCCA, con el fin de asegurar la calidad, fiabilidad y mantenibilidad de la aplicación.
+**Última actualización:** 17-Oct-2025 - Optimización documental
+
+> 📘 **Stack Tecnológico:** Ver [`03-technical-overview.md`](./03-technical-overview.md) para versiones y configuración completa.
+
+Este documento establece la estrategia, herramientas y convenciones de testing para asegurar calidad, fiabilidad y mantenibilidad de la aplicación.
 
 ---
 

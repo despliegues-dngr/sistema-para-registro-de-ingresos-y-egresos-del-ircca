@@ -13,14 +13,9 @@ Progressive Web App (PWA) para automatizar el registro, control y consulta de in
 
 ## 🛠️ Stack Tecnológico
 
-- **Frontend:** Vue 3 + TypeScript + Composition API
-- **UI Framework:** Vuetify 3 + Material Design Icons
-- **Estado:** Pinia (Vuex 5)
-- **Enrutamiento:** Vue Router 4
-- **PWA:** Workbox + Vite PWA Plugin
-- **Base de Datos:** IndexedDB
-- **Testing:** Vitest + Playwright
-- **Herramientas:** ESLint + Prettier + TypeScript
+> 📘 **Stack Completo:** Ver [`docs/02-architecture/03-technical-overview.md`](./docs/02-architecture/03-technical-overview.md) para detalles técnicos completos.
+
+**Principales tecnologías:** Vue 3 + TypeScript, Vuetify 3, Pinia, IndexedDB, Vitest + Playwright
 
 ## 🏗️ Estructura del Proyecto
 
@@ -90,19 +85,9 @@ pnpm deps:update      # Actualizar dependencias
 
 ## 🔐 Seguridad
 
-### Cifrado de Datos
+> 🔒 **Documentación Completa de Seguridad:** Ver [`docs/02-architecture/05-security-guide.md`](./docs/02-architecture/05-security-guide.md) para arquitectura completa de seguridad, cifrado, auditoría y cumplimiento normativo.
 
-- **Algoritmo:** AES-256-GCM
-- **Derivación de Clave:** PBKDF2 (100,000 iteraciones)
-- **Salt:** 16 bytes aleatorios
-- **IV:** 12 bytes aleatorios
-
-### Cumplimiento Legal
-
-- **Ley N° 18.331:** Protección de Datos Personales (Uruguay)
-- **Retención:** 365 días configurables
-- **Auditoría:** Log completo de eventos
-- **Backup:** Estrategia 3-2-1 con cifrado
+**Características principales:** Cifrado AES-256-GCM, cumplimiento Ley N° 18.331 (Uruguay), auditoría completa, backups cifrados.
 
 ## 👥 Usuarios del Sistema
 

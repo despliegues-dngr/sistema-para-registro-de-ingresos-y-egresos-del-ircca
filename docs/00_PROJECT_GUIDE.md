@@ -14,26 +14,48 @@ Las instrucciones técnicas para instalar las dependencias, configurar el entorn
 
 La documentación de este proyecto está centralizada en la carpeta `/docs` y se organiza de la siguiente manera para facilitar su consulta:
 
-- ### 📁 `01-management/`
-  - **Contiene:** Los documentos formales que definen el **QUÉ**, el **PORQUÉ** y el **CUÁNDO** del proyecto (Acta de Constitución, Cronograma, EDT, etc.).
-  - **Cuándo consultarla:** Para entender los objetivos, el alcance, el cronograma y los stakeholders involucrados.
+### 📁 `01-management/` (3 archivos consolidados)
 
-- ### 📁 `02-architecture/`
-  - **Contiene:** Las guías conceptuales sobre **CÓMO** está construido el sistema a nivel técnico (arquitectura PWA, seguridad, vista técnica general, base de datos).
-  - **Cuándo consultarla:** Para entender la estructura técnica, las tecnologías, la base de datos IndexedDB y las decisiones de alto nivel sin necesidad de leer el código fuente.
-  - **📋 Documentos clave:**
-    - `06-database-architecture.md` - Estructura completa de IndexedDB, stores, índices y patrones de consulta
-    - `07-implemented-features.md` - ✨ **NUEVO** - Catálogo completo de todas las funcionalidades implementadas (actualizado al 30-Sep)
+- **Contiene:** Los documentos formales que definen el **QUÉ**, el **PORQUÉ** y el **CUÁNDO** del proyecto.
+- **Cuándo consultarla:** Para entender objetivos, alcance, cronograma y stakeholders.
+- **📋 Documentos clave:**
+  - `01-project-overview.md` - Resumen ejecutivo (Charter + Stakeholders + Formulation)
+  - `02-project-execution.md` - Cronograma y entregables (Schedule + EDT + Communications)
+  - `urcdp-registration-guide.md` - Guía legal para registro ante URCDP
 
-- ### 📁 `03-design/`
-  - **Contiene:** Todo lo relacionado con la **APARIENCIA** y la **EXPERIENCIA DE USUARIO** (UI/UX).
-  - **Cuándo consultarla:** Para saber qué paleta de colores usar, cómo deben ser los componentes (`design-system.md`), cómo son las pantallas (`screen-requirements.md`) y cómo navega el usuario (`user-flow.md`).
+### 📁 `02-architecture/` (12 archivos optimizados)
 
-- ### 📁 `04-tasks/`
-  - **Contiene:** Los documentos para la **EJECUCIÓN Y SEGUIMIENTO** del día a día.
-  - **Cuándo consultarla:** Para saber en qué tarea trabajar y ver el progreso general del proyecto en el `00-tasks-tracker.md`.
-  - **📊 Estado actual:** 79% completado (19/24 tareas) - Actualizado al 30-Sep-2025
-  - **🔒 Seguridad:** Sistema de auditoría implementado (09-Oct-2025) - Cumple AGESIC SO.7
+- **Contiene:** Las guías conceptuales sobre **CÓMO** está construido el sistema a nivel técnico (arquitectura PWA, seguridad, base de datos, testing).
+- **Cuándo consultarla:** Para entender la estructura técnica, las tecnologías, la base de datos IndexedDB y las decisiones de alto nivel sin necesidad de leer el código fuente.
+- **📋 Documentos clave:**
+  - `01-pwa-architecture.md` - Arquitectura general PWA y decisiones de diseño
+  - `03-technical-overview.md` - Stack tecnológico (fuente única de verdad)
+  - `05-security-part1-architecture.md` + `part2-implementation.md` - Guía de seguridad completa
+  - `06-database-part1-schema.md` + `part2-operations.md` - Base de datos IndexedDB completa
+  - `07-features-index.md` - ✨ **Índice** de funcionalidades implementadas (referencias cruzadas)
+  - `08-autocomplete-part1-design.md` + `part2-implementation.md` - Arquitectura de reutilización
+
+### 📁 `03-design/` (2 archivos consolidados)
+
+- **Contiene:** Todo lo relacionado con la **APARIENCIA** y la **EXPERIENCIA DE USUARIO** (UI/UX).
+- **Cuándo consultarla:** Para saber qué paleta de colores usar, cómo deben ser los componentes, especificaciones de pantallas y flujos de usuario.
+- **📋 Documentos clave:**
+  - `01-ui-design-system.md` - Sistema de diseño completo (colores, tipografía, componentes, PWA icons)
+  - `02-ux-flows-definitions.md` - Flujos de usuario y definiciones operativas
+
+### 📁 `03-security/` (4 archivos)
+
+- **Contiene:** Documentación de cumplimiento legal y normativo (AGESIC, Ley 18.331, ARCO).
+- **Cuándo consultarla:** Para aspectos legales, compliance, notificaciones a autoridades y auditorías.
+
+### 📁 `04-tasks/`
+
+- **Contiene:** Los documentos para la **EJECUCIÓN Y SEGUIMIENTO** del día a día.
+- **Cuándo consultarla:** Para saber en qué tarea trabajar y ver el progreso general del proyecto.
+- **📊 Estado proyecto:**
+  - Documentación: ✅ Optimizada al 100% (17-Oct-2025)
+  - Tareas: 79% completado (19/24) - Actualizado 30-Sep-2025
+  - 🔒 Seguridad: Sistema de auditoría implementado (09-Oct-2025) - Cumple AGESIC SO.7
 
 ## 4. El Flujo de Trabajo (Cómo Aportar al Proyecto)
 
