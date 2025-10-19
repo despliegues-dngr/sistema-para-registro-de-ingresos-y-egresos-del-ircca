@@ -236,22 +236,15 @@ const handleChangePassword = () => {
 
 // Handler para el logout
 const handleLogout = async () => {
-  console.log('🟡 [DashboardView] handleLogout ejecutado')
   try {
-    console.log('🟡 [DashboardView] Iniciando proceso de logout...')
     isLoggingOut.value = true
-    console.log('🟡 [DashboardView] Limpiando timeout de sesión...')
     cleanupTimeout()
-    console.log('🟡 [DashboardView] Llamando a authStore.logout()...')
     await authStore.logout()
-    console.log('🟡 [DashboardView] Logout completado, redirigiendo a /login...')
     await router.push('/login')
-    console.log('🟡 [DashboardView] Redirección completada')
   } catch (error) {
-    console.error('🔴 [DashboardView] Error en logout:', error)
+    console.error('Error en logout:', error)
   } finally {
     isLoggingOut.value = false
-    console.log('🟡 [DashboardView] Proceso de logout finalizado')
   }
 }
 

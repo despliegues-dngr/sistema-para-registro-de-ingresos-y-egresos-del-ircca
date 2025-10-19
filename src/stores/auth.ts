@@ -202,14 +202,10 @@ export const useAuthStore = defineStore('auth', () => {
   }
 
   async function logout() {
-    console.log('🟢 [AuthStore] logout() iniciado')
     const auditStore = useAuditStore()
     
-    // ✅ Log de logout antes de limpiar datos
+    // Registrar evento de auditoría antes de limpiar datos
     if (user.value) {
-      console.log('🟢 [AuthStore] Usuario actual:', user.value.username)
-      console.log('🟢 [AuthStore] Registrando evento de auditoría...')
-      
       // Calcular duración de sesión (manejar lastLogin como Date o string)
       let sessionDuration = 0
       if (user.value.lastLogin) {
@@ -229,16 +225,13 @@ export const useAuthStore = defineStore('auth', () => {
           sessionDuration
         }
       )
-      console.log('🟢 [AuthStore] Evento de auditoría registrado')
     }
     
-    console.log('🟢 [AuthStore] Limpiando estado del usuario...')
+    // Limpiar estado del usuario
     user.value = null
     isAuthenticated.value = false
     loginAttempts.value = 0
-    console.log('🟢 [AuthStore] Limpiando sesión de localStorage...')
     clearSession()
-    console.log('🟢 [AuthStore] logout() completado')
     // TODO: Limpiar datos cifrados
   }
 

@@ -59,6 +59,8 @@ export interface RegistroSalida {
   cedulaBuscada: string // Cédula de la persona que sale
   tiempoEstadia: number // Tiempo en minutos desde el ingreso
   observaciones?: string // Campo opcional
+  datosVehiculoSalida?: DatosVehiculo // Vehículo vinculado al momento de la salida (puede ser diferente al de ingreso)
+  acompanantesSalida?: string[] // Cédulas de personas que salen junto con el titular
   operadorId: string
 }
 
@@ -268,6 +270,8 @@ export const useRegistroStore = defineStore('registro', () => {
     tiempoEstadia: number
     operadorId: string
     observaciones?: string
+    datosVehiculoSalida?: DatosVehiculo
+    acompanantesSalida?: string[]
   }) {
     loading.value = true
     const auditStore = useAuditStore()

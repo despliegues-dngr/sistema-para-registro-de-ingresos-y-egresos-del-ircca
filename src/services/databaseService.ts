@@ -42,6 +42,12 @@ interface RegistroSalidaCifrado extends RegistroBaseCifrado {
   cedulaBuscada: string
   tiempoEstadia: number
   observaciones?: string
+  datosVehiculoSalida?: {
+    encrypted: string
+    iv: string
+    salt: string
+  }
+  acompanantesSalida?: string[]
   persona?: {
     encrypted: string
     iv: string
@@ -202,10 +208,18 @@ export class DatabaseService {
           registroSalida.cedulaBuscada, 
           this.sessionKey!
         )
+        
+        // ✅ Cifrar datos de vehículo de salida si existen
+        if (registroSalida.datosVehiculoSalida) {
+          encryptedVehiculo = await encryptionService.encrypt(
+            JSON.stringify(registroSalida.datosVehiculoSalida), 
+            this.sessionKey!
+          )
+        }
       }
 
       // ✅ CREAR REGISTRO LIMPIO - SOLO DATOS CIFRADOS (Compliance Ley 18.331)
-      const encryptedRegistro = {
+      const encryptedRegistroBase: Record<string, unknown> = {
         id: registro.id,
         tipo: registro.tipo,
         timestamp: registro.timestamp,
@@ -217,8 +231,21 @@ export class DatabaseService {
         encrypted: true,
         // ❌ NO incluir datosPersonales, datosVehiculo, datosVisita, acompanantes, observaciones sin cifrar
       }
+      
+      // ✅ Para registros de salida, incluir lista de acompañantes (cédulas)
+      if (registro.tipo === 'salida') {
+        const registroSalida = registro as RegistroSalida
+        if (registroSalida.acompanantesSalida && registroSalida.acompanantesSalida.length > 0) {
+          encryptedRegistroBase.acompanantesSalida = registroSalida.acompanantesSalida
+        }
+        if (registroSalida.observaciones) {
+          encryptedRegistroBase.observaciones = registroSalida.observaciones
+        }
+        encryptedRegistroBase.cedulaBuscada = registroSalida.cedulaBuscada
+        encryptedRegistroBase.tiempoEstadia = registroSalida.tiempoEstadia
+      }
 
-      return await this.db.addRecord('registros', encryptedRegistro)
+      return await this.db.addRecord('registros', encryptedRegistroBase)
     } catch (error) {
       return { success: false, error: `Error guardando registro: ${error}` }
     }
@@ -352,6 +379,18 @@ export class DatabaseService {
       )
     }
 
+    // ✅ Descifrar datos de vehículo de salida si existen
+    let datosVehiculoSalida = undefined
+    if (registroCifrado.datosVehiculoSalida) {
+      const vehiculoJson = await encryptionService.decrypt(
+        registroCifrado.datosVehiculoSalida.encrypted,
+        this.sessionKey!,
+        registroCifrado.datosVehiculoSalida.salt,
+        registroCifrado.datosVehiculoSalida.iv
+      )
+      datosVehiculoSalida = JSON.parse(vehiculoJson)
+    }
+
     const registroDescifrado: RegistroSalida = {
       id: registroCifrado.id,
       tipo: 'salida',
@@ -359,7 +398,9 @@ export class DatabaseService {
       cedulaBuscada,
       tiempoEstadia: registroCifrado.tiempoEstadia,
       operadorId: registroCifrado.operadorId,
-      observaciones: registroCifrado.observaciones
+      observaciones: registroCifrado.observaciones,
+      datosVehiculoSalida,
+      acompanantesSalida: registroCifrado.acompanantesSalida
     }
 
     return registroDescifrado

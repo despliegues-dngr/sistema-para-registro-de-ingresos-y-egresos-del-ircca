@@ -6,7 +6,8 @@ import type {
   RegistroIngresoData, 
   RegistroIngreso, 
   RegistroSalida, 
-  RegistroEntry
+  RegistroEntry,
+  DatosVehiculo
 } from '@/stores/registro'
 
 /**
@@ -108,6 +109,8 @@ export class RegistroService {
     tiempoEstadia: number
     operadorId: string
     observaciones?: string
+    datosVehiculoSalida?: DatosVehiculo
+    acompanantesSalida?: string[]
   }): Promise<RegistroSalida> {
     const nuevoRegistro: RegistroSalida = {
       id: crypto.randomUUID(),

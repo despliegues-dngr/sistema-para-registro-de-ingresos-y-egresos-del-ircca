@@ -209,7 +209,6 @@ const updateAcompanante = (index: number, field: string, value: string) => {
   // Validar que el field sea una key válida de DatosAcompanante
   const validFields = ['cedula', 'nombre', 'apellido', 'destino'] as const
   if (!validFields.includes(field as typeof validFields[number])) {
-    console.warn(`Invalid field: ${field}`)
     return
   }
   

@@ -71,8 +71,14 @@
             Usuario
           </div>
           <div class="detail-value">
-            <div class="font-weight-medium">{{ evento.username }}</div>
-            <div class="text-caption text-grey">ID: {{ evento.userId }}</div>
+            <div class="font-weight-medium">
+              {{ maskCedula(evento.username) }}
+              <v-chip size="x-small" color="info" variant="tonal" class="ml-2">
+                <v-icon size="12" class="mr-1">mdi-shield-lock</v-icon>
+                Protegido
+              </v-chip>
+            </div>
+            <div class="text-caption text-grey">Cédula de identidad enmascarada (Ley 18.331)</div>
             <v-chip
               v-if="evento.details.role"
               size="small"
@@ -141,11 +147,22 @@
                 class="px-4"
               >
                 <template #prepend>
-                  <v-icon size="16" class="mr-2">mdi-circle-small</v-icon>
+                  <v-icon size="16" class="mr-2">
+                    {{ isSensitiveDetail(String(key)) ? 'mdi-shield-lock' : 'mdi-circle-small' }}
+                  </v-icon>
                 </template>
                 <v-list-item-title class="text-caption">
-                  <span class="font-weight-medium">{{ formatKey(key) }}:</span>
-                  <span class="ml-2">{{ formatValue(value) }}</span>
+                  <span class="font-weight-medium">{{ formatKey(key) }}</span>
+                  <span class="ml-1">{{ formatValueMasked(key, value) }}</span>
+                  <v-chip
+                    v-if="isSensitiveDetail(String(key))"
+                    size="x-small"
+                    color="warning"
+                    variant="tonal"
+                    class="ml-2"
+                  >
+                    Enmascarado
+                  </v-chip>
                 </v-list-item-title>
               </v-list-item>
               
@@ -194,24 +211,48 @@
           </div>
         </div>
 
+        <!-- ⚠️ Disclaimer Legal -->
+        <v-alert
+          type="info"
+          variant="tonal"
+          density="compact"
+          class="mt-4 mb-2"
+        >
+          <template #prepend>
+            <v-icon>mdi-shield-lock</v-icon>
+          </template>
+          <div class="text-caption">
+            <strong>Protección de Datos Personales:</strong> Los datos sensibles se muestran enmascarados según Ley 18.331.
+            El JSON completo contiene información sin censura y debe usarse responsablemente.
+          </div>
+        </v-alert>
+
         <!-- Datos técnicos (JSON raw) -->
         <v-expansion-panels class="mt-4">
           <v-expansion-panel>
             <v-expansion-panel-title>
               <v-icon class="mr-2">mdi-code-json</v-icon>
-              Ver JSON Completo
+              Ver JSON Completo (Datos Sin Enmascarar)
+              <v-chip size="x-small" color="warning" variant="flat" class="ml-2">
+                <v-icon size="12" class="mr-1">mdi-alert</v-icon>
+                Sensible
+              </v-chip>
             </v-expansion-panel-title>
             <v-expansion-panel-text>
+              <v-alert type="warning" density="compact" class="mb-3">
+                <strong>⚠️ Advertencia:</strong> Este JSON contiene datos personales sin enmascarar.
+                El acceso y exportación quedan registrados en auditoría.
+              </v-alert>
               <pre class="json-viewer">{{ JSON.stringify(evento, null, 2) }}</pre>
               <v-btn
-                color="primary"
+                color="warning"
                 size="small"
                 variant="outlined"
                 class="mt-2"
                 @click="copiarAlPortapapeles(JSON.stringify(evento, null, 2))"
               >
                 <v-icon class="mr-2">mdi-content-copy</v-icon>
-                Copiar JSON
+                Copiar JSON (Registrado)
               </v-btn>
             </v-expansion-panel-text>
           </v-expansion-panel>
@@ -244,6 +285,7 @@
 <script setup lang="ts">
 import { computed } from 'vue'
 import { useAuditFilters } from '@/composables/useAuditFilters'
+import { useAuditExport } from '@/composables/useAuditExport'
 import type { AuditEvent } from '@/stores/audit'
 
 // Props
@@ -269,8 +311,13 @@ const {
   getEventoIcon,
   getEventoTexto,
   getRoleName,
-  getTipoEventoTexto
+  getTipoEventoTexto,
+  maskCedula,
+  maskNombre,
+  isSensitiveDetail
 } = useAuditFilters()
+
+const { exportarEventoJSON } = useAuditExport()
 
 // Detalles filtrados (excluir campos que ya se muestran)
 const detallesFiltrados = computed(() => {
@@ -322,7 +369,7 @@ function formatKey(key: string | number): string {
   const keyStr = String(key)
   return keyStr
     .replace(/([A-Z])/g, ' $1')
-    .replace(/^./, str => str.toUpperCase())
+    .replace(/^./, str => str.toUpperCase()) + ': '
 }
 
 function formatValue(value: unknown): string {
@@ -330,6 +377,38 @@ function formatValue(value: unknown): string {
   if (typeof value === 'object') return JSON.stringify(value)
   if (typeof value === 'boolean') return value ? 'Sí' : 'No'
   return String(value)
+}
+
+/**
+ * Formatea valor enmascarando datos sensibles si es necesario
+ */
+function formatValueMasked(key: string | number, value: unknown): string {
+  if (value === null || value === undefined) return 'N/A'
+  
+  const keyStr = String(key)
+  
+  // Enmascarar según tipo de dato sensible
+  if (isSensitiveDetail(keyStr)) {
+    const valueStr = String(value)
+    
+    // Si es un nombre
+    if (keyStr.toLowerCase().includes('nombre')) {
+      return maskNombre(valueStr)
+    }
+    
+    // Si es cédula/documento
+    if (keyStr.toLowerCase().includes('cedula') || 
+        keyStr.toLowerCase().includes('documento') || 
+        keyStr.toLowerCase().includes('ci')) {
+      return maskCedula(valueStr)
+    }
+    
+    // Por defecto, enmascarar genéricamente
+    return '***[Protegido]***'
+  }
+  
+  // Si no es sensible, mostrar normal
+  return formatValue(value)
 }
 
 async function copiarAlPortapapeles(texto: string) {
@@ -343,15 +422,7 @@ async function copiarAlPortapapeles(texto: string) {
 
 function exportarEvento() {
   if (!props.evento) return
-  
-  const dataStr = JSON.stringify(props.evento, null, 2)
-  const dataBlob = new Blob([dataStr], { type: 'application/json' })
-  const url = URL.createObjectURL(dataBlob)
-  const link = document.createElement('a')
-  link.href = url
-  link.download = `evento-auditoria-${props.evento.id}.json`
-  link.click()
-  URL.revokeObjectURL(url)
+  exportarEventoJSON(props.evento)
 }
 
 function cerrar() {

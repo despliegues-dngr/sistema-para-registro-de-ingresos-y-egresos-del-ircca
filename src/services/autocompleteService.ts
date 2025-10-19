@@ -142,7 +142,7 @@ export class AutocompleteService {
           // ✅ VALIDACIÓN DE INTEGRIDAD: Verificar hash
           const hashVerificacion = await this.generateCedulaHash(descifrada.cedula)
           if (hashVerificacion !== cifrada.cedulaHash) {
-            console.warn(`Integridad comprometida en persona ${cifrada.id}, eliminando...`)
+            // Integridad comprometida, eliminar registro
             await this.db.deleteRecord('personasConocidas', cifrada.id)
             continue
           }
@@ -156,7 +156,6 @@ export class AutocompleteService {
       }
 
       this.cacheLoaded = true
-      console.info(`✅ Cache cargado: ${this.personasCache.size} personas conocidas`)
     } catch (error) {
       console.error('Error al cargar cache:', error)
     }

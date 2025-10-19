@@ -12,27 +12,16 @@
           </div>
         </div>
         
-        <!-- Botones de exportación -->
-        <div class="d-flex gap-2">
-          <v-btn
-            color="white"
-            variant="outlined"
-            size="small"
-            prepend-icon="mdi-file-pdf-box"
-            @click="exportarPDF"
-          >
-            PDF
-          </v-btn>
-          <v-btn
-            color="white"
-            variant="outlined"
-            size="small"
-            prepend-icon="mdi-file-delimited"
-            @click="exportarCSV"
-          >
-            CSV
-          </v-btn>
-        </div>
+        <!-- Botón de exportación -->
+        <v-btn
+          color="white"
+          variant="outlined"
+          size="small"
+          prepend-icon="mdi-file-delimited"
+          @click="exportarCSV"
+        >
+          Exportar CSV
+        </v-btn>
       </div>
     </v-card-title>
 
@@ -189,7 +178,10 @@
         <!-- Usuario -->
         <template v-slot:[`item.username`]="{ item }">
           <div>
-            <div class="font-weight-medium">{{ item.username }}</div>
+            <div class="font-weight-medium">
+              {{ maskCedula(item.username) }}
+              <v-icon size="12" color="info" class="ml-1">mdi-shield-lock</v-icon>
+            </div>
             <div class="text-caption text-grey">
               {{ getRoleName(item.details.role as string) }}
             </div>
@@ -254,13 +246,12 @@
 import { computed } from 'vue'
 import { useAuditStore } from '@/stores/audit'
 import { useAuditFilters } from '@/composables/useAuditFilters'
+import { useAuditExport } from '@/composables/useAuditExport'
 import type { AuditEvent } from '@/stores/audit'
 
 // Emits
 const emit = defineEmits<{
   'ver-detalles': [evento: AuditEvent]
-  'exportar-pdf': []
-  'exportar-csv': []
 }>()
 
 const auditStore = useAuditStore()
@@ -274,8 +265,11 @@ const {
   getEventoIcon,
   getEventoTexto,
   getRoleName,
-  getTipoEventoTexto
+  getTipoEventoTexto,
+  maskCedula
 } = useAuditFilters()
+
+const { exportarCSV: exportCSV } = useAuditExport()
 
 // Headers de la tabla
 const headers = [
@@ -349,12 +343,8 @@ function verDetalles(evento: AuditEvent) {
   emit('ver-detalles', evento)
 }
 
-function exportarPDF() {
-  emit('exportar-pdf')
-}
-
 function exportarCSV() {
-  emit('exportar-csv')
+  exportCSV(eventosFiltrados.value, 'registro-auditoria-ircca')
 }
 </script>
 

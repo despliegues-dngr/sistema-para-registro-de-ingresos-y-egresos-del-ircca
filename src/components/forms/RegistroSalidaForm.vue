@@ -21,7 +21,7 @@
       :total-personas="registroStore.personasDentro.length"
     />
 
-    <details-card :persona-seleccionada="personaSeleccionada" />
+    <details-card ref="detailsCardRef" :persona-seleccionada="personaSeleccionada" />
 
 
     <!-- Observaciones (solo se muestra después de seleccionar persona Y no estar en modo edición) -->
@@ -59,6 +59,8 @@ interface RegistroSalidaData {
   cedulaBuscada: string
   tiempoEstadia: number
   observaciones?: string
+  datosVehiculoSalida?: { tipo: string; matricula: string }
+  acompanantesSalida?: string[]
 }
 
 interface Props {
@@ -84,6 +86,7 @@ const personaSeleccionada = ref<PersonaDentro | null>(null)
 const mostrarEdicionSalida = ref(false)
 const observaciones = ref('')
 const formRef = ref()
+const detailsCardRef = ref<InstanceType<typeof DetailsCard>>()
 
 const messageType = computed(() => {
   const message = props.message
@@ -165,10 +168,16 @@ const handleSubmit = async () => {
     return
   }
 
+  // ✅ Obtener datos editados del componente Details (si existen)
+  const datosEditados = detailsCardRef.value?.getDatosEditados()
+
   const submitData: RegistroSalidaData = {
     cedulaBuscada: personaSeleccionada.value.cedula,
     tiempoEstadia: calcularTiempoEstadiaEnMinutos(personaSeleccionada.value.ingresoTimestamp),
     observaciones: observaciones.value || undefined,
+    // ✅ Incluir datos de vehículo y acompañantes si fueron editados
+    ...(datosEditados?.datosVehiculoSalida && { datosVehiculoSalida: datosEditados.datosVehiculoSalida }),
+    ...(datosEditados?.acompanantesSalida && datosEditados.acompanantesSalida.length > 0 && { acompanantesSalida: datosEditados.acompanantesSalida })
   }
 
   emit('submit', submitData)

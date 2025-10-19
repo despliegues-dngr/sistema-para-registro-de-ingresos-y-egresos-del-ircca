@@ -106,14 +106,15 @@
         <!-- ✅ NUEVO: Sección de Edición de Salida (reemplaza todo cuando se está editando) -->
         <div v-if="mostrarEdicionSalida" class="seccion-edicion">
 
-          <!-- Sección del Vehículo -->
-          <div v-if="infoVehiculoGrupo" class="mb-4">
+          <!-- Sección del Vehículo - ✅ SIEMPRE VISIBLE EN MODO EDICIÓN -->
+          <div class="mb-4">
             <h4 class="text-subtitle-2 mb-3 d-flex align-center">
               <v-icon size="16" class="mr-2">mdi-car</v-icon>
               <span>Vehículo</span>
             </h4>
             
-            <v-card variant="outlined" density="compact" class="mb-3">
+            <!-- ✅ Mostrar información de vehículo existente (si hay) -->
+            <v-card v-if="infoVehiculoGrupo" variant="outlined" density="compact" class="mb-3">
               <v-card-text class="pa-3">
                 <div class="d-flex align-center justify-space-between">
                   <div class="flex-grow-1">
@@ -124,6 +125,9 @@
                       <span class="text-body-2 font-weight-medium">
                         {{ infoVehiculoGrupo.tipo }} - {{ infoVehiculoGrupo.matricula }}
                       </span>
+                      <v-chip size="x-small" color="info" variant="tonal" class="ml-2">
+                        Al ingreso
+                      </v-chip>
                     </div>
                   </div>
                   
@@ -132,6 +136,32 @@
                     color="primary"
                     density="compact"
                     hide-details
+                    label="Sale con vehículo"
+                    @update:model-value="onCambioVehiculo"
+                  />
+                </div>
+              </v-card-text>
+            </v-card>
+            
+            <!-- ✅ Si NO hay vehículo de ingreso, permitir agregar uno -->
+            <v-card v-else variant="outlined" density="compact" class="mb-3 bg-grey-lighten-5">
+              <v-card-text class="pa-3">
+                <div class="d-flex align-center justify-space-between">
+                  <div class="flex-grow-1">
+                    <div class="d-flex align-center">
+                      <v-icon size="14" color="grey" class="mr-2">mdi-car-off</v-icon>
+                      <span class="text-body-2 text-medium-emphasis">
+                        Ingresó sin vehículo
+                      </span>
+                    </div>
+                  </div>
+                  
+                  <v-checkbox
+                    v-model="datosSalida.conVehiculo"
+                    color="primary"
+                    density="compact"
+                    hide-details
+                    label="Vincular vehículo"
                     @update:model-value="onCambioVehiculo"
                   />
                 </div>
@@ -166,8 +196,8 @@
             </div>
           </div>
 
-          <!-- Sección de Acompañantes -->
-          <div v-if="grupoCompleto.length > 1" class="mb-4">
+          <!-- Sección de Acompañantes - ✅ SIEMPRE VISIBLE EN MODO EDICIÓN -->
+          <div class="mb-4">
             <h4 class="text-subtitle-2 mb-3 d-flex align-center justify-space-between">
               <div class="d-flex align-center">
                 <v-icon size="16" class="mr-2">mdi-account-multiple</v-icon>
@@ -673,6 +703,30 @@ const removerAcompanante = (cedula: string) => {
     datosEditados.value = true
   }
 }
+
+// ✅ Método para obtener datos editados (expuesto al componente padre)
+const getDatosEditados = () => {
+  if (!datosEditados.value) {
+    return null
+  }
+  
+  return {
+    datosVehiculoSalida: datosSalida.conVehiculo ? {
+      tipo: datosSalida.tipoVehiculo,
+      matricula: datosSalida.matricula
+    } : undefined,
+    acompanantesSalida: [
+      ...datosSalida.acompanantesSalen,
+      ...datosSalida.acompanantesAdicionales
+    ]
+  }
+}
+
+// ✅ Exponer métodos al componente padre
+defineExpose({
+  getDatosEditados,
+  datosEditados
+})
 </script>
 
 <style scoped>

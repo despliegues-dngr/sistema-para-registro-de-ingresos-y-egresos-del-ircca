@@ -30,7 +30,6 @@ export function useAutoBackup() {
       return
     }
 
-    console.info('⏰ Ejecutando backup automático...')
     isBackingUp.value = true
 
     try {
@@ -43,10 +42,7 @@ export function useAutoBackup() {
         lastBackupId.value = result.backupId
 
         // Limpiar backups antiguos (mantener últimos 5)
-        const cleanResult = await databaseService.cleanOldBackups(5)
-        if (cleanResult.deleted > 0) {
-          console.info(`🧹 Backups antiguos eliminados: ${cleanResult.deleted}`)
-        }
+        await databaseService.cleanOldBackups(5)
 
         // Notificar éxito
         appStore.addNotification(
@@ -54,7 +50,6 @@ export function useAutoBackup() {
           'info'
         )
 
-        console.info('✅ Backup automático exitoso:', result.backupId)
       } else {
         // Notificar error
         appStore.addNotification(
@@ -89,7 +84,6 @@ export function useAutoBackup() {
       ejecutarBackupAutomatico()
     }, 30 * 60 * 1000) // 30 minutos
 
-    console.info('🔄 Timer de backups automáticos iniciado (verificación cada 30 min)')
   }
 
   /**
@@ -99,7 +93,6 @@ export function useAutoBackup() {
     if (backupTimer) {
       clearInterval(backupTimer)
       backupTimer = null
-      console.info('⏸️ Timer de backups automáticos detenido')
     }
   }
 
@@ -111,7 +104,6 @@ export function useAutoBackup() {
       return { success: false, error: 'Backup en progreso' }
     }
 
-    console.info('🔧 Ejecutando backup manual...')
     isBackingUp.value = true
 
     try {
@@ -159,7 +151,6 @@ export function useAutoBackup() {
       // ✅ EJECUTAR BACKUP INICIAL SOLO SI ESTÁ AUTENTICADO
       // El timer verificará la autenticación en cada ejecución
       if (!appStore.lastBackup && authStore.isAuthenticated) {
-        console.info('📦 Sin backup previo, ejecutando backup inicial...')
         setTimeout(() => ejecutarBackupAutomatico(), 5000) // 5 segundos después del mount
       }
     }

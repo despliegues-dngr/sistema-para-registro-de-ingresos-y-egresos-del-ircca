@@ -290,6 +290,49 @@ export function useAuditFilters() {
     return tipos[eventType] || eventType
   }
 
+  // ✅ NUEVAS FUNCIONES DE ENMASCARAMIENTO (Ley 18.331)
+  
+  /**
+   * Enmascara cédula mostrando solo últimos 4 dígitos
+   * @param cedula - Cédula completa (ej: "55226350")
+   * @returns Cédula enmascarada (ej: "****6350")
+   */
+  function maskCedula(cedula: string): string {
+    if (!cedula || cedula.length < 4) return '****'
+    return '****' + cedula.slice(-4)
+  }
+
+  /**
+   * Enmascara nombre completo mostrando solo iniciales
+   * @param nombre - Nombre completo (ej: "Mario Berni")
+   * @returns Nombre enmascarado (ej: "M. B.")
+   */
+  function maskNombre(nombre: string): string {
+    if (!nombre) return 'N/A'
+    const partes = nombre.trim().split(' ')
+    return partes.map(p => p.charAt(0).toUpperCase() + '.').join(' ')
+  }
+
+  /**
+   * Enmascara userId mostrando solo primeros y últimos 4 caracteres
+   * @param userId - ID del usuario (ej: "8W5v5E19EMg0kGk5g-NahA")
+   * @returns userId enmascarado (ej: "8W5v***-NahA")
+   */
+  function maskUserId(userId: string): string {
+    if (!userId || userId.length < 8) return '****'
+    return userId.slice(0, 4) + '***' + userId.slice(-4)
+  }
+
+  /**
+   * Verifica si un detalle contiene información sensible que debe enmascararse
+   * @param key - Clave del detalle
+   * @returns true si debe enmascararse
+   */
+  function isSensitiveDetail(key: string): boolean {
+    const sensitiveKeys = ['nombre', 'cedula', 'documento', 'ci', 'apellido', 'email', 'telefono']
+    return sensitiveKeys.some(sk => key.toLowerCase().includes(sk))
+  }
+
   return {
     // Estado
     filtros,
@@ -316,6 +359,12 @@ export function useAuditFilters() {
     getEventoDescripcion,
     getEventoTexto,
     getRoleName,
-    getTipoEventoTexto
+    getTipoEventoTexto,
+    
+    // ✅ Helpers de enmascaramiento (Ley 18.331)
+    maskCedula,
+    maskNombre,
+    maskUserId,
+    isSensitiveDetail
   }
 }

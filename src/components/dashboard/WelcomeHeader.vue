@@ -132,12 +132,9 @@ const emit = defineEmits<{
   'logout': []
 }>()
 
-// Handler para logout con logs
+// Handler para logout
 const handleLogoutClick = () => {
-  console.log('🔴 [WelcomeHeader] Botón Cerrar Sesión clickeado')
-  console.log('🔴 [WelcomeHeader] Emitiendo evento logout...')
   emit('logout')
-  console.log('🔴 [WelcomeHeader] Evento logout emitido')
 }
 
 // Estado reactivo para fecha y hora

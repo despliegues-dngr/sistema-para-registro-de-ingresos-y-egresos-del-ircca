@@ -68,6 +68,8 @@ interface RegistroSalidaData {
   cedulaBuscada: string
   tiempoEstadia: number
   observaciones?: string
+  datosVehiculoSalida?: { tipo: string; matricula: string }
+  acompanantesSalida?: string[]
 }
 
 interface Props {
@@ -125,11 +127,13 @@ const onSubmit = async (salidaData: RegistroSalidaData) => {
     }
 
     // Registrar salida en el store
-    registroStore.registrarSalida({
+    await registroStore.registrarSalida({
       cedulaBuscada: salidaData.cedulaBuscada,
       tiempoEstadia: salidaData.tiempoEstadia,
       operadorId,
       observaciones: salidaData.observaciones,
+      datosVehiculoSalida: salidaData.datosVehiculoSalida,
+      acompanantesSalida: salidaData.acompanantesSalida
     })
 
     const successMessage = `Salida registrada exitosamente para ${personaSeleccionada.nombre} ${personaSeleccionada.apellido}.`
