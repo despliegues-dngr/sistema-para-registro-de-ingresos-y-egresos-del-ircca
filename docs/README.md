@@ -99,6 +99,31 @@ Estado actual del proyecto y pendientes.
 
 ---
 
+### **07-development/** - Backlog y Planificación 🚀
+**NUEVO:** Roadmap post-MVP y gestión de mejoras incrementales.
+
+👉 **Empieza aquí:** [`00-DEVELOPMENT-INDEX.md`](./07-development/00-DEVELOPMENT-INDEX.md)
+
+| Archivo | Descripción |
+|---------|-------------|
+| `00-DEVELOPMENT-INDEX.md` | **📌 Índice de desarrollo - LEER PRIMERO** |
+| `01-post-mvp-backlog.md` | Backlog estructurado con 20 TODOs (3 sprints, ~60h) |
+
+**Contenido del backlog:**
+- ✅ 20 TODOs organizados por prioridad (9 Media, 9 Baja, 2 Alta)
+- ✅ User Stories con criterios de aceptación
+- ✅ Estimaciones de esfuerzo por sprint
+- ✅ Matriz de priorización (Impact vs Effort)
+- ✅ KPIs de éxito por epic
+
+**Cuándo consultar:** 
+- Planificación post-producción
+- Priorización de features con stakeholders
+- Retrospectivas de sprint
+- Estimación de roadmap trimestral
+
+---
+
 ### **manuals/** - Manuales de Usuario
 Documentación HTML para usuarios finales.
 

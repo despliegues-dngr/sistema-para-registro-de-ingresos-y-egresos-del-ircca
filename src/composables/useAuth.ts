@@ -16,8 +16,9 @@ export const useAuth = () => {
   // Authentication methods
   const login = async (username: string, password: string) => {
     try {
-      // TODO: Implementar autenticación con cifrado
-      // Por ahora simulamos usuarios hardcodeados para desarrollo
+      // NOTA: Usuarios de demostración para desarrollo
+      // La autenticación real con cifrado PBKDF2 está implementada en stores/auth.ts
+      // Estos usuarios hardcodeados deben eliminarse antes del deploy a producción
 
       if (username === 'admin' && password === 'admin123') {
         await authStore.login(username, password)
