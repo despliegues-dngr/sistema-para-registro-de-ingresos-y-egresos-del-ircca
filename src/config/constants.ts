@@ -16,7 +16,7 @@ export const SYSTEM_INFO = {
 // Configuración de autenticación
 export const AUTH_CONFIG = {
   MAX_LOGIN_ATTEMPTS: 3,
-  SESSION_TIMEOUT: 30 * 60 * 1000, // 30 minutos en milliseconds
+  SESSION_TIMEOUT: 3 * 60 * 60 * 1000, // 3 horas en milliseconds
   PASSWORD_MIN_LENGTH: 4,
   USERNAME_MIN_LENGTH: 3,
   PIN_LENGTH: 4,

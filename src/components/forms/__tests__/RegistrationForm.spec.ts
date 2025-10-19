@@ -80,7 +80,7 @@ describe('RegistrationForm', () => {
     it('debe renderizar correctamente', () => {
       const wrapper = mountComponent()
       expect(wrapper.find('.registration-form').exists()).toBe(true)
-      expect(wrapper.find('h3').text()).toBe('Datos del nuevo operador')
+      expect(wrapper.find('h2').text()).toBe('Datos del nuevo operador')
     })
 
     it('debe mostrar todos los campos requeridos', () => {

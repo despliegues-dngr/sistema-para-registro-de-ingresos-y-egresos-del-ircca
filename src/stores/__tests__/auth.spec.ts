@@ -170,7 +170,7 @@ describe('useAuthStore', () => {
       expect(authStore.user?.role).toBe('admin')
 
       // Hacer logout
-      authStore.logout()
+      await authStore.logout()
 
       expect(authStore.user).toBeNull()
       expect(authStore.isAuthenticated).toBe(false)
@@ -417,7 +417,7 @@ describe('useAuthStore', () => {
       expect(authStore.isAuthenticated).toBe(true)
       
       // Después de logout
-      authStore.logout()
+      await authStore.logout()
       expect(authStore.isAuthenticated).toBe(false)
     })
 
@@ -448,7 +448,7 @@ describe('useAuthStore', () => {
       expect(authStore.user?.role).toBe('operador')
       
       // Después de logout
-      authStore.logout()
+      await authStore.logout()
       expect(authStore.user).toBeNull()
     })
 
@@ -479,7 +479,7 @@ describe('useAuthStore', () => {
       expect(authStore.isOperador).toBe(false)
       
       // Logout y cambiar mock para operador
-      authStore.logout()
+      await authStore.logout()
       mockGetRecords.mockResolvedValue([
         {
           id: '2',
@@ -498,7 +498,7 @@ describe('useAuthStore', () => {
       expect(authStore.isOperador).toBe(true)
       
       // Logout final
-      authStore.logout()
+      await authStore.logout()
       expect(authStore.isAdmin).toBe(false)
       expect(authStore.isOperador).toBe(false)
     })

@@ -78,7 +78,10 @@ La seguridad del sistema se estructura en un modelo de **4 capas de protección*
 **Protección:**
 - Contraseñas hasheadas con PBKDF2-SHA256
 - Bloqueo automático tras 3 intentos fallidos
-- Timeout de sesión: 30 minutos inactividad
+- **Sesiones:**
+- Timeout de sesión: 3 horas inactividad
+- Advertencia: 5 minutos antes de expirar
+- Re-autenticación requerida tras expiración
 
 ### 1.4 Sistema de Auditoría
 
@@ -100,12 +103,97 @@ La seguridad del sistema se estructura en un modelo de **4 capas de protección*
 - **Nivel 2:** Automático semanal (últimas 4 semanas)
 - **Nivel 3:** Manual mensual (exportación cifrada)
 
-### 1.6 Cumplimiento Normativo
+### 1.6 Cumplimiento Normativo (CN.1)
 
 - ✅ **Ley N° 18.331:** Protección de Datos Personales (Uruguay)
-- ✅ **AGESIC:** Marco de Ciberseguridad
+- ✅ **Ley N° 20.327:** Ciberdelitos (Uruguay)
+- ✅ **AGESIC:** Marco de Ciberseguridad (NIST CSF adaptado)
 - ✅ **Retención:** 12 meses en tablet, 5 años en backups
-- ✅ **Derechos ARCO:** Procedimiento documentado
+- ✅ **Derechos ARCO:** Procedimiento documentado (`05-arco-rights-procedure.md`)
+
+**Evidencia:** Este documento + `03-agesic-compliance.md` + `04-authority-notification.md`
+
+### 1.7 Gobernanza de Seguridad (AGESIC GV)
+
+#### GV-1: Responsable de Seguridad de la Información (OR.1)
+
+**Rol designado:** Desarrollador Líder / Arquitecto de Sistema
+
+**Responsabilidades:**
+- Supervisar implementación de controles de seguridad
+- Revisar incidentes y vulnerabilidades reportadas
+- Aprobar cambios críticos de seguridad (autenticación, cifrado, RBAC)
+- Coordinación con CERTuy/URCDP en caso de incidentes
+- Validar cumplimiento de checklist pre-commit
+- Ejecutar auditorías de seguridad trimestrales
+
+**Contacto:** security@ircca.gub.uy
+
+**Evidencia:** Este documento (designación formal) + `00-SECURITY-INDEX.md`
+
+#### GV-2: Política de Seguridad del Sistema (PS.1)
+
+**Objetivos de Seguridad:**
+
+1. **Proteger Datos Personales** según Ley 18.331
+   - Cifrado AES-256-GCM para datos sensibles
+   - Almacenamiento seguro en IndexedDB
+   - Procedimiento ARCO implementado
+
+2. **Garantizar Disponibilidad** del sistema
+   - Disponibilidad objetivo: 99% (operación offline-first)
+   - Backups automáticos diarios (estrategia 3-2-1)
+   - Recuperación < 2 horas en caso de fallo
+
+3. **Prevenir Accesos No Autorizados**
+   - RBAC con 3 roles (Admin/Supervisor/Operador)
+   - Autenticación obligatoria con contraseñas hasheadas (PBKDF2)
+   - Bloqueo tras 3 intentos fallidos + timeout 30 min
+
+4. **Asegurar Integridad de Datos**
+   - Auditoría inmutable de eventos críticos
+   - Validación de entrada en todos los formularios
+   - Logs cifrados sin exposición de datos personales
+
+5. **Cumplir con Marco AGESIC**
+   - Cumplimiento actual: 90.9% (10/11 requisitos)
+   - Objetivo: 100% antes de Ene-2026
+   - Auditoría externa trimestral
+
+**Evidencia:** Este documento + `00-SECURITY-INDEX.md` (flujos de trabajo)
+
+### 1.8 Seguridad Física del Dispositivo (PR-4 / SF.1, SF.4)
+
+**Requisitos Obligatorios de la Tablet:**
+
+1. ✅ **Bloqueo de pantalla** (PIN mínimo 6 dígitos o biometría)
+   - Auto-lock tras 5 minutos de inactividad
+   - Reintentos limitados (10 máximo antes de bloqueo total)
+
+2. ✅ **Cifrado de disco completo** habilitado
+   - Android: Configuración → Seguridad → Cifrar dispositivo
+   - iOS: Habilitado por defecto con PIN
+
+3. ✅ **Modo Kiosco** configurado
+   - Previene acceso a otras apps
+   - Solo PWA IRCCA accesible
+   - Configurado mediante MDM (Mobile Device Management)
+
+4. ✅ **Políticas de red**
+   - No conectar a WiFi públicas sin VPN
+   - Bluetooth deshabilitado cuando no se usa
+   - NFC solo para funciones autorizadas
+
+**Políticas Operativas:**
+
+- 📍 **Ubicación:** Tablet permanece en área controlada (puesto de control)
+- 🔒 **Custodia:** Responsable designado por turno
+- 🚨 **Pérdida/Robo:** Notificar inmediatamente a security@ircca.gub.uy
+  - Plazo: < 1 hora desde detección
+  - Acción: Borrado remoto vía MDM (si disponible)
+- 🔄 **Actualizaciones:** Parches de seguridad mensuales del SO
+
+**Evidencia:** Checklist de configuración inicial + política de uso de dispositivos móviles
 
 ---
 

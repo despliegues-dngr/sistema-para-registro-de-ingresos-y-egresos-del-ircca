@@ -263,8 +263,8 @@ describe('useAppStore', () => {
     it('shouldBackup debe ser true si el backup es antiguo', () => {
       const appStore = useAppStore()
       
-      // Marcar backup hace 45 minutos (más que el intervalo de 30)
-      const oldBackup = new Date(Date.now() - 45 * 60 * 1000)
+      // Marcar backup hace 135 minutos (más que el intervalo de 120)
+      const oldBackup = new Date(Date.now() - 135 * 60 * 1000)
       appStore.lastBackup = oldBackup
       
       expect(appStore.shouldBackup).toBe(true)

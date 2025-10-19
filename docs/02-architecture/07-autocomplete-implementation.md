@@ -5,7 +5,7 @@
 **Parte:** 2/2 - Implementación y Beneficios  
 **Principio:** DRY (Don't Repeat Yourself)
 
-> 📘 **Parte 1:** Ver [`08-autocomplete-part1-design.md`](./08-autocomplete-part1-design.md)
+> 📘 **Parte 1:** Ver [`06-autocomplete-design.md`](./06-autocomplete-design.md)
 
 ---
 

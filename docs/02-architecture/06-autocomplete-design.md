@@ -5,7 +5,7 @@
 **Parte:** 1/2 - Diseño y Arquitectura  
 **Principio:** DRY (Don't Repeat Yourself)
 
-> 📘 **Parte 2:** Ver [`08-autocomplete-part2-implementation.md`](./08-autocomplete-part2-implementation.md)
+> 📘 **Parte 2:** Ver [`07-autocomplete-implementation.md`](./07-autocomplete-implementation.md)
 
 ---
 

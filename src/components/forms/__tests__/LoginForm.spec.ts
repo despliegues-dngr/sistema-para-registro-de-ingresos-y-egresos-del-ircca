@@ -64,7 +64,7 @@ describe('LoginForm', () => {
       const wrapper = mountComponent()
 
       expect(wrapper.find('.login-form').exists()).toBe(true)
-      expect(wrapper.find('h3').text()).toBe('Acceso al sistema')
+      expect(wrapper.find('h2').text()).toBe('Acceso al sistema')
     })
 
     it('debe mostrar campos de usuario y contraseña', () => {
