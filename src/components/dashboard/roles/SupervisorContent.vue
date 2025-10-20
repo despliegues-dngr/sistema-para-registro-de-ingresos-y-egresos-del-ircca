@@ -2,6 +2,13 @@
   <div class="supervisor-content">
     <!-- Dashboard Supervisor - Vista Operacional sin Acciones de Registro -->
     
+    <!-- ⭐ NUEVA SECCIÓN: Consulta de Historial de Personas -->
+    <v-row class="mb-8">
+      <v-col cols="12">
+        <PersonHistoryCard />
+      </v-col>
+    </v-row>
+
     <!-- ⭐ NUEVA SECCIÓN: Gestión de Destinos -->
     <v-row class="mb-8">
       <v-col cols="12">
@@ -61,7 +68,7 @@
           prepend-icon="mdi-file-pdf-box"
           @click="showPdfDialog = true"
         >
-          Descargar PDF
+          Descargar Planilla de Registros
         </v-btn>
       </v-col>
     </v-row>
@@ -81,6 +88,7 @@ import { useDatabase } from '@/composables/useDatabase'
 import { useMultipleCounters } from '@/composables/useCounterAnimation'
 
 // Componentes del supervisor
+import PersonHistoryCard from '../supervisor/PersonHistoryCard.vue'
 import DestinosManager from './sections/DestinosManager.vue'
 import PdfGeneratorDialog from '@/components/ui/PdfGeneratorDialog.vue'
 

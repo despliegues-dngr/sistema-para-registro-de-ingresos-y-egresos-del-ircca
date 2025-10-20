@@ -141,6 +141,92 @@ Este índice centraliza **TODA** la documentación de seguridad del proyecto en 
 
 ---
 
+#### [`ARCO-README.md`](./ARCO-README.md) 🆕
+**Propósito:** Guía rápida para comprender y usar el sistema ARCO
+
+**Contenido:**
+- ✅ Resumen ejecutivo del sistema ARCO
+- ✅ Instrucciones paso a paso para administradores
+- ✅ Procedimiento completo de respuesta
+- ✅ Contactos y enlaces de emergencia
+- ✅ FAQ sobre derechos ARCO
+
+**Cuándo consultar:**
+- 📌 Primera vez usando sistema ARCO
+- 📌 Necesitar guía rápida de procedimiento
+- 📌 Explicar ARCO a nuevos administradores
+
+**Documento complementario:** Lectura recomendada antes de `05-arco-rights-procedure.md`
+
+---
+
+#### [`08-arco-implementation.md`](./08-arco-implementation.md) 🆕
+**Propósito:** Estado técnico de implementación de derechos ARCO
+
+**Contenido:**
+- ✅ Fase 1 completada: Exportación de datos (Derecho de Acceso)
+- ✅ Composable `useArcoDataExport` con 3 formatos (TXT, CSV, JSON)
+- ✅ Componente UI integrado en dashboard admin
+- ✅ Logs de auditoría automáticos
+- ⏳ Fases pendientes: Gestión de solicitudes, Rectificación, Cancelación
+- 📊 Roadmap técnico y checklist de compliance
+
+**Cuándo consultar:**
+- 📌 Planificar próximas fases ARCO
+- 📌 Validar estado de implementación
+- 📌 Code review de features ARCO
+- 📌 Auditoría técnica de cumplimiento
+
+**Archivos relacionados:**
+- `src/composables/useArcoDataExport.ts`
+- `src/components/dashboard/admin/ArcoDataExportCard.vue`
+
+---
+
+#### [`ARCO-PROCEDIMIENTO-TEMPORAL.md`](./ARCO-PROCEDIMIENTO-TEMPORAL.md) 🆕
+**Propósito:** Procedimiento manual para gestionar solicitudes ARCO (hasta implementar Fase 2)
+
+**Contenido:**
+- ✅ Sistema de numeración de casos (ARCO-2025-XXX)
+- ✅ Organización de archivos y carpetas
+- ✅ Flujo de trabajo paso a paso
+- ✅ Control de plazos (10 días hábiles)
+- ✅ Templates de comunicación
+- ✅ Excel de tracking
+- ✅ Casos especiales (rechazos, urgencias)
+
+**Cuándo consultar:**
+- 📌 Recibir solicitud ARCO (uso diario)
+- 📌 Organizar sistema de archivos
+- 📌 Calcular plazos legales
+- 📌 Responder casos especiales
+
+**Vigencia:** Hasta implementación de Fase 2 (sistema automatizado de tracking)
+
+---
+
+#### [`ARCO-GUIA-RAPIDA-ADMIN.md`](./ARCO-GUIA-RAPIDA-ADMIN.md) 🆕
+**Propósito:** Guía visual paso a paso para administradores (formato imprimible)
+
+**Contenido:**
+- ✅ 4 pasos simplificados: Recibir → Buscar → Exportar → Responder
+- ✅ Screenshots y diagramas de interfaz
+- ✅ Ejemplo completo de caso real
+- ✅ Tips de eficiencia
+- ✅ Solución de errores comunes
+- ✅ Checklist imprimible
+
+**Cuándo consultar:**
+- 📌 Primera vez procesando solicitud ARCO
+- 📌 Capacitación de nuevo personal
+- 📌 Imprimir como referencia de escritorio
+- 📌 Resolver dudas operativas rápidas
+
+**Tiempo de lectura:** 5 minutos  
+**Tiempo de ejecución:** < 5 minutos por solicitud
+
+---
+
 #### [`06-pwa-compliance-report.md`](./06-pwa-compliance-report.md)
 **Propósito:** Evidencia de cumplimiento PWA y auditoría Lighthouse
 

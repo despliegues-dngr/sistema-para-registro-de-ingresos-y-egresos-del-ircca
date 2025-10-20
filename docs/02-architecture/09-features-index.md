@@ -202,5 +202,25 @@
 
 ---
 
+## 📝 HISTORIAL DE MEJORAS RECIENTES
+
+### 19-Oct-2025: Refinamiento Dashboard Supervisor
+
+**Consulta de Historial de Personas (`PersonHistoryCard.vue`):**
+- ✅ Layout optimizado: Campos de fecha "Desde/Hasta" en misma línea
+- ✅ Operador legible: Formato "Grado Nombre Apellido" (vs ID cifrado)
+- ✅ Autocomplete corregido: Limpieza correcta con evento `@click:clear`
+- ✅ CSV mejorado: Hora 24h, placeholders consistentes ("-"), operador con nombre real
+
+**Dashboard Supervisor (`SupervisorContent.vue`):**
+- ✅ Botón PDF renombrado: "Descargar Planilla de Registros" (más descriptivo)
+
+**Composable (`usePersonHistory.ts`):**
+- ✅ Integración con `databaseService.getUsuarios()` para datos de operadores
+- ✅ Formato 24h consistente en hora de generación y registros
+
+---
+
 **Documento optimizado:** 17-Oct-2025  
+**Última actualización:** 19-Oct-2025  
 **Versión anterior:** `07-implemented-features.md` (702 líneas) → Convertido a índice de referencias

@@ -178,6 +178,13 @@
       </v-col>
     </v-row>
 
+    <!-- Sección de Derechos ARCO - Exportación de Datos -->
+    <v-row class="mb-8">
+      <v-col cols="12">
+        <ArcoDataExportCard />
+      </v-col>
+    </v-row>
+
     <!-- Sección de Auditoría -->
     <AuditActivityCard class="mb-8" />
     
@@ -275,6 +282,9 @@ import type { AuditEvent } from '@/stores/audit'
 import AuditActivityCard from '../admin/audit/AuditActivityCard.vue'
 import AuditTableSection from '../admin/audit/AuditTableSection.vue'
 import EventDetailDialog from '../admin/audit/EventDetailDialog.vue'
+
+// Componente ARCO
+import ArcoDataExportCard from '../admin/ArcoDataExportCard.vue'
 
 // Interface para usuarios de la BD
 interface User {
