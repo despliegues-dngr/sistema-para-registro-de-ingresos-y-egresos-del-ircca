@@ -1,0 +1,17 @@
+# Reportes de ZAP - NO commitear (pueden contener info sensible)
+*.html
+*.json
+*-report.md
+*-scan*.md
+!README.md
+!INTERPRETAR-RESULTADOS.md
+
+# Sesiones de ZAP
+*.session
+*.data
+
+# Logs
+*.log
+
+# Configuración específica del usuario
+local-config.yaml

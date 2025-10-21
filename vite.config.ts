@@ -11,11 +11,27 @@ import { VitePWA } from 'vite-plugin-pwa'
 export default defineConfig(({ mode }) => {
   const isProduction = mode === 'production'
   
+  // Security Headers - OWASP ZAP Scan Compliance (20-Oct-2025)
+  const securityHeaders = {
+    'Content-Security-Policy': "default-src 'self'; script-src 'self' 'unsafe-inline'; style-src 'self' 'unsafe-inline'; img-src 'self' data: blob:; font-src 'self'; connect-src 'self'; form-action 'self'; frame-ancestors 'none'; base-uri 'self';",
+    'X-Frame-Options': 'DENY',
+    'X-Content-Type-Options': 'nosniff',
+    'Referrer-Policy': 'strict-origin-when-cross-origin',
+    'Permissions-Policy': 'geolocation=(), microphone=(), camera=()'
+  }
+
   return {
     // Configuración del servidor de desarrollo
     server: {
       port: process.env.PORT ? parseInt(process.env.PORT) : 5173,
-      host: process.env.NODE_ENV === 'development' ? 'localhost' : '0.0.0.0'
+      host: process.env.NODE_ENV === 'development' ? 'localhost' : '0.0.0.0',
+      headers: securityHeaders
+    },
+
+    // Configuración del servidor preview (para testing de builds)
+    preview: {
+      port: 4173,
+      headers: securityHeaders
     },
     
     // Variables globales para Vercel

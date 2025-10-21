@@ -1,0 +1,140 @@
+# OWASP ZAP Automation Framework - Sistema IRCCA
+# Documentación: https://www.zaproxy.org/docs/desktop/addons/automation-framework/
+
+env:
+  contexts:
+    - name: "Sistema IRCCA"
+      urls:
+        - "http://localhost:5173.*"
+        - "http://127.0.0.1:5173.*"
+      includePaths:
+        - "http://localhost:5173/.*"
+      excludePaths:
+        - "http://localhost:5173/node_modules/.*"
+        - ".*\\.map$"
+        - ".*\\.woff2?$"
+        - ".*\\.png$"
+        - ".*\\.jpg$"
+        - ".*\\.svg$"
+      
+      # Configuración de autenticación (para testing con usuario real)
+      authentication:
+        method: "form"
+        parameters:
+          loginPageUrl: "http://localhost:5173/#/login"
+          loginRequestUrl: "http://localhost:5173/"
+          loginRequestBody: "cedula={%username%}&password={%password%}"
+        verification:
+          method: "autodetect"
+      
+      # Usuarios de prueba (usar credenciales de .env)
+      users:
+        - name: "Admin Test"
+          credentials:
+            username: "55226350"  # VITE_ADMIN_CEDULA
+            password: "${ADMIN_PASSWORD}"  # Configurar en ZAP
+        
+        - name: "Operador Test"
+          credentials:
+            username: "11111111"  # Cédula ficticia de prueba
+            password: "TestOperador123!"
+      
+      # Gestión de sesión
+      sessionManagement:
+        method: "cookie"
+        parameters:
+          sessionTokenName: "sessionId"
+
+  parameters:
+    failOnError: true
+    failOnWarning: false
+    progressToStdout: true
+
+jobs:
+  # Job 1: Spider (Rastreo de la aplicación)
+  - type: spider
+    parameters:
+      context: "Sistema IRCCA"
+      user: "Admin Test"
+      url: "http://localhost:5173"
+      maxDuration: 5  # minutos
+      maxDepth: 5
+      maxChildren: 10
+      acceptCookies: true
+      parseComments: false
+      parseRobotsTxt: false
+      postForm: true
+      processForm: true
+      requestWaitTime: 0
+  
+  # Job 2: Passive Scan (Análisis pasivo)
+  - type: passiveScan-wait
+    parameters:
+      maxDuration: 5  # minutos
+  
+  # Job 3: Active Scan (Análisis activo - MÁS AGRESIVO)
+  - type: activeScan
+    parameters:
+      context: "Sistema IRCCA"
+      user: "Admin Test"
+      policy: "Default Policy"
+      maxRuleDurationInMins: 2
+      maxScanDurationInMins: 15
+      delayInMs: 0
+      handleAntiCSRFTokens: true
+      injectPluginIdInHeader: false
+      scanHeadersAllRequests: true
+    
+    # Tests de validación
+    tests:
+      # Validar ausencia de XSS
+      - name: "No XSS Vulnerabilities"
+        type: alert
+        scanRuleId: 40012  # Cross Site Scripting (Reflected)
+        action: passIfAbsent
+        onFail: error
+      
+      - name: "No XSS Persistent"
+        type: alert
+        scanRuleId: 40014  # Cross Site Scripting (Persistent)
+        action: passIfAbsent
+        onFail: warn  # WARN porque no hay DB
+      
+      # Validar headers de seguridad
+      - name: "CSP Header Present"
+        type: alert
+        scanRuleId: 10038  # CSP Header Not Set
+        action: passIfAbsent
+        onFail: error
+      
+      - name: "X-Frame-Options Present"
+        type: alert
+        scanRuleId: 10020
+        action: passIfAbsent
+        onFail: error
+      
+      # Validar ausencia de información sensible
+      - name: "No Information Disclosure"
+        type: alert
+        scanRuleId: 10048  # Remote File Inclusion
+        action: passIfAbsent
+        onFail: error
+  
+  # Job 4: Generar reporte
+  - type: report
+    parameters:
+      template: "traditional-html-plus"
+      reportDir: ".zap"
+      reportFile: "scan-report-${timestamp}.html"
+      reportTitle: "OWASP ZAP Scan - Sistema IRCCA"
+      reportDescription: "Análisis de seguridad automatizado"
+      displayReport: false
+    risks:
+      - high
+      - medium
+      - low
+      - info
+
+# Configuración adicional
+# Para ejecutar: zap.sh -cmd -autorun automation.yaml
+# O desde GUI: Automation > Plan Editor > Load Plan

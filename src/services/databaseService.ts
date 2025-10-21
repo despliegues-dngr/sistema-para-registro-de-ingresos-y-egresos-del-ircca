@@ -540,8 +540,12 @@ export class DatabaseService {
       const registros = await this.getRegistrosDescifrados()
       const oldRegistros = registros.filter((r) => new Date(r.timestamp) < cutoffDate)
 
-      // TODO: Implementar eliminación selectiva por ID
-      // Por ahora solo contamos
+      // TODO v1.1: Implementar eliminación selectiva por ID
+      // Pendiente: Validar política de retención con IRCCA/AGESIC
+      // Por ahora solo cuenta (útil para reportes de mantenimiento)
+      // Implementar cuando: (1) Se valide período de retención correcto
+      //                     (2) Se defina si requiere aprobación manual
+      //                     (3) Se agregue UI de confirmación en panel admin
 
       return { success: true, cleaned: oldRegistros.length }
     } catch {

@@ -23,9 +23,12 @@ Este índice centraliza **TODA** la documentación de seguridad del proyecto en 
 | **PWA Security** | ✅ 100/100 | `06-pwa-compliance-report.md` |
 | **Tests de Seguridad** | ✅ 194 tests PASS | `02-security-implementation.md` |
 | **Vulnerabilidades** | ✅ 0 críticas | `npm audit` |
+| **OWASP ZAP Scan** | ✅ 5 alertas (aceptables) | Preview scan 21-Oct-2025 |
+| **HTTP Security Headers** | ✅ 5/5 configurados | `vite.config.ts` |
 
-**Última auditoría:** 18-Oct-2025  
-**Reporte auditoría código:** `07-security-audit-report.md` - ✅ 100% cumplimiento
+**Última auditoría:** 21-Oct-2025  
+**Reporte auditoría código:** `07-security-audit-report.md` - ✅ 100% cumplimiento  
+**Scan OWASP ZAP:** ✅ 0 HIGH, 2 MEDIUM (aceptables), 1 LOW, 2 INFO
 
 ---
 
