@@ -30,6 +30,9 @@ El proyecto está configurado con un stack de testing moderno y unificado:
     *   **Framework**: **Playwright**. Permite automatizar acciones en un navegador real para simular interacciones de usuario.
     *   **Ubicación**: Las pruebas se encuentran en el directorio `e2e/` en la raíz del proyecto.
     *   **Comando**: `pnpm test:e2e`
+    *   **Navegadores**: Chromium, Firefox, WebKit (Safari)
+    *   **Arquitectura**: Page Object Model (POM)
+    *   **📘 Estrategia completa**: Ver [`10-e2e-testing-strategy.md`](./10-e2e-testing-strategy.md) para casos de prueba, plantillas y roadmap de implementación
 
 ---
 

@@ -1,7 +1,7 @@
 # 📂 Índice de Documentos de Desarrollo - Sistema IRCCA
 
-**Versión:** 1.0  
-**Fecha:** 19-Oct-2025  
+**Versión:** 1.1  
+**Fecha:** 21-Oct-2025  
 **Propósito:** Centralizar documentación técnica del proceso de desarrollo
 
 ---
@@ -121,7 +121,8 @@ Ver sección "Estado de Implementación" en `01-post-mvp-backlog.md`
 
 ### Código:
 - **Líneas de código:** ~8,000 (TypeScript + Vue)
-- **Tests:** 194 tests pasando
+- **Tests Unitarios:** 194 tests pasando (Vitest)
+- **Tests E2E:** 18 tests pasando, 2 skipped (Playwright - Chromium + WebKit)
 - **Cobertura:** >85%
 - **Archivos:** ~60 archivos fuente
 
@@ -160,9 +161,9 @@ Ver sección "Estado de Implementación" en `01-post-mvp-backlog.md`
 
 ---
 
-**Versión:** 1.0  
-**Última Actualización:** 19-Oct-2025  
-**Próxima Revisión:** Al iniciar Sprint 1 Post-MVP
+**Versión:** 1.1  
+**Última Actualización:** 21-Oct-2025  
+**Próxima Revisión:** Al completar Epic 2 E2E (Registro Ingresos)
 
 ---
 

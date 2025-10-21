@@ -49,7 +49,8 @@ Guías conceptuales sobre cómo está construido el sistema.
 | `05-database-operations.md` | Operaciones DB (Parte 2) |
 | `06-autocomplete-design.md` | Sistema autocomplete - Diseño |
 | `07-autocomplete-implementation.md` | Sistema autocomplete - Implementación |
-| `08-testing-guidelines.md` | Estrategia de testing |
+| `08-testing-guidelines.md` | **📌 Estrategia de testing unitario (Vitest)** |
+| `10-e2e-testing-strategy.md` | **🎭 Estrategia E2E con Playwright** |
 | `09-features-index.md` | Índice de funcionalidades |
 | `CHANGELOG-DATABASE.md` | Historial de cambios DB |
 
@@ -153,10 +154,11 @@ Artefactos generados de auditorías técnicas.
 1. Consultar 05-tasks/00-tasks-tracker.md
 2. Leer 02-architecture/02-technical-stack.md (stack)
 3. Leer 03-security/01-security-architecture.md (requisitos seguridad)
-4. Leer 02-architecture/08-testing-guidelines.md (estrategia testing)
-5. Implementar con TDD
-6. Ejecutar checklist 03-security/02-security-implementation.md
-7. Actualizar tracker
+4. Leer 02-architecture/08-testing-guidelines.md (tests unitarios)
+5. Leer 02-architecture/10-e2e-testing-strategy.md (tests E2E)
+6. Implementar con TDD
+7. Ejecutar checklist 03-security/02-security-implementation.md
+8. Actualizar tracker
 ```
 
 ### **Resolver Bug de Seguridad**
@@ -175,6 +177,7 @@ Artefactos generados de auditorías técnicas.
 pnpm lint:check          # ✅ 0 errores
 pnpm type-check          # ✅ TypeScript OK
 pnpm test:unit           # ✅ 194 tests PASS
+pnpm test:e2e            # ✅ 18/18 tests PASS (Chromium + WebKit)
 npm audit                # ✅ 0 vulnerabilidades críticas
 
 # Verificar documentación:
@@ -190,7 +193,7 @@ npm audit                # ✅ 0 vulnerabilidades críticas
 - **Estado:** Pinia
 - **BD:** IndexedDB (offline-first)
 - **Seguridad:** AES-256-GCM + PBKDF2
-- **Testing:** Vitest (194 tests)
+- **Testing:** Vitest (194 unitarios) + Playwright (18 E2E en Chromium/WebKit)
 - **PWA:** Service Worker + Workbox
 
 ### **Principios de Desarrollo**
@@ -226,12 +229,13 @@ npm audit                # ✅ 0 vulnerabilidades críticas
 
 ## 📊 Estado del Proyecto
 
-**Última actualización:** 18-Oct-2025
+**Última actualización:** 21-Oct-2025
 
 | Categoría | Estado | Notas |
 |-----------|--------|-------|
 | **Documentación** | ✅ 100% | Reorganizada 18-Oct-2025 |
-| **Testing** | ✅ 100% | 194 tests PASS |
+| **Testing Unitario** | ✅ 100% | 194 tests PASS (Vitest) |
+| **Testing E2E** | ✅ 100% Epic 1 | 18 tests PASS, 2 skip (Playwright) |
 | **Seguridad AGESIC** | ✅ 90.9% | 10/11 requisitos |
 | **PWA Compliance** | ✅ 100% | Lighthouse v9 PASS |
 | **Tareas** | 🟡 79% | 19/24 completadas |

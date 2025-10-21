@@ -16,7 +16,7 @@
 - ✅ **Sistema de autenticación** - RBAC con 3 roles
 - ✅ **Cifrado de datos** - AES-256-GCM implementado
 - ✅ **Módulos operativos** - Registro, consulta, supervisión, administración
-- ✅ **Testing** - 218 tests unitarios + 5 E2E
+- ✅ **Testing** - 11 suites de tests unitarios (Vitest) + Playwright E2E configurado
 - ✅ **Documentación** - Guías técnicas y arquitectónicas
 
 ### ⏳ Pendiente (21%)
@@ -134,11 +134,29 @@
 
 ## 🧪 TESTING IMPLEMENTADO
 
-> 📘 **Detalles:** Ver [`05-testing-guidelines.md`](./05-testing-guidelines.md)
+> 📘 **Detalles:** Ver [`08-testing-guidelines.md`](./08-testing-guidelines.md) y [`10-e2e-testing-strategy.md`](./10-e2e-testing-strategy.md)
 
-**Cobertura:**
-- ✅ **218 tests unitarios** (Vitest) - Stores, Services, Components, Router
-- ✅ **5 tests E2E** (Playwright) - Flujos críticos (Login, Registro ingreso/salida, Reportes)
+**Cobertura de Tests Unitarios (Vitest):**
+- ✅ **11 suites de tests** distribuidas en:
+  - 3 tests de componentes (LoginForm, RegistrationForm, TermsAndConditionsDialog)
+  - 1 test de vista (LoginView)
+  - 4 tests de stores (app, audit, auth, registro)
+  - 2 tests de servicios (databaseService, encryptionService)
+  - 1 test de router
+- ✅ **Configuración oficial Vuetify** con `resize-observer-polyfill`
+- ✅ **Helper global** `mountWithVuetify()` para componentes
+
+**Infraestructura E2E (Playwright):**
+- ✅ **Playwright configurado** con 3 navegadores (Chromium, Firefox, WebKit)
+- ✅ **Auto-start dev server** antes de tests
+- ⏳ **Tests E2E pendientes** - Ver estrategia en `10-e2e-testing-strategy.md`
+
+**Gaps Identificados:**
+- ⏳ 33 componentes sin tests unitarios
+- ⏳ 17 composables sin tests
+- ⏳ 0 tests E2E de flujos críticos implementados
+
+**Seguridad:**
 - ✅ **Cobertura OWASP:** 9/10 vulnerabilidades cubiertas
 
 ---
