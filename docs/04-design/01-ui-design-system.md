@@ -129,8 +129,8 @@ Fuente estándar: **Roboto** (legibilidad y compatibilidad Material Design).
 **Adicional a Supervisor:**
 - Panel de gestión de usuarios (tabla)
 - Sistema de auditoría modular:
-  - Card de actividad del día
-  - Tabla de eventos con filtros avanzados
+  - Resumen del sistema (métricas globales de 6 meses)
+  - Tabla de eventos con filtros avanzados y histórico completo
   - Modal de detalles de eventos
 - Acceso a configuración del sistema
 

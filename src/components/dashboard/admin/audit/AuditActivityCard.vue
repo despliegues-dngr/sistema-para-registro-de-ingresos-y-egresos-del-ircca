@@ -1,202 +1,197 @@
 <template>
   <v-card elevation="2" class="mb-8">
     <v-card-title class="bg-primary pa-4">
-      <div class="d-flex align-center">
-        <v-icon color="white" size="28" class="mr-3">mdi-history</v-icon>
-        <div>
-          <h3 class="text-h6 text-white mb-0">Actividad del Día</h3>
-          <p class="text-caption text-blue-lighten-4 mb-0">
-            {{ formatDate(new Date()) }}
-          </p>
+      <div class="d-flex align-center justify-space-between">
+        <div class="d-flex align-center">
+          <v-icon color="white" size="28" class="mr-3">mdi-chart-box</v-icon>
+          <div>
+            <h3 class="text-h6 text-white mb-0">Resumen del Sistema de Auditoría</h3>
+            <p class="text-caption text-blue-lighten-4 mb-0">
+              Datos de los últimos 6 meses
+            </p>
+          </div>
         </div>
+        
+        <!-- Estado de carga -->
+        <v-chip
+          v-if="auditStore.isLoading"
+          color="white"
+          variant="outlined"
+          size="small"
+        >
+          <v-progress-circular
+            indeterminate
+            size="16"
+            width="2"
+            class="mr-2"
+          />
+          Cargando...
+        </v-chip>
       </div>
     </v-card-title>
 
-    <!-- Resumen numérico -->
+    <!-- Métricas del sistema -->
     <v-card-text class="pa-4">
-      <v-row class="mb-4">
+      <v-row>
+        <!-- Total de Eventos -->
         <v-col cols="6" md="3">
-          <div class="stat-box">
-            <v-icon color="primary" size="32">mdi-account-multiple</v-icon>
-            <div class="text-h4 font-weight-bold">{{ stats.usuariosActivos }}</div>
-            <div class="text-caption text-grey">Usuarios Activos</div>
+          <div class="stat-box stat-box-primary">
+            <v-icon color="primary" size="36">mdi-database</v-icon>
+            <div class="text-h3 font-weight-bold mt-2">{{ stats.totalEventos.toLocaleString() }}</div>
+            <div class="text-caption text-grey mt-1">Total de Eventos</div>
+            <v-divider class="my-2" />
+            <div class="text-caption text-primary">En base de datos</div>
           </div>
         </v-col>
+
+        <!-- Eventos de Autenticación -->
         <v-col cols="6" md="3">
-          <div class="stat-box">
-            <v-icon color="success" size="32">mdi-file-document-edit</v-icon>
-            <div class="text-h4 font-weight-bold">{{ stats.registrosCreados }}</div>
-            <div class="text-caption text-grey">Registros Creados</div>
+          <div class="stat-box stat-box-success">
+            <v-icon color="success" size="36">mdi-shield-check</v-icon>
+            <div class="text-h3 font-weight-bold mt-2">{{ stats.eventosAuth }}</div>
+            <div class="text-caption text-grey mt-1">Eventos de Seguridad</div>
+            <v-divider class="my-2" />
+            <div class="text-caption">
+              <span class="text-success">{{ stats.loginsExitosos }}</span> exitosos · 
+              <span class="text-error">{{ stats.loginsFallidos }}</span> fallidos
+            </div>
           </div>
         </v-col>
+
+        <!-- Eventos Críticos -->
         <v-col cols="6" md="3">
-          <div class="stat-box">
-            <v-icon color="warning" size="32">mdi-logout</v-icon>
-            <div class="text-h4 font-weight-bold">{{ stats.salidasProcesadas }}</div>
-            <div class="text-caption text-grey">Salidas Procesadas</div>
+          <div class="stat-box stat-box-warning">
+            <v-icon color="warning" size="36">mdi-alert</v-icon>
+            <div class="text-h3 font-weight-bold mt-2">{{ stats.eventosCriticos }}</div>
+            <div class="text-caption text-grey mt-1">Eventos Críticos</div>
+            <v-divider class="my-2" />
+            <div class="text-caption">
+              Errores · Bloqueos · Fallos
+            </div>
           </div>
         </v-col>
+
+        <!-- Tasa de Éxito -->
         <v-col cols="6" md="3">
-          <div class="stat-box">
-            <v-icon color="error" size="32">mdi-alert-circle</v-icon>
-            <div class="text-h4 font-weight-bold">{{ stats.eventosImportantes }}</div>
-            <div class="text-caption text-grey">Eventos Importantes</div>
+          <div class="stat-box stat-box-info">
+            <v-icon :color="stats.tasaExito >= 95 ? 'success' : 'warning'" size="36">
+              mdi-chart-line
+            </v-icon>
+            <div class="text-h3 font-weight-bold mt-2">{{ stats.tasaExito }}%</div>
+            <div class="text-caption text-grey mt-1">Tasa de Éxito</div>
+            <v-divider class="my-2" />
+            <v-progress-linear
+              :model-value="stats.tasaExito"
+              :color="stats.tasaExito >= 95 ? 'success' : 'warning'"
+              height="4"
+              rounded
+            />
           </div>
         </v-col>
       </v-row>
 
-      <v-divider class="mb-4" />
-
-      <!-- Filtros simples -->
-      <v-row class="mb-3">
-        <v-col cols="12" md="6">
-          <v-btn-toggle
-            v-model="filtroTiempo"
-            color="primary"
-            variant="outlined"
-            divided
-            mandatory
-          >
-            <v-btn value="hoy">Hoy</v-btn>
-            <v-btn value="ayer">Ayer</v-btn>
-            <v-btn value="semana">Última Semana</v-btn>
-          </v-btn-toggle>
+      <!-- Métricas adicionales -->
+      <v-row class="mt-2">
+        <v-col cols="12" md="4">
+          <v-card variant="outlined" class="pa-3">
+            <div class="d-flex align-center">
+              <v-icon color="info" class="mr-3">mdi-account-multiple</v-icon>
+              <div>
+                <div class="text-h6 font-weight-bold">{{ stats.usuariosUnicos }}</div>
+                <div class="text-caption text-grey">Usuarios únicos activos</div>
+              </div>
+            </div>
+          </v-card>
         </v-col>
-        <v-col cols="12" md="6">
-          <v-select
-            v-model="filtroUsuario"
-            :items="usuariosDisponibles"
-            label="Filtrar por usuario"
-            variant="outlined"
-            density="compact"
-            clearable
-            prepend-inner-icon="mdi-account-filter"
-          />
+
+        <v-col cols="12" md="4">
+          <v-card variant="outlined" class="pa-3">
+            <div class="d-flex align-center">
+              <v-icon color="info" class="mr-3">mdi-file-document-edit</v-icon>
+              <div>
+                <div class="text-h6 font-weight-bold">{{ stats.operacionesDatos }}</div>
+                <div class="text-caption text-grey">Operaciones de datos</div>
+              </div>
+            </div>
+          </v-card>
+        </v-col>
+
+        <v-col cols="12" md="4">
+          <v-card variant="outlined" class="pa-3">
+            <div class="d-flex align-center">
+              <v-icon color="info" class="mr-3">mdi-clock-outline</v-icon>
+              <div>
+                <div class="text-h6 font-weight-bold">{{ stats.eventosDia }}</div>
+                <div class="text-caption text-grey">Eventos hoy</div>
+              </div>
+            </div>
+          </v-card>
         </v-col>
       </v-row>
-
-      <!-- Lista de actividades -->
-      <div class="activity-list">
-        <div
-          v-for="evento in eventosMostrados"
-          :key="evento.id"
-          class="activity-item"
-        >
-          <v-icon
-            :color="getEventoColor(evento.action)"
-            size="20"
-            class="mr-3"
-          >
-            {{ getEventoIcon(evento.action) }}
-          </v-icon>
-          
-          <div class="flex-grow-1">
-            <div class="d-flex justify-space-between align-center">
-              <span class="font-weight-medium">
-                {{ evento.username }} 
-                <span class="text-caption text-grey">
-                  ({{ getRoleName(evento.details.role as string) }})
-                </span>
-              </span>
-              <span class="text-caption text-grey">
-                {{ formatTime(evento.timestamp) }}
-              </span>
-            </div>
-            <div class="text-body-2 text-grey-darken-1">
-              {{ getEventoDescripcion(evento.action) }}
-            </div>
-          </div>
-        </div>
-
-        <!-- Estado vacío -->
-        <div v-if="eventosMostrados.length === 0" class="text-center pa-8">
-          <v-icon size="64" color="grey-lighten-2">mdi-information-outline</v-icon>
-          <p class="text-h6 text-grey mt-4">No hay actividad registrada</p>
-          <p class="text-body-2 text-grey">
-            No se encontraron eventos para los filtros seleccionados
-          </p>
-        </div>
-      </div>
     </v-card-text>
   </v-card>
 </template>
 
 <script setup lang="ts">
-import { ref, computed, onMounted } from 'vue'
+import { computed } from 'vue'
 import { useAuditStore } from '@/stores/audit'
-import { useAuditFilters } from '@/composables/useAuditFilters'
 
 const auditStore = useAuditStore()
-const {
-  filtroTiempo,
-  getRangoTiempo,
-  formatTime,
-  formatDate,
-  getEventoColor,
-  getEventoIcon,
-  getEventoDescripcion,
-  getRoleName
-} = useAuditFilters()
 
-// Estado local
-const filtroUsuario = ref<string | null>(null)
-
-// Estadísticas computadas del día
+// Estadísticas computadas basadas en TODOS los datos de la BD (6 meses)
 const stats = computed(() => {
-  const rango = getRangoTiempo('hoy')
-  const eventosHoy = auditStore.auditLogs.filter(e => {
+  const todosLosEventos = auditStore.auditLogs
+  const total = todosLosEventos.length
+
+  // Eventos de hoy
+  const hoy = new Date()
+  hoy.setHours(0, 0, 0, 0)
+  const manana = new Date(hoy)
+  manana.setDate(manana.getDate() + 1)
+  const eventosDia = todosLosEventos.filter(e => {
     const fecha = new Date(e.timestamp)
-    return fecha >= rango.inicio && fecha <= rango.fin
-  })
+    return fecha >= hoy && fecha < manana
+  }).length
+
+  // Eventos de autenticación
+  const eventosAuth = todosLosEventos.filter(e => e.eventType === 'auth').length
+  const loginsExitosos = todosLosEventos.filter(e => e.action === 'login.success').length
+  const loginsFallidos = todosLosEventos.filter(e => 
+    e.action === 'login.failed' || e.action === 'login.blocked'
+  ).length
+
+  // Eventos críticos
+  const eventosCriticos = todosLosEventos.filter(e => 
+    e.eventType === 'system_error' || 
+    e.action.includes('failed') || 
+    e.action.includes('blocked')
+  ).length
+
+  // Tasa de éxito (eventos sin "failed", "error", "blocked")
+  const eventosExitosos = todosLosEventos.filter(e => 
+    !e.action.includes('failed') && 
+    !e.action.includes('error') && 
+    !e.action.includes('blocked')
+  ).length
+  const tasaExito = total > 0 ? Math.round((eventosExitosos / total) * 100) : 100
+
+  // Usuarios únicos
+  const usuariosUnicos = new Set(todosLosEventos.map(e => e.userId)).size
+
+  // Operaciones de datos
+  const operacionesDatos = todosLosEventos.filter(e => e.eventType === 'data_operation').length
 
   return {
-    usuariosActivos: new Set(eventosHoy.map(e => e.userId)).size,
-    registrosCreados: eventosHoy.filter(e => e.action === 'registro.created').length,
-    salidasProcesadas: eventosHoy.filter(e => e.action === 'registro.modified').length,
-    eventosImportantes: eventosHoy.filter(e => 
-      e.action.includes('failed') || e.action.includes('blocked')
-    ).length
+    totalEventos: total,
+    eventosAuth,
+    loginsExitosos,
+    loginsFallidos,
+    eventosCriticos,
+    tasaExito,
+    usuariosUnicos,
+    operacionesDatos,
+    eventosDia
   }
-})
-
-// Usuarios disponibles para filtro
-const usuariosDisponibles = computed(() => {
-  const usuarios = new Set(auditStore.auditLogs.map(e => e.username))
-  return Array.from(usuarios).map(u => ({ title: u, value: u }))
-})
-
-// Eventos filtrados y mostrados
-const eventosMostrados = computed(() => {
-  let eventos = auditStore.auditLogs
-
-  // Filtro por tiempo
-  const rango = getRangoTiempo(filtroTiempo.value)
-  eventos = eventos.filter(e => {
-    const fecha = new Date(e.timestamp)
-    return fecha >= rango.inicio && fecha <= rango.fin
-  })
-
-  // Filtro por usuario
-  if (filtroUsuario.value) {
-    eventos = eventos.filter(e => e.username === filtroUsuario.value)
-  }
-
-  // Ordenar por más reciente primero y limitar a 20
-  return eventos
-    .sort((a, b) => new Date(b.timestamp).getTime() - new Date(a.timestamp).getTime())
-    .slice(0, 20)
-})
-
-// Lifecycle
-onMounted(async () => {
-  // Cargar logs de las últimas 24 horas
-  const ayer = new Date()
-  ayer.setDate(ayer.getDate() - 1)
-  
-  await auditStore.loadAuditLogs({
-    startDate: ayer,
-    endDate: new Date()
-  })
 })
 </script>
 

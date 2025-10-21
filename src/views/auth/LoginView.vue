@@ -59,13 +59,8 @@ const onSubmit = async (credentials: { username: string; password: string }) => 
   message.value = ''
 
   try {
-    // Verificar si aún puede intentar login
-    if (!authStore.canAttemptLogin) {
-      message.value = MESSAGES.AUTH.ACCOUNT_LOCKED
-      return
-    }
-
     // Intentar login usando la lógica real del authStore
+    // El bloqueo temporal ahora se maneja automáticamente en la BD
     await authStore.login(credentials.username, credentials.password)
     
     // Login exitoso

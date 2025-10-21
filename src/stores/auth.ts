@@ -16,6 +16,11 @@ interface StoredUser {
   salt: string
   createdAt: string
   lastLogin: string | null
+  // Campos de bloqueo temporal
+  loginAttempts?: number
+  lastFailedAttempt?: string | null
+  isLocked?: boolean
+  lockedUntil?: string | null
 }
 
 export interface User {
@@ -105,39 +110,72 @@ export const useAuthStore = defineStore('auth', () => {
   async function login(username: string, password: string): Promise<void> {
     const auditStore = useAuditStore()
     const sessionId = crypto.randomUUID()
+    const { AUTH_CONFIG } = await import('@/config/constants')
     
     try {
-      if (!canAttemptLogin.value) {
-        // Log de cuenta bloqueada
-        await auditStore.logAuthEvent(
-          'unknown',
-          username,
-          'login.blocked',
-          sessionId,
-          { reason: 'max_attempts_exceeded', attempts: loginAttempts.value }
-        )
-        throw new Error('Máximo número de intentos de login excedido. Contacte al administrador.')
-      }
-
       // Inicializar BD si no está inicializada
       await initDatabase()
 
       // Buscar usuario por username (cédula)
       const users = await getRecords('usuarios', 'username', username)
       if (users.length === 0) {
-        incrementLoginAttempts()
         // Log de login fallido - usuario no encontrado
         await auditStore.logAuthEvent(
           'unknown',
           username,
           'login.failed',
           sessionId,
-          { reason: 'user_not_found', attempts: loginAttempts.value }
+          { reason: 'user_not_found' }
         )
         throw new Error('Usuario no encontrado')
       }
 
       const dbUser = users[0] as StoredUser
+
+      // ✅ VERIFICAR BLOQUEO TEMPORAL
+      const now = new Date()
+      
+      // Verificar si está bloqueado
+      if (dbUser.isLocked && dbUser.lockedUntil) {
+        const unlockTime = new Date(dbUser.lockedUntil)
+        
+        // Si el bloqueo expiró, desbloquear automáticamente
+        if (now >= unlockTime) {
+          await updateRecord('usuarios', dbUser.id, {
+            isLocked: false,
+            loginAttempts: 0,
+            lockedUntil: null,
+            lastFailedAttempt: null
+          })
+          
+          // Log de desbloqueo automático
+          await auditStore.logAuthEvent(
+            dbUser.id,
+            dbUser.username,
+            'user.auto_unlocked',
+            sessionId,
+            { reason: 'timeout_expired' }
+          )
+          
+          // Usuario desbloqueado, continuar con login
+          dbUser.isLocked = false
+          dbUser.loginAttempts = 0
+        } else {
+          // Aún bloqueado - calcular tiempo restante
+          const minutesRemaining = Math.ceil((unlockTime.getTime() - now.getTime()) / (60 * 1000))
+          
+          // Log de intento bloqueado
+          await auditStore.logAuthEvent(
+            dbUser.id,
+            dbUser.username,
+            'login.blocked',
+            sessionId,
+            { reason: 'account_locked', minutesRemaining }
+          )
+          
+          throw new Error(`Cuenta bloqueada. Intente nuevamente en ${minutesRemaining} minuto${minutesRemaining > 1 ? 's' : ''}.`)
+        }
+      }
 
       // Verificar contraseña usando método estático
       const isPasswordValid = await EncryptionService.verifyPassword(
@@ -147,21 +185,57 @@ export const useAuthStore = defineStore('auth', () => {
       )
 
       if (!isPasswordValid) {
-        incrementLoginAttempts()
-        // Log de login fallido - contraseña incorrecta
-        await auditStore.logAuthEvent(
-          dbUser.id,
-          dbUser.username,
-          'login.failed',
-          sessionId,
-          { reason: 'invalid_password', attempts: loginAttempts.value }
-        )
-        throw new Error('Contraseña incorrecta')
+        // Incrementar intentos fallidos en BD
+        const currentAttempts = (dbUser.loginAttempts || 0) + 1
+        const updateData: Partial<StoredUser> = {
+          loginAttempts: currentAttempts,
+          lastFailedAttempt: now.toISOString()
+        }
+        
+        // Si alcanzó el máximo, bloquear por 15 minutos
+        if (currentAttempts >= AUTH_CONFIG.MAX_LOGIN_ATTEMPTS) {
+          const lockUntil = new Date(now.getTime() + AUTH_CONFIG.LOCKOUT_DURATION)
+          updateData.isLocked = true
+          updateData.lockedUntil = lockUntil.toISOString()
+          
+          await updateRecord('usuarios', dbUser.id, updateData)
+          
+          // Log de cuenta bloqueada
+          await auditStore.logAuthEvent(
+            dbUser.id,
+            dbUser.username,
+            'login.blocked',
+            sessionId,
+            { reason: 'max_attempts_exceeded', attempts: currentAttempts }
+          )
+          
+          throw new Error('Máximo número de intentos excedido. Cuenta bloqueada por 15 minutos.')
+        } else {
+          // Actualizar intentos sin bloquear
+          await updateRecord('usuarios', dbUser.id, updateData)
+          
+          const attemptsLeft = AUTH_CONFIG.MAX_LOGIN_ATTEMPTS - currentAttempts
+          
+          // Log de login fallido
+          await auditStore.logAuthEvent(
+            dbUser.id,
+            dbUser.username,
+            'login.failed',
+            sessionId,
+            { reason: 'invalid_password', attempts: currentAttempts, attemptsLeft }
+          )
+          
+          throw new Error(`Contraseña incorrecta. Le quedan ${attemptsLeft} intento${attemptsLeft > 1 ? 's' : ''}.`)
+        }
       }
 
-      // Actualizar último login en la BD
+      // ✅ Login exitoso - resetear bloqueo y actualizar último login
       await updateRecord('usuarios', dbUser.id, {
-        lastLogin: new Date().toISOString()
+        lastLogin: now.toISOString(),
+        loginAttempts: 0,
+        lastFailedAttempt: null,
+        isLocked: false,
+        lockedUntil: null
       })
 
       // Login exitoso - establecer usuario

@@ -95,8 +95,8 @@
 - Y 7 modales más...
 
 #### Admin/Audit (3 componentes)
-- `AuditActivityCard.vue` - Card de resumen de actividad del día
-- `AuditTableSection.vue` - Tabla completa con filtros avanzados
+- `AuditActivityCard.vue` - Resumen del sistema de auditoría (métricas globales de 6 meses)
+- `AuditTableSection.vue` - Tabla completa con histórico de 6 meses y filtros avanzados
 - `EventDetailDialog.vue` - Modal de detalles de evento
 
 #### Layout (5 componentes)

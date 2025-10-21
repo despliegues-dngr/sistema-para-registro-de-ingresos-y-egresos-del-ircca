@@ -148,7 +148,7 @@ La seguridad del sistema se estructura en un modelo de **4 capas de protección*
 3. **Prevenir Accesos No Autorizados**
    - RBAC con 3 roles (Admin/Supervisor/Operador)
    - Autenticación obligatoria con contraseñas hasheadas (PBKDF2)
-   - Bloqueo tras 3 intentos fallidos + timeout 30 min
+   - Bloqueo tras 3 intentos fallidos + timeout 15 min (desbloqueo automático)
 
 4. **Asegurar Integridad de Datos**
    - Auditoría inmutable de eventos críticos

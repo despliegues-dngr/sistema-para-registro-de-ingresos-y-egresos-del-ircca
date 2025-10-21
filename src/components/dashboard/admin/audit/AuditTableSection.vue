@@ -243,7 +243,7 @@
 </template>
 
 <script setup lang="ts">
-import { computed } from 'vue'
+import { computed, onMounted } from 'vue'
 import { useAuditStore } from '@/stores/audit'
 import { useAuditFilters } from '@/composables/useAuditFilters'
 import { useAuditExport } from '@/composables/useAuditExport'
@@ -346,6 +346,18 @@ function verDetalles(evento: AuditEvent) {
 function exportarCSV() {
   exportCSV(eventosFiltrados.value, 'registro-auditoria-ircca')
 }
+
+// Lifecycle: Cargar eventos al montar el componente
+onMounted(async () => {
+  // Cargar últimos 6 meses de eventos para auditorías mensuales/trimestrales
+  const seisMesesAtras = new Date()
+  seisMesesAtras.setMonth(seisMesesAtras.getMonth() - 6)
+  
+  await auditStore.loadAuditLogs({
+    startDate: seisMesesAtras,
+    endDate: new Date()
+  })
+})
 </script>
 
 <style scoped>
