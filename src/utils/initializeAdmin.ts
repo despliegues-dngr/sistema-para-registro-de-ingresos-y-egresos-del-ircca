@@ -51,11 +51,8 @@ export async function createInitialAdmin(adminData: AdminUser): Promise<boolean>
       lastLogin: null
     }
 
-    console.log('[CREATE_ADMIN] Creating admin user:', { cedula: adminData.cedula, hashedPassword: hashedPassword.substring(0, 20) + '...', salt: salt.substring(0, 20) + '...' })
-
     // Guardar en BD
     const result = await addRecord('usuarios', adminUser)
-    console.log('[CREATE_ADMIN] Result:', result)
     
     if (!result.success) {
       throw new Error(result.error || 'Error al crear usuario administrador')
@@ -87,8 +84,6 @@ export const DEFAULT_ADMIN: AdminUser = {
   apellido: import.meta.env.VITE_ADMIN_APELLIDO || 'Berni',
   password: import.meta.env.VITE_ADMIN_PASSWORD || '2025.Ircca'
 }
-
-console.log('[INIT_ADMIN] DEFAULT_ADMIN loaded:', { cedula: DEFAULT_ADMIN.cedula, nombre: DEFAULT_ADMIN.nombre, password: DEFAULT_ADMIN.password })
 
 /**
  * 🔧 FUNCIÓN TEMPORAL: Eliminar usuario administrador para forzar recreación
@@ -128,8 +123,6 @@ export const DEFAULT_SUPERVISOR: AdminUser = {
   password: import.meta.env.VITE_SUPERVISOR_PASSWORD || '2025.Supervisor'
 }
 
-console.log('[INIT_SUPERVISOR] DEFAULT_SUPERVISOR loaded:', { cedula: DEFAULT_SUPERVISOR.cedula, nombre: DEFAULT_SUPERVISOR.nombre, password: DEFAULT_SUPERVISOR.password })
-
 /**
  * Crea el usuario supervisor del sistema
  */
@@ -167,11 +160,8 @@ export async function createInitialSupervisor(supervisorData: AdminUser): Promis
       lastLogin: null
     }
 
-    console.log('[CREATE_SUPERVISOR] Creating supervisor user:', { cedula: supervisorData.cedula, hashedPassword: hashedPassword.substring(0, 20) + '...', salt: salt.substring(0, 20) + '...' })
-
     // Guardar en BD
     const result = await addRecord('usuarios', supervisorUser)
-    console.log('[CREATE_SUPERVISOR] Result:', result)
     
     if (!result.success) {
       throw new Error(result.error || 'Error al crear usuario supervisor')

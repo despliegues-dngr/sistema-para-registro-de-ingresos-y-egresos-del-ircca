@@ -199,13 +199,7 @@ export const useDatabase = () => {
           request = store.getAll()
         }
 
-        request.onsuccess = () => {
-          const result = request.result || []
-          if (storeName === 'usuarios' && result.length > 0) {
-            console.log('[GET_RECORDS] Usuarios recuperados de IndexedDB:', result.map((u: Record<string, unknown>) => ({ id: u.id, username: u.username, role: u.role, hasSalt: !!u.salt, saltLength: (u.salt as string)?.length })))
-          }
-          resolve(result)
-        }
+        request.onsuccess = () => resolve(request.result || [])
         request.onerror = () => reject([])
       })
     } catch {
