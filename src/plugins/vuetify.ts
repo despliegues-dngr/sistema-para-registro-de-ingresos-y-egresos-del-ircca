@@ -11,6 +11,8 @@ import '@mdi/font/css/materialdesignicons.css'
 export default createVuetify({
   components,
   directives,
+  // ✅ SSR Config: Deshabilitar SSR para evitar errores de getBoundingClientRect en producción
+  ssr: false,
   theme: {
     defaultTheme: 'ircca',
     themes: {

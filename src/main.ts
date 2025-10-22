@@ -17,4 +17,10 @@ app.use(vuetify)
 initializeDefaultAdmin().catch(console.error)
 initializeDefaultSupervisor().catch(console.error)
 
-app.mount('#app')
+// ✅ FIX: Asegurar que el DOM esté completamente cargado antes de montar
+// Previene errores de getBoundingClientRect en producción minificada
+if (document.readyState === 'loading') {
+  document.addEventListener('DOMContentLoaded', () => app.mount('#app'))
+} else {
+  app.mount('#app')
+}

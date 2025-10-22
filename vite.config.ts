@@ -19,7 +19,7 @@ export default defineConfig(({ mode }) => {
     'X-Content-Type-Options': 'nosniff',
     'Referrer-Policy': 'strict-origin-when-cross-origin',
     // ✅ Geolocation bloqueada (correcto para app de control de accesos)
-    'Permissions-Policy': 'geolocation=(), microphone=(), camera=()'
+    'Permissions-Policy': 'geolocation=(), microphone=(), camera=(), interest-cohort=()'
   }
 
   return {
@@ -77,8 +77,10 @@ export default defineConfig(({ mode }) => {
       ...(isProduction ? [] : [vueDevTools()]),
       vuetify(),
       VitePWA({
-        registerType: 'autoUpdate',
+        registerType: 'prompt',
         workbox: {
+          skipWaiting: false,
+          clientsClaim: false,
           globPatterns: ['**/*.{js,css,html,ico,png,svg,woff2,woff}'],
           runtimeCaching: [
             {
