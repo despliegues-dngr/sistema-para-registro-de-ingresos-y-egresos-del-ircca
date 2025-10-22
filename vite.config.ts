@@ -110,37 +110,24 @@ export default defineConfig(({ mode }) => {
             {
               src: '/icons/icon-192x192.png',
               sizes: '192x192',
-              type: 'image/png',
-              purpose: 'maskable any'
+              type: 'image/png'
+            },
+            {
+              src: '/icons/icon-512x512.png',
+              sizes: '512x512',
+              type: 'image/png'
             },
             {
               src: '/icons/icon-512x512.png',
               sizes: '512x512',
               type: 'image/png',
-              purpose: 'maskable any'
-            }
-          ],
-          shortcuts: [
-            {
-              name: 'Registrar Ingreso',
-              short_name: 'Ingreso',
-              description: 'Registrar ingreso de persona o vehículo',
-              url: '/registro/ingreso',
-              icons: [{ src: '/icons/ingreso-96x96.png', sizes: '96x96' }]
+              purpose: 'any'
             },
             {
-              name: 'Registrar Egreso',
-              short_name: 'Egreso',
-              description: 'Registrar egreso de persona o vehículo',
-              url: '/registro/egreso',
-              icons: [{ src: '/icons/egreso-96x96.png', sizes: '96x96' }]
-            },
-            {
-              name: 'Consultas',
-              short_name: 'Consultas',
-              description: 'Consultar registros históricos',
-              url: '/consultas',
-              icons: [{ src: '/icons/consulta-96x96.png', sizes: '96x96' }]
+              src: '/icons/icon-512x512.png',
+              sizes: '512x512',
+              type: 'image/png',
+              purpose: 'maskable'
             }
           ]
         }

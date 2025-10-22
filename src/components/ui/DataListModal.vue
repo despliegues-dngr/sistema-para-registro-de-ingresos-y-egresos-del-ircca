@@ -18,7 +18,7 @@
       </v-card-title>
 
       <!-- Búsqueda rápida -->
-      <v-card-text class="pa-4 pb-0" v-if="data.length > 0">
+      <v-card-text class="pa-4 pb-2" v-if="data.length > 0">
         <v-text-field
           v-model="searchQuery"
           prepend-inner-icon="mdi-magnify"
@@ -31,115 +31,101 @@
         />
       </v-card-text>
 
-      <v-card-text class="pa-0">
-        <!-- Lista de personas -->
+      <v-card-text class="pa-4 pt-2">
+        <!-- Lista de personas con Virtual Scroll -->
         <template v-if="dataType === 'personas'">
-          <v-list class="py-0">
-            <template v-for="(persona, index) in filteredData" :key="(persona as PersonaModalData)?.cedula || index">
-              <v-list-item
-                class="py-3 px-6"
-                :class="{ 'bg-grey-lighten-5': index % 2 === 1 }"
+          <v-virtual-scroll
+            :items="filteredData"
+            :height="virtualScrollHeight"
+            item-height="80"
+          >
+            <template v-slot:default="{ item }">
+              <v-card
+                variant="outlined"
+                class="persona-card mb-3"
+                hover
               >
-                <template #prepend>
-                  <v-avatar color="primary" class="text-white mr-4">
-                    <v-icon>mdi-account</v-icon>
-                  </v-avatar>
-                </template>
-
-                <v-list-item-title class="text-h6 mb-1">
-                  {{ (persona as any)?.nombre }} {{ (persona as any)?.apellido }}
-                </v-list-item-title>
-
-                <v-list-item-subtitle>
-                  <div class="d-flex flex-column gap-1">
+                <v-card-text class="pa-3">
+                  <div class="persona-header">
                     <div class="d-flex align-center">
-                      <v-icon size="16" class="mr-2">mdi-card-account-details</v-icon>
-                      <span>C.I: {{ (persona as any)?.cedula }}</span>
+                      <v-avatar color="primary" size="40" class="mr-3">
+                        <v-icon size="20" color="white">mdi-account</v-icon>
+                      </v-avatar>
+                      <div class="persona-name">
+                        {{ (item as any)?.nombre }} {{ (item as any)?.apellido }}
+                      </div>
                     </div>
-                    <div class="d-flex align-center">
-                      <v-icon size="16" class="mr-2">mdi-clock</v-icon>
-                      <span>Ingreso: {{ formatearHora((persona as any)?.ingresoTimestamp) }}</span>
-                    </div>
-                    <div class="d-flex align-center">
-                      <v-icon size="16" class="mr-2">mdi-domain</v-icon>
-                      <span>Destino: {{ (persona as any)?.destino }}</span>
-                    </div>
-                  </div>
-                </v-list-item-subtitle>
-
-                <template #append>
-                  <div class="text-center">
+                    
                     <v-chip
-                      :color="(persona as any)?.conVehiculo ? 'success' : 'default'"
+                      :color="(item as any)?.conVehiculo ? 'success' : 'grey'"
                       size="small"
-                      variant="tonal"
+                      variant="flat"
+                      class="badge-vehiculo"
                     >
-                      <v-icon
-                        size="16"
-                        :icon="(persona as any)?.conVehiculo ? 'mdi-car' : 'mdi-walk'"
-                        class="mr-1"
-                      />
-                      {{ (persona as any)?.conVehiculo ? 'Con vehículo' : 'Sin vehículo' }}
+                      <v-icon size="14" class="mr-1">
+                        {{ (item as any)?.conVehiculo ? 'mdi-car' : 'mdi-walk' }}
+                      </v-icon>
+                      {{ (item as any)?.conVehiculo ? 'Con vehículo' : 'A pie' }}
                     </v-chip>
                   </div>
-                </template>
-              </v-list-item>
-
-              <v-divider v-if="index < filteredData.length - 1" />
+                  
+                  <div class="persona-details">
+                    <span class="detail-item">
+                      <span class="detail-label">C.I:</span>
+                      <span class="detail-value">{{ (item as any)?.cedula }}</span>
+                    </span>
+                    <span class="detail-separator">|</span>
+                    <span class="detail-item">
+                      <span class="detail-label">Destino:</span>
+                      <span class="detail-value">{{ (item as any)?.destino }}</span>
+                    </span>
+                    <span class="detail-separator">|</span>
+                    <span class="detail-item">
+                      <span class="detail-label">Ingreso:</span>
+                      <span class="detail-value">{{ formatearHoraCorta((item as any)?.ingresoTimestamp) }}</span>
+                    </span>
+                  </div>
+                </v-card-text>
+              </v-card>
             </template>
-          </v-list>
+          </v-virtual-scroll>
         </template>
 
-        <!-- Lista de vehículos -->
+        <!-- Lista de vehículos con Virtual Scroll -->
         <template v-else-if="dataType === 'vehiculos'">
-          <v-list class="py-0">
-            <template v-for="(vehiculo, index) in filteredData" :key="(vehiculo as any)?.id || index">
-              <v-list-item
-                class="py-3 px-6"
-                :class="{ 'bg-grey-lighten-5': index % 2 === 1 }"
+          <v-virtual-scroll
+            :items="filteredData"
+            :height="virtualScrollHeight"
+            item-height="80"
+          >
+            <template v-slot:default="{ item }">
+              <v-card
+                variant="outlined"
+                class="vehiculo-card mb-3"
+                hover
               >
-                <template #prepend>
-                  <v-avatar :color="getVehicleColor((vehiculo as any)?.tipo)" class="text-white mr-4">
-                    <v-icon>{{ getVehicleIcon((vehiculo as any)?.tipo) }}</v-icon>
-                  </v-avatar>
-                </template>
-
-                <v-list-item-title class="text-h6 mb-1">
-                  {{ (vehiculo as any)?.tipo }} - {{ (vehiculo as any)?.matricula }}
-                </v-list-item-title>
-
-                <v-list-item-subtitle>
-                  <div class="d-flex flex-column gap-1">
-                    <div class="d-flex align-center">
-                      <v-icon size="16" class="mr-2">mdi-clock</v-icon>
-                      <span>Ingreso: {{ formatearHora((vehiculo as any)?.ingresoTimestamp) }}</span>
-                    </div>
-                    <div class="d-flex align-center">
-                      <v-icon size="16" class="mr-2">mdi-account</v-icon>
-                      <span>Conductor: {{ (vehiculo as any)?.conductor }}</span>
+                <v-card-text class="pa-3">
+                  <div class="d-flex align-center">
+                    <v-avatar :color="getVehicleColor((item as any)?.tipo)" size="48" class="mr-3">
+                      <v-icon size="24" color="white">{{ getVehicleIcon((item as any)?.tipo) }}</v-icon>
+                    </v-avatar>
+                    
+                    <div class="flex-grow-1">
+                      <div class="text-subtitle-1 font-weight-bold">
+                        {{ (item as any)?.tipo }} - {{ (item as any)?.matricula }}
+                      </div>
+                      
+                      <div class="info-line-single text-caption">
+                        <span class="info-item">👤 {{ (item as any)?.conductor }}</span>
+                        <span class="info-separator">•</span>
+                        <span class="info-item">⏱️ {{ formatearHoraCorta((item as any)?.ingresoTimestamp) }}</span>
+                      </div>
                     </div>
                   </div>
-                </v-list-item-subtitle>
-
-                <template #append>
-                  <v-chip
-                    :color="getVehicleColor((vehiculo as any)?.tipo)"
-                    size="small"
-                    variant="tonal"
-                  >
-                    <v-icon
-                      size="16"
-                      :icon="getVehicleIcon((vehiculo as any)?.tipo)"
-                      class="mr-1"
-                    />
-                    {{ (vehiculo as any)?.tipo }}
-                  </v-chip>
-                </template>
-              </v-list-item>
-
-              <v-divider v-if="index < filteredData.length - 1" />
+                </v-card-text>
+              </v-card>
             </template>
-          </v-list>
+          </v-virtual-scroll>
         </template>
 
         <!-- Estado vacío -->
@@ -259,16 +245,23 @@ const filteredData = computed(() => {
     }
   })
 })
-function formatearHora(timestamp: Date): string {
+// Altura del virtual scroll (calculada)
+const virtualScrollHeight = computed(() => {
+  const dataLength = filteredData.value.length
+  if (dataLength === 0) return 0
+  // Max 500px de altura para evitar scrolls muy largos
+  return Math.min(dataLength * 88, 500)
+})
+
+function formatearHoraCorta(timestamp: Date): string {
   if (!timestamp) return 'N/A'
   const fecha = new Date(timestamp)
   return fecha.toLocaleString('es-UY', {
     day: '2-digit',
     month: '2-digit',
-    year: 'numeric',
     hour: '2-digit',
     minute: '2-digit',
-    hour12: false  // ✅ Formato 24 horas
+    hour12: false
   })
 }
 
@@ -313,5 +306,78 @@ watch(modelValue, (newVal: boolean) => {
 /* Estilo estándar del proyecto para modales */
 .data-list-dialog-card {
   border-top: 3px solid rgb(var(--v-theme-primary));
+}
+
+/* Cards de personas y vehículos */
+.persona-card,
+.vehiculo-card {
+  transition: all 0.2s;
+  border-color: rgba(0, 0, 0, 0.12);
+}
+
+.persona-card:hover,
+.vehiculo-card:hover {
+  border-color: rgb(var(--v-theme-primary));
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+}
+
+/* Header de persona con badge */
+.persona-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 8px;
+}
+
+.persona-name {
+  font-size: 1rem;
+  font-weight: 600;
+  color: rgb(var(--v-theme-on-surface));
+  line-height: 1.2;
+}
+
+.badge-vehiculo {
+  font-weight: 500;
+  font-size: 0.75rem;
+}
+
+/* Detalles estructurados tipo tabla */
+.persona-details {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  font-size: 0.8125rem;
+  color: rgba(var(--v-theme-on-surface), 0.7);
+  margin-left: 52px;
+}
+
+.detail-item {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+}
+
+.detail-label {
+  font-weight: 500;
+  color: rgba(var(--v-theme-on-surface), 0.6);
+}
+
+.detail-value {
+  font-weight: 400;
+  color: rgba(var(--v-theme-on-surface), 0.85);
+}
+
+.detail-separator {
+  color: rgba(var(--v-theme-on-surface), 0.25);
+  font-weight: 300;
+}
+
+/* Ajustes para virtual scroll */
+:deep(.v-virtual-scroll) {
+  padding: 0 !important;
+}
+
+:deep(.v-virtual-scroll__container) {
+  padding: 0 !important;
 }
 </style>

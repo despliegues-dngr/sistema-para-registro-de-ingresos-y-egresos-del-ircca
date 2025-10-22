@@ -125,7 +125,7 @@
 </template>
 
 <script setup lang="ts">
-import { ref, onMounted, onUnmounted } from 'vue'
+import { ref, computed, onMounted, onUnmounted } from 'vue'
 import { useRouter } from 'vue-router'
 import { useAuthStore } from '@/stores/auth'
 import { useRegistroStore } from '@/stores/registro'
@@ -200,8 +200,10 @@ const {
   updateVehicleAnimation
 } = useDashboardStats(registroStore)
 
-// Adaptador para vehiculosData que depende de un estado local (selectedVehicleType)
-const vehiculosData = vehiculosDataComputed(selectedVehicleType.value)
+// Adaptador reactivo para vehiculosData que depende de un estado local (selectedVehicleType)
+const vehiculosData = computed(() => {
+  return vehiculosDataComputed(selectedVehicleType.value).value
+})
 
 // --- Lógica que permanece en el componente ---
 

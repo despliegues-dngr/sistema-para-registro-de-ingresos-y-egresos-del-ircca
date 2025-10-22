@@ -20,8 +20,8 @@ test.describe('Epic 1: Autenticación y Seguridad', () => {
       await loginPage.expectFormVisible()
       await loginPage.login(testUsers.admin.username, testUsers.admin.password)
       await dashboardPage.expectToBeDashboard()
-      // Admin tiene un dashboard diferente sin stats cards de operador
-      // Solo verificar que está en dashboard y ve el header
+      // Verificar que está en la URL correcta
+      await expect(page).toHaveURL(/\/dashboard/)
     })
 
     test('debe permitir login exitoso como Supervisor', async ({ page }) => {
@@ -30,8 +30,11 @@ test.describe('Epic 1: Autenticación y Seguridad', () => {
       
       await loginPage.login(testUsers.supervisor.username, testUsers.supervisor.password)
       await dashboardPage.expectToBeDashboard()
+      await expect(page).toHaveURL(/\/dashboard/)
     })
 
+    // TODO: Habilitar cuando exista usuario operador en seeding
+    // eslint-disable-next-line playwright/no-skipped-test
     test.skip('debe permitir login exitoso como Operador', async ({ page }) => {
       // SKIP: No hay usuario operador por defecto en el sistema
       // Necesita ser creado manualmente o vía seeding
@@ -40,6 +43,7 @@ test.describe('Epic 1: Autenticación y Seguridad', () => {
       
       await loginPage.login(testUsers.operador.username, testUsers.operador.password)
       await dashboardPage.expectToBeDashboard()
+      await expect(page).toHaveURL(/\/dashboard/)
     })
   })
 
@@ -66,6 +70,7 @@ test.describe('Epic 1: Autenticación y Seguridad', () => {
       )
       
       await loginPage.expectErrorMessage('Contraseña incorrecta')
+      await expect(page).not.toHaveURL(/\/dashboard/)
     })
 
     test('debe validar campos vacíos', async ({ page }) => {
@@ -74,6 +79,9 @@ test.describe('Epic 1: Autenticación y Seguridad', () => {
       // Usuario vacío
       await loginPage.fillPassword(testUsers.operador.password)
       await loginPage.expectSubmitDisabled()
+      // Verificar que el botón está realmente deshabilitado
+      const submitButton = page.locator('button[type="submit"]')
+      await expect(submitButton).toBeDisabled()
     })
   })
 
@@ -103,8 +111,8 @@ test.describe('Epic 1: Autenticación y Seguridad', () => {
       await dashboardPage.expectToBeDashboard()
       await dashboardPage.logout()
       
-      // WebKit necesita tiempo para estabilizarse después del logout
-      await page.waitForLoadState('networkidle')
+      // Esperar a que la navegación esté completa
+      await page.waitForLoadState('domcontentloaded')
       
       await page.goto('/dashboard')
       // El guard redirige a /login
@@ -130,6 +138,7 @@ test.describe('Epic 1: Autenticación y Seguridad', () => {
       
       await page.goto('/dashboard')
       await dashboardPage.expectToBeDashboard()
+      await expect(page).toHaveURL(/\/dashboard/)
     })
   })
 })
