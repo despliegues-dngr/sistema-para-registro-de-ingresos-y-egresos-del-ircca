@@ -190,6 +190,13 @@ export class EncryptionService {
    */
   async verifyPassword(password: string, storedHash: string, salt: string): Promise<boolean> {
     try {
+      console.log('[VERIFY_PASSWORD] Iniciando verificación:', { passwordLength: password.length, storedHashLength: storedHash?.length, saltLength: salt?.length, saltValue: salt?.substring(0, 20) + '...' })
+      
+      if (!salt) {
+        console.error('[VERIFY_PASSWORD] ERROR CRÍTICO: Salt es null/undefined')
+        return false
+      }
+      
       const encoder = new TextEncoder()
       const passwordBuffer = encoder.encode(password)
       const saltBuffer = new Uint8Array(
@@ -197,6 +204,8 @@ export class EncryptionService {
           .split('')
           .map((c) => c.charCodeAt(0)),
       )
+      
+      console.log('[VERIFY_PASSWORD] Salt decodificado:', { saltBufferLength: saltBuffer.length })
 
       const keyMaterial = await window.crypto.subtle.importKey(
         'raw',
@@ -226,8 +235,11 @@ export class EncryptionService {
       const hashBuffer = await window.crypto.subtle.exportKey('raw', hashKey)
       const computedHash = btoa(String.fromCharCode(...new Uint8Array(hashBuffer)))
       
+      console.log('[VERIFY_PASSWORD] Comparación de hashes:', { computedHashLength: computedHash.length, storedHashLength: storedHash.length, match: computedHash === storedHash, computedHashStart: computedHash.substring(0, 20) + '...', storedHashStart: storedHash.substring(0, 20) + '...' })
+      
       return computedHash === storedHash
-    } catch {
+    } catch (error) {
+      console.error('[VERIFY_PASSWORD] ERROR:', error)
       return false
     }
   }
