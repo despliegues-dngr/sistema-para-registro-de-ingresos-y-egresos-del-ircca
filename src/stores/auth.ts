@@ -3,6 +3,7 @@ import { defineStore } from 'pinia'
 import { EncryptionService } from '@/services/encryptionService'
 import { useDatabase } from '@/composables/useDatabase'
 import { useAuditStore } from './audit'
+import { AUTH_CONFIG } from '@/config/constants'
 
 // Interfaz para usuario almacenado en BD
 interface StoredUser {
@@ -110,7 +111,6 @@ export const useAuthStore = defineStore('auth', () => {
   async function login(username: string, password: string): Promise<void> {
     const auditStore = useAuditStore()
     const sessionId = crypto.randomUUID()
-    const { AUTH_CONFIG } = await import('@/config/constants')
     
     try {
       // Inicializar BD si no está inicializada

@@ -11,12 +11,14 @@ import { VitePWA } from 'vite-plugin-pwa'
 export default defineConfig(({ mode }) => {
   const isProduction = mode === 'production'
   
-  // Security Headers - OWASP ZAP Scan Compliance (20-Oct-2025)
+  // Security Headers - OWASP ZAP Scan Compliance (Actualizado: 22-Oct-2025)
   const securityHeaders = {
-    'Content-Security-Policy': "default-src 'self'; script-src 'self' 'unsafe-inline'; style-src 'self' 'unsafe-inline'; img-src 'self' data: blob:; font-src 'self'; connect-src 'self'; form-action 'self'; frame-ancestors 'none'; base-uri 'self';",
+    // ✅ CSP optimizado: permite Google Fonts y Material Design Icons (base64) manteniendo seguridad OWASP
+    'Content-Security-Policy': "default-src 'self'; script-src 'self' 'unsafe-inline'; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; img-src 'self' data: blob:; font-src 'self' data: https://fonts.gstatic.com; connect-src 'self' https://fonts.googleapis.com https://fonts.gstatic.com; form-action 'self'; frame-ancestors 'none'; base-uri 'self';",
     'X-Frame-Options': 'DENY',
     'X-Content-Type-Options': 'nosniff',
     'Referrer-Policy': 'strict-origin-when-cross-origin',
+    // ✅ Geolocation bloqueada (correcto para app de control de accesos)
     'Permissions-Policy': 'geolocation=(), microphone=(), camera=()'
   }
 
@@ -51,9 +53,18 @@ export default defineConfig(({ mode }) => {
       rollupOptions: {
         output: {
           manualChunks: {
+            // Core framework - cargado siempre (todos los usuarios)
             vendor: ['vue', 'vue-router', 'pinia'],
+            
+            // UI framework - cargado siempre (todos los usuarios)
             vuetify: ['vuetify'],
-            utils: ['@vueuse/core']
+            
+            // Utilidades básicas - cargado siempre
+            utils: ['@vueuse/core'],
+            
+            // 🆕 PDF libraries - lazy load solo para Supervisores (~220 KB)
+            // Evita que Operadores (80% usuarios) descarguen código que no usan
+            'pdf-libs': ['jspdf', 'jspdf-autotable']
           }
         }
       }

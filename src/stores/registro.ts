@@ -9,6 +9,7 @@ import {
 } from '@/composables/useRegistros'
 import { useAuditStore } from './audit'
 import { useAuthStore } from './auth'
+import { autocompleteService } from '@/services/autocompleteService'
 
 // Tipos según especificación del modal de ingreso
 export interface DatosPersonales {
@@ -191,10 +192,8 @@ export const useRegistroStore = defineStore('registro', () => {
         
         // ✅ AUTOCOMPLETE: Actualizar persona conocida en IndexedDB
         try {
-          const autocompleteModule = await import('@/services/autocompleteService')
-          
           // Actualizar titular (NO es acompañante)
-          await autocompleteModule.autocompleteService.actualizarPersonaConocida({
+          await autocompleteService.actualizarPersonaConocida({
             cedula: datos.datosPersonales.cedula,
             nombre: datos.datosPersonales.nombre,
             apellido: datos.datosPersonales.apellido,
@@ -206,7 +205,7 @@ export const useRegistroStore = defineStore('registro', () => {
           // Actualizar acompañantes (SÍ son acompañantes)
           if (datos.acompanantes) {
             for (const acomp of datos.acompanantes) {
-              await autocompleteModule.autocompleteService.actualizarPersonaConocida({
+              await autocompleteService.actualizarPersonaConocida({
                 cedula: acomp.cedula,
                 nombre: acomp.nombre,
                 apellido: acomp.apellido,
@@ -444,8 +443,7 @@ export const useRegistroStore = defineStore('registro', () => {
       
       // ✅ SINCRONIZAR AUTOCOMPLETADO: Migrar registros existentes a personasConocidas
       try {
-        const autocompleteModule = await import('@/services/autocompleteService')
-        await autocompleteModule.autocompleteService.sincronizarDesdeRegistros(registrosDescifrados)
+        await autocompleteService.sincronizarDesdeRegistros(registrosDescifrados)
       } catch {
         // Error no crítico en sincronización
       }
