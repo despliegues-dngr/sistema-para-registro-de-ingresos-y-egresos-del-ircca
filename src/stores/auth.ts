@@ -112,13 +112,17 @@ export const useAuthStore = defineStore('auth', () => {
     const auditStore = useAuditStore()
     const sessionId = crypto.randomUUID()
     
+    console.log('[LOGIN] Iniciando login con username:', username)
+    
     try {
       // Inicializar BD si no está inicializada
       await initDatabase()
 
       // Buscar usuario por username (cédula)
       const users = await getRecords('usuarios', 'username', username)
+      console.log('[LOGIN] Usuarios encontrados:', users.length)
       if (users.length === 0) {
+        console.log('[LOGIN] ERROR: Usuario no encontrado')
         // Log de login fallido - usuario no encontrado
         await auditStore.logAuthEvent(
           'unknown',
@@ -131,6 +135,7 @@ export const useAuthStore = defineStore('auth', () => {
       }
 
       const dbUser = users[0] as StoredUser
+      console.log('[LOGIN] Usuario encontrado:', { cedula: dbUser.username, role: dbUser.role, isLocked: dbUser.isLocked })
 
       // ✅ VERIFICAR BLOQUEO TEMPORAL
       const now = new Date()
@@ -178,13 +183,16 @@ export const useAuthStore = defineStore('auth', () => {
       }
 
       // Verificar contraseña usando método estático
+      console.log('[LOGIN] Verificando contraseña...')
       const isPasswordValid = await EncryptionService.verifyPassword(
         password,
         dbUser.hashedPassword,
         dbUser.salt
       )
+      console.log('[LOGIN] Resultado verificación contraseña:', isPasswordValid)
 
       if (!isPasswordValid) {
+        console.log('[LOGIN] ERROR: Contraseña inválida')
         // Incrementar intentos fallidos en BD
         const currentAttempts = (dbUser.loginAttempts || 0) + 1
         const updateData: Partial<StoredUser> = {
@@ -230,6 +238,7 @@ export const useAuthStore = defineStore('auth', () => {
       }
 
       // ✅ Login exitoso - resetear bloqueo y actualizar último login
+      console.log('[LOGIN] ✅ Login exitoso para:', dbUser.username)
       await updateRecord('usuarios', dbUser.id, {
         lastLogin: now.toISOString(),
         loginAttempts: 0,
