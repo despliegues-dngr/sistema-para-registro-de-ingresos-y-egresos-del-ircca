@@ -352,12 +352,13 @@ describe('LoginForm', () => {
   })
 
   describe('Accesibilidad', () => {
-    it('debe tener campo usuario con autofocus', () => {
+    it('debe tener campo usuario sin autofocus (UX móvil)', () => {
       const wrapper = mountComponent()
 
       // Estrategia oficial: buscar input dentro de Vuetify
       const usernameInput = wrapper.find('.v-text-field input[type="text"]')
-      expect(usernameInput.attributes('autofocus')).toBeDefined()
+      // Autofocus removido para evitar apertura automática del teclado en tablets
+      expect(usernameInput.attributes('autofocus')).toBeUndefined()
     })
 
     it('debe tener autocomplete apropiado en campos', () => {

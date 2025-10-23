@@ -35,7 +35,6 @@
       :rules="usernameRules"
       :disabled="loading"
       autocomplete="off"
-      autofocus
       hide-details="auto"
       spellcheck="false"
       :readonly="false"
