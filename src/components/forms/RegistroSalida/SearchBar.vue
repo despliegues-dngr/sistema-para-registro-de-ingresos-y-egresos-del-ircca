@@ -26,7 +26,6 @@
       variant="outlined"
       density="comfortable"
       clearable
-      autofocus
       hide-details="auto"
       :rules="rules"
       placeholder="Escriba cédula o matrícula del vehículo..."

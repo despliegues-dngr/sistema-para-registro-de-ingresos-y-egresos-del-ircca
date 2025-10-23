@@ -1,0 +1,477 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Manual del Operador - Versión Imprimible</title>
+    <link rel="stylesheet" href="estilos.css">
+    <style>
+        /* ========================================
+           ESTILOS ESPECÍFICOS PARA IMPRESIÓN
+           ======================================== */
+        
+        /* ========================================
+           ESTILOS OPTIMIZADOS PARA IMPRESIÓN
+           Basado en mejores prácticas editoriales
+           ======================================== */
+        
+        @media print {
+            /* ===== OCULTAR ELEMENTOS NO IMPRIMIBLES ===== */
+            .no-imprimir {
+                display: none !important;
+            }
+            
+            /* ===== CONFIGURACIÓN DE PÁGINA ===== */
+            @page {
+                size: A4 portrait;
+                margin: 20mm 15mm 20mm 15mm; /* Superior, Derecho, Inferior, Izquierdo */
+            }
+            
+            /* Página de portada con márgenes especiales */
+            @page :first {
+                margin-top: 25mm;
+            }
+            
+            /* ===== TIPOGRAFÍA Y LEGIBILIDAD ===== */
+            body {
+                color: #000000;
+                background: #ffffff;
+                font-size: 11pt; /* Tamaño óptimo para impresión */
+                line-height: 1.5; /* Mejor legibilidad */
+            }
+            
+            /* Encabezados con tamaños optimizados */
+            h1 {
+                font-size: 18pt;
+                margin-top: 0;
+                margin-bottom: 12pt;
+                page-break-after: avoid;
+                orphans: 3;
+                widows: 3;
+            }
+            
+            h2 {
+                font-size: 14pt;
+                margin-top: 12pt;
+                margin-bottom: 8pt;
+                page-break-after: avoid;
+                orphans: 3;
+                widows: 3;
+            }
+            
+            h3 {
+                font-size: 12pt;
+                margin-top: 10pt;
+                margin-bottom: 6pt;
+                page-break-after: avoid;
+            }
+            
+            /* Párrafos con espaciado profesional */
+            p {
+                margin-bottom: 8pt;
+                orphans: 3;
+                widows: 3;
+                text-align: justify;
+            }
+            
+            /* ===== CONTROL DE SALTOS DE PÁGINA ===== */
+            
+            /* Forzar nueva página para cada sección principal */
+            .seccion-modulo {
+                page-break-before: always;
+                padding-top: 0;
+            }
+            
+            /* Primera sección en la misma página que el header */
+            .seccion-modulo:first-child {
+                page-break-before: auto;
+            }
+            
+            /* Evitar saltos dentro de elementos importantes */
+            .paso, 
+            .caja-info, 
+            .caja-advertencia, 
+            .caja-exito, 
+            .caja-critico,
+            .seccion-contacto {
+                page-break-inside: avoid;
+                margin-bottom: 10pt;
+            }
+            
+            /* Tablas: evitar partir filas */
+            table {
+                page-break-inside: auto;
+                margin-bottom: 12pt;
+            }
+            
+            tr {
+                page-break-inside: avoid;
+                page-break-after: auto;
+            }
+            
+            thead {
+                display: table-header-group; /* Repetir encabezados en cada página */
+            }
+            
+            tfoot {
+                display: table-footer-group;
+            }
+            
+            /* ===== LISTAS Y PASOS NUMERADOS ===== */
+            ul, ol {
+                page-break-inside: avoid;
+                margin-bottom: 10pt;
+            }
+            
+            li {
+                orphans: 3;
+                widows: 3;
+            }
+            
+            /* Pasos numerados */
+            .paso {
+                margin-bottom: 12pt;
+                padding: 8pt;
+            }
+            
+            .paso-numero {
+                width: 24pt;
+                height: 24pt;
+                font-size: 12pt;
+            }
+            
+            /* ===== CAJAS DE INFORMACIÓN ===== */
+            .caja-info,
+            .caja-advertencia,
+            .caja-exito,
+            .caja-critico {
+                border: 1.5pt solid;
+                padding: 10pt;
+                margin: 10pt 0;
+                background: #ffffff !important; /* Fondo blanco para ahorrar tinta */
+            }
+            
+            /* Bordes específicos por tipo */
+            .caja-info {
+                border-color: #1565C0;
+            }
+            
+            .caja-advertencia {
+                border-color: #F57C00;
+            }
+            
+            .caja-exito {
+                border-color: #2E7D32;
+            }
+            
+            .caja-critico {
+                border-color: #C62828;
+            }
+            
+            /* ===== HEADER INSTITUCIONAL ===== */
+            .header-institucional {
+                text-align: center;
+                margin-bottom: 20pt;
+                padding-bottom: 15pt;
+                border-bottom: 2pt solid #1565C0;
+            }
+            
+            .titulo-principal {
+                font-size: 22pt;
+                margin: 10pt 0;
+            }
+            
+            .subtitulo {
+                font-size: 14pt;
+                margin: 5pt 0;
+            }
+            
+            .version-fecha {
+                font-size: 10pt;
+                margin-top: 8pt;
+            }
+            
+            /* ===== IMÁGENES Y PLACEHOLDERS ===== */
+            .imagen-placeholder {
+                border: 1pt dashed #666666;
+                padding: 20pt;
+                text-align: center;
+                margin: 12pt 0;
+                page-break-inside: avoid;
+            }
+            
+            .imagen-caption {
+                font-size: 9pt;
+                font-style: italic;
+                text-align: center;
+                margin-top: 4pt;
+                margin-bottom: 12pt;
+            }
+            
+            /* ===== ENLACES ===== */
+            a {
+                color: #000000;
+                text-decoration: none;
+            }
+            
+            /* Mostrar URLs después de enlaces externos */
+            a[href^="http"]:after {
+                content: " (" attr(href) ")";
+                font-size: 9pt;
+                color: #666666;
+            }
+            
+            /* No mostrar URLs para enlaces internos */
+            a[href^="#"]:after {
+                content: "";
+            }
+            
+            /* ===== OPTIMIZACIONES DE RENDIMIENTO ===== */
+            
+            /* Reducir sombras y efectos para impresión */
+            * {
+                box-shadow: none !important;
+                text-shadow: none !important;
+            }
+            
+            /* Optimizar colores de fondo */
+            .badge {
+                background: #ffffff !important;
+                border: 1pt solid #1565C0;
+                color: #000000 !important;
+                padding: 2pt 6pt;
+            }
+            
+            /* ===== NUMERACIÓN DE PÁGINAS ===== */
+            @page {
+                @bottom-right {
+                    content: "Página " counter(page) " de " counter(pages);
+                    font-size: 9pt;
+                    color: #666666;
+                }
+                
+                @bottom-left {
+                    content: "Manual del Operador - Sistema IRCCA";
+                    font-size: 9pt;
+                    color: #666666;
+                }
+            }
+            
+            /* ===== ÍNDICE (TOC) ===== */
+            .indice {
+                page-break-after: always;
+                margin-bottom: 20pt;
+            }
+            
+            .indice ul {
+                list-style: none;
+                padding-left: 0;
+            }
+            
+            .indice li {
+                margin-bottom: 6pt;
+                padding-left: 10pt;
+            }
+            
+            /* ===== SEPARADORES ===== */
+            hr {
+                border: none;
+                border-top: 1pt solid #cccccc;
+                margin: 15pt 0;
+            }
+        }
+        
+        /* Estilos para vista previa en pantalla */
+        @media screen {
+            body {
+                background: #f5f5f5;
+            }
+            
+            .contenedor-impresion {
+                max-width: 210mm;
+                margin: 20px auto;
+                background: white;
+                padding: 20mm;
+                box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+            }
+            
+            .seccion-modulo {
+                margin-bottom: 40px;
+                padding-bottom: 40px;
+                border-bottom: 2px dashed #e0e0e0;
+            }
+            
+            .seccion-modulo:last-child {
+                border-bottom: none;
+            }
+            
+            .boton-imprimir {
+                position: fixed;
+                top: 20px;
+                right: 20px;
+                background: #1565C0;
+                color: white;
+                border: none;
+                padding: 15px 30px;
+                border-radius: 8px;
+                font-size: 16px;
+                font-weight: 600;
+                cursor: pointer;
+                box-shadow: 0 4px 12px rgba(21, 101, 192, 0.3);
+                z-index: 1000;
+                transition: all 0.3s ease;
+            }
+            
+            .boton-imprimir:hover {
+                background: #0d47a1;
+                transform: translateY(-2px);
+                box-shadow: 0 6px 16px rgba(21, 101, 192, 0.4);
+            }
+            
+            .mensaje-carga {
+                text-align: center;
+                padding: 40px;
+                font-size: 18px;
+                color: #1565C0;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Botón de impresión (solo visible en pantalla) -->
+    <button class="boton-imprimir no-imprimir" onclick="window.print()">
+        🖨️ Imprimir Manual Completo
+    </button>
+
+    <!-- Contenedor principal -->
+    <div class="contenedor-impresion">
+        <!-- Header institucional -->
+        <div class="header-institucional">
+            <div class="logo-placeholder">[Logo IRCCA]</div>
+            <h1 class="titulo-principal">Manual del Operador</h1>
+            <p class="subtitulo">Sistema de Control de Accesos del IRCCA</p>
+            <p class="version-fecha">
+                <strong>Versión:</strong> 1.0 | <strong>Fecha:</strong> Octubre 2025 | 
+                <strong>Rol:</strong> <span class="badge badge-operador">OPERADOR</span>
+            </p>
+        </div>
+
+        <!-- Mensaje de carga -->
+        <div id="mensaje-carga" class="mensaje-carga">
+            ⏳ Cargando contenido del manual...
+        </div>
+
+        <!-- Contenedor donde se cargará todo el contenido -->
+        <div id="contenido-completo"></div>
+    </div>
+
+    <script>
+        /**
+         * Script para cargar dinámicamente el contenido de todos los módulos
+         * y prepararlo para impresión
+         */
+        
+        // Lista de archivos a cargar en orden
+        const modulos = [
+            '01-introduccion.html',
+            '02-inicio-sesion.html',
+            '03-dashboard.html',
+            '04-registro-ingreso.html',
+            '05-registro-salida.html',
+            '06-consultas.html',
+            '07-errores.html',
+            '08-buenas-practicas.html',
+            '09-troubleshooting.html',
+            '10-soporte.html'
+        ];
+
+        /**
+         * Función para cargar el contenido de un módulo
+         */
+        async function cargarModulo(archivo) {
+            try {
+                const respuesta = await fetch(archivo);
+                if (!respuesta.ok) {
+                    throw new Error(`Error al cargar ${archivo}: ${respuesta.status}`);
+                }
+                const html = await respuesta.text();
+                
+                // Crear un parser temporal
+                const parser = new DOMParser();
+                const doc = parser.parseFromString(html, 'text/html');
+                
+                // Extraer solo el contenido del body (sin header, nav, footer)
+                const contenido = doc.querySelector('body');
+                
+                // Remover elementos de navegación
+                const elementosARemover = contenido.querySelectorAll('nav, .footer');
+                elementosARemover.forEach(el => el.remove());
+                
+                // Remover el header duplicado (ya tenemos uno en el maestro)
+                const headerDuplicado = contenido.querySelector('.header-institucional');
+                if (headerDuplicado) {
+                    headerDuplicado.remove();
+                }
+                
+                return contenido.innerHTML;
+            } catch (error) {
+                console.error(`Error cargando ${archivo}:`, error);
+                return `<div class="caja-advertencia">
+                    <p><strong>⚠️ Error:</strong> No se pudo cargar la sección ${archivo}</p>
+                </div>`;
+            }
+        }
+
+        /**
+         * Función principal para cargar todo el contenido
+         */
+        async function cargarTodoElContenido() {
+            const contenedor = document.getElementById('contenido-completo');
+            const mensajeCarga = document.getElementById('mensaje-carga');
+            
+            try {
+                // Cargar todos los módulos en paralelo
+                const promesas = modulos.map(modulo => cargarModulo(modulo));
+                const contenidos = await Promise.all(promesas);
+                
+                // Construir el HTML completo
+                let htmlCompleto = '';
+                contenidos.forEach((contenido, index) => {
+                    htmlCompleto += `
+                        <div class="seccion-modulo" data-modulo="${modulos[index]}">
+                            ${contenido}
+                        </div>
+                    `;
+                });
+                
+                // Insertar todo el contenido
+                contenedor.innerHTML = htmlCompleto;
+                
+                // Ocultar mensaje de carga
+                mensajeCarga.style.display = 'none';
+                
+                console.log('✅ Manual completo cargado y listo para imprimir');
+                
+            } catch (error) {
+                console.error('Error cargando el manual:', error);
+                mensajeCarga.innerHTML = `
+                    <div class="caja-critico">
+                        <p><strong>🚨 Error:</strong> No se pudo cargar el manual completo.</p>
+                        <p>Por favor, verifique que todos los archivos estén en la misma carpeta.</p>
+                    </div>
+                `;
+            }
+        }
+
+        // Cargar el contenido cuando la página esté lista
+        document.addEventListener('DOMContentLoaded', cargarTodoElContenido);
+        
+        // También intentar cargar si el DOM ya está listo
+        if (document.readyState === 'loading') {
+            document.addEventListener('DOMContentLoaded', cargarTodoElContenido);
+        } else {
+            cargarTodoElContenido();
+        }
+    </script>
+</body>
+</html>

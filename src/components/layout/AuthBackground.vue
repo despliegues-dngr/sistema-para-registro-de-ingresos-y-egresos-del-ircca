@@ -57,12 +57,15 @@ onUnmounted(() => {
   min-height: 100vh;
   background: v-bind('UI_CONFIG.BACKGROUND.GRADIENT_PRIMARY');
   overflow: hidden;
-  transition: filter 0.3s ease, transform 0.3s ease;
+  /* ✅ OPTIMIZACIÓN: Transición más rápida + GPU acceleration */
+  transition: filter 0.2s ease-out;
+  will-change: filter;
 }
 
 .auth-background--blurred {
-  filter: blur(4px) saturate(0.3) contrast(0.8);  /* Blur + desaturar + reducir contraste */
-  transform: scale(0.95);  /* Alejar ligeramente */
+  /* ✅ OPTIMIZACIÓN: Blur reducido + brightness (más eficiente que saturate+contrast) */
+  filter: blur(3px) brightness(0.85);
+  /* ❌ REMOVIDO: transform: scale() causa reflow costoso */
 }
 
 .background-overlay {
@@ -89,7 +92,8 @@ onUnmounted(() => {
 .shape {
   position: absolute;
   transform-origin: center;
-  transition: all 0.3s ease;
+  /* ✅ OPTIMIZACIÓN: Eliminar transición innecesaria en elementos decorativos estáticos */
+  /* transition: all 0.3s ease; */
 }
 
 /* Formas grandes */

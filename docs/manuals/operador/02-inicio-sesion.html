@@ -1,0 +1,192 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>2. Inicio y Cierre de Sesión - Manual de Operador</title>
+    <link rel="stylesheet" href="estilos.css">
+</head>
+<body>
+    <div class="header-institucional">
+        <div class="logo-placeholder">[Logo IRCCA]</div>
+        <h1 class="titulo-principal">Manual del Operador</h1>
+        <p class="subtitulo">Sistema de Control de Accesos del IRCCA</p>
+    </div>
+
+    <nav class="caja-info">
+        <p><span class="icono-caja">🏠</span><a href="index.html"><strong>← Volver al Índice</strong></a></p>
+    </nav>
+
+    <h1 id="inicio-sesion">2. Inicio y Cierre de Sesión</h1>
+
+    <h2>2.1. Primera Vez en el Sistema - Registro de Operador</h2>
+    <p>
+        Si es su <strong>primera vez</strong> usando el sistema y aún no tiene credenciales, 
+        debe registrarse antes de poder iniciar sesión.
+    </p>
+
+    <div class="paso">
+        <span class="paso-numero">1</span>
+        <div class="paso-contenido">
+            <p class="paso-titulo">Acceder al Registro</p>
+            <p>
+                En la pantalla de inicio de sesión, presione el botón 
+                <strong>"REGISTRARSE COMO NUEVO USUARIO"</strong> ubicado en la parte inferior 
+                de la pantalla (debajo del formulario de login).
+            </p>
+        </div>
+    </div>
+
+    <div class="paso">
+        <span class="paso-numero">2</span>
+        <div class="paso-contenido">
+            <p class="paso-titulo">Completar Formulario de Registro</p>
+            <p>Complete todos los campos obligatorios:</p>
+            <ul>
+                <li><strong>Cédula de Identidad:</strong> 8 dígitos sin puntos ni guiones (ej: 12345678)</li>
+                <li><strong>Grado:</strong> Seleccione su grado de la lista desplegable</li>
+                <li><strong>Nombre:</strong> Su nombre completo</li>
+                <li><strong>Apellido:</strong> Su apellido completo</li>
+                <li><strong>Contraseña:</strong> Mínimo 6 caracteres (será su clave de acceso)</li>
+                <li><strong>Confirmar Contraseña:</strong> Repita la contraseña para verificar</li>
+            </ul>
+        </div>
+    </div>
+
+    <div class="paso">
+        <span class="paso-numero">3</span>
+        <div class="paso-contenido">
+            <p class="paso-titulo">Aceptar Términos y Condiciones</p>
+            <p>
+                Marque la casilla <strong>"He leído y acepto los Términos y Condiciones del sistema"</strong>. 
+                Puede leer los términos completos haciendo clic en el enlace azul. 
+                Esto confirma el cumplimiento de la <strong>Ley N° 18.331</strong> de Protección de Datos Personales.
+            </p>
+        </div>
+    </div>
+
+    <div class="paso">
+        <span class="paso-numero">4</span>
+        <div class="paso-contenido">
+            <p class="paso-titulo">Registrar Operador</p>
+            <p>
+                Presione el botón <strong>"REGISTRAR OPERADOR"</strong>. 
+                Si todos los datos son correctos, su cuenta quedará creada y podrá iniciar sesión.
+            </p>
+        </div>
+    </div>
+
+    <div class="caja-info">
+        <p><span class="icono-caja">📋</span><strong>Registro de Personal:</strong></p>
+        <p>
+            El sistema lleva un registro completo de todo el personal registrado, incluyendo 
+            fecha y hora de creación de cuenta. Esta información es auditable por los supervisores.
+        </p>
+    </div>
+
+    <h2>2.2. Iniciar Sesión</h2>
+    <p>Una vez registrado, ingrese al sistema con sus credenciales:</p>
+    <ul>
+        <li><strong>Usuario:</strong> Su número de cédula (sin puntos ni guiones)</li>
+        <li><strong>Contraseña:</strong> La clave que creó durante el registro</li>
+    </ul>
+    <p>Presione el botón <strong>"INGRESAR"</strong> para acceder al Dashboard.</p>
+
+    <div class="imagen-placeholder">
+        [Insertar imagen: Pantalla de Login con botón de registro visible]
+    </div>
+    <p class="imagen-caption">Figura 1: Pantalla de inicio de sesión</p>
+
+    <div class="caja-advertencia">
+        <p><span class="icono-caja">⚠️</span><strong>Intentos Fallidos:</strong></p>
+        <p>
+            Después de <strong>3 intentos fallidos</strong>, su cuenta quedará bloqueada por seguridad. 
+            Contacte a su supervisor para desbloquearla.
+        </p>
+    </div>
+
+    <h2>2.3. Menú de Perfil de Usuario</h2>
+    <p>
+        Para acceder al menú de perfil, toque su <strong>avatar</strong> (círculo con ícono de persona) 
+        ubicado en la esquina superior izquierda del header verde. Se desplegará un menú con las siguientes opciones:
+    </p>
+
+    <h3>Ver Perfil Completo</h3>
+    <p>Esta opción abre un modal donde puede:</p>
+    <ul>
+        <li><strong>Visualizar sus datos personales:</strong>
+            <ul>
+                <li>Número de cédula</li>
+                <li>Grado</li>
+                <li>Nombre y apellido</li>
+                <li>Fecha de registro en el sistema</li>
+            </ul>
+        </li>
+        <li><strong>Editar su información:</strong> Presione el botón "Editar" para modificar:
+            <ul>
+                <li>Grado (si cambió de rango)</li>
+                <li>Nombre</li>
+                <li>Apellido</li>
+            </ul>
+        </li>
+        <li><strong>Guardar cambios:</strong> Después de editar, presione "Guardar Cambios"</li>
+    </ul>
+
+    <div class="caja-advertencia">
+        <p><span class="icono-caja">⚠️</span><strong>Nota:</strong></p>
+        <p>
+            El <strong>número de cédula NO puede modificarse</strong> ya que es su identificador único en el sistema.
+        </p>
+    </div>
+
+    <h3>Cambiar Contraseña</h3>
+    <p>Esta opción abre un modal para cambiar su contraseña de acceso. Debe completar:</p>
+    <ul>
+        <li><strong>Contraseña actual:</strong> Su clave vigente (para verificar su identidad)</li>
+        <li><strong>Nueva contraseña:</strong> Mínimo 6 caracteres</li>
+        <li><strong>Confirmar nueva contraseña:</strong> Debe coincidir exactamente con la anterior</li>
+    </ul>
+    <p>El sistema validará que:
+        <ul>
+            <li>La contraseña actual sea correcta</li>
+            <li>La nueva contraseña cumpla con los requisitos mínimos</li>
+            <li>Ambas contraseñas nuevas coincidan</li>
+        </ul>
+    </p>
+
+    <div class="caja-exito">
+        <p><span class="icono-caja">🔐</span><strong>Seguridad de Contraseña:</strong></p>
+        <p>
+            Se recomienda cambiar su contraseña periódicamente y <strong>nunca compartirla</strong> 
+            con otros operadores. Cada usuario es responsable de las acciones realizadas con sus credenciales.
+        </p>
+    </div>
+
+    <h3>Cerrar Sesión</h3>
+    <p>
+        Esta opción (en color rojo) cierra su sesión inmediatamente y lo redirige a la pantalla de login. 
+        <strong>SIEMPRE cierre sesión</strong> al finalizar su turno.
+    </p>
+
+    <div class="caja-critico">
+        <p><span class="icono-caja">🔒</span><strong>IMPORTANTE - Seguridad:</strong></p>
+        <p>
+            <strong>SIEMPRE cierre sesión</strong> al terminar su turno. No deje la sesión abierta 
+            para el siguiente operador. Cada usuario debe usar sus propias credenciales.
+        </p>
+        <p>
+            El sistema tiene timeout automático de <strong>3 horas de inactividad</strong>. 
+            Recibirá una advertencia 5 minutos antes del cierre automático, pero NO confíe solo en eso.
+        </p>
+    </div>
+
+    <nav class="caja-exito">
+        <p><span class="icono-caja">➡️</span><strong>Siguiente:</strong> <a href="03-dashboard.html">3. Dashboard Principal</a></p>
+    </nav>
+
+    <div class="footer">
+        <p><a href="index.html">← Volver al Índice</a></p>
+    </div>
+
+</body>
+</html>

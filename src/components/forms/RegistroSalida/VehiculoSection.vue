@@ -47,6 +47,7 @@
               :items="tiposVehiculo"
               variant="outlined"
               density="compact"
+              clearable
               hide-details
             />
           </v-col>

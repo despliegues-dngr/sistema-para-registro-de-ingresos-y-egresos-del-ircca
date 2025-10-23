@@ -30,7 +30,6 @@
       placeholder="12345678"
       hint="8 dígitos sin puntos ni guiones"
       persistent-hint
-      autofocus
       hide-details="auto"
     />
 

@@ -11,14 +11,15 @@
     variant="outlined"
     density="comfortable"
     clearable
-    autofocus
     hide-details="auto"
     placeholder="Escriba la cédula..."
     :custom-filter="() => true"
     no-filter
     :loading="loading"
+    :rules="cedulaRules"
     hint="Ingrese el número de cédula sin puntos ni guiones"
     persistent-hint
+    required
     @keypress="onlyNumbers"
   >
     <!-- Slot personalizado para cada item (persona conocida) -->
@@ -152,6 +153,22 @@ withDefaults(defineProps<Props>(), {
 })
 
 const emit = defineEmits<Emits>()
+
+// Reglas de validación para cédula
+const cedulaRules = [
+  (v: string | AutocompleteItem) => {
+    const cedula = typeof v === 'string' ? v : (v?.cedula || '')
+    return !!cedula || 'La cédula es requerida'
+  },
+  (v: string | AutocompleteItem) => {
+    const cedula = typeof v === 'string' ? v : (v?.cedula || '')
+    return cedula.length >= 7 || 'La cédula debe tener al menos 7 dígitos'
+  },
+  (v: string | AutocompleteItem) => {
+    const cedula = typeof v === 'string' ? v : (v?.cedula || '')
+    return cedula.length <= 8 || 'La cédula no puede tener más de 8 dígitos'
+  }
+]
 
 // Filtro de entrada: solo números
 const onlyNumbers = (event: KeyboardEvent) => {

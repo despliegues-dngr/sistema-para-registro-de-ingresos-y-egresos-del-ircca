@@ -19,6 +19,7 @@
           :rules="vehiculoFieldRules"
           variant="outlined"
           density="comfortable"
+          clearable
         />
       </v-col>
 

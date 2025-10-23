@@ -1,0 +1,129 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>4. Registrar Ingresos - Manual de Operador</title>
+    <link rel="stylesheet" href="estilos.css">
+</head>
+<body>
+    <div class="header-institucional">
+        <div class="logo-placeholder">[Logo IRCCA]</div>
+        <h1 class="titulo-principal">Manual del Operador</h1>
+        <p class="subtitulo">Sistema de Control de Accesos del IRCCA</p>
+    </div>
+
+    <nav class="caja-info">
+        <p><span class="icono-caja">🏠</span><a href="index.html"><strong>← Volver al Índice</strong></a></p>
+    </nav>
+
+    <h1 id="registro-ingreso">4. Registrar Ingresos</h1>
+    <p>
+        Esta es su función principal. Cada vez que una persona ingresa al predio, debe registrarla.
+    </p>
+
+    <h2>4.1. Proceso Paso a Paso</h2>
+
+    <div class="paso">
+        <span class="paso-numero">1</span>
+        <div class="paso-contenido">
+            <p class="paso-titulo">Abrir Formulario</p>
+            <p>Desde el Dashboard, presione el botón azul <strong>"Registrar Ingreso"</strong>.</p>
+        </div>
+    </div>
+
+    <div class="paso">
+        <span class="paso-numero">2</span>
+        <div class="paso-contenido">
+            <p class="paso-titulo">Sección 1: Datos Personales y Visita (Siempre Visible)</p>
+            <p>Esta sección está <strong>expandida por defecto</strong>. Complete:</p>
+            <ul>
+                <li><strong>Cédula:</strong> Número sin puntos ni guiones (ej: 12345678)</li>
+                <li><strong>Nombre:</strong> Se autocompletará si la persona ya visitó antes ⚡</li>
+                <li><strong>Apellido:</strong> Se autocompletará si la persona ya visitó antes ⚡</li>
+                <li><strong>Destino:</strong> Seleccione de la lista desplegable (IRCCA, Ligeral, Simbiosys, Jabelor, Otra)</li>
+            </ul>
+        </div>
+    </div>
+
+    <div class="paso">
+        <span class="paso-numero">3</span>
+        <div class="paso-contenido">
+            <p class="paso-titulo">Sección 2: Datos de Vehículo (Expandible - Opcional)</p>
+            <p>
+                Si la persona ingresa con vehículo, <strong>toque el encabezado</strong> de la sección 
+                "Datos del Vehículo" para expandirla y complete:
+            </p>
+            <ul>
+                <li><strong>Tipo:</strong> Seleccione Auto, Moto, Camión o Bus</li>
+                <li><strong>Matrícula:</strong> Ingrese la matrícula completa (ej: ABC1234)</li>
+            </ul>
+            <p class="text-caption">💡 Si la persona ya visitó con vehículo, estos datos también se autocompletarán</p>
+        </div>
+    </div>
+
+    <div class="paso">
+        <span class="paso-numero">4</span>
+        <div class="paso-contenido">
+            <p class="paso-titulo">Sección 3: Acompañantes (Expandible - Opcional)</p>
+            <p>
+                Si ingresan varias personas juntas, <strong>toque el encabezado</strong> de la sección 
+                "Acompañantes" para expandirla y presione <strong>"Agregar Acompañante"</strong>:
+            </p>
+            <ul>
+                <li><strong>Cédula del acompañante</strong></li>
+                <li><strong>Nombre completo</strong></li>
+                <li><strong>Apellido</strong></li>
+                <li><strong>Destino:</strong> Puede ser diferente al titular</li>
+            </ul>
+            <p>Puede agregar hasta <strong>20 acompañantes</strong>. Use el botón "Eliminar" (ícono de tacho) para quitar uno.</p>
+        </div>
+    </div>
+
+    <div class="paso">
+        <span class="paso-numero">5</span>
+        <div class="paso-contenido">
+            <p class="paso-titulo">Observaciones (Opcional)</p>
+            <p>
+                Al final del formulario hay un campo de texto para <strong>"Observaciones sobre el Ingreso"</strong>. 
+                Use este campo para agregar información adicional relevante (máximo 100 caracteres).
+            </p>
+        </div>
+    </div>
+
+    <div class="paso">
+        <span class="paso-numero">6</span>
+        <div class="paso-contenido">
+            <p class="paso-titulo">Guardar Registro</p>
+            <p>
+                Verifique que todos los datos sean correctos y presione el botón <strong>"Registrar Ingreso"</strong> 
+                ubicado en la parte inferior del modal. El sistema confirmará el registro con un mensaje de éxito 
+                y volverá al Dashboard con las estadísticas actualizadas.
+            </p>
+        </div>
+    </div>
+
+    <div class="imagen-placeholder">
+        [Insertar imagen: Formulario de registro de ingreso completo]
+    </div>
+    <p class="imagen-caption">Figura 3: Formulario de registro de ingreso</p>
+
+    <div class="caja-exito">
+        <p><span class="icono-caja">⚡</span><strong>Autocompletado Inteligente:</strong></p>
+        <p>
+            Cuando ingrese una cédula de una persona que ya visitó anteriormente, 
+            el sistema <strong>autocompletará automáticamente</strong> su nombre y apellido, 
+            reduciendo el tiempo de registro a menos de 15 segundos.
+        </p>
+    </div>
+
+    <nav class="caja-exito">
+        <p><span class="icono-caja">➡️</span><strong>Siguiente:</strong> <a href="05-registro-salida.html">5. Registrar Salidas</a></p>
+    </nav>
+
+    <div class="footer">
+        <p><a href="index.html">← Volver al Índice</a></p>
+    </div>
+
+</body>
+</html>
