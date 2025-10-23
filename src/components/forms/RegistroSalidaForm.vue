@@ -37,6 +37,7 @@
         maxlength="100"
         hint="Información adicional relevante sobre la salida"
         persistent-hint
+        validate-on="blur"
       />
     </div>
   </v-form>

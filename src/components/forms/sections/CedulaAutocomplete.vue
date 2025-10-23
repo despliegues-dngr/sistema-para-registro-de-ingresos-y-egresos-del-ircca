@@ -154,19 +154,19 @@ withDefaults(defineProps<Props>(), {
 
 const emit = defineEmits<Emits>()
 
-// Reglas de validación para cédula
+// Reglas de validación para cédula (acepta documentos nacionales y extranjeros)
 const cedulaRules = [
   (v: string | AutocompleteItem) => {
     const cedula = typeof v === 'string' ? v : (v?.cedula || '')
-    return !!cedula || 'La cédula es requerida'
+    return !!cedula || 'El documento es requerido'
   },
   (v: string | AutocompleteItem) => {
     const cedula = typeof v === 'string' ? v : (v?.cedula || '')
-    return cedula.length >= 7 || 'La cédula debe tener al menos 7 dígitos'
+    return cedula.length >= 7 || 'El documento debe tener al menos 7 dígitos'
   },
   (v: string | AutocompleteItem) => {
     const cedula = typeof v === 'string' ? v : (v?.cedula || '')
-    return cedula.length <= 8 || 'La cédula no puede tener más de 8 dígitos'
+    return cedula.length <= 15 || 'El documento no puede tener más de 15 dígitos'
   }
 ]
 

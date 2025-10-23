@@ -19,6 +19,7 @@
           :rules="vehiculoFieldRules"
           variant="outlined"
           density="comfortable"
+          validate-on="blur"
           clearable
         />
       </v-col>
@@ -30,13 +31,11 @@
           @update:model-value="onMatriculaChange"
           label="Matrícula"
           prepend-inner-icon="mdi-card-text"
-          :rules="matriculaRules"
+          :rules="vehiculoFieldRules"
           variant="outlined"
           density="comfortable"
-          hint="Formato: ABC1234"
-          persistent-hint
-          @input="onMatriculaInput"
-          @keypress="onlyAlphaNumeric"
+          validate-on="blur"
+          placeholder="ABC1234"
         />
       </v-col>
     </v-row>
@@ -66,10 +65,6 @@ const emit = defineEmits<Emits>()
 const tiposVehiculo = ['Auto', 'Moto', 'Camión', 'Bus']
 
 // Reglas de validación
-const matriculaRules = [
-  (v: string) => !v || /^[A-Za-z0-9]+$/.test(v) || 'Solo se permiten letras y números',
-]
-
 const vehiculoFieldRules = [
   (v: string) => {
     const { tipo, matricula } = props.datosVehiculo
@@ -92,22 +87,9 @@ const onMatriculaChange = (value: string) => {
   checkHasData()
 }
 
-const onMatriculaInput = (event: Event) => {
-  const target = event.target as HTMLInputElement
-  const value = target.value.toUpperCase()
-  emit('update:matricula', value)
-}
-
 const checkHasData = () => {
   const { tipo, matricula } = props.datosVehiculo
   const hasData = !!(tipo || matricula)
   emit('has-data-change', hasData)
-}
-
-const onlyAlphaNumeric = (event: KeyboardEvent) => {
-  const char = String.fromCharCode(event.which)
-  if (!/^[a-zA-Z0-9]$/.test(char)) {
-    event.preventDefault()
-  }
 }
 </script>

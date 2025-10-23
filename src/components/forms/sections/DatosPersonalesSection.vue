@@ -29,6 +29,7 @@
           :rules="nombreRules"
           variant="outlined"
           density="comfortable"
+          validate-on="blur"
           required
         />
       </v-col>
@@ -42,6 +43,7 @@
           :rules="apellidoRules"
           variant="outlined"
           density="comfortable"
+          validate-on="blur"
           required
         />
       </v-col>
@@ -57,6 +59,7 @@
           :rules="requiredRules"
           variant="outlined"
           density="comfortable"
+          validate-on="blur"
           required
         />
       </v-col>
@@ -66,6 +69,7 @@
 
 <script setup lang="ts">
 import { ref, computed, watch } from 'vue'
+import { useDebounceFn } from '@vueuse/core'
 import FormSection from '@/components/forms/FormSection.vue'
 import CedulaAutocomplete from './CedulaAutocomplete.vue'
 import { useAutocomplete } from '@/composables/useAutocomplete'
@@ -130,11 +134,18 @@ const requiredRules = [
 ]
 
 /**
+ * ⚡ OPTIMIZACIÓN: Debounce para emit de cédula (evita re-renders innecesarios)
+ */
+const debouncedEmitCedula = useDebounceFn((value: string) => {
+  emit('update:cedula', value)
+}, 150)
+
+/**
  * Watch: Buscar personas conocidas mientras escribe la cédula
  */
 watch(cedulaBusqueda, async (newValue) => {
-  // Actualizar cédula en el formulario padre
-  emit('update:cedula', newValue)
+  // ⚡ Actualizar cédula con debounce para evitar lag
+  debouncedEmitCedula(newValue)
   
   // Buscar sugerencias si hay al menos 1 dígito
   if (newValue && newValue.length >= 1) {

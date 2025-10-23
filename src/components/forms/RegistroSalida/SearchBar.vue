@@ -33,6 +33,7 @@
       @update:search="$emit('update:search', $event)"
       :custom-filter="() => true"
       no-filter
+      validate-on="blur"
     >
       <!-- ✅ Slot para controlar qué se muestra cuando está seleccionado -->
       <template #selection="{ item }">

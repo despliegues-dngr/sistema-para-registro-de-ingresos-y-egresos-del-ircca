@@ -65,6 +65,7 @@
         maxlength="100"
         hint="Información adicional relevante sobre el ingreso"
         persistent-hint
+        validate-on="blur"
       />
     </div>
   </v-form>

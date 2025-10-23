@@ -15,6 +15,7 @@ export function useAutocomplete() {
   /**
    * Busca personas por cédula con debounce de 300ms
    * ✅ Busca desde el PRIMER carácter
+   * ⚡ OPTIMIZACIÓN: Limita resultados a 10 para mejorar performance
    */
   const buscarPorCedula = async (cedulaParcial: string) => {
     // Limpiar timeout anterior
@@ -35,7 +36,8 @@ export function useAutocomplete() {
     timeoutId.value = setTimeout(async () => {
       try {
         const resultados = await autocompleteService.buscarPorCedulaParcial(cedulaParcial)
-        sugerenciasCedula.value = resultados
+        // ⚡ Limitar a 10 resultados para mejorar rendimiento del dropdown
+        sugerenciasCedula.value = resultados.slice(0, 10)
       } catch (error) {
         console.error('Error en búsqueda por cédula:', error)
         sugerenciasCedula.value = []
@@ -47,6 +49,7 @@ export function useAutocomplete() {
 
   /**
    * Busca personas por matrícula con debounce de 300ms
+   * ⚡ OPTIMIZACIÓN: Limita resultados a 10 para mejorar performance
    */
   const buscarPorMatricula = async (matriculaParcial: string) => {
     // Limpiar timeout anterior
@@ -66,7 +69,8 @@ export function useAutocomplete() {
     timeoutId.value = setTimeout(async () => {
       try {
         const resultados = await autocompleteService.buscarPorMatriculaParcial(matriculaParcial)
-        sugerenciasMatricula.value = resultados
+        // ⚡ Limitar a 10 resultados para mejorar rendimiento del dropdown
+        sugerenciasMatricula.value = resultados.slice(0, 10)
       } catch (error) {
         console.error('Error en búsqueda por matrícula:', error)
         sugerenciasMatricula.value = []
