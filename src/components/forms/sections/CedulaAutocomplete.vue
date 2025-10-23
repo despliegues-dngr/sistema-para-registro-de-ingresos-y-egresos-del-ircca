@@ -18,7 +18,9 @@
     :loading="loading"
     :rules="cedulaRules"
     hint="Ingrese el número de cédula sin puntos ni guiones"
-    persistent-hint
+    autocomplete="off"
+    spellcheck="false"
+    :readonly="false"
     required
     @keypress="onlyNumbers"
   >

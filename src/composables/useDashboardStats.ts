@@ -6,7 +6,7 @@ import type { RegistroIngreso, RegistroSalida, PersonaDentro, RegistroEntry } fr
 export function useDashboardStats(registroStore: any) {
   // ⭐ REFACTORIZADO: Usar composable genérico para contadores de personas
   const { createCounter, startAll: startPeopleAnimations } = useMultipleCounters({
-    duration: 2000,
+    duration: 800, // ⚡ Reducido de 2000ms a 800ms para tablets
     autoWatch: true // Auto-reactividad activada
   })
 
@@ -63,7 +63,7 @@ export function useDashboardStats(registroStore: any) {
 
   // ⭐ REFACTORIZADO: Usar composable genérico para contadores de vehículos
   const { createCounter: createVehicleCounter, startAll: startVehicleAnimations } = useMultipleCounters({
-    duration: 2000,
+    duration: 800, // ⚡ Reducido de 2000ms a 800ms para tablets
     autoWatch: false // Control manual para vehículos (computed complejo)
   })
 

@@ -152,9 +152,77 @@
 
 /**
  * Optimizar transición de expansión (v-expansion-panel)
+ * ⚡ CRÍTICO: GPU acceleration + will-change para fluidez en tablets
  */
 .v-expansion-panel {
   transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1) !important;
+  transform: translateZ(0);
+  backface-visibility: hidden;
+  will-change: auto;
+}
+
+/**
+ * ⚡ NUEVO: Optimizar título del acordeón
+ * Prevenir repaints durante hover/click
+ */
+.v-expansion-panel-title {
+  transform: translateZ(0);
+  backface-visibility: hidden;
+  will-change: background-color;
+  transition: background-color 0.15s ease !important;
+}
+
+/**
+ * ⚡ NUEVO: Optimizar contenido del acordeón
+ * GPU acceleration para animación de altura
+ */
+.v-expansion-panel-text {
+  transform: translateZ(0);
+  will-change: height, opacity;
+  backface-visibility: hidden;
+}
+
+/**
+ * ⚡ NUEVO: Optimizar wrapper interno del contenido
+ * Reducir reflows durante expansión
+ */
+.v-expansion-panel-text__wrapper {
+  transform: translateZ(0);
+  will-change: height;
+  backface-visibility: hidden;
+}
+
+/**
+ * ⚡ NUEVO: Optimizar ícono de expansión
+ * Rotación fluida sin lag
+ */
+.v-expansion-panel-title__icon {
+  transform: translateZ(0);
+  will-change: transform;
+  transition: transform 0.2s cubic-bezier(0.4, 0, 0.2, 1) !important;
+  backface-visibility: hidden;
+}
+
+/**
+ * ⚡ NUEVO: Optimizar contenido dentro de acordeones
+ * Reducir reflows al expandir/colapsar
+ */
+.v-expansion-panel-text .v-row {
+  transform: translateZ(0);
+  backface-visibility: hidden;
+}
+
+.v-expansion-panel-text .v-col {
+  transform: translateZ(0);
+  backface-visibility: hidden;
+}
+
+/**
+ * ⚡ NUEVO: Prevenir layout shifts durante expansión
+ * Usar contain para aislar el layout del acordeón
+ */
+.v-expansion-panels {
+  contain: layout style;
 }
 
 /* ========================================

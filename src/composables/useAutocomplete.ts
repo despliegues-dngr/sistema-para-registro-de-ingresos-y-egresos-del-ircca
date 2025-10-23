@@ -13,9 +13,10 @@ export function useAutocomplete() {
   const timeoutId = ref<ReturnType<typeof setTimeout> | null>(null)
 
   /**
-   * Busca personas por cédula con debounce de 300ms
+   * Busca personas por cédula con debounce de 150ms
    * ✅ Busca desde el PRIMER carácter
    * ⚡ OPTIMIZACIÓN: Limita resultados a 10 para mejorar performance
+   * ⚡ OPTIMIZADO: Debounce reducido a 150ms para tablets (antes 300ms)
    */
   const buscarPorCedula = async (cedulaParcial: string) => {
     // Limpiar timeout anterior
@@ -32,7 +33,7 @@ export function useAutocomplete() {
     // Indicar que está buscando
     buscando.value = true
 
-    // Aplicar debounce de 300ms
+    // Aplicar debounce de 150ms (optimizado para tablets)
     timeoutId.value = setTimeout(async () => {
       try {
         const resultados = await autocompleteService.buscarPorCedulaParcial(cedulaParcial)
@@ -44,12 +45,13 @@ export function useAutocomplete() {
       } finally {
         buscando.value = false
       }
-    }, 300)
+    }, 150) // ⚡ Reducido de 300ms a 150ms
   }
 
   /**
-   * Busca personas por matrícula con debounce de 300ms
+   * Busca personas por matrícula con debounce de 150ms
    * ⚡ OPTIMIZACIÓN: Limita resultados a 10 para mejorar performance
+   * ⚡ OPTIMIZADO: Debounce reducido a 150ms para tablets (antes 300ms)
    */
   const buscarPorMatricula = async (matriculaParcial: string) => {
     // Limpiar timeout anterior
@@ -65,7 +67,7 @@ export function useAutocomplete() {
 
     buscando.value = true
 
-    // Aplicar debounce de 300ms
+    // Aplicar debounce de 150ms (optimizado para tablets)
     timeoutId.value = setTimeout(async () => {
       try {
         const resultados = await autocompleteService.buscarPorMatriculaParcial(matriculaParcial)
@@ -77,7 +79,7 @@ export function useAutocomplete() {
       } finally {
         buscando.value = false
       }
-    }, 300)
+    }, 150) // ⚡ Reducido de 300ms a 150ms
   }
 
   /**

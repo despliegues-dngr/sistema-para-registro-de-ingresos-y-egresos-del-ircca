@@ -36,6 +36,9 @@
           :rules="nombreRules"
           variant="outlined"
           density="comfortable"
+          autocomplete="off"
+          spellcheck="false"
+          :readonly="false"
           required
         />
       </v-col>
@@ -49,6 +52,9 @@
           :rules="apellidoRules"
           variant="outlined"
           density="comfortable"
+          autocomplete="off"
+          spellcheck="false"
+          :readonly="false"
           required
         />
       </v-col>

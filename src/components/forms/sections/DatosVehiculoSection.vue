@@ -34,8 +34,12 @@
           :rules="vehiculoFieldRules"
           variant="outlined"
           density="comfortable"
+          autocomplete="off"
+          spellcheck="false"
+          :readonly="false"
           validate-on="blur"
           placeholder="ABC1234"
+          class="matricula-uppercase"
         />
       </v-col>
     </v-row>
@@ -82,8 +86,14 @@ const onTipoChange = (value: string) => {
   checkHasData()
 }
 
+/**
+ * Maneja cambios en matrícula y convierte automáticamente a mayúsculas
+ * ✅ Formato estándar uruguayo: ABC1234 (siempre en mayúsculas)
+ */
 const onMatriculaChange = (value: string) => {
-  emit('update:matricula', value)
+  // Convertir a mayúsculas automáticamente
+  const matriculaMayuscula = value.toUpperCase()
+  emit('update:matricula', matriculaMayuscula)
   checkHasData()
 }
 
@@ -93,3 +103,13 @@ const checkHasData = () => {
   emit('has-data-change', hasData)
 }
 </script>
+
+<style scoped>
+/**
+ * ✅ Forzar visualización en mayúsculas para el campo de matrícula
+ * Mejora UX: El usuario ve inmediatamente el formato correcto
+ */
+.matricula-uppercase :deep(input) {
+  text-transform: uppercase;
+}
+</style>

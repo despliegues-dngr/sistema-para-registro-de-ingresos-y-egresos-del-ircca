@@ -29,6 +29,9 @@
           :rules="nombreRules"
           variant="outlined"
           density="comfortable"
+          autocomplete="off"
+          spellcheck="false"
+          :readonly="false"
           validate-on="blur"
           required
         />
@@ -43,6 +46,9 @@
           :rules="apellidoRules"
           variant="outlined"
           density="comfortable"
+          autocomplete="off"
+          spellcheck="false"
+          :readonly="false"
           validate-on="blur"
           required
         />

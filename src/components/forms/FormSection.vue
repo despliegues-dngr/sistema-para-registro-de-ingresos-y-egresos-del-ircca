@@ -76,11 +76,21 @@ const internalExpanded = computed({
   border-radius: 8px;
   margin-bottom: 8px;
   box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
-  transition: all 0.2s ease;
+  /* ⚡ OPTIMIZADO: Solo transicionar propiedades específicas, no 'all' */
+  transition: border-color 0.15s ease, box-shadow 0.15s ease;
+  /* ⚡ GPU acceleration */
+  transform: translateZ(0);
+  will-change: auto;
 }
 
 .form-section-expansion :deep(.v-expansion-panel:hover) {
   border-color: rgba(var(--v-theme-primary), 0.4);
   box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+}
+
+/* ⚡ NUEVO: Optimizar contenido interno para evitar reflows */
+.form-section-expansion :deep(.v-expansion-panel-text__wrapper) {
+  /* Usar contain para aislar reflows */
+  contain: layout style paint;
 }
 </style>

@@ -25,6 +25,7 @@ export class CacheManager {
   /**
    * Cargar cache de personas conocidas (una sola vez por sesión)
    * ✅ OPTIMIZADO: Descifra todas las personas y las mantiene en memoria
+   * ⚡ OPTIMIZADO: Procesa en chunks de 50 para evitar bloqueo de UI
    */
   async cargarCache(): Promise<void> {
     if (this.cacheLoaded) return
@@ -33,24 +34,35 @@ export class CacheManager {
       await this.db.initDatabase()
       const personasCifradas = (await this.db.getRecords('personasConocidas')) as PersonaConocidaCifrada[]
 
-      // Descifrar todas y cachear
-      for (const cifrada of personasCifradas) {
-        try {
-          const descifrada = await descifrarPersonaConocida(cifrada)
-          
-          // ✅ VALIDACIÓN DE INTEGRIDAD: Verificar hash
-          const hashVerificacion = await generateCedulaHash(descifrada.cedula)
-          if (hashVerificacion !== cifrada.cedulaHash) {
-            // Integridad comprometida, eliminar registro
-            await this.db.deleteRecord('personasConocidas', cifrada.id)
-            continue
-          }
+      // ⚡ OPTIMIZACIÓN: Procesar en chunks de 50 personas
+      const CHUNK_SIZE = 50
+      for (let i = 0; i < personasCifradas.length; i += CHUNK_SIZE) {
+        const chunk = personasCifradas.slice(i, i + CHUNK_SIZE)
+        
+        // Procesar chunk
+        for (const cifrada of chunk) {
+          try {
+            const descifrada = await descifrarPersonaConocida(cifrada)
+            
+            // ✅ VALIDACIÓN DE INTEGRIDAD: Verificar hash
+            const hashVerificacion = await generateCedulaHash(descifrada.cedula)
+            if (hashVerificacion !== cifrada.cedulaHash) {
+              // Integridad comprometida, eliminar registro
+              await this.db.deleteRecord('personasConocidas', cifrada.id)
+              continue
+            }
 
-          this.personasCache.set(descifrada.cedula, descifrada)
-        } catch (error) {
-          console.error(`Error descifrado persona ${cifrada.id}:`, error)
-          // Eliminar registro corrupto
-          await this.db.deleteRecord('personasConocidas', cifrada.id)
+            this.personasCache.set(descifrada.cedula, descifrada)
+          } catch (error) {
+            console.error(`Error descifrado persona ${cifrada.id}:`, error)
+            // Eliminar registro corrupto
+            await this.db.deleteRecord('personasConocidas', cifrada.id)
+          }
+        }
+        
+        // ⚡ Yield al event loop cada chunk para no bloquear UI
+        if (i + CHUNK_SIZE < personasCifradas.length) {
+          await new Promise(resolve => setTimeout(resolve, 0))
         }
       }
 
