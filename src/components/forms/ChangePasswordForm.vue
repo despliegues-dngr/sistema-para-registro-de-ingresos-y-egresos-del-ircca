@@ -43,6 +43,7 @@
           autocomplete="current-password"
           @click:append-inner="showCurrentPassword = !showCurrentPassword"
           :disabled="loading"
+          validate-on="blur"
         />
       </v-col>
 
@@ -60,6 +61,7 @@
           autocomplete="new-password"
           @click:append-inner="showNewPassword = !showNewPassword"
           :disabled="loading"
+          validate-on="blur"
         />
       </v-col>
 
@@ -77,6 +79,7 @@
           autocomplete="new-password"
           @click:append-inner="showConfirmPassword = !showConfirmPassword"
           :disabled="loading"
+          validate-on="blur"
         />
       </v-col>
     </v-row>

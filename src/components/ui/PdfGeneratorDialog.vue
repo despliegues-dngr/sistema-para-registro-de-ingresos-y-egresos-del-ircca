@@ -2,7 +2,8 @@
   <v-dialog
     v-model="modelValue"
     max-width="600"
-    transition="dialog-bottom-transition"
+    transition="fade-transition"
+    :scrim="true"
   >
     <v-card class="pdf-generator-dialog-card">
       <!-- Header institucional -->

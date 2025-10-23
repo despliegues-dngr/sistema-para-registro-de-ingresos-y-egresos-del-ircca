@@ -2,8 +2,10 @@
   <v-dialog
     v-model="modelValue"
     max-width="800"
-    transition="dialog-bottom-transition"
+    transition="fade-transition"
     scrollable
+    :scrim="true"
+    eager
   >
     <template #activator="{ props }">
       <slot name="activator" v-bind="props" />
@@ -22,7 +24,9 @@
       </v-card-title>
 
       <v-card-text class="pa-6">
+        <!-- ⚡ LAZY LOADING: Solo renderizar formulario cuando modal está abierto -->
         <RegistroIngresoForm
+          v-if="modelValue"
           ref="formRef"
           :loading="loading"
           :message="message"

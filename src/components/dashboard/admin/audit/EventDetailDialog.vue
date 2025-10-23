@@ -2,7 +2,8 @@
   <v-dialog
     v-model="localValue"
     max-width="700"
-    transition="dialog-bottom-transition"
+    transition="fade-transition"
+    :scrim="true"
   >
     <v-card>
       <!-- Header -->

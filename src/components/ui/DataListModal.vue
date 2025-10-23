@@ -2,8 +2,9 @@
   <v-dialog
     v-model="modelValue"
     max-width="900"
-    transition="dialog-bottom-transition"
+    transition="fade-transition"
     scrollable
+    :scrim="true"
   >
     <v-card class="data-list-dialog-card">
       <!-- Header institucional estándar -->

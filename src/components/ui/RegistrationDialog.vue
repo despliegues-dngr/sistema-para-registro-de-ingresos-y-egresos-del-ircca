@@ -1,5 +1,10 @@
 <template>
-  <v-dialog v-model="modelValue" max-width="600" transition="dialog-bottom-transition">
+  <v-dialog 
+    v-model="modelValue" 
+    max-width="600" 
+    transition="fade-transition"
+    :scrim="true"
+  >
     <template #activator="{ props }">
       <slot name="activator" v-bind="props" />
     </template>
@@ -17,7 +22,9 @@
       </v-card-title>
 
       <v-card-text class="pa-6">
+        <!-- ⚡ LAZY LOADING: Solo renderizar formulario cuando modal está abierto -->
         <RegistrationForm
+          v-if="modelValue"
           :loading="loading"
           :message="message"
           @submit="onSubmit"

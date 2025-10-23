@@ -31,6 +31,7 @@
       hint="8 dígitos sin puntos ni guiones"
       persistent-hint
       hide-details="auto"
+      validate-on="blur"
     />
 
     <!-- Campo Grado -->
@@ -45,6 +46,8 @@
       :rules="gradoRules"
       :disabled="loading"
       hide-details="auto"
+      validate-on="blur"
+      :menu-props="{ maxHeight: 300 }"
     />
 
     <!-- Campo Nombre -->
@@ -58,6 +61,7 @@
       :rules="nombreRules"
       :disabled="loading"
       hide-details="auto"
+      validate-on="blur"
     />
 
     <!-- Campo Apellido -->
@@ -71,6 +75,7 @@
       :rules="apellidoRules"
       :disabled="loading"
       hide-details="auto"
+      validate-on="blur"
     />
 
     <!-- Campo Contraseña -->
@@ -89,6 +94,7 @@
       persistent-hint
       @click:append-inner="showPassword = !showPassword"
       hide-details="auto"
+      validate-on="blur"
     />
 
     <!-- Campo Confirmar Contraseña -->
@@ -105,6 +111,7 @@
       :disabled="loading"
       @click:append-inner="showConfirmPassword = !showConfirmPassword"
       hide-details="auto"
+      validate-on="blur"
     />
 
     <!-- Términos y Condiciones -->
@@ -166,7 +173,7 @@
 </template>
 
 <script setup lang="ts">
-import { ref, computed } from 'vue'
+import { ref } from 'vue'
 import { ICONS, MESSAGES, VALIDATION_PATTERNS } from '@/config/constants'
 import TermsAndConditionsDialog from '@/components/ui/TermsAndConditionsDialog.vue'
 
@@ -256,10 +263,11 @@ const passwordRules = [
   (v: string) => v.length <= 50 || 'La contraseña no puede exceder 50 caracteres',
 ]
 
-const confirmPasswordRules = computed(() => [
+// ⚡ OPTIMIZACIÓN: Array estático en lugar de computed para evitar re-cálculos
+const confirmPasswordRules = [
   (v: string) => !!v || MESSAGES.VALIDATION.REQUIRED_FIELD,
   (v: string) => v === userData.value.password || 'Las contraseñas no coinciden',
-])
+]
 
 const terminosRules = [
   (v: boolean) => !!v || 'Debe aceptar los términos y condiciones para continuar',

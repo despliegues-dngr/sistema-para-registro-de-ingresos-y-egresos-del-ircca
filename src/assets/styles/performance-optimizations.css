@@ -1,0 +1,279 @@
+/**
+ * ⚡ OPTIMIZACIONES DE PERFORMANCE PARA TABLETS
+ * 
+ * Este archivo contiene optimizaciones CSS críticas para mejorar
+ * la fluidez de animaciones y transiciones en dispositivos móviles.
+ * 
+ * Técnicas aplicadas:
+ * - GPU Acceleration (transform: translateZ(0))
+ * - will-change para pre-optimización
+ * - Reducción de box-shadows costosas
+ * - Optimización de transiciones Vuetify
+ */
+
+/* ========================================
+   🎨 GPU ACCELERATION - MODALES
+   ======================================== */
+
+/**
+ * Forzar GPU acceleration en todos los modales
+ * Reduce lag en apertura/cierre de diálogos
+ */
+.v-dialog > .v-overlay__content {
+  transform: translateZ(0);
+  will-change: opacity;
+  backface-visibility: hidden;
+  -webkit-backface-visibility: hidden;
+}
+
+/**
+ * Optimizar overlay/scrim del modal
+ * Eliminar backdrop-filter que es muy costoso en tablets
+ */
+.v-overlay__scrim {
+  backdrop-filter: none !important;
+  -webkit-backdrop-filter: none !important;
+}
+
+/* ========================================
+   ⚡ OPTIMIZACIÓN DE CAMPOS DE FORMULARIO
+   ======================================== */
+
+/**
+ * GPU acceleration para campos de texto
+ * Mejora transición placeholder → label
+ */
+.v-field__field,
+.v-field__outline,
+.v-field__outline__start,
+.v-field__outline__end {
+  will-change: transform;
+  transform: translateZ(0);
+  backface-visibility: hidden;
+}
+
+/**
+ * Optimizar animación de labels
+ * Reducir duración de transición para mayor fluidez
+ */
+.v-label {
+  will-change: transform, font-size;
+  transform: translateZ(0);
+  transition: all 0.15s cubic-bezier(0.4, 0, 0.2, 1) !important;
+}
+
+/**
+ * Acelerar transición de focus en campos
+ */
+.v-field {
+  transition: border-color 0.15s ease !important;
+}
+
+.v-field--focused .v-label,
+.v-field--active .v-label {
+  transition-duration: 0.15s !important;
+}
+
+/* ========================================
+   📋 OPTIMIZACIÓN DE DROPDOWNS/SELECTS
+   ======================================== */
+
+/**
+ * GPU acceleration para menús desplegables
+ * Mejora apertura de v-select, v-combobox, v-autocomplete
+ */
+.v-menu > .v-overlay__content {
+  transform: translateZ(0);
+  will-change: opacity, transform;
+  backface-visibility: hidden;
+}
+
+/**
+ * Optimizar lista de items en dropdowns
+ */
+.v-list {
+  transform: translateZ(0);
+  will-change: scroll-position;
+}
+
+.v-list-item {
+  will-change: background-color;
+  transition: background-color 0.1s ease !important;
+}
+
+/* ========================================
+   🌑 REDUCCIÓN DE SOMBRAS COSTOSAS
+   ======================================== */
+
+/**
+ * Reducir elevación de cards en modales
+ * Las sombras complejas son muy costosas en tablets
+ */
+.v-dialog .v-card {
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15) !important;
+}
+
+/**
+ * Eliminar sombras innecesarias en campos outlined
+ */
+.v-field--variant-outlined {
+  box-shadow: none !important;
+}
+
+/**
+ * Reducir sombra de botones elevados
+ */
+.v-btn--elevated {
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.12) !important;
+}
+
+.v-btn--elevated:hover {
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.16) !important;
+}
+
+/* ========================================
+   🎯 OPTIMIZACIÓN DE TRANSICIONES
+   ======================================== */
+
+/**
+ * Fade transition optimizada para modales
+ * Más rápida y suave que dialog-bottom-transition
+ */
+.fade-transition-enter-active,
+.fade-transition-leave-active {
+  transition: opacity 0.2s cubic-bezier(0.4, 0, 0.2, 1) !important;
+  will-change: opacity;
+}
+
+.fade-transition-enter-from,
+.fade-transition-leave-to {
+  opacity: 0;
+}
+
+/**
+ * Optimizar transición de expansión (v-expansion-panel)
+ */
+.v-expansion-panel {
+  transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1) !important;
+}
+
+/* ========================================
+   📱 OPTIMIZACIONES ESPECÍFICAS PARA TABLETS
+   ======================================== */
+
+/**
+ * Mejorar scroll en tablets
+ */
+.v-card-text {
+  -webkit-overflow-scrolling: touch;
+  scroll-behavior: smooth;
+}
+
+/**
+ * Optimizar ripple effect en tablets
+ * Reducir duración para mejor feedback táctil
+ */
+.v-ripple__container {
+  transition: opacity 0.15s ease !important;
+}
+
+/**
+ * Reducir motion en dispositivos que lo prefieran
+ */
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+  }
+}
+
+/* ========================================
+   🔧 OPTIMIZACIONES ADICIONALES
+   ======================================== */
+
+/**
+ * Forzar hardware acceleration en elementos con transiciones
+ */
+.v-btn,
+.v-chip,
+.v-avatar {
+  transform: translateZ(0);
+  backface-visibility: hidden;
+}
+
+/**
+ * Optimizar tabs y navigation
+ */
+.v-tabs {
+  transform: translateZ(0);
+}
+
+.v-tab {
+  will-change: color, background-color;
+  transition: all 0.15s ease !important;
+}
+
+/**
+ * Optimizar alerts y notificaciones
+ */
+.v-alert {
+  transform: translateZ(0);
+  will-change: opacity, transform;
+}
+
+/**
+ * Optimizar progress indicators
+ */
+.v-progress-circular,
+.v-progress-linear {
+  will-change: transform;
+  transform: translateZ(0);
+}
+
+/* ========================================
+   🎨 OPTIMIZACIÓN DE ICONOS
+   ======================================== */
+
+/**
+ * GPU acceleration para iconos
+ * Mejora rotaciones y transiciones
+ */
+.v-icon {
+  transform: translateZ(0);
+  backface-visibility: hidden;
+}
+
+/**
+ * Optimizar iconos en botones
+ */
+.v-btn .v-icon {
+  will-change: transform;
+  transition: transform 0.15s ease !important;
+}
+
+/* ========================================
+   📊 OPTIMIZACIÓN DE TABLAS Y LISTAS
+   ======================================== */
+
+/**
+ * Optimizar scroll en tablas grandes
+ */
+.v-table {
+  transform: translateZ(0);
+  will-change: scroll-position;
+}
+
+/**
+ * Reducir repaints en filas de tabla
+ */
+.v-table tbody tr {
+  will-change: background-color;
+  transition: background-color 0.1s ease !important;
+}
+
+/* ========================================
+   🌟 FIN DE OPTIMIZACIONES
+   ======================================== */

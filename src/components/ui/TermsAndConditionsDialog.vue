@@ -1,5 +1,12 @@
 <template>
-  <v-dialog :model-value="modelValue" @update:model-value="$emit('update:modelValue', $event)" max-width="800" scrollable transition="dialog-bottom-transition">
+  <v-dialog 
+    :model-value="modelValue" 
+    @update:model-value="$emit('update:modelValue', $event)" 
+    max-width="800" 
+    scrollable 
+    transition="fade-transition"
+    :scrim="true"
+  >
     <v-card class="terms-dialog-card">
       <!-- Header institucional -->
       <v-card-title class="bg-primary pa-4">
