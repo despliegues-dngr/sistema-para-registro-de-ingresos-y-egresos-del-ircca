@@ -55,7 +55,7 @@
                         {{ (item as any)?.nombre }} {{ (item as any)?.apellido }}
                       </div>
                     </div>
-                    
+
                     <v-chip
                       :color="(item as any)?.conVehiculo ? 'success' : 'grey'"
                       size="small"
@@ -68,7 +68,7 @@
                       {{ (item as any)?.conVehiculo ? 'Con vehículo' : 'A pie' }}
                     </v-chip>
                   </div>
-                  
+
                   <div class="persona-details">
                     <span class="detail-item">
                       <span class="detail-label">C.I:</span>
@@ -109,12 +109,12 @@
                     <v-avatar :color="getVehicleColor((item as any)?.tipo)" size="48" class="mr-3">
                       <v-icon size="24" color="white">{{ getVehicleIcon((item as any)?.tipo) }}</v-icon>
                     </v-avatar>
-                    
+
                     <div class="flex-grow-1">
                       <div class="text-subtitle-1 font-weight-bold">
                         {{ (item as any)?.tipo }} - {{ (item as any)?.matricula }}
                       </div>
-                      
+
                       <div class="info-line-single text-caption">
                         <span class="info-item">👤 {{ (item as any)?.conductor }}</span>
                         <span class="info-separator">•</span>
@@ -374,10 +374,10 @@ watch(modelValue, (newVal: boolean) => {
 
 /* Ajustes para virtual scroll */
 :deep(.v-virtual-scroll) {
-  padding: 0 !important;
+  padding: 0;
 }
 
 :deep(.v-virtual-scroll__container) {
-  padding: 0 !important;
+  padding: 0;
 }
 </style>
