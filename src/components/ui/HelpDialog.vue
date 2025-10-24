@@ -1,98 +1,68 @@
 <template>
-  <v-dialog 
-    v-model="modelValue" 
-    max-width="480" 
-    transition="fade-transition"
-    :scrim="true"
+  <FullScreenModal
+    v-model="modelValue"
+    title="Centro de Ayuda"
+    subtitle="Sistema de Control de Accesos del IRCCA"
+    icon="mdi mdi-help-circle"
+    header-color="primary"
+    @close="handleClose"
   >
-    <template #activator="{ props }">
-      <slot name="activator" v-bind="props" />
-    </template>
+    <!-- Información de soporte técnico -->
+    <div class="text-center mb-6">
+      <i class="mdi mdi-headset support-icon"></i>
+      <h4 class="support-title">Soporte Técnico</h4>
+    </div>
 
-    <v-card class="help-dialog-card">
-      <!-- Header minimalista -->
-      <v-card-title class="bg-primary pa-4">
-        <div class="d-flex align-center">
-          <v-icon size="24" color="white" class="mr-3">{{ ICONS.NAVIGATION.HELP }}</v-icon>
-          <div>
-            <h3 class="text-h6 text-white mb-0">Centro de Ayuda</h3>
-            <p class="text-caption text-blue-lighten-4 mb-0">
-              Sistema de Control de Accesos del IRCCA
-            </p>
-          </div>
-        </div>
-      </v-card-title>
+    <!-- Contactos de soporte -->
+    <div class="contact-buttons">
+      <button class="contact-btn email-btn" @click="copyToClipboard(supportEmail)">
+        <i class="mdi mdi-email"></i>
+        <span>{{ supportEmail }}</span>
+      </button>
 
-      <v-card-text class="pa-4">
-        <!-- Información de soporte técnico -->
-        <div class="text-center mb-4">
-          <v-icon size="48" color="primary" class="mb-2">mdi-headset</v-icon>
-          <h4 class="text-h6 mb-2">Soporte Técnico</h4>
-        </div>
+      <button class="contact-btn whatsapp-btn">
+        <i class="mdi mdi-whatsapp"></i>
+        <span>WhatsApp: {{ whatsappNumber }}</span>
+      </button>
+    </div>
 
-        <!-- Contactos de soporte -->
-        <div class="d-flex flex-column gap-2 mb-4">
-          <v-btn
-            variant="outlined"
-            color="primary"
-            prepend-icon="mdi-email"
-            size="small"
-            @click="copyToClipboard(supportEmail)"
-          >
-            {{ supportEmail }}
-          </v-btn>
+    <!-- Card: Credenciales -->
+    <div class="info-card info-card--info">
+      <div class="info-card-header">
+        <i class="mdi mdi-account-question"></i>
+        <strong>¿No tiene credenciales?</strong>
+      </div>
+      <p class="info-card-text">
+        Si es la primera vez que ingresa y aún no tiene usuario, seleccione
+        <strong>"REGISTRARSE COMO NUEVO USUARIO"</strong>.
+      </p>
+      <p class="info-card-text">Para otros casos, contacte al soporte técnico.</p>
+    </div>
 
-          <v-btn
-            variant="outlined"
-            color="green"
-            prepend-icon="mdi-whatsapp"
-            size="small"
-          >
-            WhatsApp: {{ whatsappNumber }}
-          </v-btn>
-        </div>
+    <!-- Card: Responsabilidad -->
+    <div class="info-card info-card--warning">
+      <div class="info-card-header">
+        <i class="mdi mdi-shield-account"></i>
+        <strong>Responsabilidad</strong>
+      </div>
+      <p class="info-card-text">Mantenga sus credenciales seguras y personales.</p>
+    </div>
 
-        <!-- Card: Credenciales -->
-        <v-card variant="tonal" color="info" class="mb-3" density="compact">
-          <v-card-text class="pa-3">
-            <div class="d-flex align-center mb-2">
-              <v-icon size="20" color="info" class="mr-2">mdi-account-question</v-icon>
-              <strong class="text-body-2">¿No tiene credenciales?</strong>
-            </div>
-            <p class="text-body-2 mb-2">
-              Si es la primera vez que ingresa y aún no tiene usuario, seleccione
-              <strong>"REGISTRARSE COMO NUEVO USUARIO"</strong>.
-            </p>
-            <p class="text-body-2 mb-0">Para otros casos, contacte al soporte técnico.</p>
-          </v-card-text>
-        </v-card>
-
-        <!-- Card: Responsabilidad -->
-        <v-card variant="tonal" color="warning" density="compact">
-          <v-card-text class="pa-3">
-            <div class="d-flex align-center mb-2">
-              <v-icon size="20" color="warning" class="mr-2">mdi-shield-account</v-icon>
-              <strong class="text-body-2">Responsabilidad</strong>
-            </div>
-            <p class="text-body-2 mb-0">Mantenga sus credenciales seguras y personales.</p>
-          </v-card-text>
-        </v-card>
-      </v-card-text>
-
-      <!-- Actions -->
-      <v-card-actions class="pa-4 pt-2">
-        <v-spacer />
-        <v-btn color="primary" variant="flat" prepend-icon="mdi-check" @click="closeDialog">
+    <!-- Footer con botón -->
+    <template #footer>
+      <div class="footer-actions">
+        <button class="btn-primary" @click="closeDialog">
+          <i class="mdi mdi-check"></i>
           Entendido
-        </v-btn>
-      </v-card-actions>
-    </v-card>
-  </v-dialog>
+        </button>
+      </div>
+    </template>
+  </FullScreenModal>
 </template>
 
 <script setup lang="ts">
-import { computed, watch } from 'vue'
-import { ICONS } from '@/config/constants'
+import { computed } from 'vue'
+import FullScreenModal from './FullScreenModal.vue'
 
 interface Props {
   modelValue: boolean
@@ -122,14 +92,9 @@ const closeDialog = () => {
   emit('close')
 }
 
-// Emitir eventos globales para controlar blur del fondo
-watch(modelValue, (newVal: boolean) => {
-  if (newVal) {
-    window.dispatchEvent(new CustomEvent('dialog-opened'))
-  } else {
-    window.dispatchEvent(new CustomEvent('dialog-closed'))
-  }
-})
+const handleClose = () => {
+  closeDialog()
+}
 
 const copyToClipboard = async (text: string) => {
   try {
@@ -142,11 +107,188 @@ const copyToClipboard = async (text: string) => {
 </script>
 
 <style scoped>
-.help-dialog-card {
-  border-top: 3px solid rgb(var(--v-theme-primary));
+/* ========================================
+   🎨 SOPORTE TÉCNICO
+   ======================================== */
+
+.support-icon {
+  font-size: 3rem;
+  color: #1565C0;
+  margin-bottom: 0.5rem;
 }
 
-.gap-2 {
-  gap: 8px;
+.support-title {
+  font-size: 1.25rem;
+  font-weight: 600;
+  color: #212121;
+  margin: 0;
+}
+
+/* ========================================
+   🎨 BOTONES DE CONTACTO
+   ======================================== */
+
+.contact-buttons {
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+  margin-bottom: 1.5rem;
+}
+
+.contact-btn {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  padding: 0.75rem 1rem;
+  border: 2px solid;
+  border-radius: 8px;
+  background: white;
+  cursor: pointer;
+  font-size: 0.875rem;
+  font-weight: 500;
+  transition: all 0.2s ease;
+  
+  /* ⚡ GPU ACCELERATION */
+  transform: translateZ(0);
+  backface-visibility: hidden;
+}
+
+.contact-btn i {
+  font-size: 1.25rem;
+}
+
+.email-btn {
+  border-color: #1565C0;
+  color: #1565C0;
+}
+
+.email-btn:hover {
+  background: #E3F2FD;
+  transform: translateY(-2px) translateZ(0);
+}
+
+.whatsapp-btn {
+  border-color: #25D366;
+  color: #25D366;
+}
+
+.whatsapp-btn:hover {
+  background: #E8F5E9;
+  transform: translateY(-2px) translateZ(0);
+}
+
+.contact-btn:active {
+  transform: scale(0.98) translateZ(0);
+}
+
+/* ========================================
+   🎨 INFO CARDS
+   ======================================== */
+
+.info-card {
+  padding: 1rem;
+  border-radius: 8px;
+  margin-bottom: 1rem;
+  
+  /* ⚡ GPU ACCELERATION */
+  transform: translateZ(0);
+}
+
+.info-card--info {
+  background: #E3F2FD;
+  border-left: 4px solid #1976D2;
+}
+
+.info-card--warning {
+  background: #FFF3E0;
+  border-left: 4px solid #F57C00;
+}
+
+.info-card-header {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  margin-bottom: 0.75rem;
+  font-size: 0.875rem;
+}
+
+.info-card--info .info-card-header {
+  color: #1976D2;
+}
+
+.info-card--warning .info-card-header {
+  color: #F57C00;
+}
+
+.info-card-header i {
+  font-size: 1.25rem;
+}
+
+.info-card-text {
+  font-size: 0.875rem;
+  color: #424242;
+  margin: 0 0 0.5rem 0;
+  line-height: 1.5;
+}
+
+.info-card-text:last-child {
+  margin-bottom: 0;
+}
+
+/* ========================================
+   🎨 FOOTER ACTIONS
+   ======================================== */
+
+.footer-actions {
+  display: flex;
+  justify-content: flex-end;
+}
+
+.btn-primary {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.75rem 1.5rem;
+  background: #1565C0;
+  color: white;
+  border: none;
+  border-radius: 8px;
+  font-size: 0.875rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  
+  /* ⚡ GPU ACCELERATION */
+  transform: translateZ(0);
+  backface-visibility: hidden;
+}
+
+.btn-primary:hover {
+  background: #0D47A1;
+  transform: translateY(-2px) translateZ(0);
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+}
+
+.btn-primary:active {
+  transform: scale(0.98) translateZ(0);
+}
+
+.btn-primary i {
+  font-size: 1.125rem;
+}
+
+/* ========================================
+   📱 RESPONSIVE
+   ======================================== */
+
+@media (max-width: 600px) {
+  .support-icon {
+    font-size: 2.5rem;
+  }
+  
+  .support-title {
+    font-size: 1.125rem;
+  }
 }
 </style>
+
