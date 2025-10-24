@@ -21,7 +21,7 @@ La paleta se basa en el tema gubernamental de Uruguay, asegurando identidad visu
 | **Error** | ■ Rojo Error | `#C62828` | Mensajes de error, indicadores de fallo |
 | **Info** | ■ Azul Información | `#1976D2` | Banners informativos, tooltips |
 | **Surface** | ■ Superficie | `#FFFFFF` | Fondos de tarjetas, modales y menús |
-| **Background** | ■ Fondo General | `#F5F5F5` | Color de fondo principal de la aplicación |
+| **Background** | ■ Fondo General | `#0D47A1` | Color de fondo principal de la aplicación (azul oscuro institucional sólido) |
 
 ---
 

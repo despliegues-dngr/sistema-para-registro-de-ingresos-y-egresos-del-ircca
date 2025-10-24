@@ -28,7 +28,7 @@ export default createVuetify({
           success: '#2E7D32',
           warning: '#F57C00',
           // Surface and background colors
-          background: '#F5F5F5',
+          background: '#0D47A1',
           surface: '#FFFFFF',
           'on-primary': '#FFFFFF',
           'on-secondary': '#FFFFFF',
@@ -56,7 +56,7 @@ export default createVuetify({
     VDialog: {
       maxWidth: '600',
       persistent: false,
-      scrim: 'rgba(0, 0, 0, 0.7)',
+      scrim: 'rgba(0, 0, 0, 0.90)',
     },
     VAlert: {
       variant: 'tonal',

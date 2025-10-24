@@ -31,7 +31,7 @@ export function useCounterAnimation(
   } = {}
 ) {
   const {
-    duration = 800, // ⚡ Reducido de 2000ms a 800ms para tablets
+    duration = 600, // ⚡ Optimizado: 600ms para máxima fluidez en tablets
     transition = TransitionPresets.easeOutCubic,
     initialValue = 0,
     autoWatch = true

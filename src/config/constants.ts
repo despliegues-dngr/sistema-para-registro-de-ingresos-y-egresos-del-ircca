@@ -32,7 +32,7 @@ export const UI_CONFIG = {
   RESPONSIVE_BREAKPOINT: 'md',
   // Configuración del fondo institucional con formas distribuidas
   BACKGROUND: {
-    GRADIENT_PRIMARY: 'linear-gradient(135deg, #1565C0 0%, #0D47A1 50%, #1976D2 100%)',
+    GRADIENT_PRIMARY: 'rgba(92, 92, 92, 1)',
     GRADIENT_OVERLAY:
       'radial-gradient(circle at 30% 20%, rgba(255, 255, 255, 0.05) 0%, transparent 50%)',
     // Formas geométricas - colores institucionales (más visibles)

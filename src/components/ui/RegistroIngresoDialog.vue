@@ -4,7 +4,6 @@
     max-width="800"
     transition="fade-transition"
     scrollable
-    :scrim="true"
     eager
   >
     <template #activator="{ props }">

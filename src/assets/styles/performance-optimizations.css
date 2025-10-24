@@ -1,9 +1,9 @@
 /**
  * ⚡ OPTIMIZACIONES DE PERFORMANCE PARA TABLETS
- * 
+ *
  * Este archivo contiene optimizaciones CSS críticas para mejorar
  * la fluidez de animaciones y transiciones en dispositivos móviles.
- * 
+ *
  * Técnicas aplicadas:
  * - GPU Acceleration (transform: translateZ(0))
  * - will-change para pre-optimización
@@ -27,12 +27,26 @@
 }
 
 /**
- * Optimizar overlay/scrim del modal
- * Eliminar backdrop-filter que es muy costoso en tablets
+ * Efecto blur optimizado en overlay/scrim del modal
+ * Balance entre desenfoque y performance (6px es óptimo)
+ * Transición suave para evitar "jank" en apertura
  */
 .v-overlay__scrim {
-  backdrop-filter: none !important;
-  -webkit-backdrop-filter: none !important;
+  backdrop-filter: blur(6px);
+  -webkit-backdrop-filter: blur(6px);
+  transition: backdrop-filter 0.2s ease-out;
+  will-change: backdrop-filter;
+  transform: translateZ(0);
+}
+
+/**
+ * GPU acceleration para el overlay completo
+ * Mejora fluidez en apertura/cierre de modales
+ */
+.v-overlay {
+  will-change: opacity;
+  transform: translateZ(0);
+  backface-visibility: hidden;
 }
 
 /* ========================================
@@ -59,19 +73,19 @@
 .v-label {
   will-change: transform, font-size;
   transform: translateZ(0);
-  transition: all 0.15s cubic-bezier(0.4, 0, 0.2, 1) !important;
+  transition: all 0.15s cubic-bezier(0.4, 0, 0.2, 1);
 }
 
 /**
  * Acelerar transición de focus en campos
  */
 .v-field {
-  transition: border-color 0.15s ease !important;
+  transition: border-color 0.15s ease;
 }
 
 .v-field--focused .v-label,
 .v-field--active .v-label {
-  transition-duration: 0.15s !important;
+  transition-duration: 0.15s;
 }
 
 /* ========================================
@@ -98,7 +112,7 @@
 
 .v-list-item {
   will-change: background-color;
-  transition: background-color 0.1s ease !important;
+  transition: background-color 0.1s ease;
 }
 
 /* ========================================
@@ -110,25 +124,25 @@
  * Las sombras complejas son muy costosas en tablets
  */
 .v-dialog .v-card {
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15) !important;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
 }
 
 /**
  * Eliminar sombras innecesarias en campos outlined
  */
 .v-field--variant-outlined {
-  box-shadow: none !important;
+  box-shadow: none;
 }
 
 /**
  * Reducir sombra de botones elevados
  */
 .v-btn--elevated {
-  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.12) !important;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.12);
 }
 
 .v-btn--elevated:hover {
-  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.16) !important;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.16);
 }
 
 /* ========================================
@@ -141,7 +155,7 @@
  */
 .fade-transition-enter-active,
 .fade-transition-leave-active {
-  transition: opacity 0.2s cubic-bezier(0.4, 0, 0.2, 1) !important;
+  transition: opacity 0.2s cubic-bezier(0.4, 0, 0.2, 1);
   will-change: opacity;
 }
 
@@ -155,7 +169,7 @@
  * ⚡ CRÍTICO: GPU acceleration + will-change para fluidez en tablets
  */
 .v-expansion-panel {
-  transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1) !important;
+  transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
   transform: translateZ(0);
   backface-visibility: hidden;
   will-change: auto;
@@ -169,7 +183,7 @@
   transform: translateZ(0);
   backface-visibility: hidden;
   will-change: background-color;
-  transition: background-color 0.15s ease !important;
+  transition: background-color 0.15s ease;
 }
 
 /**
@@ -199,7 +213,7 @@
 .v-expansion-panel-title__icon {
   transform: translateZ(0);
   will-change: transform;
-  transition: transform 0.2s cubic-bezier(0.4, 0, 0.2, 1) !important;
+  transition: transform 0.2s cubic-bezier(0.4, 0, 0.2, 1);
   backface-visibility: hidden;
 }
 
@@ -242,7 +256,7 @@
  * Reducir duración para mejor feedback táctil
  */
 .v-ripple__container {
-  transition: opacity 0.15s ease !important;
+  transition: opacity 0.15s ease;
 }
 
 /**
@@ -252,9 +266,9 @@
   *,
   *::before,
   *::after {
-    animation-duration: 0.01ms !important;
-    animation-iteration-count: 1 !important;
-    transition-duration: 0.01ms !important;
+    animation-duration: 0.01ms;
+    animation-iteration-count: 1;
+    transition-duration: 0.01ms;
   }
 }
 
@@ -281,7 +295,7 @@
 
 .v-tab {
   will-change: color, background-color;
-  transition: all 0.15s ease !important;
+  transition: all 0.15s ease;
 }
 
 /**
@@ -319,7 +333,7 @@
  */
 .v-btn .v-icon {
   will-change: transform;
-  transition: transform 0.15s ease !important;
+  transition: transform 0.15s ease;
 }
 
 /* ========================================
@@ -339,7 +353,196 @@
  */
 .v-table tbody tr {
   will-change: background-color;
-  transition: background-color 0.1s ease !important;
+  transition: background-color 0.1s ease;
+}
+
+/* ========================================
+   🎯 OPTIMIZACIÓN DE HOVER Y TOUCH
+   ======================================== */
+
+/**
+ * ⚡ CRÍTICO: Optimizar hover en botones
+ * Prevenir trancadas al pasar el mouse
+ */
+.v-btn:hover {
+  will-change: background-color, box-shadow;
+  transition: background-color 0.15s ease, box-shadow 0.15s ease;
+}
+
+/**
+ * ⚡ CRÍTICO: Optimizar touch events en tablets
+ * Mejora respuesta táctil y previene lag
+ */
+.v-btn,
+.v-card,
+.v-list-item,
+.v-expansion-panel-title {
+  touch-action: manipulation;
+  -webkit-tap-highlight-color: transparent;
+}
+
+/**
+ * Optimizar hover en cards
+ */
+.v-card:hover {
+  will-change: box-shadow, transform;
+  transition: box-shadow 0.2s ease, transform 0.2s ease;
+}
+
+/**
+ * Optimizar hover en list items
+ */
+.v-list-item:hover {
+  will-change: background-color;
+  transition: background-color 0.15s ease;
+}
+
+/* ========================================
+   📦 OPTIMIZACIÓN DE CARDS Y VIRTUAL SCROLL
+   ======================================== */
+
+/**
+ * ⚡ CRÍTICO: Optimizar cards en modales
+ * Mejora performance en listas largas
+ */
+.persona-card,
+.vehiculo-card {
+  transform: translateZ(0);
+  backface-visibility: hidden;
+  will-change: auto;
+  contain: layout style paint;
+}
+
+/**
+ * Optimizar hover en cards de personas/vehículos
+ */
+.persona-card:hover,
+.vehiculo-card:hover {
+  will-change: box-shadow, border-color;
+  transition: box-shadow 0.2s ease, border-color 0.2s ease;
+}
+
+/**
+ * ⚡ CRÍTICO: Optimizar virtual scroll
+ * Reduce reflows durante scroll
+ */
+.v-virtual-scroll {
+  transform: translateZ(0);
+  will-change: scroll-position;
+  contain: strict;
+}
+
+.v-virtual-scroll__item {
+  transform: translateZ(0);
+  backface-visibility: hidden;
+  contain: layout style paint;
+}
+
+/* ========================================
+   🎬 OPTIMIZACIÓN DE ANIMACIONES DE CONTADORES
+   ======================================== */
+
+/**
+ * ⚡ NUEVO: Optimizar elementos con animaciones numéricas
+ * Mejora fluidez de count-up animations
+ */
+.stat-value,
+.counter-value,
+[class*="counter"],
+[class*="stat"] {
+  will-change: contents;
+  transform: translateZ(0);
+  backface-visibility: hidden;
+}
+
+/* ========================================
+   🖱️ OPTIMIZACIÓN DE ELEMENTOS INTERACTIVOS
+   ======================================== */
+
+/**
+ * ⚡ CRÍTICO: Optimizar todos los elementos clickeables
+ * Mejora respuesta de hover y click
+ */
+button,
+a,
+[role="button"],
+[tabindex="0"] {
+  transform: translateZ(0);
+  backface-visibility: hidden;
+  will-change: auto;
+}
+
+/**
+ * Optimizar focus states
+ */
+*:focus-visible {
+  will-change: outline, box-shadow;
+  transition: outline 0.1s ease, box-shadow 0.1s ease;
+}
+
+/**
+ * ⚡ NUEVO: Optimizar avatares y badges
+ * Mejora transiciones en elementos pequeños
+ */
+.v-avatar,
+.v-badge,
+.v-chip {
+  will-change: transform, opacity;
+  transition: transform 0.15s ease, opacity 0.15s ease;
+}
+
+/* ========================================
+   📱 OPTIMIZACIÓN ESPECÍFICA PARA TOUCH
+   ======================================== */
+
+/**
+ * ⚡ CRÍTICO: Mejorar respuesta táctil en tablets
+ * Reduce delay de 300ms en touch events
+ */
+@media (hover: none) and (pointer: coarse) {
+  /* Dispositivos táctiles (tablets, móviles) */
+  * {
+    touch-action: manipulation;
+  }
+  
+  /* Acelerar transiciones en touch */
+  .v-btn,
+  .v-card,
+  .v-list-item {
+    transition-duration: 0.1s;
+  }
+  
+  /* Feedback visual inmediato en touch */
+  .v-btn:active,
+  .v-card:active,
+  .v-list-item:active {
+    transform: scale(0.98) translateZ(0);
+    transition: transform 0.05s ease;
+  }
+}
+
+/* ========================================
+   🎨 OPTIMIZACIÓN DE TRANSICIONES GLOBALES
+   ======================================== */
+
+/**
+ * ⚡ NUEVO: Optimizar todas las transiciones de Vuetify
+ * Reduce duración para mayor sensación de fluidez
+ */
+.v-enter-active,
+.v-leave-active {
+  transition-duration: 0.2s !important;
+}
+
+/**
+ * Optimizar slide transitions
+ */
+.v-slide-x-transition-enter-active,
+.v-slide-x-transition-leave-active,
+.v-slide-y-transition-enter-active,
+.v-slide-y-transition-leave-active {
+  transition-duration: 0.2s !important;
+  will-change: transform, opacity;
 }
 
 /* ========================================
