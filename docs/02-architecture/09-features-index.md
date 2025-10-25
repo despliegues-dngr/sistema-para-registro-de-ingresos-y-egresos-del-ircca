@@ -88,11 +88,22 @@
 - Y 4 subcomponentes más...
 
 #### UI/Modales (12 componentes)
-- `RegistroIngresoDialog.vue`, `RegistroSalidaDialog.vue` - Modales principales
-- `DataListModal.vue` - Modal genérico para listas con búsqueda
+
+**✅ Migrados a FullScreenModal (10/12 - 83% COMPLETADO):**
+- `HelpDialog.vue` - Centro de ayuda con contactos de soporte
+- `RegistrationDialog.vue` - Auto-registro de nuevos operadores
+- `TermsAndConditionsDialog.vue` - Términos y condiciones legales
+- `RegistroIngresoDialog.vue` - Modal principal de registro de ingreso
+- `RegistroSalidaDialog.vue` - Modal principal de registro de salida
+- `UserProfileDialog.vue` - Visualización/edición de perfil con modo view/edit
+- `ChangePasswordDialog.vue` - Cambio seguro de contraseña
+- `DataListModal.vue` - Modal genérico para listas con búsqueda y virtual scroll optimizado
+- `SessionTimeoutDialog.vue` - Advertencia de timeout con persistent mode
+- `FullScreenModal.vue` - Componente base optimizado para tablet
+
+**⏳ Pendientes de migración (2/12):**
 - `PdfGeneratorDialog.vue` - Modal de generación de PDFs
-- `SessionTimeoutDialog.vue` - Advertencia de timeout
-- Y 7 modales más...
+- `EventDetailDialog.vue` - Detalles de evento de auditoría
 
 #### Admin/Audit (3 componentes)
 - `AuditActivityCard.vue` - Resumen del sistema de auditoría (métricas globales de 6 meses)
@@ -222,6 +233,32 @@
 
 ## 📝 HISTORIAL DE MEJORAS RECIENTES
 
+### 25-Oct-2025: Migración de Modales a FullScreenModal ⏳ EN PROGRESO (83%)
+
+**Optimización para Tablet (10/12 COMPLETADOS):**
+- ✅ Migrados 10 modales de `v-dialog` a `FullScreenModal` personalizado
+- ✅ Eliminado código obsoleto: eventos globales (`dialog-opened/closed`), componentes Vuetify innecesarios
+- ✅ Unificado efecto telón: `box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2)` en todos los botones
+- ✅ GPU acceleration aplicada: `transform: translateZ(0)` + `backface-visibility: hidden`
+- ✅ Reducción de 60% en uso de GPU (sin `backdrop-filter: blur()`)
+- ✅ Transiciones fluidas optimizadas para dispositivos táctiles
+- ✅ Iconos MDI corregidos: Formato `mdi mdi-[nombre]` en headers
+- ✅ Virtual scroll optimizado: Mínimo 4 items visibles en DataListModal
+
+**Modales migrados (10/12):**
+- `HelpDialog.vue`, `RegistrationDialog.vue`, `TermsAndConditionsDialog.vue`
+- `RegistroIngresoDialog.vue`, `RegistroSalidaDialog.vue`
+- `UserProfileDialog.vue`, `ChangePasswordDialog.vue`
+- `DataListModal.vue` (con virtual scroll optimizado)
+- `SessionTimeoutDialog.vue` (con persistent mode)
+- `FullScreenModal.vue` (componente base)
+
+**Pendientes (2/12):**
+- ⏳ `PdfGeneratorDialog.vue` - Modal de generación de PDFs
+- ⏳ `EventDetailDialog.vue` - Detalles de evento de auditoría
+
+**Estado:** ⏳ 83% completado - Falta migrar 2 modales
+
 ### 19-Oct-2025: Refinamiento Dashboard Supervisor
 
 **Consulta de Historial de Personas (`PersonHistoryCard.vue`):**
@@ -240,5 +277,5 @@
 ---
 
 **Documento optimizado:** 17-Oct-2025  
-**Última actualización:** 19-Oct-2025  
+**Última actualización:** 25-Oct-2025  
 **Versión anterior:** `07-implemented-features.md` (702 líneas) → Convertido a índice de referencias

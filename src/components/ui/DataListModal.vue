@@ -1,25 +1,14 @@
 <template>
-  <v-dialog
+  <FullScreenModal
     v-model="modelValue"
-    max-width="900"
-    transition="fade-transition"
-    scrollable
-    :scrim="true"
+    :title="title"
+    subtitle="Sistema de Control de Accesos del IRCCA"
+    :icon="headerIcon"
+    :header-color="headerColor"
+    @close="handleClose"
   >
-    <v-card class="data-list-dialog-card">
-      <!-- Header institucional estándar -->
-      <v-card-title :class="`bg-${headerColor} pa-4`">
-        <div class="d-flex align-center">
-          <v-icon size="24" color="white" class="mr-3">{{ headerIcon }}</v-icon>
-          <div>
-            <h3 class="text-h6 text-white mb-0">{{ title }}</h3>
-            <p class="text-caption text-blue-lighten-4 mb-0">Sistema de Control de Accesos del IRCCA</p>
-          </div>
-        </div>
-      </v-card-title>
-
-      <!-- Búsqueda rápida -->
-      <v-card-text class="pa-4 pb-2" v-if="data.length > 0">
+    <!-- Búsqueda rápida -->
+    <div class="search-container" v-if="data.length > 0">
         <v-text-field
           v-model="searchQuery"
           prepend-inner-icon="mdi-magnify"
@@ -30,9 +19,10 @@
           clearable
           hide-details
         />
-      </v-card-text>
+    </div>
 
-      <v-card-text class="pa-4 pt-2">
+    <!-- Contenido principal -->
+    <div class="content-container">
         <!-- Lista de personas con Virtual Scroll -->
         <template v-if="dataType === 'personas'">
           <v-virtual-scroll
@@ -137,28 +127,26 @@
             <p class="text-body-2 text-grey">{{ emptySubtitle }}</p>
           </div>
         </template>
-      </v-card-text>
+    </div>
 
-      <!-- Actions estándar -->
-      <v-card-actions class="pa-4 pt-2">
-        <span class="text-body-2 text-grey-darken-1">
+    <!-- Footer con contador y botón -->
+    <template #footer>
+      <div class="footer-actions">
+        <span class="counter-text">
           {{ searchQuery ? `${filteredData.length} de ${data.length}` : `Total: ${data.length}` }} {{ dataType === 'personas' ? 'personas' : 'vehículos' }}
         </span>
-        <v-spacer />
-        <v-btn
-          color="secondary"
-          variant="text"
-          @click="closeModal"
-        >
+        <button class="btn-secondary" @click="closeModal">
+          <i class="mdi mdi-close"></i>
           Cerrar
-        </v-btn>
-      </v-card-actions>
-    </v-card>
-  </v-dialog>
+        </button>
+      </div>
+    </template>
+  </FullScreenModal>
 </template>
 
 <script setup lang="ts">
-import { ref, computed, watch } from 'vue'
+import { ref, computed } from 'vue'
+import FullScreenModal from './FullScreenModal.vue'
 
 // 🔧 INTERFACES ESPECÍFICAS PARA EVITAR 'any'
 interface PersonaModalData {
@@ -250,8 +238,14 @@ const filteredData = computed(() => {
 const virtualScrollHeight = computed(() => {
   const dataLength = filteredData.value.length
   if (dataLength === 0) return 0
-  // Max 500px de altura para evitar scrolls muy largos
-  return Math.min(dataLength * 88, 500)
+  
+  const itemHeight = 88 // 80px item + 8px margin
+  const minHeight = itemHeight * 4 // Mínimo 4 items visibles (352px)
+  const maxHeight = 600 // Máximo para tablets (aprox 6-7 items)
+  
+  // Asegurar que siempre se muestren al menos 4 items (si hay datos)
+  const calculatedHeight = dataLength * itemHeight
+  return Math.max(minHeight, Math.min(calculatedHeight, maxHeight))
 })
 
 function formatearHoraCorta(timestamp: Date): string {
@@ -293,20 +287,26 @@ function closeModal() {
   modelValue.value = false
 }
 
-// Emitir eventos globales para controlar blur del fondo
-watch(modelValue, (newVal: boolean) => {
-  if (newVal) {
-    window.dispatchEvent(new CustomEvent('dialog-opened'))
-  } else {
-    window.dispatchEvent(new CustomEvent('dialog-closed'))
-  }
-})
+function handleClose() {
+  closeModal()
+}
 </script>
 
 <style scoped>
-/* Estilo estándar del proyecto para modales */
-.data-list-dialog-card {
-  border-top: 3px solid rgb(var(--v-theme-primary));
+/* ========================================
+   🔍 BÚSQUEDA
+   ======================================== */
+
+.search-container {
+  padding: 1rem 1.5rem 0.5rem;
+}
+
+/* ========================================
+   📋 CONTENIDO
+   ======================================== */
+
+.content-container {
+  padding: 0.5rem 1.5rem 1rem;
 }
 
 /* Cards de personas y vehículos */
@@ -380,5 +380,77 @@ watch(modelValue, (newVal: boolean) => {
 
 :deep(.v-virtual-scroll__container) {
   padding: 0;
+}
+
+/* ========================================
+   🎨 FOOTER ACTIONS
+   ======================================== */
+
+.footer-actions {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  width: 100%;
+}
+
+.counter-text {
+  font-size: 0.875rem;
+  color: #616161;
+  font-weight: 500;
+}
+
+.btn-secondary {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.75rem 1.5rem;
+  background: transparent;
+  color: #424242;
+  border: 1px solid #BDBDBD;
+  border-radius: 8px;
+  font-size: 0.875rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  
+  /* ⚡ GPU ACCELERATION */
+  transform: translateZ(0);
+  backface-visibility: hidden;
+}
+
+.btn-secondary:hover {
+  background: #F5F5F5;
+  border-color: #757575;
+  transform: translateY(-2px) translateZ(0);
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+}
+
+.btn-secondary:active {
+  transform: scale(0.98) translateZ(0);
+}
+
+.btn-secondary i {
+  font-size: 1.125rem;
+}
+
+/* ========================================
+   📱 RESPONSIVE
+   ======================================== */
+
+@media (max-width: 600px) {
+  .footer-actions {
+    flex-direction: column;
+    gap: 0.75rem;
+    align-items: stretch;
+  }
+  
+  .counter-text {
+    text-align: center;
+  }
+  
+  .btn-secondary {
+    width: 100%;
+    justify-content: center;
+  }
 }
 </style>

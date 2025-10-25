@@ -74,7 +74,7 @@
     <DataListModal
       v-model="showPersonasDentroModal"
       title="Personas Dentro del Predio"
-      header-icon="mdi-account-multiple"
+      header-icon="mdi mdi-account-multiple"
       data-type="personas"
       :data="personasDentroData"
       empty-title="No hay personas dentro"
@@ -85,7 +85,7 @@
     <DataListModal
       v-model="showIngresosHoyModal"
       title="Ingresos de Hoy"
-      header-icon="mdi-login"
+      header-icon="mdi mdi-login"
       header-color="success"
       data-type="personas"
       :data="ingresosHoyData"
@@ -97,7 +97,7 @@
     <DataListModal
       v-model="showSalidasHoyModal"
       title="Salidas de Hoy"
-      header-icon="mdi-logout"
+      header-icon="mdi mdi-logout"
       header-color="warning"
       data-type="personas"
       :data="salidasHoyData"

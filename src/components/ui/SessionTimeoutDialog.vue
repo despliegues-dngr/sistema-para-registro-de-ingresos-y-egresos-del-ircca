@@ -1,82 +1,63 @@
 <template>
-  <v-dialog v-model="modelValue" max-width="500" persistent no-click-animation>
-    <v-card class="session-timeout-card">
-      <!-- Header de advertencia -->
-      <v-card-title class="bg-warning pa-4">
-        <div class="d-flex align-center">
-          <v-icon size="24" color="white" class="mr-3">mdi-clock-alert</v-icon>
-          <div>
-            <h3 class="text-h6 text-white mb-0">Sesión por Expirar</h3>
-            <p class="text-caption text-amber-lighten-4 mb-0">Sistema de Control de Accesos del IRCCA</p>
-          </div>
+  <FullScreenModal
+    v-model="modelValue"
+    title="Sesión por Expirar"
+    subtitle="Sistema de Control de Accesos del IRCCA"
+    icon="mdi mdi-clock-alert"
+    header-color="warning"
+    :persistent="true"
+    @close="handleClose"
+  >
+    <div class="content-center">
+      <i class="mdi mdi-timer warning-icon"></i>
+
+      <h4 class="title">Su sesión está por expirar</h4>
+
+      <p class="description">
+        Por motivos de seguridad, su sesión se cerrará automáticamente por inactividad.
+      </p>
+
+      <div class="session-countdown">
+        <div class="countdown-display">
+          <i class="mdi mdi-clock-outline countdown-icon"></i>
+          <span class="countdown-time">
+            {{ formattedTime }}
+          </span>
         </div>
-      </v-card-title>
-
-      <v-card-text class="pa-6 text-center">
-        <v-icon size="64" color="warning" class="mb-4">mdi-timer</v-icon>
-
-        <h4 class="text-h5 mb-3">Su sesión está por expirar</h4>
-
-        <p class="text-body-1 mb-4 text-grey-darken-1">
-          Por motivos de seguridad, su sesión se cerrará automáticamente por inactividad.
+        <p class="countdown-label">
+          Tiempo restante antes del cierre automático
         </p>
+      </div>
 
-        <div class="session-countdown mb-4">
-          <div class="d-flex justify-center align-center">
-            <v-icon size="20" color="error" class="mr-2">mdi-clock-outline</v-icon>
-            <span class="text-h4 font-weight-bold text-error">
-              {{ formattedTime }}
-            </span>
-          </div>
-          <p class="text-caption text-grey mt-1">
-            Tiempo restante antes del cierre automático
-          </p>
-        </div>
-
-        <v-alert
-          type="info"
-          density="compact"
-          variant="tonal"
-          class="mb-4 text-start"
-        >
-          <template #prepend>
-            <v-icon>mdi-information</v-icon>
-          </template>
+      <div class="info-alert">
+        <i class="mdi mdi-information info-icon"></i>
+        <div class="info-content">
           <strong>¿Desea continuar trabajando?</strong><br>
           Haga clic en "Extender Sesión" para continuar o "Cerrar Sesión" para salir del sistema de forma segura.
-        </v-alert>
-      </v-card-text>
+        </div>
+      </div>
+    </div>
 
-      <!-- Actions -->
-      <v-card-actions class="pa-4 pt-0">
-        <v-btn
-          color="error"
-          variant="outlined"
-          @click="$emit('logout')"
-          class="flex-grow-1"
-          :prepend-icon="'mdi-logout'"
-        >
+    <!-- Footer con botones de acción -->
+    <template #footer>
+      <div class="footer-actions">
+        <button class="btn-danger" @click="$emit('logout')">
+          <i class="mdi mdi-logout"></i>
           Cerrar Sesión
-        </v-btn>
-
-        <v-btn
-          color="primary"
-          variant="flat"
-          @click="$emit('extend')"
-          class="flex-grow-1 ml-3"
-          :prepend-icon="'mdi-clock-plus'"
-          elevation="1"
-        >
+        </button>
+        <button class="btn-primary" @click="$emit('extend')">
+          <i class="mdi mdi-clock-plus"></i>
           Extender Sesión
-        </v-btn>
-      </v-card-actions>
-    </v-card>
-  </v-dialog>
+        </button>
+      </div>
+    </template>
+  </FullScreenModal>
 </template>
 
 <script setup lang="ts">
 import { computed } from 'vue'
 import { formatRemainingTime } from '@/composables/useSessionTimeout'
+import FullScreenModal from './FullScreenModal.vue'
 
 interface Props {
   modelValue: boolean
@@ -100,17 +81,198 @@ const modelValue = computed({
 
 // Computed
 const formattedTime = computed(() => formatRemainingTime(props.remainingTime))
+
+const handleClose = () => {
+  // No permitir cerrar con ESC o click fuera (persistent)
+  // Solo se puede cerrar con los botones
+}
 </script>
 
 <style scoped>
-.session-timeout-card {
-  border-top: 3px solid rgb(var(--v-theme-warning));
+/* ========================================
+   📋 CONTENIDO CENTRADO
+   ======================================== */
+
+.content-center {
+  text-align: center;
+  padding: 2rem 1.5rem;
+  max-width: 500px;
+  margin: 0 auto;
 }
 
+.warning-icon {
+  font-size: 4rem;
+  color: #F57C00;
+  margin-bottom: 1.5rem;
+}
+
+.title {
+  font-size: 1.5rem;
+  font-weight: 600;
+  color: #212121;
+  margin-bottom: 1rem;
+}
+
+.description {
+  font-size: 1rem;
+  color: #616161;
+  margin-bottom: 1.5rem;
+  line-height: 1.5;
+}
+
+/* ========================================
+   ⏱️ COUNTDOWN
+   ======================================== */
+
 .session-countdown {
-  background: rgba(var(--v-theme-surface-variant), 0.1);
+  background: #FFF3E0;
   border-radius: 12px;
-  padding: 16px;
-  border: 1px solid rgba(var(--v-theme-outline), 0.2);
+  padding: 1.5rem;
+  border: 1px solid #FFE0B2;
+  margin-bottom: 1.5rem;
+}
+
+.countdown-display {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 0.5rem;
+  margin-bottom: 0.5rem;
+}
+
+.countdown-icon {
+  font-size: 1.5rem;
+  color: #D32F2F;
+}
+
+.countdown-time {
+  font-size: 2.5rem;
+  font-weight: 700;
+  color: #D32F2F;
+}
+
+.countdown-label {
+  font-size: 0.75rem;
+  color: #757575;
+  margin: 0;
+}
+
+/* ========================================
+   ℹ️ INFO ALERT
+   ======================================== */
+
+.info-alert {
+  display: flex;
+  gap: 0.75rem;
+  padding: 1rem;
+  background: #E3F2FD;
+  border: 1px solid #BBDEFB;
+  border-radius: 8px;
+  text-align: left;
+  margin-bottom: 1rem;
+}
+
+.info-icon {
+  font-size: 1.5rem;
+  color: #1976D2;
+  flex-shrink: 0;
+}
+
+.info-content {
+  font-size: 0.875rem;
+  color: #424242;
+  line-height: 1.5;
+}
+
+.info-content strong {
+  color: #1976D2;
+}
+
+/* ========================================
+   🎨 FOOTER ACTIONS
+   ======================================== */
+
+.footer-actions {
+  display: flex;
+  gap: 0.75rem;
+  width: 100%;
+}
+
+.btn-danger,
+.btn-primary {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+  padding: 0.75rem 1.5rem;
+  border-radius: 8px;
+  font-size: 0.875rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  border: none;
+  flex: 1;
+  
+  /* ⚡ GPU ACCELERATION */
+  transform: translateZ(0);
+  backface-visibility: hidden;
+}
+
+.btn-danger {
+  background: transparent;
+  color: #D32F2F;
+  border: 1px solid #D32F2F;
+}
+
+.btn-danger:hover {
+  background: #FFEBEE;
+  border-color: #C62828;
+  transform: translateY(-2px) translateZ(0);
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+}
+
+.btn-danger:active {
+  transform: scale(0.98) translateZ(0);
+}
+
+.btn-primary {
+  background: #1565C0;
+  color: white;
+  border: 1px solid #1565C0;
+}
+
+.btn-primary:hover {
+  background: #0D47A1;
+  border-color: #0D47A1;
+  transform: translateY(-2px) translateZ(0);
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+}
+
+.btn-primary:active {
+  transform: scale(0.98) translateZ(0);
+}
+
+.btn-danger i,
+.btn-primary i {
+  font-size: 1.125rem;
+}
+
+/* ========================================
+   📱 RESPONSIVE
+   ======================================== */
+
+@media (max-width: 600px) {
+  .content-center {
+    padding: 1.5rem 1rem;
+  }
+  
+  .footer-actions {
+    flex-direction: column;
+  }
+  
+  .btn-danger,
+  .btn-primary {
+    width: 100%;
+  }
 }
 </style>

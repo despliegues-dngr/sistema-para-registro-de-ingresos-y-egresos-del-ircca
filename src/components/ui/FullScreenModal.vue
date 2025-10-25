@@ -11,9 +11,7 @@
           <div :class="['fullscreen-modal-header', `bg-${headerColor}`]">
             <div class="header-content">
               <div class="header-left">
-                <div v-if="icon" class="header-icon">
-                  <i :class="icon"></i>
-                </div>
+                <i v-if="icon" :class="['header-icon', icon]"></i>
                 <div class="header-text">
                   <h3 class="header-title">{{ title }}</h3>
                   <p v-if="subtitle" class="header-subtitle">{{ subtitle }}</p>

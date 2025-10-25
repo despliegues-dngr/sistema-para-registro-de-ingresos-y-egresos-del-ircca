@@ -160,6 +160,7 @@ const handleClose = () => {
   background: #F5F5F5;
   border-color: #757575;
   transform: translateY(-2px) translateZ(0);
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
 }
 
 .btn-secondary:active:not(:disabled) {

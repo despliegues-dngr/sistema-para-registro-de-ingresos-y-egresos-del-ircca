@@ -13,13 +13,13 @@
           <section class="mb-6">
             <h4 class="text-h6 text-primary mb-3">1. INTRODUCCIÓN Y ACEPTACIÓN</h4>
             <p class="text-body-2 mb-3">
-              El presente documento establece los términos y condiciones para el uso del Sistema de Registro de Accesos 
-              desarrollado por la <strong>Dirección Nacional de la Guardia Republicana (DNGR)</strong> para el control de 
+              El presente documento establece los términos y condiciones para el uso del Sistema de Registro de Accesos
+              desarrollado por la <strong>Dirección Nacional de la Guardia Republicana (DNGR)</strong> para el control de
               accesos en las instalaciones del <strong>Instituto de Regulación y Control del Cannabis (IRCCA)</strong>.
             </p>
             <p class="text-body-2">
-              Al registrarse como operador del sistema, usted acepta expresamente todos los términos contenidos en este documento 
-              y se compromete a cumplir con la normativa nacional vigente en materia de protección de datos personales 
+              Al registrarse como operador del sistema, usted acepta expresamente todos los términos contenidos en este documento
+              y se compromete a cumplir con la normativa nacional vigente en materia de protección de datos personales
               (Ley N° 18.331).
             </p>
           </section>
@@ -30,13 +30,13 @@
 
             <h5 class="text-subtitle-1 font-weight-medium mb-2">¿Qué datos se recolectan?</h5>
             <p class="text-body-2 mb-3">
-              El sistema registra: nombre completo, cédula de identidad, destino de la visita, 
+              El sistema registra: nombre completo, cédula de identidad, destino de la visita,
               fecha y hora de ingreso/egreso, y opcionalmente datos de vehículo (tipo y matrícula).
             </p>
 
             <h5 class="text-subtitle-1 font-weight-medium mb-2">¿Para qué se usan los datos?</h5>
             <p class="text-body-2 mb-3">
-              Los datos se utilizan exclusivamente para el control de accesos a las instalaciones 
+              Los datos se utilizan exclusivamente para el control de accesos a las instalaciones
               del IRCCA por razones de seguridad institucional. No se utilizarán para otros fines.
             </p>
 
@@ -72,13 +72,13 @@
           <section class="mb-6">
             <h4 class="text-h6 text-primary mb-3">4. CONSERVACIÓN Y SEGURIDAD DE DATOS</h4>
             <p class="text-body-2 mb-3">
-              Los registros se conservan en el sistema durante <strong>12 meses</strong>. 
-              Los respaldos se mantienen por <strong>5 años</strong> para auditorías institucionales, 
+              Los registros se conservan en el sistema durante <strong>12 meses</strong>.
+              Los respaldos se mantienen por <strong>5 años</strong> para auditorías institucionales,
               luego son eliminados de forma segura.
             </p>
             <p class="text-body-2">
-              Se han adoptado medidas técnicas y organizativas para garantizar la seguridad, 
-              integridad y confidencialidad de los datos personales, evitando su alteración, 
+              Se han adoptado medidas técnicas y organizativas para garantizar la seguridad,
+              integridad y confidencialidad de los datos personales, evitando su alteración,
               pérdida o acceso no autorizado.
             </p>
           </section>
@@ -91,7 +91,7 @@
             </p>
             <div class="ml-4">
               <p class="text-body-2 mb-2">
-                <strong>Email:</strong> gr-deptoinfoygc@minterior.gub.uy
+                <strong>Email:</strong> gr-depto.infoygc@minterior.gub.uy
               </p>
               <p class="text-body-2 mb-2">
                 <strong>Teléfono:</strong> 099 505 227
@@ -220,7 +220,7 @@ defineEmits<Emits>()
   font-weight: 600;
   cursor: pointer;
   transition: all 0.2s ease;
-  
+
   /* ⚡ GPU ACCELERATION */
   transform: translateZ(0);
   backface-visibility: hidden;
@@ -230,6 +230,7 @@ defineEmits<Emits>()
   background: #F5F5F5;
   border-color: #757575;
   transform: translateY(-2px) translateZ(0);
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
 }
 
 .btn-secondary:active {

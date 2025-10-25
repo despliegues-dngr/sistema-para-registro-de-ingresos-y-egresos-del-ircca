@@ -275,8 +275,7 @@ Los `v-dialog` estándar tienen limitaciones en tablets:
 - ✅ 60% menos GPU usage (sin backdrop blur) | ✅ Transiciones fluidas | ✅ ~3KB vs ~8KB
 - ✅ Event listeners optimizados | ✅ Body scroll correcto | ✅ Sin modales anidados
 
-**Migrados:** HelpDialog, RegistrationDialog, TermsAndConditionsDialog, RegistroIngresoDialog ✅  
-**Pendientes:** RegistroSalidaDialog, UserProfileDialog, ChangePasswordDialog
+**⏳ MIGRACIÓN EN PROGRESO (83% - 10/12):** HelpDialog, RegistrationDialog, TermsAndConditionsDialog, RegistroIngresoDialog, RegistroSalidaDialog, UserProfileDialog, ChangePasswordDialog, DataListModal, SessionTimeoutDialog, FullScreenModal | **Pendientes:** PdfGeneratorDialog, EventDetailDialog
 
 **Usar en:** Formularios largos, listas con scroll, contenido complejo, modales anidados  
 **NO usar en:** Confirmaciones simples (usar v-dialog)

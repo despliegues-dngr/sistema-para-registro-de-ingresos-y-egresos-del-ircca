@@ -61,15 +61,15 @@ export function useDashboardModals() {
   })
 
   const vehicleModalIcon = computed(() => {
-    if (!selectedVehicleType.value) return 'mdi-car-multiple'
+    if (!selectedVehicleType.value) return 'mdi mdi-car-multiple'
     const iconos: { [key: string]: string } = {
-      Auto: 'mdi-car',
-      Moto: 'mdi-motorbike',
-      Camión: 'mdi-truck',
-      Camion: 'mdi-truck',
-      Bus: 'mdi-bus'
+      Auto: 'mdi mdi-car',
+      Moto: 'mdi mdi-motorbike',
+      Camión: 'mdi mdi-truck',
+      Camion: 'mdi mdi-truck',
+      Bus: 'mdi mdi-bus'
     }
-    return iconos[selectedVehicleType.value] || 'mdi-car'
+    return iconos[selectedVehicleType.value] || 'mdi mdi-car'
   })
 
   const vehicleModalEmptySubtitle = computed(() => {

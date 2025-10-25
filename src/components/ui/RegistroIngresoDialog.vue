@@ -185,6 +185,7 @@ const handleClose = () => {
   background: #F5F5F5;
   border-color: #757575;
   transform: translateY(-2px) translateZ(0);
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
 }
 
 .btn-secondary:active:not(:disabled) {
@@ -206,7 +207,7 @@ const handleClose = () => {
   background: #0D47A1;
   border-color: #0D47A1;
   transform: translateY(-2px) translateZ(0);
-  box-shadow: 0 4px 8px rgba(21, 101, 192, 0.3);
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
 }
 
 .btn-primary:active:not(:disabled) {

@@ -1,71 +1,53 @@
 <template>
-  <v-dialog
+  <FullScreenModal
     v-model="modelValue"
-    max-width="700"
-    transition="fade-transition"
-    scrollable
-    :scrim="true"
-    eager
+    title="Registrar Salida"
+    subtitle="Sistema de Control de Accesos del IRCCA"
+    icon="mdi mdi-account-minus"
+    header-color="warning"
+    :persistent="loading"
+    @close="handleClose"
   >
-    <template #activator="{ props }">
-      <slot name="activator" v-bind="props" />
-    </template>
+    <!-- ⚡ LAZY LOADING: Solo renderizar formulario cuando modal está abierto -->
+    <RegistroSalidaForm
+      v-if="modelValue"
+      ref="formRef"
+      :loading="loading"
+      :message="message"
+      @submit="onSubmit"
+      @clear-message="clearMessage"
+    />
 
-    <v-card class="registro-salida-dialog-card">
-      <!-- Header institucional -->
-      <v-card-title class="bg-warning pa-4">
-        <div class="d-flex align-center">
-          <v-icon size="24" color="white" class="mr-3">mdi-account-minus</v-icon>
-          <div>
-            <h3 class="text-h6 text-white mb-0">Registrar Salida</h3>
-            <p class="text-caption text-orange-lighten-4 mb-0">Sistema de Control de Accesos del IRCCA</p>
-          </div>
-        </div>
-      </v-card-title>
-
-      <v-card-text class="pa-6">
-        <!-- ⚡ LAZY LOADING: Solo renderizar formulario cuando modal está abierto -->
-        <RegistroSalidaForm
-          v-if="modelValue"
-          ref="formRef"
-          :loading="loading"
-          :message="message"
-          @submit="onSubmit"
-          @clear-message="clearMessage"
-        />
-      </v-card-text>
-
-      <!-- Actions -->
-      <v-card-actions class="pa-4 pt-2">
-        <v-spacer />
-        <v-btn
-          color="secondary"
-          variant="text"
-          @click="closeDialog()"
+    <!-- Footer con botones de acción -->
+    <template #footer>
+      <div class="footer-actions">
+        <button 
+          class="btn-secondary" 
+          @click="closeDialog"
           :disabled="loading"
         >
+          <i class="mdi mdi-close"></i>
           Cancelar
-        </v-btn>
-        <v-btn
+        </button>
+        <button 
           v-if="!isEditingMode"
-          color="warning"
-          variant="flat"
-          prepend-icon="mdi-logout"
+          class="btn-warning" 
           @click="handleSubmit"
-          :loading="loading"
-          :disabled="!isFormValid"
+          :disabled="!isFormValid || loading"
         >
+          <i class="mdi mdi-logout"></i>
           Registrar Salida
-        </v-btn>
-      </v-card-actions>
-    </v-card>
-  </v-dialog>
+        </button>
+      </div>
+    </template>
+  </FullScreenModal>
 </template>
 
 <script setup lang="ts">
-import { ref, computed, watch } from 'vue'
+import { ref, computed } from 'vue'
 import { useAuthStore } from '@/stores/auth'
 import { useRegistroStore } from '@/stores/registro'
+import FullScreenModal from './FullScreenModal.vue'
 import RegistroSalidaForm from '@/components/forms/RegistroSalidaForm.vue'
 
 interface RegistroSalidaData {
@@ -178,18 +160,109 @@ const closeDialog = () => {
   emit('close')
 }
 
-// Emitir eventos globales para controlar blur del fondo
-watch(modelValue, (newVal: boolean) => {
-  if (newVal) {
-    window.dispatchEvent(new CustomEvent('dialog-opened'))
-  } else {
-    window.dispatchEvent(new CustomEvent('dialog-closed'))
+const handleClose = () => {
+  if (!loading.value) {
+    closeDialog()
   }
-})
+}
 </script>
 
 <style scoped>
-.registro-salida-dialog-card {
-  border-top: 3px solid rgb(var(--v-theme-warning));
+/* ========================================
+   🎨 FOOTER ACTIONS
+   ======================================== */
+
+.footer-actions {
+  display: flex;
+  justify-content: flex-end;
+  gap: 0.75rem;
+}
+
+/* ========================================
+   🎨 BOTONES
+   ======================================== */
+
+.btn-secondary,
+.btn-warning {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.75rem 1.5rem;
+  border-radius: 8px;
+  font-size: 0.875rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  border: none;
+  
+  /* ⚡ GPU ACCELERATION */
+  transform: translateZ(0);
+  backface-visibility: hidden;
+}
+
+.btn-secondary {
+  background: transparent;
+  color: #424242;
+  border: 1px solid #BDBDBD;
+}
+
+.btn-secondary:hover:not(:disabled) {
+  background: #F5F5F5;
+  border-color: #757575;
+  transform: translateY(-2px) translateZ(0);
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+}
+
+.btn-secondary:active:not(:disabled) {
+  transform: scale(0.98) translateZ(0);
+}
+
+.btn-secondary:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+.btn-warning {
+  background: #F57C00;
+  color: white;
+  border: 1px solid #F57C00;
+}
+
+.btn-warning:hover:not(:disabled) {
+  background: #E65100;
+  border-color: #E65100;
+  transform: translateY(-2px) translateZ(0);
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+}
+
+.btn-warning:active:not(:disabled) {
+  transform: scale(0.98) translateZ(0);
+}
+
+.btn-warning:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+.btn-secondary i,
+.btn-warning i {
+  font-size: 1.125rem;
+}
+
+/* ========================================
+   📱 RESPONSIVE
+   ======================================== */
+
+@media (max-width: 600px) {
+  .footer-actions {
+    flex-direction: column;
+    gap: 0.5rem;
+  }
+  
+  .btn-secondary,
+  .btn-warning {
+    width: 100%;
+    justify-content: center;
+  }
 }
 </style>
