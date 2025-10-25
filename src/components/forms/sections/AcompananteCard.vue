@@ -71,6 +71,7 @@
           variant="outlined"
           density="comfortable"
           required
+          :menu-props="{ zIndex: 10000 }"
         />
       </v-col>
     </v-row>

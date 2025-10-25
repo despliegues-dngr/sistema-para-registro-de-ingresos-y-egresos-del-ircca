@@ -67,6 +67,7 @@
           density="comfortable"
           validate-on="blur"
           required
+          :menu-props="{ zIndex: 10000 }"
         />
       </v-col>
     </v-row>

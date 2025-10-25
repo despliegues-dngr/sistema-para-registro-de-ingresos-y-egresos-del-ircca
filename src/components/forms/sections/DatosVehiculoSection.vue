@@ -21,6 +21,7 @@
           density="comfortable"
           validate-on="blur"
           clearable
+          :menu-props="{ zIndex: 10000 }"
         />
       </v-col>
 

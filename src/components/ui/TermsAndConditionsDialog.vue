@@ -1,27 +1,14 @@
 <template>
-  <v-dialog 
-    :model-value="modelValue" 
-    @update:model-value="$emit('update:modelValue', $event)" 
-    max-width="800" 
-    scrollable 
-    transition="fade-transition"
-    :scrim="true"
+  <FullScreenModal
+    :model-value="modelValue"
+    @update:model-value="$emit('update:modelValue', $event)"
+    title="Términos y Condiciones"
+    subtitle="Sistema de Control de Accesos del IRCCA"
+    icon="mdi mdi-file-document-outline"
+    header-color="primary"
+    @close="$emit('close')"
   >
-    <v-card class="terms-dialog-card">
-      <!-- Header institucional -->
-      <v-card-title class="bg-primary pa-4">
-        <div class="d-flex align-center">
-          <v-icon size="24" color="white" class="mr-3">mdi-file-document-outline</v-icon>
-          <div>
-            <h3 class="text-h6 text-white mb-0">Términos y Condiciones</h3>
-            <p class="text-caption text-blue-lighten-4 mb-0">Sistema de Control de Accesos del IRCCA</p>
-          </div>
-        </div>
-      </v-card-title>
-
-      <!-- Contenido scrollable -->
-      <v-card-text class="pa-6" style="height: 500px;">
-        <div class="terms-content">
+    <div class="terms-content">
           <!-- Introducción -->
           <section class="mb-6">
             <h4 class="text-h6 text-primary mb-3">1. INTRODUCCIÓN Y ACEPTACIÓN</h4>
@@ -115,31 +102,28 @@
             </div>
           </section>
 
-          <!-- Nota legal al pie -->
-          <v-divider class="my-4" />
-          <p class="text-caption text-center text-grey">
-            Sistema regido por la Ley N° 18.331 de Protección de Datos Personales de Uruguay
-          </p>
-        </div>
-      </v-card-text>
+      <!-- Nota legal al pie -->
+      <hr class="divider" />
+      <p class="legal-note">
+        Sistema regido por la Ley N° 18.331 de Protección de Datos Personales de Uruguay
+      </p>
+    </div>
 
-      <!-- Actions -->
-      <v-card-actions class="pa-4 pt-2 bg-grey-lighten-5">
-        <v-spacer />
-        <v-btn
-          color="secondary"
-          variant="text"
-          @click="$emit('close')"
-          prepend-icon="mdi-close"
-        >
+    <!-- Footer con botón cerrar -->
+    <template #footer>
+      <div class="footer-actions">
+        <button class="btn-secondary" @click="$emit('close')">
+          <i class="mdi mdi-close"></i>
           Cerrar
-        </v-btn>
-      </v-card-actions>
-    </v-card>
-  </v-dialog>
+        </button>
+      </div>
+    </template>
+  </FullScreenModal>
 </template>
 
 <script setup lang="ts">
+import FullScreenModal from './FullScreenModal.vue'
+
 interface Props {
   modelValue: boolean
 }
@@ -154,34 +138,125 @@ defineEmits<Emits>()
 </script>
 
 <style scoped>
-.terms-dialog-card {
-  border-radius: 12px;
-}
+/* ========================================
+   🎨 CONTENIDO DE TÉRMINOS
+   ======================================== */
 
 .terms-content {
   line-height: 1.6;
+  padding: 0;
 }
 
 .terms-content h4 {
+  font-size: 1.125rem;
+  font-weight: 600;
+  color: #1565C0;
   border-bottom: 2px solid #E3F2FD;
-  padding-bottom: 8px;
+  padding-bottom: 0.5rem;
+  margin-bottom: 1rem;
+}
+
+.terms-content h5 {
+  font-size: 1rem;
+  font-weight: 600;
+  color: #424242;
+  margin-bottom: 0.5rem;
 }
 
 .terms-content section {
-  scroll-margin-top: 20px;
+  margin-bottom: 1.5rem;
 }
 
-/* Mejorar legibilidad del texto */
-.terms-content p, .terms-content li {
+.terms-content p {
+  font-size: 0.875rem;
   color: rgba(0, 0, 0, 0.87);
+  margin-bottom: 0.75rem;
 }
 
-/* Estilo para listas */
 .terms-content ul {
   list-style-type: disc;
+  margin-left: 1.5rem;
+  margin-bottom: 0.75rem;
 }
 
 .terms-content ul li {
-  margin-bottom: 4px;
+  font-size: 0.875rem;
+  color: rgba(0, 0, 0, 0.87);
+  margin-bottom: 0.25rem;
 }
+
+.divider {
+  border: none;
+  border-top: 1px solid #E0E0E0;
+  margin: 1.5rem 0;
+}
+
+.legal-note {
+  font-size: 0.75rem;
+  text-align: center;
+  color: #757575;
+  margin: 0;
+}
+
+/* ========================================
+   🎨 FOOTER ACTIONS
+   ======================================== */
+
+.footer-actions {
+  display: flex;
+  justify-content: flex-end;
+}
+
+.btn-secondary {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.75rem 1.5rem;
+  background: transparent;
+  color: #424242;
+  border: 1px solid #BDBDBD;
+  border-radius: 8px;
+  font-size: 0.875rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  
+  /* ⚡ GPU ACCELERATION */
+  transform: translateZ(0);
+  backface-visibility: hidden;
+}
+
+.btn-secondary:hover {
+  background: #F5F5F5;
+  border-color: #757575;
+  transform: translateY(-2px) translateZ(0);
+}
+
+.btn-secondary:active {
+  transform: scale(0.98) translateZ(0);
+}
+
+.btn-secondary i {
+  font-size: 1.125rem;
+}
+
+/* ========================================
+   🎨 UTILIDADES VUETIFY-LIKE
+   ======================================== */
+
+.mb-2 { margin-bottom: 0.5rem; }
+.mb-3 { margin-bottom: 0.75rem; }
+.mb-4 { margin-bottom: 1rem; }
+.mb-6 { margin-bottom: 1.5rem; }
+.ml-4 { margin-left: 1rem; }
+
+.text-h6 { font-size: 1.25rem; }
+.text-subtitle-1 { font-size: 1rem; }
+.text-body-2 { font-size: 0.875rem; }
+.text-caption { font-size: 0.75rem; }
+
+.text-primary { color: #1565C0; }
+.text-grey-darken-1 { color: #757575; }
+
+.font-weight-medium { font-weight: 500; }
 </style>

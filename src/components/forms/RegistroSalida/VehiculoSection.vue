@@ -49,6 +49,7 @@
               density="compact"
               clearable
               hide-details
+              :menu-props="{ zIndex: 10000 }"
             />
           </v-col>
           <v-col cols="6">

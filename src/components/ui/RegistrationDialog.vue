@@ -1,57 +1,43 @@
 <template>
-  <v-dialog 
-    v-model="modelValue" 
-    max-width="600" 
-    transition="fade-transition"
-    :scrim="true"
+  <FullScreenModal
+    v-model="modelValue"
+    title="Registro de Nuevo Operador"
+    subtitle="Sistema de Control de Accesos del IRCCA"
+    icon="mdi mdi-account-plus"
+    header-color="primary"
+    :persistent="loading"
+    @close="handleClose"
   >
-    <template #activator="{ props }">
-      <slot name="activator" v-bind="props" />
-    </template>
+    <!-- ⚡ LAZY LOADING: Solo renderizar formulario cuando modal está abierto -->
+    <RegistrationForm
+      v-if="modelValue"
+      :loading="loading"
+      :message="message"
+      @submit="onSubmit"
+      @clear-message="clearMessage"
+    />
 
-    <v-card class="registration-dialog-card">
-      <!-- Header institucional -->
-      <v-card-title class="bg-primary pa-4">
-        <div class="d-flex align-center">
-          <v-icon size="24" color="white" class="mr-3">{{ ICONS.NAVIGATION.REGISTER }}</v-icon>
-          <div>
-            <h3 class="text-h6 text-white mb-0">Registro de Nuevo Operador</h3>
-            <p class="text-caption text-blue-lighten-4 mb-0">Sistema de Control de Accesos del IRCCA</p>
-          </div>
-        </div>
-      </v-card-title>
-
-      <v-card-text class="pa-6">
-        <!-- ⚡ LAZY LOADING: Solo renderizar formulario cuando modal está abierto -->
-        <RegistrationForm
-          v-if="modelValue"
-          :loading="loading"
-          :message="message"
-          @submit="onSubmit"
-          @clear-message="clearMessage"
-        />
-      </v-card-text>
-
-      <!-- Actions -->
-      <v-card-actions class="pa-4 pt-2">
-        <v-spacer />
-        <v-btn
-          color="secondary"
-          variant="text"
+    <!-- Footer con botón cancelar -->
+    <template #footer>
+      <div class="footer-actions">
+        <button 
+          class="btn-secondary" 
           @click="closeDialog"
           :disabled="loading"
         >
+          <i class="mdi mdi-close"></i>
           Cancelar
-        </v-btn>
-      </v-card-actions>
-    </v-card>
-  </v-dialog>
+        </button>
+      </div>
+    </template>
+  </FullScreenModal>
 </template>
 
 <script setup lang="ts">
-import { ref, computed, watch } from 'vue'
-import { ICONS, MESSAGES } from '@/config/constants'
+import { ref, computed } from 'vue'
+import { MESSAGES } from '@/config/constants'
 import { useAuthStore } from '@/stores/auth'
+import FullScreenModal from './FullScreenModal.vue'
 import RegistrationForm from '@/components/forms/RegistrationForm.vue'
 
 interface Props {
@@ -133,18 +119,59 @@ const closeDialog = () => {
   emit('close')
 }
 
-// Emitir eventos globales para controlar blur del fondo
-watch(modelValue, (newVal: boolean) => {
-  if (newVal) {
-    window.dispatchEvent(new CustomEvent('dialog-opened'))
-  } else {
-    window.dispatchEvent(new CustomEvent('dialog-closed'))
+const handleClose = () => {
+  if (!loading.value) {
+    closeDialog()
   }
-})
+}
 </script>
 
 <style scoped>
-.registration-dialog-card {
-  border-top: 3px solid rgb(var(--v-theme-primary));
+/* ========================================
+   🎨 FOOTER ACTIONS
+   ======================================== */
+
+.footer-actions {
+  display: flex;
+  justify-content: flex-end;
+  gap: 0.75rem;
+}
+
+.btn-secondary {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.75rem 1.5rem;
+  background: transparent;
+  color: #424242;
+  border: 1px solid #BDBDBD;
+  border-radius: 8px;
+  font-size: 0.875rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  
+  /* ⚡ GPU ACCELERATION */
+  transform: translateZ(0);
+  backface-visibility: hidden;
+}
+
+.btn-secondary:hover:not(:disabled) {
+  background: #F5F5F5;
+  border-color: #757575;
+  transform: translateY(-2px) translateZ(0);
+}
+
+.btn-secondary:active:not(:disabled) {
+  transform: scale(0.98) translateZ(0);
+}
+
+.btn-secondary:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+.btn-secondary i {
+  font-size: 1.125rem;
 }
 </style>

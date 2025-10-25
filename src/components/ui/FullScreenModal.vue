@@ -46,7 +46,7 @@
 </template>
 
 <script setup lang="ts">
-import { computed, watch, onMounted, onUnmounted } from 'vue'
+import { computed, watch, onBeforeUnmount } from 'vue'
 
 interface Props {
   modelValue: boolean
@@ -87,32 +87,29 @@ const handleOverlayClick = () => {
   }
 }
 
-// Prevenir scroll del body cuando el modal está abierto
-watch(modelValue, (newVal: boolean) => {
-  if (newVal) {
-    document.body.style.overflow = 'hidden'
-  } else {
-    document.body.style.overflow = ''
-  }
-})
-
-// Limpiar al desmontar
-onUnmounted(() => {
-  document.body.style.overflow = ''
-})
-
-// Manejar tecla ESC
+// ⚡ OPTIMIZACIÓN: Manejar tecla ESC directamente en el watch
 const handleEscape = (e: KeyboardEvent) => {
   if (e.key === 'Escape' && modelValue.value && !props.persistent) {
     handleClose()
   }
 }
 
-onMounted(() => {
-  document.addEventListener('keydown', handleEscape)
-})
+// ⚡ PREVENIR CONFLICTOS: Gestión limpia de event listeners y body scroll
+watch(modelValue, (newVal: boolean, oldVal: boolean) => {
+  if (newVal && !oldVal) {
+    // Modal se abre
+    document.body.style.overflow = 'hidden'
+    document.addEventListener('keydown', handleEscape)
+  } else if (!newVal && oldVal) {
+    // Modal se cierra
+    document.body.style.overflow = ''
+    document.removeEventListener('keydown', handleEscape)
+  }
+}, { immediate: false })
 
-onUnmounted(() => {
+// ⚡ LIMPIEZA GARANTIZADA: Restaurar estado al desmontar componente
+onBeforeUnmount(() => {
+  document.body.style.overflow = ''
   document.removeEventListener('keydown', handleEscape)
 })
 </script>

@@ -51,7 +51,11 @@
       :disabled="loading"
       hide-details="auto"
       validate-on="blur"
-      :menu-props="{ maxHeight: 300 }"
+      :menu-props="{ 
+        maxHeight: 300,
+        contentClass: 'elevation-8',
+        zIndex: 10000
+      }"
     />
 
     <!-- Campo Nombre -->
