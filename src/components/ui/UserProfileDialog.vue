@@ -53,7 +53,7 @@
 
 <script setup lang="ts">
 import { ref, computed } from 'vue'
-import { ICONS, MESSAGES } from '@/config/constants'
+import { MESSAGES } from '@/config/constants'
 import { useAuthStore } from '@/stores/auth'
 import FullScreenModal from './FullScreenModal.vue'
 import UserProfileForm from '@/components/forms/UserProfileForm.vue'
@@ -104,11 +104,11 @@ const modelValue = computed({
 const headerIcon = computed(() => {
   switch (currentMode.value) {
     case 'view':
-      return ICONS.NAVIGATION.PROFILE || 'mdi-account'
+      return 'mdi mdi-account' // ✅ Formato correcto para FullScreenModal
     case 'edit':
-      return ICONS.NAVIGATION.EDIT || 'mdi-account-edit'
+      return 'mdi mdi-account-edit' // ✅ Formato correcto para FullScreenModal
     default:
-      return 'mdi-account'
+      return 'mdi mdi-account'
   }
 })
 

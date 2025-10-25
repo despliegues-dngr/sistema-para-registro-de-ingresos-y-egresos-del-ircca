@@ -1,36 +1,14 @@
 <template>
-  <v-dialog
+  <FullScreenModal
     v-model="localValue"
-    max-width="700"
-    transition="fade-transition"
-    :scrim="true"
+    title="Detalle de Evento de Auditoría"
+    subtitle="Información completa del evento"
+    icon="mdi mdi-file-document-outline"
+    header-color="primary"
+    @close="cerrar"
   >
-    <v-card>
-      <!-- Header -->
-      <v-card-title class="bg-primary pa-4">
-        <div class="d-flex align-center justify-space-between">
-          <div class="d-flex align-center">
-            <v-icon color="white" size="28" class="mr-3">mdi-file-document-outline</v-icon>
-            <div>
-              <h3 class="text-h6 text-white mb-0">Detalle de Evento de Auditoría</h3>
-              <p class="text-caption text-blue-lighten-4 mb-0">
-                Información completa del evento
-              </p>
-            </div>
-          </div>
-          <v-btn
-            icon
-            variant="text"
-            color="white"
-            @click="cerrar"
-          >
-            <v-icon>mdi-close</v-icon>
-          </v-btn>
-        </div>
-      </v-card-title>
-
-      <!-- Contenido -->
-      <v-card-text v-if="evento" class="pa-6">
+    <!-- Contenido -->
+    <div v-if="evento" class="pa-6">
         <!-- ID del Evento -->
         <div class="detail-section mb-4">
           <div class="detail-label">ID del Evento</div>
@@ -258,11 +236,11 @@
             </v-expansion-panel-text>
           </v-expansion-panel>
         </v-expansion-panels>
-      </v-card-text>
+    </div>
 
-      <!-- Acciones -->
-      <v-card-actions v-if="evento" class="pa-4">
-        <v-spacer />
+    <!-- Footer con acciones -->
+    <template #footer>
+      <div v-if="evento" class="d-flex justify-end ga-2 pa-4">
         <v-btn
           color="grey"
           variant="text"
@@ -273,18 +251,19 @@
         <v-btn
           color="primary"
           variant="flat"
-          prepend-icon="mdi-download"
+          prepend-icon="mdi mdi-download"
           @click="exportarEvento"
         >
           Exportar Evento
         </v-btn>
-      </v-card-actions>
-    </v-card>
-  </v-dialog>
+      </div>
+    </template>
+  </FullScreenModal>
 </template>
 
 <script setup lang="ts">
 import { computed } from 'vue'
+import FullScreenModal from '@/components/ui/FullScreenModal.vue'
 import { useAuditFilters } from '@/composables/useAuditFilters'
 import { useAuditExport } from '@/composables/useAuditExport'
 import type { AuditEvent } from '@/stores/audit'

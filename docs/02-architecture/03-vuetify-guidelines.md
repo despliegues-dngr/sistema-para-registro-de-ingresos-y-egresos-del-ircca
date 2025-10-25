@@ -274,8 +274,14 @@ Los `v-dialog` estándar tienen limitaciones en tablets:
 
 - ✅ 60% menos GPU usage (sin backdrop blur) | ✅ Transiciones fluidas | ✅ ~3KB vs ~8KB
 - ✅ Event listeners optimizados | ✅ Body scroll correcto | ✅ Sin modales anidados
+- ✅ Overlay institucional personalizado: `rgba(0, 124, 159, 0.98)` - Color primario con 98% opacidad
 
-**⏳ MIGRACIÓN EN PROGRESO (83% - 10/12):** HelpDialog, RegistrationDialog, TermsAndConditionsDialog, RegistroIngresoDialog, RegistroSalidaDialog, UserProfileDialog, ChangePasswordDialog, DataListModal, SessionTimeoutDialog, FullScreenModal | **Pendientes:** PdfGeneratorDialog, EventDetailDialog
+**✅ MIGRACIÓN COMPLETADA (100% - 12/12):** HelpDialog, RegistrationDialog, TermsAndConditionsDialog, RegistroIngresoDialog, RegistroSalidaDialog, UserProfileDialog, ChangePasswordDialog, DataListModal, SessionTimeoutDialog, FullScreenModal, PdfGeneratorDialog (modularizado con `usePdfGenerator`), EventDetailDialog
+
+**Mejoras adicionales:**
+- ✅ Composable `usePdfGenerator.ts` - Lógica de negocio extraída (245 líneas)
+- ✅ Bug fix: Iconos en UserProfileDialog (formato `mdi mdi-[nombre]`)
+- ✅ Bug fix: Select "Grado" con `z-index: 10000` en UserProfileForm
 
 **Usar en:** Formularios largos, listas con scroll, contenido complejo, modales anidados  
 **NO usar en:** Confirmaciones simples (usar v-dialog)

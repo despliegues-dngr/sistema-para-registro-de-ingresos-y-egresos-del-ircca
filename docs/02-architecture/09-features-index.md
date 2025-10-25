@@ -89,7 +89,7 @@
 
 #### UI/Modales (12 componentes)
 
-**✅ Migrados a FullScreenModal (10/12 - 83% COMPLETADO):**
+**✅ MIGRACIÓN COMPLETADA (12/12 - 100%):**
 - `HelpDialog.vue` - Centro de ayuda con contactos de soporte
 - `RegistrationDialog.vue` - Auto-registro de nuevos operadores
 - `TermsAndConditionsDialog.vue` - Términos y condiciones legales
@@ -99,11 +99,9 @@
 - `ChangePasswordDialog.vue` - Cambio seguro de contraseña
 - `DataListModal.vue` - Modal genérico para listas con búsqueda y virtual scroll optimizado
 - `SessionTimeoutDialog.vue` - Advertencia de timeout con persistent mode
-- `FullScreenModal.vue` - Componente base optimizado para tablet
-
-**⏳ Pendientes de migración (2/12):**
-- `PdfGeneratorDialog.vue` - Modal de generación de PDFs
+- `PdfGeneratorDialog.vue` - Generación de PDFs (modularizado con `usePdfGenerator`)
 - `EventDetailDialog.vue` - Detalles de evento de auditoría
+- `FullScreenModal.vue` - Componente base optimizado con overlay institucional personalizado
 
 #### Admin/Audit (3 componentes)
 - `AuditActivityCard.vue` - Resumen del sistema de auditoría (métricas globales de 6 meses)
@@ -233,10 +231,11 @@
 
 ## 📝 HISTORIAL DE MEJORAS RECIENTES
 
-### 25-Oct-2025: Migración de Modales a FullScreenModal ⏳ EN PROGRESO (83%)
+### 25-Oct-2025: Migración de Modales a FullScreenModal ✅ COMPLETADO (100%)
 
-**Optimización para Tablet (10/12 COMPLETADOS):**
-- ✅ Migrados 10 modales de `v-dialog` a `FullScreenModal` personalizado
+**Optimización para Tablet (12/12 COMPLETADOS):**
+- ✅ Migrados 12 modales de `v-dialog` a `FullScreenModal` personalizado
+- ✅ Overlay institucional: `rgba(0, 124, 159, 0.98)` - Color primario con 98% opacidad
 - ✅ Eliminado código obsoleto: eventos globales (`dialog-opened/closed`), componentes Vuetify innecesarios
 - ✅ Unificado efecto telón: `box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2)` en todos los botones
 - ✅ GPU acceleration aplicada: `transform: translateZ(0)` + `backface-visibility: hidden`
@@ -245,19 +244,20 @@
 - ✅ Iconos MDI corregidos: Formato `mdi mdi-[nombre]` en headers
 - ✅ Virtual scroll optimizado: Mínimo 4 items visibles en DataListModal
 
-**Modales migrados (10/12):**
+**Modales migrados (12/12):**
 - `HelpDialog.vue`, `RegistrationDialog.vue`, `TermsAndConditionsDialog.vue`
 - `RegistroIngresoDialog.vue`, `RegistroSalidaDialog.vue`
 - `UserProfileDialog.vue`, `ChangePasswordDialog.vue`
 - `DataListModal.vue` (con virtual scroll optimizado)
 - `SessionTimeoutDialog.vue` (con persistent mode)
-- `FullScreenModal.vue` (componente base)
+- `PdfGeneratorDialog.vue` (modularizado con composable `usePdfGenerator`)
+- `EventDetailDialog.vue` (detalles de auditoría)
+- `FullScreenModal.vue` (componente base con overlay institucional)
 
-**Pendientes (2/12):**
-- ⏳ `PdfGeneratorDialog.vue` - Modal de generación de PDFs
-- ⏳ `EventDetailDialog.vue` - Detalles de evento de auditoría
-
-**Estado:** ⏳ 83% completado - Falta migrar 2 modales
+**Mejoras adicionales:**
+- ✅ Composable `usePdfGenerator.ts` creado (245 líneas) - Lógica de negocio extraída
+- ✅ Bug fixes: Iconos en UserProfileDialog, z-index en select de Grado
+- ✅ Overlay personalizado con color institucional para mejor UX
 
 ### 19-Oct-2025: Refinamiento Dashboard Supervisor
 

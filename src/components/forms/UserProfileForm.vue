@@ -73,6 +73,11 @@
           :rules="gradoRules"
           variant="outlined"
           density="comfortable"
+          :menu-props="{ 
+            maxHeight: 300,
+            contentClass: 'elevation-8',
+            zIndex: 10000
+          }"
         />
       </v-col>
 

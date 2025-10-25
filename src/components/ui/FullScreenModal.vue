@@ -123,13 +123,13 @@ onBeforeUnmount(() => {
   left: 0;
   width: 100%;
   height: 100%;
-  background-color: rgba(0, 0, 0, 0.75);
+  background-color: rgba(0, 124, 159, 0.98);
   z-index: 9999;
   display: flex;
   align-items: flex-start;
   justify-content: center;
   overflow-y: auto;
-  
+
   /* ⚡ GPU ACCELERATION - Sin blur para máxima performance */
   transform: translateZ(0);
   backface-visibility: hidden;
@@ -144,7 +144,7 @@ onBeforeUnmount(() => {
   display: flex;
   flex-direction: column;
   min-height: 100vh;
-  
+
   /* ⚡ GPU ACCELERATION */
   transform: translateZ(0);
   backface-visibility: hidden;
@@ -159,7 +159,7 @@ onBeforeUnmount(() => {
   padding: 1rem 1.5rem;
   color: white;
   flex-shrink: 0;
-  
+
   /* ⚡ GPU ACCELERATION */
   transform: translateZ(0);
 }
@@ -217,7 +217,7 @@ onBeforeUnmount(() => {
   font-size: 1.5rem;
   flex-shrink: 0;
   transition: background-color 0.2s ease;
-  
+
   /* ⚡ GPU ACCELERATION */
   transform: translateZ(0);
   backface-visibility: hidden;
@@ -239,7 +239,7 @@ onBeforeUnmount(() => {
   flex: 1;
   overflow-y: auto;
   padding: 1.5rem;
-  
+
   /* ⚡ OPTIMIZACIÓN DE SCROLL */
   -webkit-overflow-scrolling: touch;
   scroll-behavior: smooth;
@@ -255,7 +255,7 @@ onBeforeUnmount(() => {
   border-top: 1px solid rgba(0, 0, 0, 0.12);
   flex-shrink: 0;
   background: white;
-  
+
   /* ⚡ GPU ACCELERATION */
   transform: translateZ(0);
 }
@@ -327,7 +327,7 @@ onBeforeUnmount(() => {
     border-radius: 8px;
     overflow: hidden;
   }
-  
+
   .fullscreen-modal-overlay {
     align-items: center;
     padding: 2rem;
@@ -344,7 +344,7 @@ onBeforeUnmount(() => {
     touch-action: manipulation;
     -webkit-tap-highlight-color: transparent;
   }
-  
+
   .close-button:active {
     transition: transform 0.05s ease;
   }
