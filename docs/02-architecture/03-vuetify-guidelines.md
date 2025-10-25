@@ -1,8 +1,10 @@
 # 🎨 GUÍA DE DESARROLLO VUETIFY - IRCCA PWA
 
-**Versión:** 1.0.0  
-**Fecha:** 11-Sep-2025  
+**Versión:** 1.1.0  
+**Fecha:** 24-Oct-2025  
 **Propósito:** Lineamientos oficiales para desarrollo con Vuetify siguiendo mejores prácticas
+
+**✅ VALIDADO EN TABLET:** Optimizaciones de modales confirmadas funcionando perfectamente (24-Oct-2025)
 
 ---
 
@@ -257,33 +259,27 @@ Los `v-dialog` estándar tienen limitaciones en tablets:
 - **Animaciones complejas:** Transiciones + scrim causan lag
 - **Overhead de Vuetify:** Código no utilizado se ejecuta igual
 
-### 8.2 Solución: FullScreenModal
+### 8.2 Solución: FullScreenModal ✅ VALIDADO
 
-Para modales críticos de performance (formularios largos, listas), usar componente personalizado:
+**Componente:** `src/components/ui/FullScreenModal.vue`
 
 ```vue
-<FullScreenModal
-  v-model="showModal"
-  title="Título"
-  header-icon="mdi-icon"
->
-  <!-- Contenido -->
+<FullScreenModal v-model="show" title="Título" icon="mdi mdi-icon" @close="handleClose">
+  <div>Contenido</div>
+  <template #footer><button @click="close">Cerrar</button></template>
 </FullScreenModal>
 ```
 
-**Ventajas:**
-- ✅ Sin backdrop blur → 60% menos GPU usage
-- ✅ Transición slide-down nativa → Más fluida
-- ✅ CSS containment → Aísla reflows
-- ✅ ~3KB vs ~8KB de v-dialog
+**Ventajas confirmadas (tablet):**
 
-**Cuándo usar:**
-- ✅ Formularios largos (RegistroIngreso, RegistroSalida)
-- ✅ Listas con scroll (DataListModal)
-- ✅ Contenido complejo en tablets
-- ❌ Confirmaciones simples (usar v-dialog)
+- ✅ 60% menos GPU usage (sin backdrop blur) | ✅ Transiciones fluidas | ✅ ~3KB vs ~8KB
+- ✅ Event listeners optimizados | ✅ Body scroll correcto | ✅ Sin modales anidados
 
-**Componente:** `src/components/ui/FullScreenModal.vue`
+**Migrados:** HelpDialog, RegistrationDialog, TermsAndConditionsDialog, RegistroIngresoDialog ✅  
+**Pendientes:** RegistroSalidaDialog, UserProfileDialog, ChangePasswordDialog
+
+**Usar en:** Formularios largos, listas con scroll, contenido complejo, modales anidados  
+**NO usar en:** Confirmaciones simples (usar v-dialog)
 
 ---
 
