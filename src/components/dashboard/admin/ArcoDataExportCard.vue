@@ -21,8 +21,8 @@
         density="compact"
       >
         <div class="text-body-2">
-          <strong>Derecho de Acceso:</strong> Permite al ciudadano conocer qué datos personales 
-          almacena el sistema. Este reporte incluye todos los registros de ingreso/egreso y 
+          <strong>Derecho de Acceso:</strong> Permite al ciudadano conocer qué datos personales
+          almacena el sistema. Este reporte incluye todos los registros de ingreso/egreso y
           datos en personas conocidas.
         </div>
       </v-alert>
@@ -37,8 +37,8 @@
             :loading="buscandoCedula"
             item-title="displayText"
             item-value="searchText"
-            label="Cédula del Solicitante"
-            placeholder="Comienza a escribir la cédula..."
+            label="Documento del Solicitante"
+            placeholder="Comienza a escribir el documento..."
             prepend-inner-icon="mdi-card-account-details"
             variant="outlined"
             density="comfortable"
@@ -92,7 +92,7 @@
       <v-expand-transition>
         <div v-if="reporte" class="mt-6">
           <v-divider class="mb-4" />
-          
+
           <!-- Resumen de datos encontrados -->
           <v-card variant="outlined" class="mb-4">
             <v-card-title class="bg-grey-lighten-4 text-subtitle-1">
@@ -103,7 +103,7 @@
               <v-row dense>
                 <v-col cols="12" md="6">
                   <div class="text-body-2 mb-2">
-                    <strong>Cédula:</strong> {{ reporte.datosPersonales.cedula }}
+                    <strong>Documento:</strong> {{ reporte.datosPersonales.cedula }}
                   </div>
                   <div class="text-body-2 mb-2">
                     <strong>Nombre:</strong> {{ reporte.datosPersonales.nombreCompleto }}
@@ -111,13 +111,13 @@
                 </v-col>
                 <v-col cols="12" md="6">
                   <div class="text-body-2 mb-2">
-                    <strong>Total registros:</strong> 
+                    <strong>Total registros:</strong>
                     <v-chip size="small" color="primary" class="ml-2">
                       {{ reporte.datosPersonales.registrosEncontrados }}
                     </v-chip>
                   </div>
                   <div class="text-body-2 mb-2">
-                    <strong>Ingresos:</strong> {{ reporte.registrosIngreso.length }} | 
+                    <strong>Ingresos:</strong> {{ reporte.registrosIngreso.length }} |
                     <strong>Salidas:</strong> {{ reporte.registrosSalida.length }}
                   </div>
                 </v-col>
@@ -237,7 +237,7 @@
           class="mt-4"
         >
           <div class="text-body-2">
-            <strong>No se encontraron datos</strong> para la cédula <strong>{{ cedula }}</strong>.
+            <strong>No se encontraron datos</strong> para el documento <strong>{{ cedula }}</strong>.
             <br />
             Esto puede significar que la persona nunca ha ingresado al predio del IRCCA.
           </div>
@@ -281,7 +281,7 @@ const vistaPrevia = ref('')
  */
 async function buscarDatos() {
   if (!cedula.value || cedula.value.length !== 8) {
-    errorMessage.value = 'Ingrese una cédula válida de 8 dígitos'
+    errorMessage.value = 'Ingrese una documento válida de 8 dígitos'
     return
   }
 
@@ -337,7 +337,7 @@ function onCedulaSelect(value: string) {
 async function registrarExportacion(formato: 'TXT' | 'CSV' | 'JSON') {
   try {
     if (!authStore.user) return
-    
+
     await auditStore.logEvent({
       userId: authStore.user.id,
       username: authStore.user.username,

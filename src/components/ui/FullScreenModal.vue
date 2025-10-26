@@ -123,7 +123,7 @@ onBeforeUnmount(() => {
   left: 0;
   width: 100%;
   height: 100%;
-  background-color: rgba(0, 124, 159, 0.98);
+  background-color: rgba(109, 109, 109, 0.98);
   z-index: 9999;
   display: flex;
   align-items: flex-start;

@@ -20,7 +20,7 @@
     <!-- Campo Cédula -->
     <v-text-field
       v-model="userData.cedula"
-      label="Cédula de Identidad"
+      label="Documento"
       :prepend-inner-icon="ICONS.USER.PROFILE"
       variant="outlined"
       density="comfortable"
@@ -51,7 +51,7 @@
       :disabled="loading"
       hide-details="auto"
       validate-on="blur"
-      :menu-props="{ 
+      :menu-props="{
         maxHeight: 300,
         contentClass: 'elevation-8',
         zIndex: 10000
@@ -149,7 +149,7 @@
       >
         <template #label>
           <span class="text-body-2">
-            He leído y acepto los 
+            He leído y acepto los
             <v-btn
               variant="text"
               color="primary"
@@ -164,7 +164,7 @@
           </span>
         </template>
       </v-checkbox>
-      
+
       <p class="text-caption text-grey-darken-1 ml-8 mt-2">
         <v-icon size="14" class="mr-1">mdi-shield-check</v-icon>
         Al aceptar, confirma el cumplimiento de la Ley N° 18.331 de Protección de Datos Personales
@@ -258,7 +258,7 @@ const gradoOptions = [
 // Reglas de validación
 const cedulaRules = [
   (v: string) => !!v || MESSAGES.VALIDATION.REQUIRED_FIELD,
-  (v: string) => /^\d{8}$/.test(v) || 'La cédula debe tener exactamente 8 dígitos',
+  (v: string) => /^\d{8}$/.test(v) || 'El documento debe tener exactamente 8 dígitos',
   (v: string) => VALIDATION_PATTERNS.CEDULA.test(v) || 'Formato de cédula inválido',
 ]
 

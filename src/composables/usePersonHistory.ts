@@ -65,7 +65,7 @@ interface OperadorInfo {
 
 export function usePersonHistory() {
   const { searchByCedula } = useRegistrosSearch()
-  
+
   // Estado
   const isLoading = ref(false)
   const error = ref<string | null>(null)
@@ -82,7 +82,7 @@ export function usePersonHistory() {
     fechaHasta?: Date
   ): Promise<HistorialCompleto | null> {
     if (!cedula || cedula.length !== 8) {
-      error.value = 'Cédula debe tener 8 dígitos'
+      error.value = 'Documento debe tener 8 dígitos'
       return null
     }
 
@@ -116,10 +116,10 @@ export function usePersonHistory() {
         const hora = `${fecha.getHours().toString().padStart(2, '0')}:${fecha.getMinutes().toString().padStart(2, '0')}`
         // Buscar operador en la lista cargada
         const operador = operadores.value.find(op => op.id === ing.operadorId)
-        const nombreOperador = operador 
+        const nombreOperador = operador
           ? `${operador.grado} ${operador.nombre} ${operador.apellido}`.trim()
           : 'Sistema'
-        
+
         registrosCombinados.push({
           id: ing.id,
           tipo: 'ingreso',
@@ -139,10 +139,10 @@ export function usePersonHistory() {
         const hora = `${fecha.getHours().toString().padStart(2, '0')}:${fecha.getMinutes().toString().padStart(2, '0')}`
         // Buscar operador en la lista cargada
         const operador = operadores.value.find(op => op.id === sal.operadorId)
-        const nombreOperador = operador 
+        const nombreOperador = operador
           ? `${operador.grado} ${operador.nombre} ${operador.apellido}`.trim()
           : 'Sistema'
-        
+
         registrosCombinados.push({
           id: sal.id,
           tipo: 'salida',
@@ -168,7 +168,7 @@ export function usePersonHistory() {
 
       // Si no hay registros
       if (registrosFiltrados.length === 0) {
-        error.value = 'No se encontraron registros para esta cédula'
+        error.value = 'No se encontraron registros para esta documento'
         historial.value = null
         return null
       }
@@ -256,11 +256,11 @@ export function usePersonHistory() {
     // Formato fecha generación en 24h
     const now = new Date()
     const fechaGen = `${now.toLocaleDateString('es-UY')} ${now.getHours().toString().padStart(2, '0')}:${now.getMinutes().toString().padStart(2, '0')}:${now.getSeconds().toString().padStart(2, '0')}`
-    
+
     // Construir CSV con formato profesional (similar a ARCO)
     const csvContent = [
       `"Historial de Registros - IRCCA"`,
-      `"Cédula: ${persona.cedula}"`,
+      `"Documento: ${persona.cedula}"`,
       `"Nombre: ${persona.nombre} ${persona.apellido}"`,
       `"Total registros: ${registros.length}"`,
       `"Fecha generación: ${fechaGen}"`,
@@ -294,7 +294,7 @@ export function usePersonHistory() {
   }
 
   // Computed properties
-  const tieneRegistros = computed(() => 
+  const tieneRegistros = computed(() =>
     historial.value !== null && historial.value.registros.length > 0
   )
 

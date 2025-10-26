@@ -40,7 +40,7 @@ export function useAutocomplete() {
         // ⚡ Limitar a 10 resultados para mejorar rendimiento del dropdown
         sugerenciasCedula.value = resultados.slice(0, 10)
       } catch (error) {
-        console.error('Error en búsqueda por cédula:', error)
+        console.error('Error en búsqueda por documento:', error)
         sugerenciasCedula.value = []
       } finally {
         buscando.value = false
@@ -89,7 +89,7 @@ export function useAutocomplete() {
     try {
       return await autocompleteService.obtenerPorCedula(cedula)
     } catch (error) {
-      console.error('Error obteniendo persona por cédula:', error)
+      console.error('Error obteniendo persona por documento:', error)
       return null
     }
   }
@@ -122,7 +122,7 @@ export function useAutocomplete() {
     buscando,
     tieneSugerenciasCedula,
     tieneSugerenciasMatricula,
-    
+
     // Métodos
     buscarPorCedula,
     buscarPorMatricula,

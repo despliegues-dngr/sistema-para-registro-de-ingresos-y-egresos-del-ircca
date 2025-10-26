@@ -4,7 +4,7 @@
       <v-icon class="mr-3">mdi-lightning-bolt</v-icon>
       Acciones Rápidas
     </v-card-title>
-    
+
     <v-card-text class="px-6 pb-6">
       <v-row class="action-row">
         <!-- Botón Registrar Ingreso -->
@@ -34,12 +34,12 @@
 
         <!-- Botón Registrar Salida -->
         <v-col cols="12" sm="6">
-          <v-tooltip text="Búsqueda rápida por cédula" location="top">
+          <v-tooltip text="Búsqueda rápida por Documento" location="top">
             <template v-slot:activator="{ props }">
               <v-btn
                 color="warning"
                 size="x-large"
-                variant="elevated" 
+                variant="elevated"
                 block
                 class="action-btn py-6"
                 v-bind="props"
@@ -112,7 +112,7 @@ defineEmits<{
     min-height: 90px;
     font-size: 0.95rem;
   }
-  
+
   .action-btn .v-icon {
     margin-right: 0.75rem;
     font-size: 28px;
@@ -132,7 +132,7 @@ defineEmits<{
     min-height: 80px;
     padding: 1rem;
   }
-  
+
   .action-btn .v-icon {
     margin-right: 0.5rem;
     font-size: 24px;

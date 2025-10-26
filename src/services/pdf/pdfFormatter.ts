@@ -74,6 +74,58 @@ export function formatObservaciones(
 }
 
 /**
+ * Calcula el dígito verificador de una cédula uruguaya
+ * Algoritmo: Módulo 10 con ponderadores 2, 9, 8, 7, 6, 3, 4
+ * @param cedula Número de cédula sin dígito verificador (7 dígitos)
+ * @returns Dígito verificador (0-9)
+ */
+function calcularDigitoVerificador(cedula: string): number {
+  const ponderadores = [2, 9, 8, 7, 6, 3, 4]
+  let suma = 0
+
+  // Multiplicar cada dígito por su ponderador y sumar
+  for (let i = 0; i < 7; i++) {
+    // eslint-disable-next-line security/detect-object-injection -- Safe: i is bounded 0-6, cedula and ponderadores are fixed-length arrays
+    suma += parseInt(cedula[i]) * ponderadores[i]
+  }
+
+  // Calcular el dígito verificador
+  const resto = suma % 10
+  return resto === 0 ? 0 : 10 - resto
+}
+
+/**
+ * Formatea cédula uruguaya con formato X.XXX.XXX-X
+ * Solo aplica formato si tiene exactamente 8 dígitos
+ * @param cedula Número de documento (puede ser cédula u otro)
+ * @returns Cédula formateada o valor original
+ */
+export function formatCedula(cedula: string): string {
+  // Si está vacío o es guion, retornar como está
+  if (!cedula || cedula.trim() === '' || cedula === '-') {
+    return cedula
+  }
+
+  // Limpiar espacios
+  const cedulaLimpia = cedula.trim()
+
+  // Solo formatear si tiene exactamente 8 dígitos numéricos
+  if (/^\d{8}$/.test(cedulaLimpia)) {
+    // Extraer los 7 primeros dígitos
+    const numero = cedulaLimpia.substring(0, 7)
+    
+    // Calcular dígito verificador
+    const digitoVerificador = calcularDigitoVerificador(numero)
+    
+    // Formatear: X.XXX.XXX-X
+    return `${numero[0]}.${numero.substring(1, 4)}.${numero.substring(4, 7)}-${digitoVerificador}`
+  }
+
+  // Si no tiene 8 dígitos, retornar tal cual
+  return cedulaLimpia
+}
+
+/**
  * Genera nombre de archivo descriptivo basado en el período de datos
  * @param dateRange Rango de fechas del reporte (ej: "01-10-2025" o "01-10-2025 al 05-10-2025")
  * @returns Nombre de archivo formateado

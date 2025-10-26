@@ -57,7 +57,7 @@
                 Protegido
               </v-chip>
             </div>
-            <div class="text-caption text-grey">Cédula de identidad enmascarada (Ley 18.331)</div>
+            <div class="text-caption text-grey">Documento de identidad enmascarado (Ley 18.331)</div>
             <v-chip
               v-if="evento.details.role"
               size="small"
@@ -144,7 +144,7 @@
                   </v-chip>
                 </v-list-item-title>
               </v-list-item>
-              
+
               <!-- Si no hay detalles -->
               <v-list-item v-if="Object.keys(detallesFiltrados).length === 0" class="px-4">
                 <v-list-item-title class="text-caption text-grey">
@@ -302,7 +302,7 @@ const { exportarEventoJSON } = useAuditExport()
 // Detalles filtrados (excluir campos que ya se muestran)
 const detallesFiltrados = computed(() => {
   if (!props.evento) return {}
-  
+
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
   const { role, ...resto } = props.evento.details
   return resto
@@ -364,29 +364,29 @@ function formatValue(value: unknown): string {
  */
 function formatValueMasked(key: string | number, value: unknown): string {
   if (value === null || value === undefined) return 'N/A'
-  
+
   const keyStr = String(key)
-  
+
   // Enmascarar según tipo de dato sensible
   if (isSensitiveDetail(keyStr)) {
     const valueStr = String(value)
-    
+
     // Si es un nombre
     if (keyStr.toLowerCase().includes('nombre')) {
       return maskNombre(valueStr)
     }
-    
+
     // Si es cédula/documento
-    if (keyStr.toLowerCase().includes('cedula') || 
-        keyStr.toLowerCase().includes('documento') || 
+    if (keyStr.toLowerCase().includes('cedula') ||
+        keyStr.toLowerCase().includes('documento') ||
         keyStr.toLowerCase().includes('ci')) {
       return maskCedula(valueStr)
     }
-    
+
     // Por defecto, enmascarar genéricamente
     return '***[Protegido]***'
   }
-  
+
   // Si no es sensible, mostrar normal
   return formatValue(value)
 }

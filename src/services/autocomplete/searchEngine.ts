@@ -27,7 +27,7 @@ export async function buscarPorCedulaParcial(cedulaParcial: string): Promise<Per
 
     // Cargar cache si no está cargado (solo primera vez)
     await cacheManager.cargarCache()
-    
+
     // Filtrar del cache (muy rápido)
     const resultados = cacheManager.getPersonas()
       .filter(p => p.cedula.startsWith(cedulaParcial))
@@ -43,7 +43,7 @@ export async function buscarPorCedulaParcial(cedulaParcial: string): Promise<Per
 
     return resultados
   } catch (error) {
-    console.error('Error buscando por cédula:', error)
+    console.error('Error buscando por documento:', error)
     return []
   }
 }
@@ -60,9 +60,9 @@ export async function buscarPorMatriculaParcial(matriculaParcial: string): Promi
 
     // Cargar cache si no está cargado (solo primera vez)
     await cacheManager.cargarCache()
-    
+
     const matriculaNormalizada = matriculaParcial.toUpperCase()
-    
+
     // Filtrar del cache
     const resultados = cacheManager.getPersonas()
       .filter(p => p.ultimoVehiculo?.matricula?.toUpperCase().startsWith(matriculaNormalizada))

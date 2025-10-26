@@ -66,7 +66,7 @@ describe('RegistrationForm', () => {
       const wrapper = mountComponent()
       const form = wrapper.find('form')
       await form.trigger('submit.prevent')
-      
+
       const submitEvents = wrapper.emitted('submit')
       if (submitEvents && submitEvents[0]) {
         const userData = submitEvents[0][0] as Record<string, unknown>
@@ -85,7 +85,7 @@ describe('RegistrationForm', () => {
 
     it('debe mostrar todos los campos requeridos', () => {
       const wrapper = mountComponent()
-      expect(wrapper.html()).toContain('Cédula de Identidad')
+      expect(wrapper.html()).toContain('Documento')
       expect(wrapper.html()).toContain('Grado')
       expect(wrapper.html()).toContain('Nombre')
       expect(wrapper.html()).toContain('Apellido')
@@ -166,7 +166,7 @@ describe('RegistrationForm', () => {
   })
 
   describe('Validaciones', () => {
-    it('debe validar cédula requerida', () => {
+    it('debe validar documento requerido', () => {
       const wrapper = mountComponent()
       const vm = wrapper.vm as any
       const rules = vm.cedulaRules
@@ -174,23 +174,23 @@ describe('RegistrationForm', () => {
       expect(rules[0]('12345678')).toBe(true)
     })
 
-    it('debe validar formato de cédula', () => {
+    it('debe validar formato de documento', () => {
       const wrapper = mountComponent()
       const vm = wrapper.vm as any
       const rules = vm.cedulaRules
-      expect(rules[1]('1234567')).toBe('La cédula debe tener exactamente 8 dígitos')
+      expect(rules[1]('1234567')).toBe('El documento debe tener exactamente 8 dígitos')
       expect(rules[1]('12345678')).toBe(true)
-      expect(rules[2]('1234567a')).toBe('Formato de cédula inválido')
+      expect(rules[2]('1234567a')).toBe('Formato de documento inválido')
       expect(rules[2]('12345678')).toBe(true)
     })
 
     it('debe validar contraseñas coincidan', async () => {
       const wrapper = mountComponent()
       const vm = wrapper.vm as any
-      
+
       vm.userData.password = 'password123'
       await wrapper.vm.$nextTick()
-      
+
       const rules = vm.confirmPasswordRules
       expect(rules[1]('different')).toBe('Las contraseñas no coinciden')
       expect(rules[1]('password123')).toBe(true)
@@ -201,13 +201,13 @@ describe('RegistrationForm', () => {
     it('debe permitir escribir en campos', async () => {
       const wrapper = mountComponent()
       const vm = wrapper.vm as any
-      
+
       vm.userData.cedula = '12345678'
       vm.userData.nombre = 'Juan'
       vm.userData.apellido = 'Pérez'
-      
+
       await wrapper.vm.$nextTick()
-      
+
       expect(vm.userData.cedula).toBe('12345678')
       expect(vm.userData.nombre).toBe('Juan')
       expect(vm.userData.apellido).toBe('Pérez')
@@ -216,7 +216,7 @@ describe('RegistrationForm', () => {
     it('debe alternar visibilidad de contraseña', async () => {
       const wrapper = mountComponent()
       const vm = wrapper.vm as any
-      
+
       expect(vm.showPassword).toBe(false)
       vm.showPassword = true
       await wrapper.vm.$nextTick()
@@ -228,7 +228,7 @@ describe('RegistrationForm', () => {
     it('debe emitir evento submit con datos válidos', async () => {
       const wrapper = mountComponent()
       const vm = wrapper.vm as any
-      
+
       vm.userData = {
         cedula: '12345678',
         grado: 'cabo',
@@ -238,11 +238,11 @@ describe('RegistrationForm', () => {
         confirmPassword: 'password123'
       }
       vm.formValid = true
-      
+
       await wrapper.vm.$nextTick()
       const form = wrapper.find('form')
       await form.trigger('submit.prevent')
-      
+
       expect(wrapper.emitted('submit')).toBeTruthy()
     })
   })

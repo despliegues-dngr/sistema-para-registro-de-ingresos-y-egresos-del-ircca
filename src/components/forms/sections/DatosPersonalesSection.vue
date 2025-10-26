@@ -113,6 +113,7 @@ const { sugerenciasCedula, buscando, buscarPorCedula, limpiarSugerencias } = use
 // Estado local
 const personaSeleccionada = ref<AutocompleteItem | null>(null)
 const cedulaBusqueda = ref('')
+const isAutocompletando = ref(false) // Flag para evitar búsqueda durante autocompletado
 
 // ⭐ NUEVO: Destinos dinámicos desde el store (reactivo)
 const destinos = computed(() => appStore.config.destinos)
@@ -154,6 +155,11 @@ watch(cedulaBusqueda, async (newValue) => {
   // ⚡ Actualizar cédula con debounce para evitar lag
   debouncedEmitCedula(newValue)
   
+  // ✅ No buscar si estamos autocompletando (evita re-búsqueda)
+  if (isAutocompletando.value) {
+    return
+  }
+  
   // Buscar sugerencias si hay al menos 1 dígito
   if (newValue && newValue.length >= 1) {
     await buscarPorCedula(newValue)
@@ -175,15 +181,29 @@ watch(() => props.datosPersonales.cedula, (newValue) => {
  * Autocompletar datos cuando se selecciona una persona conocida
  */
 const autocompletarDatos = (persona: PersonaConocida) => {
+  // ✅ Activar flag para evitar búsqueda durante autocompletado
+  isAutocompletando.value = true
+  
   // Autocompletar todos los campos
   emit('update:cedula', persona.cedula)
   emit('update:nombre', persona.nombre)
   emit('update:apellido', persona.apellido)
   emit('update:destino', persona.ultimoDestino)
   
-  // Si tiene vehículo registrado, emitir evento para autocompletar vehículo
+  // ✅ Siempre emitir evento de vehículo (con datos o vacío)
   if (persona.ultimoVehiculo) {
     emit('update:vehiculo', persona.ultimoVehiculo)
+  } else {
+    // Limpiar vehículo si la persona no tiene uno registrado
+    emit('update:vehiculo', { tipo: '', matricula: '' })
   }
+  
+  // Limpiar sugerencias después de seleccionar
+  limpiarSugerencias()
+  
+  // ✅ Desactivar flag después de un breve delay
+  setTimeout(() => {
+    isAutocompletando.value = false
+  }, 100)
 }
 </script>

@@ -232,7 +232,7 @@ export default createVuetify({
 
 <style>
 .login-card {
-  background-color: white !important;
+  background-color: white;
 }
 </style>
 ```

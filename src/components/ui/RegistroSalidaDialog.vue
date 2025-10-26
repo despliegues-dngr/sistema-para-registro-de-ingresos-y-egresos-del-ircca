@@ -1,19 +1,34 @@
 <template>
+  <!-- Modal 1: Lista de personas para seleccionar -->
+  <DataListModal
+    v-model="showListaPersonas"
+    title="Seleccionar Persona para Salida"
+    header-icon="mdi mdi-logout"
+    header-color="warning"
+    data-type="personas"
+    :data="personasDentroData"
+    empty-title="No hay personas en el predio"
+    empty-subtitle="Actualmente no hay personas registradas para registrar salida"
+    empty-icon="mdi-account-off"
+    @item-click="handlePersonaSeleccionada"
+  />
+
+  <!-- Modal 2: Confirmación y detalles de salida -->
   <FullScreenModal
-    v-model="modelValue"
-    title="Registrar Salida"
+    v-model="showConfirmacion"
+    title="Confirmar Salida"
     subtitle="Sistema de Control de Accesos del IRCCA"
     icon="mdi mdi-account-minus"
     header-color="warning"
     :persistent="loading"
-    @close="handleClose"
+    @close="handleCloseConfirmacion"
   >
-    <!-- ⚡ LAZY LOADING: Solo renderizar formulario cuando modal está abierto -->
     <RegistroSalidaForm
-      v-if="modelValue"
+      v-if="showConfirmacion && personaSeleccionada"
       ref="formRef"
       :loading="loading"
       :message="message"
+      :persona-preseleccionada="personaSeleccionada"
       @submit="onSubmit"
       @clear-message="clearMessage"
     />
@@ -23,14 +38,13 @@
       <div class="footer-actions">
         <button 
           class="btn-secondary" 
-          @click="closeDialog"
+          @click="volverALista"
           :disabled="loading"
         >
-          <i class="mdi mdi-close"></i>
-          Cancelar
+          <i class="mdi mdi-arrow-left"></i>
+          Volver
         </button>
         <button 
-          v-if="!isEditingMode"
           class="btn-warning" 
           @click="handleSubmit"
           :disabled="!isFormValid || loading"
@@ -44,11 +58,13 @@
 </template>
 
 <script setup lang="ts">
-import { ref, computed } from 'vue'
+import { ref, computed, watch } from 'vue'
 import { useAuthStore } from '@/stores/auth'
 import { useRegistroStore } from '@/stores/registro'
 import FullScreenModal from './FullScreenModal.vue'
+import DataListModal from './DataListModal.vue'
 import RegistroSalidaForm from '@/components/forms/RegistroSalidaForm.vue'
+import type { PersonaDentro } from '@/stores/registro'
 
 interface RegistroSalidaData {
   cedulaBuscada: string
@@ -78,21 +94,46 @@ const registroStore = useRegistroStore()
 const loading = ref(false)
 const message = ref('')
 const formRef = ref()
+const showListaPersonas = ref(false)
+const showConfirmacion = ref(false)
+const personaSeleccionada = ref<PersonaDentro | null>(null)
+
+// Datos de personas dentro del predio
+const personasDentroData = computed(() => {
+  return registroStore.personasDentro.map(persona => ({
+    cedula: persona.cedula,
+    nombre: persona.nombre,
+    apellido: persona.apellido,
+    destino: persona.destino,
+    ingresoTimestamp: persona.ingresoTimestamp,
+    conVehiculo: persona.conVehiculo
+  }))
+})
+
+// Watch para sincronizar modelValue con showListaPersonas
+watch(() => props.modelValue, (newValue) => {
+  if (newValue) {
+    showListaPersonas.value = true
+    showConfirmacion.value = false
+    personaSeleccionada.value = null
+  } else {
+    showListaPersonas.value = false
+    showConfirmacion.value = false
+  }
+})
+
+watch(showListaPersonas, (newValue) => {
+  if (!newValue && !showConfirmacion.value) {
+    emit('update:modelValue', false)
+  }
+})
 
 // Computed para validación del formulario
 const isFormValid = computed(() => {
   return formRef.value?.isFormValid ?? false
 })
 
-// Computed para verificar si está en modo edición
-const isEditingMode = computed(() => {
-  return formRef.value?.isEditingMode ?? false
-})
-
-const modelValue = computed({
-  get: () => props.modelValue,
-  set: (value: boolean) => emit('update:modelValue', value),
-})
+// Computed eliminados - no se usan
 
 // Métodos
 const onSubmit = async (salidaData: RegistroSalidaData) => {
@@ -149,10 +190,34 @@ const clearMessage = () => {
   message.value = ''
 }
 
+// Handler cuando se selecciona una persona de la lista
+const handlePersonaSeleccionada = (item: unknown) => {
+  const persona = item as PersonaDentro
+  personaSeleccionada.value = registroStore.personasDentro.find(
+    p => p.cedula === persona.cedula
+  ) || null
+  
+  if (personaSeleccionada.value) {
+    showListaPersonas.value = false
+    showConfirmacion.value = true
+  }
+}
+
+// Volver a la lista de personas
+const volverALista = () => {
+  showConfirmacion.value = false
+  showListaPersonas.value = true
+  personaSeleccionada.value = null
+  message.value = ''
+}
+
 const closeDialog = () => {
   // Limpiar estado al cerrar
   message.value = ''
   loading.value = false
+  personaSeleccionada.value = null
+  showListaPersonas.value = false
+  showConfirmacion.value = false
   if (formRef.value) {
     formRef.value.resetForm()
   }
@@ -160,9 +225,9 @@ const closeDialog = () => {
   emit('close')
 }
 
-const handleClose = () => {
+const handleCloseConfirmacion = () => {
   if (!loading.value) {
-    closeDialog()
+    volverALista()
   }
 }
 </script>

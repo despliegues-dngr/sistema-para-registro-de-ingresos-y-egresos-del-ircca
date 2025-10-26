@@ -5,17 +5,17 @@
       <span class="info-label">👤 Persona:</span>
       <span class="info-value">{{ persona.nombre }} {{ persona.apellido }}</span>
     </div>
-    
+
     <div class="info-row">
-      <span class="info-label">🆔 Cédula:</span>
+      <span class="info-label">🆔 Documento:</span>
       <span class="info-value">{{ persona.cedula }}</span>
     </div>
-    
+
     <div class="info-row">
       <span class="info-label">🏢 Destino:</span>
       <span class="info-value">{{ persona.destino }}</span>
     </div>
-    
+
     <div class="info-row">
       <span class="info-label">⏱️ Tiempo:</span>
       <span class="info-value">{{ tiempoEstadia }}</span>
@@ -39,7 +39,7 @@ const tiempoEstadia = computed(() => {
   const diferenciaMs = ahora.getTime() - ingreso.getTime()
   const horas = Math.floor(diferenciaMs / (1000 * 60 * 60))
   const minutos = Math.floor((diferenciaMs % (1000 * 60 * 60)) / (1000 * 60))
-  
+
   return horas > 0 ? `${horas}h ${minutos}m` : `${minutos}m`
 })
 </script>

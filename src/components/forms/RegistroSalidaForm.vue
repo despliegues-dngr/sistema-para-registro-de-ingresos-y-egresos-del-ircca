@@ -12,20 +12,12 @@
       {{ message }}
     </v-alert>
 
-    <!-- Sección de Búsqueda y Selección Integrada -->
-    <search-bar
-      v-model="personaSeleccionadaItem"
-      v-model:search="terminoBusqueda"
-      :items="personasFiltradas"
-      :rules="personaRules"
-      :total-personas="registroStore.personasDentro.length"
-    />
-
-    <details-card ref="detailsCardRef" :persona-seleccionada="personaSeleccionada" />
+    <!-- Detalles de la persona seleccionada -->
+    <details-card ref="detailsCardRef" :persona-seleccionada="personaSeleccionadaObj" />
 
 
     <!-- Observaciones (solo se muestra después de seleccionar persona Y no estar en modo edición) -->
-    <div v-if="personaSeleccionada && !mostrarEdicionSalida" class="form-section mt-6">
+    <div v-if="personaSeleccionadaObj && !mostrarEdicionSalida" class="form-section mt-6">
       <v-textarea
         v-model="observaciones"
         label="Observaciones sobre la Salida (Opcional)"
@@ -44,29 +36,23 @@
 </template>
 
 <script setup lang="ts">
-import { ref, computed, watch } from 'vue'
-import { useRegistroStore, type PersonaDentro, type RegistroIngreso } from '@/stores/registro'
-import SearchBar from './RegistroSalida/SearchBar.vue'
+import { ref, computed } from 'vue'
+import { useRegistroStore } from '@/stores/registro'
+import type { PersonaDentro, DatosVehiculo } from '@/stores/registro'
 import DetailsCard from './RegistroSalida/Details.vue'
-
-// Interface para SearchItem (copiada de SearchBar para compatibilidad)
-interface SearchItem {
-  displayText: string;
-  persona: PersonaDentro;
-  searchText: string;
-}
 
 interface RegistroSalidaData {
   cedulaBuscada: string
   tiempoEstadia: number
   observaciones?: string
-  datosVehiculoSalida?: { tipo: string; matricula: string }
+  datosVehiculoSalida?: DatosVehiculo
   acompanantesSalida?: string[]
 }
 
 interface Props {
   loading?: boolean
   message?: string
+  personaPreseleccionada?: PersonaDentro
 }
 
 interface Emits {
@@ -81,13 +67,17 @@ const props = withDefaults(defineProps<Props>(), {
 const emit = defineEmits<Emits>()
 
 const registroStore = useRegistroStore()
-const terminoBusqueda = ref('')
-const personaSeleccionadaItem = ref<SearchItem | null>(null)
-const personaSeleccionada = ref<PersonaDentro | null>(null)
+const personaSeleccionada = ref<string>(props.personaPreseleccionada?.cedula || '') // Cédula seleccionada
 const mostrarEdicionSalida = ref(false)
 const observaciones = ref('')
 const formRef = ref()
 const detailsCardRef = ref<InstanceType<typeof DetailsCard>>()
+
+// Computed: Obtener persona completa desde cédula
+const personaSeleccionadaObj = computed(() => {
+  if (!personaSeleccionada.value) return null
+  return registroStore.personasDentro.find(p => p.cedula === personaSeleccionada.value) || null
+})
 
 const messageType = computed(() => {
   const message = props.message
@@ -97,56 +87,8 @@ const messageType = computed(() => {
   return 'info'
 })
 
-const personasParaSelect = computed(() => {
-  return registroStore.personasDentro.map((persona) => {
-    const vehiculoInfo = getVehiculoInfo(persona.cedula)
-    const matricula = vehiculoInfo ? vehiculoInfo.matricula : ''
-    
-    return {
-      displayText: `${persona.nombre} ${persona.apellido}`,
-      persona: persona,
-      searchText: `${persona.cedula} ${matricula}`.toLowerCase()
-    }
-  })
-})
-
-const personasFiltradas = computed(() => {
-  if (!terminoBusqueda.value) {
-    return personasParaSelect.value
-  }
-  
-  const termino = terminoBusqueda.value.toLowerCase().trim()
-  
-  return personasParaSelect.value.filter(item => {
-    const persona = item.persona
-    const coincideCedula = persona.cedula.includes(termino)
-    if (coincideCedula) {
-      return true
-    }
-    const vehiculoInfo = getVehiculoInfo(persona.cedula)
-    const matricula = vehiculoInfo?.matricula?.toLowerCase() || ''
-    const coincideMatricula = matricula.includes(termino)
-    if (vehiculoInfo && coincideMatricula) {
-      return true
-    }
-    return false
-  })
-})
-
 const isFormValid = computed(() => {
   return !!personaSeleccionada.value
-})
-
-const personaRules = [
-  (v: SearchItem | null) => !!v?.persona || 'Debe seleccionar una persona para registrar la salida'
-]
-
-watch(personaSeleccionadaItem, (newItem) => {
-  if (newItem && newItem.persona) {
-    personaSeleccionada.value = newItem.persona
-  } else {
-    personaSeleccionada.value = null
-  }
 })
 
 const calcularTiempoEstadiaEnMinutos = (ingresoTimestamp: Date): number => {
@@ -155,28 +97,15 @@ const calcularTiempoEstadiaEnMinutos = (ingresoTimestamp: Date): number => {
   return Math.floor((ahora.getTime() - ingreso.getTime()) / (1000 * 60))
 }
 
-const getVehiculoInfo = (cedula: string) => {
-  const registro = registroStore.registrosRaw.find(r => 
-    r.tipo === 'ingreso' && 
-    (r as RegistroIngreso).datosPersonales?.cedula === cedula
-  ) as RegistroIngreso | undefined
-  
-  return registro?.datosVehiculo || null
-}
-
 const handleSubmit = async () => {
-  if (!personaSeleccionada.value) {
-    return
-  }
+  if (!personaSeleccionadaObj.value) return
 
-  // ✅ Obtener datos editados del componente Details (si existen)
   const datosEditados = detailsCardRef.value?.getDatosEditados()
 
   const submitData: RegistroSalidaData = {
-    cedulaBuscada: personaSeleccionada.value.cedula,
-    tiempoEstadia: calcularTiempoEstadiaEnMinutos(personaSeleccionada.value.ingresoTimestamp),
+    cedulaBuscada: personaSeleccionadaObj.value.cedula,
+    tiempoEstadia: calcularTiempoEstadiaEnMinutos(personaSeleccionadaObj.value.ingresoTimestamp),
     observaciones: observaciones.value || undefined,
-    // ✅ Incluir datos de vehículo y acompañantes si fueron editados
     ...(datosEditados?.datosVehiculoSalida && { datosVehiculoSalida: datosEditados.datosVehiculoSalida }),
     ...(datosEditados?.acompanantesSalida && datosEditados.acompanantesSalida.length > 0 && { acompanantesSalida: datosEditados.acompanantesSalida })
   }
@@ -185,10 +114,8 @@ const handleSubmit = async () => {
 }
 
 const resetForm = () => {
-  personaSeleccionada.value = null
-  personaSeleccionadaItem.value = null
+  personaSeleccionada.value = ''
   observaciones.value = ''
-  terminoBusqueda.value = ''
   formRef.value?.resetValidation()
 }
 
@@ -201,77 +128,6 @@ defineExpose({
 
 <style scoped>
 .form-section {
-  margin-bottom: 1rem;
-}
-
-.section-header {
-  display: flex;
-  align-items: center;
-  border-bottom: 1px solid rgba(var(--v-theme-warning), 0.2);
-  padding-bottom: 0.5rem;
-}
-
-/* Estilos para el autocomplete personalizado */
-.persona-autocomplete-item {
-  border-bottom: 1px solid rgba(var(--v-theme-surface-variant), 0.2);
-  transition: all 0.2s ease;
-  min-height: 90px;
-}
-
-.persona-autocomplete-item:hover {
-  background-color: rgba(var(--v-theme-warning), 0.06);
-  border-left: 3px solid rgb(var(--v-theme-warning));
-}
-
-.persona-autocomplete-item:last-child {
-  border-bottom: none;
-}
-
-/* Avatar sutil */
-.avatar-sutil {
-  opacity: 0.7;
-  transition: opacity 0.2s ease;
-}
-
-.persona-autocomplete-item:hover .avatar-sutil {
-  opacity: 1;
-}
-
-/* Layout de dos columnas */
-.datos-personales {
-  min-width: 0; /* Permite que flexbox maneje el texto largo */
-}
-
-.datos-vehiculo-tiempo {
-  min-width: 120px;
-  flex-shrink: 0;
-}
-
-/* Espaciado mejorado para chips */
-.datos-personales .gap-1 {
-  gap: 4px;
-}
-
-/* Estilos para información de vehículo */
-.vehiculo-info {
-  text-align: right;
-}
-
-.sin-vehiculo {
-  display: flex;
-  align-items: center;
-  justify-content: flex-end;
-  font-style: italic;
-}
-
-/* Responsive para pantallas pequeñas */
-@media (max-width: 600px) {
-  .datos-vehiculo-tiempo {
-    min-width: 100px;
-  }
-  
-  .persona-autocomplete-item .pa-4 {
-    padding: 12px;
-  }
+  margin-bottom: 1.5rem;
 }
 </style>

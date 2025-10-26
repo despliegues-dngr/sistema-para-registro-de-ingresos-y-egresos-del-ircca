@@ -5,7 +5,7 @@ import type { RegistroEntry } from '@/stores/registro'
 /**
  * Composable para exportación de datos de usuarios según derechos ARCO
  * Cumplimiento: Ley 18.331 - Derecho de Acceso
- * 
+ *
  * @see docs/03-security/05-arco-rights-procedure.md
  */
 
@@ -262,7 +262,7 @@ export function useArcoDataExport() {
     // Construir CSV
     const csvContent = [
       `"Reporte de Datos Personales - IRCCA"`,
-      `"Cédula: ${reporte.datosPersonales.cedula}"`,
+      `"Documento: ${reporte.datosPersonales.cedula}"`,
       `"Nombre: ${reporte.datosPersonales.nombreCompleto}"`,
       `"Total registros: ${reporte.datosPersonales.registrosEncontrados}"`,
       `"Fecha generación: ${new Date(reporte.metadata.fechaGeneracion).toLocaleString('es-UY')}"`,
@@ -298,7 +298,7 @@ export function useArcoDataExport() {
       '═══════════════════════════════════════════════════════════',
       '',
       '📋 DATOS DEL SOLICITANTE:',
-      `   Cédula: ${reporte.datosPersonales.cedula}`,
+      `   Documento: ${reporte.datosPersonales.cedula}`,
       `   Nombre: ${reporte.datosPersonales.nombreCompleto}`,
       '',
       '📊 RESUMEN:',

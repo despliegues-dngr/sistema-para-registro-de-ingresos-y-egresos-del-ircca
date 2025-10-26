@@ -9,7 +9,7 @@
             <v-icon class="mr-3" color="primary">mdi-account-group</v-icon>
             Control de Usuarios del Sistema
           </v-card-title>
-          
+
           <v-card-text class="px-6 pb-6">
             <!-- Estadísticas de usuarios -->
             <v-row class="mb-4">
@@ -79,7 +79,7 @@
               v-model="searchQuery"
               prepend-inner-icon="mdi-magnify"
               label="Buscar usuarios..."
-              placeholder="Buscar por nombre completo o cédula..."
+              placeholder="Buscar por nombre completo o documento..."
               variant="outlined"
               density="compact"
               clearable
@@ -143,7 +143,7 @@
                     Editar usuario
                   </v-tooltip>
                 </v-btn>
-                
+
                 <v-btn
                   icon
                   size="small"
@@ -154,8 +154,8 @@
                 >
                   <v-icon size="18">mdi-delete</v-icon>
                   <v-tooltip activator="parent" location="top">
-                    {{ item.role === 'admin' && usersData.admins <= 1 
-                      ? 'No se puede eliminar el último administrador' 
+                    {{ item.role === 'admin' && usersData.admins <= 1
+                      ? 'No se puede eliminar el último administrador'
                       : 'Eliminar usuario' }}
                   </v-tooltip>
                 </v-btn>
@@ -187,7 +187,7 @@
 
     <!-- Sección de Auditoría -->
     <AuditActivityCard class="mb-8" />
-    
+
     <AuditTableSection
       @ver-detalles="handleVerDetalles"
       @exportar-pdf="handleExportarPDF"
@@ -216,11 +216,11 @@
             <v-avatar size="64" color="grey-lighten-2" class="mb-4">
               <v-icon size="32" color="grey-darken-1">mdi-account</v-icon>
             </v-avatar>
-            
+
             <p class="text-body-1 mb-2">
               ¿Está seguro que desea eliminar el usuario?
             </p>
-            
+
             <div class="bg-grey-lighten-5 pa-4 rounded mb-4">
               <div class="text-h6 mb-1">{{ userToDelete.nombre }}</div>
               <div class="text-body-2 text-grey-darken-1">C.I: {{ userToDelete.cedula }}</div>
@@ -233,7 +233,7 @@
               class="text-left mb-4"
             >
               <div class="text-body-2">
-                <strong>Nota:</strong> Esta acción eliminará permanentemente el usuario del sistema. 
+                <strong>Nota:</strong> Esta acción eliminará permanentemente el usuario del sistema.
                 Si el usuario necesita acceso nuevamente, deberá ser registrado como un nuevo usuario.
               </div>
             </v-alert>
@@ -340,12 +340,12 @@ const filteredUsersData = computed(() => {
   }
 
   const query = searchQuery.value.toLowerCase().trim()
-  
+
   return usersTableData.value.filter((user: UserTableRow) => {
     // Buscar solo en nombre completo y cédula como solicitaste
     const nombre = user.nombre.toLowerCase()
     const cedula = user.cedula.toLowerCase()
-    
+
     return nombre.includes(query) || cedula.includes(query)
   })
 })
@@ -381,7 +381,7 @@ const tableHeaders = [
 const getRoleColor = (role: string): string => {
   const colors = {
     'admin': 'error',
-    'supervisor': 'warning', 
+    'supervisor': 'warning',
     'operador': 'success'
   }
   return colors[role as keyof typeof colors] || 'default'
@@ -418,42 +418,42 @@ const handleDeleteUser = (user: UserTableRow) => {
     // TODO: Mostrar notificación de error
     return
   }
-  
+
   userToDelete.value = user
   showDeleteDialog.value = true
 }
 
 const confirmDeleteUser = async () => {
   if (!userToDelete.value) return
-  
+
   isDeleting.value = true
-  
+
   try {
     // Eliminar de la base de datos IndexedDB
     const result = await deleteRecord('usuarios', userToDelete.value.id)
-    
+
     if (result.success) {
       // Actualizar el array local
       const index = usersTableData.value.findIndex(u => u.id === userToDelete.value!.id)
       if (index > -1) {
         usersTableData.value.splice(index, 1)
-        
+
         // Actualizar estadísticas
         usersData.value.totalUsers = usersTableData.value.length
         usersData.value.admins = usersTableData.value.filter(u => u.role === 'admin').length
         usersData.value.supervisors = usersTableData.value.filter(u => u.role === 'supervisor').length
         usersData.value.operators = usersTableData.value.filter(u => u.role === 'operador').length
-        
+
         // Usuarios creados hoy (recalcular)
         const today = new Date().toDateString()
-        usersData.value.newUsersToday = usersTableData.value.filter((u: UserTableRow) => 
+        usersData.value.newUsersToday = usersTableData.value.filter((u: UserTableRow) =>
           u.fechaCreacion && new Date(u.fechaCreacion).toDateString() === today
         ).length
       }
     } else {
       throw new Error(result.error || 'Error desconocido')
     }
-    
+
   } catch (error) {
     // TODO: Mostrar notificación de error al usuario
     alert('Error al eliminar usuario: ' + (error instanceof Error ? error.message : 'Error desconocido'))
@@ -493,26 +493,26 @@ const loadUsersStats = async () => {
   try {
     // Inicializar la base de datos primero
     const dbResult = await initDatabase()
-    
+
     if (!dbResult.success) {
       return
     }
-    
+
     const users = await getRecords('usuarios') as User[]
-    
+
     if (users && Array.isArray(users)) {
       // Actualizar estadísticas
       usersData.value.totalUsers = users.length
       usersData.value.admins = users.filter((u: User) => u.role === 'admin').length
       usersData.value.supervisors = users.filter((u: User) => u.role === 'supervisor').length
       usersData.value.operators = users.filter((u: User) => u.role === 'operador').length
-      
+
       // Usuarios creados hoy
       const today = new Date().toDateString()
-      usersData.value.newUsersToday = users.filter((u: User) => 
+      usersData.value.newUsersToday = users.filter((u: User) =>
         u.createdAt && new Date(u.createdAt).toDateString() === today
       ).length
-      
+
       // Cargar datos completos para la tabla
       usersTableData.value = users.map((user, index) => ({
         numero: index + 1,

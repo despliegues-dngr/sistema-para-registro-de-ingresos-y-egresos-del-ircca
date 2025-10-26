@@ -336,7 +336,11 @@ export const useRegistroStore = defineStore('registro', () => {
    * Busca personas dentro del predio
    */
   function buscarPersonasDentro(termino: string): PersonaDentro[] {
-    return search.searchPersonasDentro(personasDentro.value, termino)
+    console.log('🔍 [Store] buscarPersonasDentro llamado con término:', termino)
+    console.log('📊 [Store] Total personas dentro:', personasDentro.value.length)
+    const resultados = search.searchPersonasDentro(personasDentro.value, termino)
+    console.log('📋 [Store] Resultados de búsqueda:', resultados.length)
+    return resultados
   }
 
   /**

@@ -6,7 +6,7 @@
 import { jsPDF } from 'jspdf'
 import autoTable from 'jspdf-autotable'
 import type { ReportData } from './types'
-import { formatValue } from './pdfFormatter'
+import { formatValue, formatCedula } from './pdfFormatter'
 import logoGuardiaRepublicana from '@/assets/images/logo-gr.jpg'
 import logoIrcca from '@/assets/images/logo-ircca.png'
 
@@ -116,7 +116,7 @@ export function addPdfSummary(doc: jsPDF, pageWidth: number, margin: number, dat
   // ✅ Estadísticas clarificadas según nueva definición
   const totalVehiculos = (data.vehiculos?.autos || 0) + (data.vehiculos?.motos || 0)
   const stats = [
-    `Cant. registros: ${data.totalRegistros}`,
+    `Cant. registros (entre ingresos y salidas): ${data.totalRegistros}`,
     `Ingresos personas: ${data.ingresos}`,
     `Ingresos vehículos: ${totalVehiculos}`
   ].join(' | ')
@@ -141,7 +141,7 @@ export function addPdfSummary(doc: jsPDF, pageWidth: number, margin: number, dat
 export function addPdfTable(doc: jsPDF, data: ReportData, summaryY: number, margin: number): void {
   // Preparar datos para la tabla
   const tableColumns = [
-    'N°', 'Fecha', 'H. Ingreso', 'Cédula', 'Nombre',
+    'N°', 'Fecha', 'H. Ingreso', 'Documento', 'Nombre',
     'Destino', 'Vehículo', 'Matrícula', 'H. Salida', 'Responsable', 'Observ.'
   ]
 
@@ -149,7 +149,7 @@ export function addPdfTable(doc: jsPDF, data: ReportData, summaryY: number, marg
     registro.numero.toString(),
     formatValue(registro.fecha),
     formatValue(registro.horaIngreso),
-    formatValue(registro.cedula),
+    formatCedula(formatValue(registro.cedula)), // ✅ Formatear cédula uruguaya
     formatValue(registro.nombre),
     formatValue(registro.destino),
     formatValue(registro.vehiculo),
@@ -165,6 +165,7 @@ export function addPdfTable(doc: jsPDF, data: ReportData, summaryY: number, marg
     body: tableRows,
     startY: summaryY + 3, // ✅ Comienza después del resumen + margen
     margin: { left: margin, right: margin }, // ✅ Márgenes iguales al header (10mm)
+    tableWidth: 'auto', // ✅ Tabla ocupa todo el ancho disponible entre márgenes
     theme: 'striped', // ✅ Efecto cebra (alternating rows)
     styles: {
       fontSize: 8,
@@ -180,19 +181,30 @@ export function addPdfTable(doc: jsPDF, data: ReportData, summaryY: number, marg
     alternateRowStyles: {
       fillColor: [245, 245, 245] // ✅ Gris claro para filas alternas (efecto cebra)
     },
-    // ✅ Anchos optimizados de columnas (en mm)
+    // ✅ Todas las columnas alineadas a la izquierda con anchos optimizados
     columnStyles: {
-      0: { cellWidth: 8, halign: 'center' },   // N° - Muy estrecha, centrado
-      1: { cellWidth: 20, halign: 'center' },  // Fecha - Reducida (DD/MM/YYYY), centrado
-      2: { cellWidth: 18, halign: 'center' },  // H. Ingreso, centrado
-      3: { cellWidth: 22, halign: 'center' },  // Cédula - AUMENTADA (18 → 22), centrado
-      4: { cellWidth: 40 },  // Nombre - AUMENTADA (35 → 40)
-      5: { cellWidth: 22 },  // Destino - Mantener
-      6: { cellWidth: 24, halign: 'center' },  // Vehículo, centrado
-      7: { cellWidth: 18, halign: 'center' },  // Matrícula, centrado
-      8: { cellWidth: 18, halign: 'center' },  // H. Salida, centrado
-      9: { cellWidth: 35 },  // Responsable - Mantener
-      10: { cellWidth: 25 } // Observ. - REDUCIDA (auto → 25mm fijo)
+      0: { halign: 'left', cellWidth: 8 },    // N° - Muy estrecha
+      1: { halign: 'left', cellWidth: 18 },   // Fecha
+      2: { halign: 'left', cellWidth: 18 },   // H. Ingreso - Aumentada +1mm
+      3: { halign: 'left', cellWidth: 24 },   // Documento - Formato X.XXX.XXX-X
+      4: { halign: 'left', cellWidth: 45 },   // Nombre
+      5: { halign: 'left', cellWidth: 28 },   // Destino
+      6: { halign: 'left', cellWidth: 18 },   // Vehículo
+      7: { halign: 'left', cellWidth: 18 },   // Matrícula
+      8: { halign: 'left', cellWidth: 18 },   // H. Salida - Aumentada +1mm
+      9: { halign: 'left', cellWidth: 38 },   // Responsable - Aumentada +3mm
+      10: { halign: 'left', cellWidth: 'auto' }   // Observ. - AUTO: ocupa espacio restante
+    },
+    // ✅ Hook para centrar guiones ("-") en celdas vacías
+    didParseCell: (data) => {
+      // Solo aplicar a celdas del body (no header)
+      if (data.section === 'body') {
+        const cellText = data.cell.text[0]
+        // Si el contenido es solo un guion, centrarlo
+        if (cellText === '-') {
+          data.cell.styles.halign = 'center'
+        }
+      }
     }
   })
 }

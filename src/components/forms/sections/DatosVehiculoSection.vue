@@ -14,7 +14,7 @@
           :model-value="datosVehiculo.tipo"
           @update:model-value="onTipoChange"
           label="Tipo de Vehículo"
-          prepend-inner-icon="mdi-car"
+          :prepend-inner-icon="getVehiculoIcon(datosVehiculo.tipo)"
           :items="tiposVehiculo"
           :rules="vehiculoFieldRules"
           variant="outlined"
@@ -68,6 +68,20 @@ const emit = defineEmits<Emits>()
 
 // Constantes
 const tiposVehiculo = ['Auto', 'Moto', 'Camión', 'Bus']
+
+/**
+ * Obtiene el ícono del vehículo según el tipo seleccionado
+ */
+const getVehiculoIcon = (tipoVehiculo: string): string => {
+  const iconos: Record<string, string> = {
+    'Auto': 'mdi-car',
+    'Moto': 'mdi-motorbike',
+    'Camión': 'mdi-truck',
+    'Bus': 'mdi-bus'
+  }
+  // eslint-disable-next-line security/detect-object-injection -- Safe: tipoVehiculo is from predefined list
+  return iconos[tipoVehiculo] || 'mdi-car' // Default: ícono de auto
+}
 
 // Reglas de validación
 const vehiculoFieldRules = [

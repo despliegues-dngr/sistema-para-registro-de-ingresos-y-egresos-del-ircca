@@ -13,7 +13,7 @@
           v-model="searchQuery"
           prepend-inner-icon="mdi-magnify"
           label="Buscar..."
-          :placeholder="dataType === 'personas' ? 'Buscar por nombre, cédula o área...' : 'Buscar por tipo, matrícula o conductor...'"
+          :placeholder="dataType === 'personas' ? 'Buscar por nombre, documento o área...' : 'Buscar por tipo, matrícula o conductor...'"
           variant="outlined"
           density="compact"
           clearable
@@ -35,6 +35,7 @@
                 variant="outlined"
                 class="persona-card mb-3"
                 hover
+                @click="emit('item-click', item)"
               >
                 <v-card-text class="pa-3">
                   <div class="persona-header">
@@ -190,6 +191,7 @@ const props = withDefaults(defineProps<Props>(), {
 
 const emit = defineEmits<{
   'update:modelValue': [value: boolean]
+  'item-click': [item: unknown]
 }>()
 
 // Estado para búsqueda
@@ -238,11 +240,11 @@ const filteredData = computed(() => {
 const virtualScrollHeight = computed(() => {
   const dataLength = filteredData.value.length
   if (dataLength === 0) return 0
-  
+
   const itemHeight = 88 // 80px item + 8px margin
   const minHeight = itemHeight * 4 // Mínimo 4 items visibles (352px)
   const maxHeight = 600 // Máximo para tablets (aprox 6-7 items)
-  
+
   // Asegurar que siempre se muestren al menos 4 items (si hay datos)
   const calculatedHeight = dataLength * itemHeight
   return Math.max(minHeight, Math.min(calculatedHeight, maxHeight))
@@ -412,7 +414,7 @@ function handleClose() {
   font-weight: 600;
   cursor: pointer;
   transition: all 0.2s ease;
-  
+
   /* ⚡ GPU ACCELERATION */
   transform: translateZ(0);
   backface-visibility: hidden;
@@ -443,11 +445,11 @@ function handleClose() {
     gap: 0.75rem;
     align-items: stretch;
   }
-  
+
   .counter-text {
     text-align: center;
   }
-  
+
   .btn-secondary {
     width: 100%;
     justify-content: center;

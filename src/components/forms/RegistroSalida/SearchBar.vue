@@ -2,7 +2,7 @@
   <div class="form-section">
     <div class="section-header mb-4">
       <v-icon size="20" color="primary" class="mr-2">mdi-account-search</v-icon>
-      <h4 class="text-h6 mb-0">Buscar Persona por Cédula o Matrícula</h4>
+      <h4 class="text-h6 mb-0">Buscar Persona por Documento o Matrícula</h4>
       <v-chip
         color="info"
         variant="tonal"
@@ -16,24 +16,23 @@
     <!-- Buscador con opciones integradas -->
     <v-autocomplete
       :model-value="modelValue"
-      @update:model-value="$emit('update:modelValue', $event)"
+      @update:model-value="handleModelValueUpdate"
+      v-model:search="searchModel"
       :items="items"
       item-title="displayText"
       item-value="persona"
       return-object
-      label="Buscar por Cédula o Matrícula"
+      label="Buscar por Documento o Matrícula"
       prepend-inner-icon="mdi-magnify"
       variant="outlined"
       density="comfortable"
       clearable
       hide-details="auto"
       :rules="rules"
-      placeholder="Escriba cédula o matrícula del vehículo..."
-      :search="search"
-      @update:search="$emit('update:search', $event)"
-      :custom-filter="() => true"
-      no-filter
+      placeholder="Escriba documento o matrícula del vehículo..."
+      :custom-filter="filterFunction"
       validate-on="blur"
+      :menu-props="{ maxHeight: 400 }"
     >
       <!-- ✅ Slot para controlar qué se muestra cuando está seleccionado -->
       <template #selection="{ item }">
@@ -150,6 +149,7 @@
 </template>
 
 <script setup lang="ts">
+import { computed } from 'vue'
 import { useRegistroStore, type PersonaDentro, type RegistroIngreso } from '@/stores/registro'
 
 interface SearchItem {
@@ -164,12 +164,40 @@ interface Props {
   search: string;
   rules: ((value: SearchItem | null) => boolean | string)[];
   totalPersonas: number;
+  filterFunction?: (itemTitle: string, queryText: string, item: unknown) => boolean;
 }
 
-defineProps<Props>()
-defineEmits(['update:modelValue', 'update:search'])
+const props = defineProps<Props>()
+const emit = defineEmits(['update:modelValue', 'update:search'])
 
 const registroStore = useRegistroStore()
+
+// --- Computed bidireccional para v-model:search ---
+
+const searchModel = computed({
+  get: () => {
+    console.log('🔍 [SearchBar] GET search:', props.search)
+    console.log('📊 [SearchBar] Items disponibles:', props.items.length)
+    return props.search
+  },
+  set: (value: string) => {
+    console.log('⌨️ [SearchBar] SET search:', value)
+    console.log('📋 [SearchBar] Items en SET:', props.items)
+    emit('update:search', value)
+  }
+})
+
+// --- Event handlers with logging ---
+
+const handleModelValueUpdate = (value: SearchItem | null) => {
+  console.log('🎯 [SearchBar] Selección cambió:', value)
+  if (value) {
+    console.log('✅ [SearchBar] Persona seleccionada:', value.persona.nombre, value.persona.cedula)
+  } else {
+    console.log('❌ [SearchBar] Selección limpiada')
+  }
+  emit('update:modelValue', value)
+}
 
 // --- Helper methods moved from parent ---
 

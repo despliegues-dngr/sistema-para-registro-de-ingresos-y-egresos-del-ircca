@@ -7,7 +7,7 @@
         <span class="info-label">👥 Acompañantes:</span>
         <span class="info-value">{{ acompanantes.length }} {{ acompanantes.length === 1 ? 'persona' : 'personas' }}</span>
       </div>
-      
+
       <div v-for="(persona, index) in acompanantes" :key="persona.cedula" class="acompanante-item">
         <span class="acompanante-numero">{{ index + 1 }}.</span>
         <span class="acompanante-nombre">{{ persona.nombre }} {{ persona.apellido }}</span>
@@ -21,7 +21,7 @@
       <div class="edit-section-title mb-3">
         👥 Acompañantes que salen:
       </div>
-      
+
       <!-- Lista de checkboxes simples -->
       <div v-if="acompanantesOriginales.length > 0" class="mb-4">
         <div v-for="acomp in acompanantesOriginales" :key="acomp.cedula" class="checkbox-row">
@@ -45,7 +45,7 @@
         <div class="edit-section-title mb-2">
           ➕ Agregar más personas:
         </div>
-        
+
         <v-autocomplete
           :model-value="null"
           :search="busqueda"
@@ -53,7 +53,7 @@
           :items="personasDisponibles"
           item-title="nombre"
           item-value="cedula"
-          label="Buscar por nombre o cédula"
+          label="Buscar por nombre o documento"
           prepend-inner-icon="mdi-magnify"
           variant="outlined"
           density="compact"
@@ -73,7 +73,7 @@
                   <v-icon size="16">mdi-account-plus</v-icon>
                 </v-avatar>
               </template>
-              
+
               <template #title>
                 <span class="text-subtitle-2 font-weight-bold">
                   {{ item.raw.nombre }} {{ item.raw.apellido }}
@@ -82,7 +82,7 @@
                   (C.I: {{ item.raw.cedula }})
                 </span>
               </template>
-              
+
               <template #subtitle>
                 <div class="d-flex align-center mt-1">
                   <v-icon size="12" class="mr-1">mdi-domain</v-icon>
@@ -91,7 +91,7 @@
               </template>
             </v-list-item>
           </template>
-          
+
           <template #no-data>
             <div class="pa-2 text-caption text-medium-emphasis">
               {{ busqueda ? 'No se encontraron personas' : 'Escriba para buscar' }}
@@ -116,15 +116,15 @@
                 <v-icon size="14" color="white">mdi-check</v-icon>
               </v-avatar>
             </template>
-            
+
             <v-list-item-title class="text-body-2 font-weight-medium">
               {{ getPersonaNombre(cedula) }}
             </v-list-item-title>
-            
+
             <v-list-item-subtitle class="text-caption">
               C.I: {{ cedula }}
             </v-list-item-subtitle>
-            
+
             <template #append>
               <v-btn
                 icon="mdi-close"

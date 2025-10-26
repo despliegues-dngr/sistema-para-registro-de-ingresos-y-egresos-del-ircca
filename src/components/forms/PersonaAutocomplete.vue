@@ -94,12 +94,12 @@ interface Props {
 
 withDefaults(defineProps<Props>(), {
   loading: false,
-  label: 'Cédula de Identidad',
-  hint: 'Escriba la cédula - Aparecerán sugerencias de visitas previas',
+  label: 'Documento',
+  hint: 'Escriba el documento - Aparecerán sugerencias de visitas previas',
   icon: 'mdi-card-account-details',
   autofocus: false,
   showDestino: true,
-  placeholder: 'Escriba la cédula...',
+  placeholder: 'Escriba el documento...',
   rules: () => []
 })
 

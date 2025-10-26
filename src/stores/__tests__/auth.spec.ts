@@ -43,15 +43,15 @@ describe('useAuthStore', () => {
   beforeEach(() => {
     // Configurar Pinia antes de cada prueba
     setActivePinia(createPinia())
-    
+
     // Reset all mocks - patrón oficial Vitest
     vi.clearAllMocks()
-    
+
     // 🔥 FORZAR LIMPIEZA DE LOCALSTORAGE
     mockLocalStorage.getItem.mockReturnValue(null)
     mockLocalStorage.setItem.mockClear()
     mockLocalStorage.removeItem.mockClear()
-    
+
     // Configurar valores por defecto para mocks exitosos
     mockInitDatabase.mockResolvedValue({ success: true })
     mockAddRecord.mockResolvedValue({ success: true, id: '1' })
@@ -82,7 +82,7 @@ describe('useAuthStore', () => {
   describe('Acción login()', () => {
     it('debe autenticar usuario correctamente', async () => {
       const authStore = useAuthStore()
-      
+
       // Mock del useDatabase para simular usuario existente
       mockGetRecords.mockResolvedValue([
         {
@@ -96,12 +96,12 @@ describe('useAuthStore', () => {
           lastLogin: new Date()
         }
       ])
-      
+
       // Mock del EncryptionService para simular contraseña válida
       vi.spyOn(EncryptionService, 'verifyPassword').mockResolvedValue(true)
-      
+
       await authStore.login('admin', 'password123')
-      
+
       expect(authStore.user).toBeTruthy()
       expect(authStore.user?.username).toBe('admin')
       expect(authStore.user?.role).toBe('admin')
@@ -113,7 +113,7 @@ describe('useAuthStore', () => {
 
     it('debe resetear intentos de login al autenticar', async () => {
       const authStore = useAuthStore()
-      
+
       // Simular intentos fallidos previos
       authStore.incrementLoginAttempts()
       authStore.incrementLoginAttempts()
@@ -131,7 +131,7 @@ describe('useAuthStore', () => {
           apellido: 'Test'
         }
       ])
-      
+
       vi.spyOn(EncryptionService, 'verifyPassword').mockResolvedValue(true)
 
       await authStore.login('operador1', 'password123')
@@ -145,7 +145,7 @@ describe('useAuthStore', () => {
   describe('Acción logout()', () => {
     it('debe limpiar sesión correctamente', async () => {
       const authStore = useAuthStore()
-      
+
       // Configurar mock para login exitoso ANTES del login
       mockGetRecords.mockResolvedValue([
         {
@@ -159,10 +159,10 @@ describe('useAuthStore', () => {
         }
       ])
       vi.spyOn(EncryptionService, 'verifyPassword').mockResolvedValue(true)
-      
+
       // Hacer login con API CORRECTA
       await authStore.login('admin', 'password123')
-      
+
       // Verificar que está autenticado
       expect(authStore.isAuthenticated).toBe(true)
       expect(authStore.user).toBeTruthy()
@@ -225,7 +225,7 @@ describe('useAuthStore', () => {
   describe('Getters computados', () => {
     it('debe identificar rol admin correctamente', async () => {
       const authStore = useAuthStore()
-      
+
       // Mock para login exitoso de admin
       mockGetRecords.mockResolvedValue([
         {
@@ -248,7 +248,7 @@ describe('useAuthStore', () => {
 
     it('debe identificar rol operador correctamente', async () => {
       const authStore = useAuthStore()
-      
+
       // Mock para login exitoso de operador
       mockGetRecords.mockResolvedValue([
         {
@@ -290,7 +290,7 @@ describe('useAuthStore', () => {
     beforeEach(() => {
       // Mock de servicios para testing
       vi.clearAllMocks()
-      
+
       // Configurar mocks por defecto para este describe
       mockGetRecords.mockResolvedValue([])
       mockAddRecord.mockResolvedValue({ success: true })
@@ -299,7 +299,7 @@ describe('useAuthStore', () => {
 
     it('debe registrar un nuevo usuario exitosamente', async () => {
       const authStore = useAuthStore()
-      
+
       const newUserData = {
         cedula: '12345678',
         grado: 'Guardia Republicano',
@@ -324,9 +324,9 @@ describe('useAuthStore', () => {
       }))
     })
 
-    it('debe fallar si la cédula ya existe', async () => {
+    it('debe fallar si el documento ya existe', async () => {
       const authStore = useAuthStore()
-      
+
       const duplicateUserData: RegisterUserData = {
         cedula: '87654321',
         nombre: 'Otro',
@@ -337,7 +337,7 @@ describe('useAuthStore', () => {
       }
 
       // Configurar mock para devolver usuario existente
-      mockGetRecords.mockResolvedValueOnce([{ 
+      mockGetRecords.mockResolvedValueOnce([{
         id: 'existing-user-id',
         username: '87654321',
         role: 'operador'
@@ -345,14 +345,14 @@ describe('useAuthStore', () => {
 
       // Debe lanzar error por cédula duplicada
       await expect(authStore.registerUser(duplicateUserData))
-        .rejects.toThrow('Ya existe un usuario registrado con esa cédula')
+        .rejects.toThrow('Ya existe un usuario registrado con ese documento')
 
       expect(mockGetRecords).toHaveBeenCalledWith('usuarios', 'username', '87654321')
     })
 
     it('debe fallar si no se aceptan los términos y condiciones', async () => {
       const authStore = useAuthStore()
-      
+
       const userData: RegisterUserData = {
         cedula: '11223344',
         grado: 'Sargento',
@@ -369,7 +369,7 @@ describe('useAuthStore', () => {
 
     it('debe fallar si hay error en la base de datos', async () => {
       const authStore = useAuthStore()
-      
+
       const userData: RegisterUserData = {
         cedula: '11223344',
         grado: 'Sargento',
@@ -380,9 +380,9 @@ describe('useAuthStore', () => {
       }
 
       // Mock para simular error en la base de datos
-      mockAddRecord.mockResolvedValue({ 
-        success: false, 
-        error: 'Error de conexión con IndexedDB' 
+      mockAddRecord.mockResolvedValue({
+        success: false,
+        error: 'Error de conexión con IndexedDB'
       })
 
       // Debe lanzar error de base de datos
@@ -394,10 +394,10 @@ describe('useAuthStore', () => {
   describe('Reactividad de getters', () => {
     it('isAuthenticated debe reaccionar a login y logout', async () => {
       const authStore = useAuthStore()
-      
+
       // Estado inicial
       expect(authStore.isAuthenticated).toBe(false)
-      
+
       // Mock para login exitoso
       mockGetRecords.mockResolvedValue([
         {
@@ -411,11 +411,11 @@ describe('useAuthStore', () => {
         }
       ])
       vi.spyOn(EncryptionService, 'verifyPassword').mockResolvedValue(true)
-      
+
       // Después de login
       await authStore.login('test', 'password123')
       expect(authStore.isAuthenticated).toBe(true)
-      
+
       // Después de logout
       await authStore.logout()
       expect(authStore.isAuthenticated).toBe(false)
@@ -423,10 +423,10 @@ describe('useAuthStore', () => {
 
     it('currentUser (user) debe reflejar cambios de estado', async () => {
       const authStore = useAuthStore()
-      
+
       // Estado inicial
       expect(authStore.user).toBeNull()
-      
+
       // Mock para login exitoso
       mockGetRecords.mockResolvedValue([
         {
@@ -440,13 +440,13 @@ describe('useAuthStore', () => {
         }
       ])
       vi.spyOn(EncryptionService, 'verifyPassword').mockResolvedValue(true)
-      
+
       // Después de login
       await authStore.login('operador1', 'password123')
       expect(authStore.user).toBeTruthy()
       expect(authStore.user?.username).toBe('operador1')
       expect(authStore.user?.role).toBe('operador')
-      
+
       // Después de logout
       await authStore.logout()
       expect(authStore.user).toBeNull()
@@ -454,11 +454,11 @@ describe('useAuthStore', () => {
 
     it('getters de roles deben reaccionar a cambios de usuario', async () => {
       const authStore = useAuthStore()
-      
+
       // Estado inicial - sin usuario
       expect(authStore.isAdmin).toBe(false)
       expect(authStore.isOperador).toBe(false)
-      
+
       // Mock para login como admin
       mockGetRecords.mockResolvedValue([
         {
@@ -472,12 +472,12 @@ describe('useAuthStore', () => {
         }
       ])
       vi.spyOn(EncryptionService, 'verifyPassword').mockResolvedValue(true)
-      
+
       // Login como admin
       await authStore.login('admin', 'password123')
       expect(authStore.isAdmin).toBe(true)
       expect(authStore.isOperador).toBe(false)
-      
+
       // Logout y cambiar mock para operador
       await authStore.logout()
       mockGetRecords.mockResolvedValue([
@@ -486,17 +486,17 @@ describe('useAuthStore', () => {
           username: 'operador1',
           hashedPassword: 'hashed_password',
           salt: 'salt_value',
-          role: 'operador', 
+          role: 'operador',
           nombre: 'Operador',
           apellido: 'Test'
         }
       ])
-      
+
       // Login como operador
       await authStore.login('operador1', 'password123')
       expect(authStore.isAdmin).toBe(false)
       expect(authStore.isOperador).toBe(true)
-      
+
       // Logout final
       await authStore.logout()
       expect(authStore.isAdmin).toBe(false)

@@ -40,9 +40,9 @@ export class PersonaManager {
   async actualizarPersonaConocida(datos: ActualizarPersonaData): Promise<void> {
     try {
       await this.db.initDatabase()
-      
+
       const cedulaHash = await generateCedulaHash(datos.cedula)
-      
+
       // Buscar si ya existe (por hash)
       const registrosCifrados = (await this.db.getRecords('personasConocidas')) as PersonaConocidaCifrada[]
       const existenteCifrada = registrosCifrados.find(p => p.cedulaHash === cedulaHash)
@@ -52,7 +52,7 @@ export class PersonaManager {
       if (existenteCifrada) {
         // Descifrar para actualizar
         const existenteDescifrada = await descifrarPersonaConocida(existenteCifrada)
-        
+
         // Preparar datos actualizados
         const datosPersonales: DatosPersonalesDescifrados = {
           cedula: datos.cedula,
@@ -81,7 +81,7 @@ export class PersonaManager {
 
         // Actualizar en DB
         await this.db.updateRecord('personasConocidas', existenteCifrada.id, personaCifrada)
-        
+
         // ✅ INVALIDAR CACHE: Para reflejar cambios
         cacheManager.invalidarCache()
       } else {
@@ -113,7 +113,7 @@ export class PersonaManager {
 
         // Agregar a DB
         await this.db.addRecord('personasConocidas', personaCifrada)
-        
+
         // ✅ INVALIDAR CACHE: Para incluir nueva persona
         cacheManager.invalidarCache()
       }
@@ -130,27 +130,27 @@ export class PersonaManager {
   async obtenerPorCedula(cedula: string): Promise<PersonaConocida | null> {
     try {
       await this.db.initDatabase()
-      
+
       const cedulaHash = await generateCedulaHash(cedula)
       const personasCifradas = (await this.db.getRecords('personasConocidas')) as PersonaConocidaCifrada[]
-      
+
       const personaCifrada = personasCifradas.find(p => p.cedulaHash === cedulaHash)
-      
+
       if (!personaCifrada) {
         return null
       }
 
       // Descifrar solo si se encontró
       const personaDescifrada = await descifrarPersonaConocida(personaCifrada)
-      
+
       // Verificación adicional: asegurar que la cédula coincida exactamente
       if (personaDescifrada.cedula === cedula) {
         return personaDescifrada
       }
-      
+
       return null
     } catch (error) {
-      console.error('Error obteniendo persona por cédula:', error)
+      console.error('Error obteniendo persona por documento:', error)
       return null
     }
   }
@@ -163,15 +163,15 @@ export class PersonaManager {
     try {
       await this.db.initDatabase()
       const personasCifradas = (await this.db.getRecords('personasConocidas')) as PersonaConocidaCifrada[]
-      
+
       const anoActual = new Date().getFullYear()
-      
+
       // ✅ RÁPIDO: Solo usa campos no cifrados
       return {
         total: personasCifradas.length,
         frecuentesAlta: personasCifradas.filter(p => p.frecuencia === 'alta').length,
         frecuentesMedia: personasCifradas.filter(p => p.frecuencia === 'media').length,
-        visitasEsteAno: personasCifradas.filter(p => 
+        visitasEsteAno: personasCifradas.filter(p =>
           new Date(p.ultimaVisita).getFullYear() === anoActual
         ).length
       }

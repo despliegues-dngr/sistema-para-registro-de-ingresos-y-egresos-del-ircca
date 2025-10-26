@@ -30,7 +30,7 @@
 
             <h5 class="text-subtitle-1 font-weight-medium mb-2">¿Qué datos se recolectan?</h5>
             <p class="text-body-2 mb-3">
-              El sistema registra: nombre completo, cédula de identidad, destino de la visita,
+              El sistema registra: nombre completo, documento de identidad, destino de la visita,
               fecha y hora de ingreso/egreso, y opcionalmente datos de vehículo (tipo y matrícula).
             </p>
 

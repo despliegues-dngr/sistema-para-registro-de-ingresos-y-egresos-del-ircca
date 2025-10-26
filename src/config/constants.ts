@@ -61,7 +61,7 @@ export const MESSAGES = {
     USERNAME_FORMAT: 'Solo letras, números, puntos, guiones y guiones bajos',
     PASSWORD_MIN: `La contraseña debe tener al menos ${AUTH_CONFIG.PASSWORD_MIN_LENGTH} caracteres`,
     PIN_FORMAT: `El PIN debe tener exactamente ${AUTH_CONFIG.PIN_LENGTH} dígitos`,
-    CEDULA_FORMAT: 'La cédula debe tener 8 dígitos',
+    CEDULA_FORMAT: 'El documento debe tener 8 dígitos',
     PHONE_FORMAT: 'Formato: 09X XXX XXX',
     PLATE_FORMAT: 'Formato: ABC1234',
   },

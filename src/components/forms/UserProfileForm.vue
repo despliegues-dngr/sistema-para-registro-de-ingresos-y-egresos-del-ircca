@@ -39,7 +39,7 @@
       <v-col cols="12" md="6">
         <v-text-field
           v-model="formData.cedula"
-          label="Cédula de Identidad"
+          label="Documento"
           prepend-inner-icon="mdi-card-account-details"
           :rules="cedulaRules"
           variant="outlined"
@@ -57,7 +57,7 @@
         >
           <v-icon size="16" class="mr-1">mdi-information</v-icon>
           <span class="text-caption">
-            Nueva cédula será su usuario para próximos ingresos:
+            Nuevo documento será su usuario para próximos ingresos:
             <strong>{{ formData.cedula }}</strong>
           </span>
         </v-alert>
@@ -73,7 +73,7 @@
           :rules="gradoRules"
           variant="outlined"
           density="comfortable"
-          :menu-props="{ 
+          :menu-props="{
             maxHeight: 300,
             contentClass: 'elevation-8',
             zIndex: 10000
@@ -118,7 +118,7 @@
         <div class="d-flex justify-space-between align-center mb-2">
           <span class="text-body-2">
             <v-icon size="16" class="mr-1">mdi-card-account-details</v-icon>
-            Cédula:
+            Documento:
           </span>
           <span class="text-body-2 font-weight-medium">{{ formData.cedula || '—' }}</span>
         </div>
@@ -226,18 +226,18 @@ const fullName = computed(() => {
 
 const gradeDisplay = computed(() => {
   const grado = formData.value.grado || props.userData.grado || ''
-  
+
   // Si no hay grado, mostrar mensaje por defecto
   if (!grado) return 'Sin grado asignado'
-  
+
   // Buscar el título completo en las opciones (coincidencia exacta)
   const gradoOption = gradoOptions.find((option) => option.value === grado)
   if (gradoOption) return gradoOption.title
-  
+
   // Buscar por título (para retrocompatibilidad)
   const gradoByTitle = gradoOptions.find((option) => option.title === grado)
   if (gradoByTitle) return gradoByTitle.title
-  
+
   // Si no se encuentra en las opciones, mostrar el valor actual
   // (importante para mantener el valor cuando se está editando)
   return grado

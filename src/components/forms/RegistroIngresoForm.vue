@@ -132,7 +132,7 @@ const hasVehiculoData = computed(() => {
 })
 
 const isFormValid = computed(() => {
-  const personalValid = formData.datosPersonales.cedula.length >= 7 &&
+  const personalValid = formData.datosPersonales.cedula.length > 0 &&
                         formData.datosPersonales.nombre.length >= 2 &&
                         formData.datosPersonales.apellido.length >= 2
 
@@ -147,7 +147,7 @@ const isFormValid = computed(() => {
   let acompanantesValid = true
   if (formData.acompanantes.length > 0) {
     acompanantesValid = formData.acompanantes.every(acomp => 
-      acomp.cedula.length >= 7 &&
+      acomp.cedula.length > 0 &&
       acomp.nombre.length >= 2 &&
       acomp.apellido.length >= 2 &&
       acomp.destino.length > 0

@@ -54,7 +54,7 @@ export const useAuthStore = defineStore('auth', () => {
 
   // Clave para localStorage (con prefijo para evitar conflictos)
   const SESSION_KEY = 'ircca_auth_session'
-  
+
   // Función para guardar sesión en localStorage
   function saveSession() {
     if (user.value && isAuthenticated.value) {
@@ -66,34 +66,34 @@ export const useAuthStore = defineStore('auth', () => {
       localStorage.setItem(SESSION_KEY, JSON.stringify(sessionData))
     }
   }
-  
+
   // Función para restaurar sesión desde localStorage
   function restoreSession(): boolean {
     try {
       const sessionData = localStorage.getItem(SESSION_KEY)
       if (!sessionData) return false
-      
+
       const parsed = JSON.parse(sessionData)
       const sessionAge = Date.now() - parsed.timestamp
       const maxSessionAge = 3 * 60 * 60 * 1000 // 3 horas (mismo que el timeout)
-      
+
       // Verificar que la sesión no haya expirado
       if (sessionAge > maxSessionAge) {
         clearSession()
         return false
       }
-      
+
       // Restaurar datos
       user.value = parsed.user
       isAuthenticated.value = parsed.isAuthenticated
       return true
-      
+
     } catch {
       clearSession()
       return false
     }
   }
-  
+
   // Función para limpiar sesión de localStorage
   function clearSession() {
     localStorage.removeItem(SESSION_KEY)
@@ -111,7 +111,7 @@ export const useAuthStore = defineStore('auth', () => {
   async function login(username: string, password: string): Promise<void> {
     const auditStore = useAuditStore()
     const sessionId = crypto.randomUUID()
-    
+
     try {
       // Inicializar BD si no está inicializada
       await initDatabase()
@@ -134,11 +134,11 @@ export const useAuthStore = defineStore('auth', () => {
 
       // ✅ VERIFICAR BLOQUEO TEMPORAL
       const now = new Date()
-      
+
       // Verificar si está bloqueado
       if (dbUser.isLocked && dbUser.lockedUntil) {
         const unlockTime = new Date(dbUser.lockedUntil)
-        
+
         // Si el bloqueo expiró, desbloquear automáticamente
         if (now >= unlockTime) {
           await updateRecord('usuarios', dbUser.id, {
@@ -147,7 +147,7 @@ export const useAuthStore = defineStore('auth', () => {
             lockedUntil: null,
             lastFailedAttempt: null
           })
-          
+
           // Log de desbloqueo automático
           await auditStore.logAuthEvent(
             dbUser.id,
@@ -156,14 +156,14 @@ export const useAuthStore = defineStore('auth', () => {
             sessionId,
             { reason: 'timeout_expired' }
           )
-          
+
           // Usuario desbloqueado, continuar con login
           dbUser.isLocked = false
           dbUser.loginAttempts = 0
         } else {
           // Aún bloqueado - calcular tiempo restante
           const minutesRemaining = Math.ceil((unlockTime.getTime() - now.getTime()) / (60 * 1000))
-          
+
           // Log de intento bloqueado
           await auditStore.logAuthEvent(
             dbUser.id,
@@ -172,7 +172,7 @@ export const useAuthStore = defineStore('auth', () => {
             sessionId,
             { reason: 'account_locked', minutesRemaining }
           )
-          
+
           throw new Error(`Cuenta bloqueada. Intente nuevamente en ${minutesRemaining} minuto${minutesRemaining > 1 ? 's' : ''}.`)
         }
       }
@@ -191,15 +191,15 @@ export const useAuthStore = defineStore('auth', () => {
           loginAttempts: currentAttempts,
           lastFailedAttempt: now.toISOString()
         }
-        
+
         // Si alcanzó el máximo, bloquear por 15 minutos
         if (currentAttempts >= AUTH_CONFIG.MAX_LOGIN_ATTEMPTS) {
           const lockUntil = new Date(now.getTime() + AUTH_CONFIG.LOCKOUT_DURATION)
           updateData.isLocked = true
           updateData.lockedUntil = lockUntil.toISOString()
-          
+
           await updateRecord('usuarios', dbUser.id, updateData)
-          
+
           // Log de cuenta bloqueada
           await auditStore.logAuthEvent(
             dbUser.id,
@@ -208,14 +208,14 @@ export const useAuthStore = defineStore('auth', () => {
             sessionId,
             { reason: 'max_attempts_exceeded', attempts: currentAttempts }
           )
-          
+
           throw new Error('Máximo número de intentos excedido. Cuenta bloqueada por 15 minutos.')
         } else {
           // Actualizar intentos sin bloquear
           await updateRecord('usuarios', dbUser.id, updateData)
-          
+
           const attemptsLeft = AUTH_CONFIG.MAX_LOGIN_ATTEMPTS - currentAttempts
-          
+
           // Log de login fallido
           await auditStore.logAuthEvent(
             dbUser.id,
@@ -224,7 +224,7 @@ export const useAuthStore = defineStore('auth', () => {
             sessionId,
             { reason: 'invalid_password', attempts: currentAttempts, attemptsLeft }
           )
-          
+
           throw new Error(`Contraseña incorrecta. Le quedan ${attemptsLeft} intento${attemptsLeft > 1 ? 's' : ''}.`)
         }
       }
@@ -263,7 +263,7 @@ export const useAuthStore = defineStore('auth', () => {
         dbUser.username,
         'login.success',
         sessionId,
-        { 
+        {
           role: dbUser.role,
           nombre: `${dbUser.nombre} ${dbUser.apellido}`,
           previousLogin: dbUser.lastLogin
@@ -277,30 +277,30 @@ export const useAuthStore = defineStore('auth', () => {
 
   async function logout() {
     const auditStore = useAuditStore()
-    
+
     // Registrar evento de auditoría antes de limpiar datos
     if (user.value) {
       // Calcular duración de sesión (manejar lastLogin como Date o string)
       let sessionDuration = 0
       if (user.value.lastLogin) {
-        const lastLoginTime = user.value.lastLogin instanceof Date 
-          ? user.value.lastLogin.getTime() 
+        const lastLoginTime = user.value.lastLogin instanceof Date
+          ? user.value.lastLogin.getTime()
           : new Date(user.value.lastLogin).getTime()
         sessionDuration = Date.now() - lastLoginTime
       }
-      
+
       await auditStore.logAuthEvent(
         user.value.id,
         user.value.username,
         'logout',
         'manual',
-        { 
+        {
           role: user.value.role,
           sessionDuration
         }
       )
     }
-    
+
     // Limpiar estado del usuario
     user.value = null
     isAuthenticated.value = false
@@ -335,7 +335,7 @@ export const useAuthStore = defineStore('auth', () => {
       // Verificar que no exista un usuario con esa cédula
       const existingUsers = await getRecords('usuarios', 'username', userData.cedula)
       if (existingUsers.length > 0) {
-        throw new Error('Ya existe un usuario registrado con esa cédula')
+        throw new Error('Ya existe un usuario registrado con ese documento')
       }
 
       // Hashear la contraseña usando método estático (consistencia con initializeAdmin)
@@ -362,7 +362,7 @@ export const useAuthStore = defineStore('auth', () => {
 
       // Guardar en la base de datos
       const result = await addRecord('usuarios', newUser)
-      
+
       if (!result.success) {
         throw new Error(result.error || 'Error al guardar el usuario en la base de datos')
       }
@@ -405,9 +405,9 @@ export const useAuthStore = defineStore('auth', () => {
       if (updatedData.cedula !== user.value.username) {
         const existingUsers = await getRecords('usuarios', 'username', updatedData.cedula)
         if (existingUsers.length > 0) {
-          throw new Error('Ya existe un usuario registrado con esa cédula')
+          throw new Error('Ya existe un usuario registrado con ese documento')
         }
-        
+
         // Permitir cambio de cédula (username)
         updateData.username = updatedData.cedula
       }
@@ -428,7 +428,7 @@ export const useAuthStore = defineStore('auth', () => {
         nombre: updatedData.nombre,
         apellido: updatedData.apellido,
       }
-      
+
       // Guardar sesión actualizada
       saveSession()
 
@@ -450,17 +450,17 @@ export const useAuthStore = defineStore('auth', () => {
       // Obtener usuario actual de la base de datos
       // ✅ CORRECCIÓN: Buscar por username en lugar de id (índice que sí existe)
       const users = await getRecords('usuarios', 'username', user.value.username)
-      
+
       if (users.length === 0) {
         throw new Error('Usuario no encontrado')
       }
 
       const currentUser = users[0] as StoredUser
-      
+
       // Verificar contraseña actual
       const isCurrentPasswordValid = await EncryptionService.verifyPassword(
-        currentPassword, 
-        currentUser.hashedPassword, 
+        currentPassword,
+        currentUser.hashedPassword,
         currentUser.salt
       )
 
@@ -469,7 +469,7 @@ export const useAuthStore = defineStore('auth', () => {
       }
 
       // Generar nueva contraseña hasheada
-      const { hash: newHashedPassword, salt: newSalt } = 
+      const { hash: newHashedPassword, salt: newSalt } =
         await EncryptionService.hashPassword(newPassword)
 
       // Actualizar en la base de datos
