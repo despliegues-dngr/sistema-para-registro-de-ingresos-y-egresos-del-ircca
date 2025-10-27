@@ -117,6 +117,11 @@
       :empty-subtitle="vehicleModalEmptySubtitle"
       :empty-icon="vehicleModalEmptyIcon"
     />
+
+    <!-- ✅ Modal de Feedback (solo para operadores) -->
+    <FeedbackModal 
+      v-model="showFeedbackModal" 
+    />
     </div>
 
     <!-- Pie de página gubernamental -->
@@ -132,6 +137,7 @@ import { useRegistroStore } from '@/stores/registro'
 import { useSessionTimeout } from '@/composables/useSessionTimeout'
 import { useDashboardStats } from '@/composables/useDashboardStats'
 import { useDashboardModals } from '@/composables/useDashboardModals'
+import { useFeedback } from '@/composables/useFeedback'
 
 // Componentes del Dashboard
 import WelcomeHeader from '@/components/dashboard/WelcomeHeader.vue'
@@ -143,6 +149,7 @@ import RegistroSalidaDialog from '@/components/ui/RegistroSalidaDialog.vue'
 import SessionTimeoutDialog from '@/components/ui/SessionTimeoutDialog.vue'
 import DataListModal from '@/components/ui/DataListModal.vue'
 import DashboardFooter from '@/components/layout/DashboardFooter.vue'
+import FeedbackModal from '@/components/forms/feedback/FeedbackModal.vue'
 
 // 🚀 OPTIMIZACIÓN: Lazy loading de componentes por rol
 // Los componentes Admin/Supervisor solo se cargan cuando el usuario los necesita
@@ -207,6 +214,9 @@ const {
   startAnimation,
   updateVehicleAnimation
 } = useDashboardStats(registroStore)
+
+// Composable para el sistema de feedback
+const { showFeedbackModal } = useFeedback()
 
 // Adaptador reactivo para vehiculosData que depende de un estado local (selectedVehicleType)
 const vehiculosData = computed(() => {

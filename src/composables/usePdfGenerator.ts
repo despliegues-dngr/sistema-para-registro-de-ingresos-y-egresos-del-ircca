@@ -10,6 +10,9 @@ export function usePdfGenerator() {
   const reportType = ref<'current' | 'date-range'>('current')
   const startDate = ref('')
   const endDate = ref('')
+  const useTimeFilter = ref(false)
+  const startTime = ref('')
+  const endTime = ref('')
   const loading = ref(false)
   const message = ref('')
   const messageType = ref<'success' | 'error' | 'warning' | 'info'>('info')
@@ -52,8 +55,8 @@ export function usePdfGenerator() {
     lastGeneratedPdf.value = null
   })
 
-  // Watch para limpiar PDF al cambiar fechas
-  watch([startDate, endDate], () => {
+  // Watch para limpiar PDF al cambiar fechas o horas
+  watch([startDate, endDate, useTimeFilter, startTime, endTime], () => {
     if (lastGeneratedPdf.value) {
       lastGeneratedPdf.value = null
     }
@@ -102,7 +105,10 @@ export function usePdfGenerator() {
       const options = {
         type: reportType.value,
         startDate: startDate.value,
-        endDate: endDate.value
+        endDate: endDate.value,
+        useTimeFilter: useTimeFilter.value,
+        startTime: startTime.value,
+        endTime: endTime.value
       }
       
       qrReportInfo.value = reportType.value === 'current' 
@@ -228,23 +234,21 @@ export function usePdfGenerator() {
   }
 
   return {
-    // Estado
     reportType,
     startDate,
     endDate,
+    useTimeFilter,
+    startTime,
+    endTime,
     loading,
     message,
     messageType,
     qrReportInfo,
     lastGeneratedPdf,
     sharingWhatsApp,
-    
-    // Computed
     maxDate,
     dateRules,
     isFormValid,
-    
-    // Métodos
     generatePdf,
     regeneratePdf,
     shareViaWhatsApp,

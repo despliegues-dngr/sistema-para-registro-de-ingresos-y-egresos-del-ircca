@@ -168,6 +168,7 @@
               <span class="text-caption text-grey">Session ID:</span>
               <span class="font-mono text-caption ml-2">{{ evento.sessionId }}</span>
               <v-btn
+                v-if="evento.sessionId"
                 icon
                 size="x-small"
                 variant="text"

@@ -227,6 +227,7 @@ const currentUserData = computed(() => {
     nombre: authStore.user?.nombre || 'Usuario',
     apellido: authStore.user?.apellido || 'Sistema',
     fechaRegistro: authStore.user?.fechaRegistro || '2025-09-01',
+    lastLogin: authStore.user?.lastLogin,
   }
   
   return userData

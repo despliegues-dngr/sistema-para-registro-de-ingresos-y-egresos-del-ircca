@@ -3,8 +3,8 @@
  * Según project-charter.md: "Creación manual del usuario con rol 'Administrador'"
  */
 
-import { EncryptionService } from '@/services/encryptionService'
 import { useDatabase } from '@/composables/useDatabase'
+import { createUser, generateUserId } from './userFactory'
 
 export interface AdminUser {
   cedula: string
@@ -32,23 +32,20 @@ export async function createInitialAdmin(adminData: AdminUser): Promise<boolean>
       return false
     }
 
-    // Generar ID único y hashear contraseña
-    const encryptionService = new EncryptionService()
-    const userId = encryptionService.generateSecureId()
-    const { hash: hashedPassword, salt } = await EncryptionService.hashPassword(adminData.password)
-
-    // Crear usuario administrador
-    const adminUser = {
-      id: userId,
-      username: adminData.cedula,
-      role: 'admin' as const,
+    // ✅ REFACTORIZADO: Usar factory centralizado
+    const userId = generateUserId()
+    const adminUserData = await createUser({
+      cedula: adminData.cedula,
       nombre: adminData.nombre,
       apellido: adminData.apellido,
       grado: adminData.grado,
-      hashedPassword,
-      salt,
-      createdAt: new Date().toISOString(),
-      lastLogin: null
+      password: adminData.password,
+      role: 'admin'
+    })
+
+    const adminUser = {
+      id: userId,
+      ...adminUserData
     }
 
     // Guardar en BD
@@ -141,23 +138,20 @@ export async function createInitialSupervisor(supervisorData: AdminUser): Promis
       return false
     }
 
-    // Generar ID único y hashear contraseña
-    const encryptionService = new EncryptionService()
-    const userId = encryptionService.generateSecureId()
-    const { hash: hashedPassword, salt } = await EncryptionService.hashPassword(supervisorData.password)
-
-    // Crear usuario supervisor
-    const supervisorUser = {
-      id: userId,
-      username: supervisorData.cedula,
-      role: 'supervisor' as const,
+    // ✅ REFACTORIZADO: Usar factory centralizado
+    const userId = generateUserId()
+    const supervisorUserData = await createUser({
+      cedula: supervisorData.cedula,
       nombre: supervisorData.nombre,
       apellido: supervisorData.apellido,
       grado: supervisorData.grado,
-      hashedPassword,
-      salt,
-      createdAt: new Date().toISOString(),
-      lastLogin: null
+      password: supervisorData.password,
+      role: 'supervisor'
+    })
+
+    const supervisorUser = {
+      id: userId,
+      ...supervisorUserData
     }
 
     // Guardar en BD

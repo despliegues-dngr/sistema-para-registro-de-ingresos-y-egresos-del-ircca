@@ -148,6 +148,15 @@ export const DATABASE_CONFIG = {
   },
 } as const
 
+// ✅ Configuración del sistema de feedback
+export const FEEDBACK_CONFIG = {
+  THRESHOLD: Number(import.meta.env.VITE_FEEDBACK_THRESHOLD) || 50, // Número de registros para mostrar encuesta por primera vez
+  REMINDER_INTERVAL: Number(import.meta.env.VITE_FEEDBACK_REMINDER_INTERVAL) || 10, // Cada cuántos registros recordar si eligió "Más tarde"
+  MODAL_DELAY_MS: Number(import.meta.env.VITE_FEEDBACK_MODAL_DELAY_MS) || 2000, // Delay en milisegundos antes de mostrar el modal (default: 2 segundos)
+  MIN_RATING: 1,
+  MAX_RATING: 5,
+} as const
+
 // Configuración PWA
 export const PWA_CONFIG = {
   CACHE_NAMES: {

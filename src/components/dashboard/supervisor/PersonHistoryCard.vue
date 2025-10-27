@@ -1,19 +1,12 @@
 <template>
-  <v-card elevation="2">
+  <v-card elevation="2" class="history-card">
     <!-- Header -->
-    <v-card-title class="d-flex align-center pa-4">
-      <v-icon color="primary" class="mr-2">mdi-history</v-icon>
-      <span class="text-h6">Consulta de Historial de Personas</span>
-      <v-spacer />
-      <v-chip color="info" size="small">
-        <v-icon start size="small">mdi-shield-check</v-icon>
-        Supervisor
-      </v-chip>
+    <v-card-title class="text-h6 pb-3 px-6 pt-6 d-flex align-center">
+      <v-icon color="primary" class="mr-3">mdi-history</v-icon>
+      Consulta de Historial de Personas
     </v-card-title>
 
-    <v-divider />
-
-    <v-card-text class="pa-4">
+    <v-card-text class="px-6 pb-6">
       <!-- Formulario de Búsqueda -->
       <!-- Fila 1: Documento -->
       <v-row>
@@ -149,8 +142,7 @@
 
       <!-- Resultados -->
       <div v-if="historial" class="mt-4">
-        <HistorialResumen :historial="historial" />
-        <HistorialTable :registros="historial.registros" @exportar="exportarHistorial" />
+        <HistorialTable :registros="historial.registros" :historial="historial" @exportar="exportarHistorial" />
       </div>
     </v-card-text>
   </v-card>
@@ -162,7 +154,6 @@ import { usePersonHistory } from '@/composables/usePersonHistory'
 import { usePersonaAutocomplete } from '@/composables/usePersonaAutocomplete'
 import { useAuthStore } from '@/stores/auth'
 import { useAuditStore } from '@/stores/audit'
-import HistorialResumen from './sections/HistorialResumen.vue'
 import HistorialTable from './sections/HistorialTable.vue'
 
 // Composables
@@ -348,6 +339,12 @@ async function registrarExportacion() {
 </script>
 
 <style scoped>
+/* Consistencia con otras cards del supervisor */
+.history-card {
+  border-radius: 12px;
+  border: 1px solid rgba(0, 0, 0, 0.06);
+}
+
 /* Estilos para items de la lista de personas */
 .persona-item {
   margin: 4px 8px;

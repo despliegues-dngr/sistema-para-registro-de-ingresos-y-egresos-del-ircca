@@ -64,8 +64,8 @@ export const useDatabase = () => {
 
   const config: DatabaseConfig = {
     dbName: 'IRCCA_Sistema_DB',
-    version: 4, // ✅ INCREMENTADO: Agregado store de auditoría (audit_logs)
-    stores: ['registros', 'usuarios', 'configuracion', 'backups', 'personasConocidas', 'audit_logs'],
+    version: 5, // ✅ INCREMENTADO: Agregado store de feedback (feedback_usuarios) y campos de tracking
+    stores: ['registros', 'usuarios', 'configuracion', 'backups', 'personasConocidas', 'audit_logs', 'feedback_usuarios'],
   }
 
   const initDatabase = async (): Promise<{ success: boolean; error?: string }> => {
@@ -146,6 +146,15 @@ export const useDatabase = () => {
             auditStore.createIndex('timestamp', 'timestamp', { unique: false })
             auditStore.createIndex('action', 'action', { unique: false })
           }
+
+          // ✅ FEEDBACK: Store de respuestas de encuestas (Version 5)
+          // Almacena feedback de usuarios para mejora continua del sistema
+          if (!database.objectStoreNames.contains('feedback_usuarios')) {
+            const feedbackStore = database.createObjectStore('feedback_usuarios', { keyPath: 'id' })
+            feedbackStore.createIndex('userId', 'userId', { unique: false })
+            feedbackStore.createIndex('timestamp', 'timestamp', { unique: false })
+            feedbackStore.createIndex('rating', 'rating', { unique: false })
+          }
         }
       })
     } catch {
@@ -182,8 +191,13 @@ export const useDatabase = () => {
     indexName?: string,
     key?: IDBValidKey,
   ): Promise<unknown[]> => {
+    // Auto-inicializar BD si no está conectada
     if (!db.value) {
-      return []
+      const initResult = await initDatabase()
+      if (!initResult.success) {
+        console.error('Error inicializando BD en getRecords')
+        return []
+      }
     }
 
     try {
@@ -295,8 +309,13 @@ export const useDatabase = () => {
     storeName: string,
     id: string | number
   ): Promise<unknown | undefined> => {
+    // Auto-inicializar BD si no está conectada
     if (!db.value) {
-      return undefined
+      const initResult = await initDatabase()
+      if (!initResult.success) {
+        console.error('Error inicializando BD en getRecord')
+        return undefined
+      }
     }
 
     try {
@@ -305,10 +324,16 @@ export const useDatabase = () => {
         const store = transaction.objectStore(storeName)
         const request = store.get(id)
 
-        request.onsuccess = () => resolve(request.result)
-        request.onerror = () => reject(undefined)
+        request.onsuccess = () => {
+          resolve(request.result)
+        }
+        request.onerror = () => {
+          console.error('Error en getRecord:', { storeName, id })
+          reject(undefined)
+        }
       })
-    } catch {
+    } catch (error) {
+      console.error('Excepción en getRecord:', error)
       return undefined
     }
   }

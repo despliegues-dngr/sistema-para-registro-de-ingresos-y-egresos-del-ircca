@@ -1,7 +1,7 @@
 # Arquitectura de Base de Datos (Parte 1) - Schema y Estructura
 
-**Fecha:** 24-Sep-2025  
-**Versión DB:** 3 (Actualizado: Seguridad personasConocidas)  
+**Fecha:** 27-Oct-2025  
+**Versión DB:** 5 (Actualizado: Store feedback_usuarios)  
 **Parte:** 1/2 - Schema y Estructura de Stores  
 **Compliance:** Ley N° 18.331 Protección de Datos Personales (Uruguay)
 
@@ -167,9 +167,60 @@ auditStore.createIndex('action', 'action', { unique: false })
 **Eventos Registrados:**
 - **auth:** login.success, login.failed, logout, session.timeout
 - **user_management:** user.created, user.updated, password.changed
-- **data_operation:** registro.created, registro.modified, data.export
+- **data_operation:** registro.created, registro.modified, data.export, feedback.completed
 - **backup:** backup.created, backup.restored
 - **system_error:** encryption.failed, database.error
+
+---
+
+### 2.6 Store de Feedback: `feedback_usuarios`
+
+**Propósito:** Almacenar respuestas de encuestas de satisfacción de operadores
+
+**Configuración:**
+```typescript
+const feedbackStore = database.createObjectStore('feedback_usuarios', { keyPath: 'id' })
+feedbackStore.createIndex('userId', 'userId', { unique: false })
+feedbackStore.createIndex('timestamp', 'timestamp', { unique: false })
+feedbackStore.createIndex('rating', 'rating', { unique: false })
+```
+
+**Estructura:**
+```typescript
+interface FeedbackEntry {
+  id: string                    // UUID único de la respuesta
+  userId: string                // ID del operador
+  username: string              // Username del operador
+  timestamp: string             // ISO 8601 timestamp
+  rating: number                // Rating general (1-5)
+  velocidadScore: number        // Score de velocidad (1-5)
+  facilidadScore: number        // Score de facilidad de uso (1-5)
+  confiabilidadScore: number    // Score de confiabilidad (1-5)
+  autocompletadoScore: number   // Score de autocompletado (1-5)
+  impactoScore: number          // Score de impacto en trabajo (1-5)
+  comentarios?: string          // Comentarios opcionales
+  totalRegistrosAlMomento: number  // Total de registros al momento de la encuesta
+  userRole: 'admin' | 'supervisor' | 'operador'
+  sessionId: string             // ID de sesión para trazabilidad
+}
+```
+
+**Índices Implementados:**
+```typescript
+// Índice por userId - Para consultar feedback por usuario
+feedbackStore.createIndex('userId', 'userId', { unique: false })
+
+// Índice por timestamp - Para análisis temporal
+feedbackStore.createIndex('timestamp', 'timestamp', { unique: false })
+
+// Índice por rating - Para filtrar por satisfacción
+feedbackStore.createIndex('rating', 'rating', { unique: false })
+```
+
+**Integración:**
+- Trigger automático al alcanzar threshold de registros (default: 50)
+- Recordatorios cada N registros si usuario pospone (default: 10)
+- Registro en `audit_logs` con action `feedback.completed`
 
 ---
 

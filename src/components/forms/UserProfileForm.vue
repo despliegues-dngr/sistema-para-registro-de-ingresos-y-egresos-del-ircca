@@ -152,7 +152,7 @@
 
         <!-- Estado del sistema -->
         <v-divider class="my-3" />
-        <div class="d-flex justify-space-between align-center">
+        <div class="d-flex justify-space-between align-center mb-2">
           <span class="text-body-2">
             <v-icon size="16" class="mr-1">mdi-shield-check</v-icon>
             Estado:
@@ -161,6 +161,17 @@
             <v-icon size="14" class="mr-1">mdi-check-circle</v-icon>
             Activo
           </v-chip>
+        </div>
+
+        <!-- Última conexión -->
+        <div class="d-flex justify-space-between align-center">
+          <span class="text-body-2">
+            <v-icon size="16" class="mr-1">mdi-clock-outline</v-icon>
+            Última conexión:
+          </span>
+          <span class="text-body-2 font-weight-medium text-medium-emphasis">
+            {{ formatLastLogin(userData.lastLogin) }}
+          </span>
         </div>
       </v-card-text>
     </v-card>
@@ -178,6 +189,7 @@ interface UserData {
   nombre: string
   apellido: string
   fechaRegistro?: string
+  lastLogin?: Date | string
 }
 
 interface Props {
@@ -323,6 +335,43 @@ const formatDate = (dateString: string) => {
     })
   } catch {
     return dateString
+  }
+}
+
+const formatLastLogin = (lastLogin?: Date | string) => {
+  if (!lastLogin) {
+    return 'Nunca'
+  }
+
+  try {
+    const loginDate = lastLogin instanceof Date ? lastLogin : new Date(lastLogin)
+    const now = new Date()
+    const diffMs = now.getTime() - loginDate.getTime()
+    const diffMinutes = Math.floor(diffMs / (1000 * 60))
+    const diffHours = Math.floor(diffMs / (1000 * 60 * 60))
+    const diffDays = Math.floor(diffMs / (1000 * 60 * 60 * 24))
+
+    // Formato relativo para tiempos recientes
+    if (diffMinutes < 1) {
+      return 'Ahora mismo'
+    } else if (diffMinutes < 60) {
+      return `Hace ${diffMinutes} minuto${diffMinutes > 1 ? 's' : ''}`
+    } else if (diffHours < 24) {
+      return `Hace ${diffHours} hora${diffHours > 1 ? 's' : ''}`
+    } else if (diffDays < 7) {
+      return `Hace ${diffDays} día${diffDays > 1 ? 's' : ''}`
+    }
+
+    // Formato completo para fechas antiguas
+    return loginDate.toLocaleString('es-UY', {
+      year: 'numeric',
+      month: 'short',
+      day: 'numeric',
+      hour: '2-digit',
+      minute: '2-digit',
+    })
+  } catch {
+    return 'Fecha inválida'
   }
 }
 

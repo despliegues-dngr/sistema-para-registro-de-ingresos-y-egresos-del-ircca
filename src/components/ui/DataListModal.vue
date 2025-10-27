@@ -130,9 +130,9 @@
         <!-- Estado vacío -->
         <template v-if="filteredData.length === 0">
           <div class="d-flex flex-column align-center justify-center py-12">
-            <v-icon size="64" color="grey-lighten-2" class="mb-4">{{ emptyIcon }}</v-icon>
-            <h3 class="text-h6 text-grey-darken-1 mb-2">{{ emptyTitle }}</h3>
-            <p class="text-body-2 text-grey">{{ emptySubtitle }}</p>
+            <v-icon size="64" color="grey-lighten-2" class="mb-4">{{ displayEmptyIcon }}</v-icon>
+            <h3 class="text-h6 text-grey-darken-1 mb-2">{{ displayEmptyTitle }}</h3>
+            <p class="text-body-2 text-grey">{{ displayEmptySubtitle }}</p>
           </div>
         </template>
     </div>
@@ -244,6 +244,40 @@ const filteredData = computed(() => {
              conductor.includes(query)
     }
   })
+})
+
+// 🎯 MENSAJES CONTEXTUALES DINÁMICOS
+// Detecta si estamos en búsqueda activa o estado vacío por defecto
+const isSearchActive = computed(() => {
+  return searchQuery.value.trim().length > 0
+})
+
+const hasNoResults = computed(() => {
+  return props.data.length > 0 && filteredData.value.length === 0 && isSearchActive.value
+})
+
+// Título dinámico del estado vacío
+const displayEmptyTitle = computed(() => {
+  if (hasNoResults.value) {
+    return 'Sin coincidencias'
+  }
+  return props.emptyTitle
+})
+
+// Subtítulo dinámico del estado vacío
+const displayEmptySubtitle = computed(() => {
+  if (hasNoResults.value) {
+    return `No se encontraron resultados para "${searchQuery.value}"`
+  }
+  return props.emptySubtitle
+})
+
+// Ícono dinámico del estado vacío
+const displayEmptyIcon = computed(() => {
+  if (hasNoResults.value) {
+    return 'mdi-magnify-close'
+  }
+  return props.emptyIcon
 })
 // Altura del virtual scroll (calculada)
 const virtualScrollHeight = computed(() => {

@@ -1,5 +1,5 @@
 <template>
-  <v-card elevation="2" class="destinos-manager">
+  <v-card elevation="2" class="destinos-manager-card">
     <v-card-title class="text-h6 pb-3 px-6 pt-6 d-flex align-center">
       <v-icon class="mr-3" color="success">mdi-map-marker-multiple</v-icon>
       Gestión de Destinos
@@ -212,7 +212,8 @@ onMounted(() => {
 </script>
 
 <style scoped>
-.destinos-manager {
+/* Consistencia con otras cards del supervisor */
+.destinos-manager-card {
   border-radius: 12px;
   border: 1px solid rgba(0, 0, 0, 0.06);
 }

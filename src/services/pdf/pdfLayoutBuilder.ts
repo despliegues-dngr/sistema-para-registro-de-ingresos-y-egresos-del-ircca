@@ -116,7 +116,7 @@ export function addPdfSummary(doc: jsPDF, pageWidth: number, margin: number, dat
   // ✅ Estadísticas clarificadas según nueva definición
   const totalVehiculos = (data.vehiculos?.autos || 0) + (data.vehiculos?.motos || 0)
   const stats = [
-    `Cant. registros (entre ingresos y salidas): ${data.totalRegistros}`,
+    `Cant. registros (ingresos y salidas): ${data.totalRegistros}`,
     `Ingresos personas: ${data.ingresos}`,
     `Ingresos vehículos: ${totalVehiculos}`
   ].join(' | ')
@@ -127,7 +127,15 @@ export function addPdfSummary(doc: jsPDF, pageWidth: number, margin: number, dat
   doc.setFontSize(9)
   doc.setFont('helvetica', 'italic')
   doc.setTextColor(100, 100, 100)
-  doc.text(`Período: ${data.dateRange}`, margin, startY + 6)
+
+  let periodText = `Período: ${data.dateRange}`
+
+  // ✅ NUEVO: Agregar horario si existe filtro de hora
+  if (data.timeRange) {
+    periodText += ` | Horario: ${data.timeRange}`
+  }
+
+  doc.text(periodText, margin, startY + 6)
 
   // Resetear colores
   doc.setTextColor(0, 0, 0)
@@ -185,15 +193,15 @@ export function addPdfTable(doc: jsPDF, data: ReportData, summaryY: number, marg
     columnStyles: {
       0: { halign: 'left', cellWidth: 8 },    // N° - Muy estrecha
       1: { halign: 'left', cellWidth: 18 },   // Fecha
-      2: { halign: 'left', cellWidth: 18 },   // H. Ingreso - Aumentada +1mm
+      2: { halign: 'left', cellWidth: 18 },   // H. Ingreso
       3: { halign: 'left', cellWidth: 24 },   // Documento - Formato X.XXX.XXX-X
       4: { halign: 'left', cellWidth: 45 },   // Nombre
       5: { halign: 'left', cellWidth: 28 },   // Destino
-      6: { halign: 'left', cellWidth: 18 },   // Vehículo
+      6: { halign: 'left', cellWidth: 22 },   // Vehículo - Aumentada +4mm (de 18 a 22)
       7: { halign: 'left', cellWidth: 18 },   // Matrícula
-      8: { halign: 'left', cellWidth: 18 },   // H. Salida - Aumentada +1mm
-      9: { halign: 'left', cellWidth: 38 },   // Responsable - Aumentada +3mm
-      10: { halign: 'left', cellWidth: 'auto' }   // Observ. - AUTO: ocupa espacio restante
+      8: { halign: 'left', cellWidth: 18 },   // H. Salida
+      9: { halign: 'left', cellWidth: 38 },   // Responsable
+      10: { halign: 'left', cellWidth: 'auto' }   // Observ. - AUTO: reducida implícitamente
     },
     // ✅ Hook para centrar guiones ("-") en celdas vacías
     didParseCell: (data) => {

@@ -15,9 +15,8 @@ export interface RegistroHistorial {
   destino?: string
   operadorId: string
   vehiculo?: {
+    tipo?: string // Auto, Moto, Camión, Bus
     matricula?: string
-    marca?: string
-    modelo?: string
   }
 }
 
@@ -234,21 +233,17 @@ export function usePersonHistory() {
     const { persona, registros } = historialData
 
     // Headers del CSV
-    const headers = ['Fecha', 'Hora', 'Tipo', 'Destino', 'Vehículo', 'Operador']
+    const headers = ['Fecha', 'Hora', 'Tipo', 'Destino', 'Tipo Vehículo', 'Matrícula', 'Operador']
 
     // Construir filas con comillas para compatibilidad Excel
     const rows = registros.map(reg => {
-      // Formato de vehículo: "Matrícula (Marca Modelo)" o "-"
-      const vehiculoInfo = reg.vehiculo?.matricula
-        ? `${reg.vehiculo.matricula} (${reg.vehiculo.marca || ''} ${reg.vehiculo.modelo || ''})`.trim()
-        : '-'
-
       return [
         reg.fecha,
         reg.hora,
         reg.tipo.toUpperCase(),
         reg.destino || '-',
-        vehiculoInfo,
+        reg.vehiculo?.tipo || '-',
+        reg.vehiculo?.matricula || '-',
         reg.operadorId
       ]
     })

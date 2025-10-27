@@ -9,6 +9,9 @@ export interface PdfReportOptions {
   type: 'current' | 'date-range'
   startDate?: string
   endDate?: string
+  useTimeFilter?: boolean
+  startTime?: string // Formato HH:MM
+  endTime?: string   // Formato HH:MM
 }
 
 export interface ReportData {
@@ -23,6 +26,7 @@ export interface ReportData {
     buses: number
   }
   dateRange: string
+  timeRange?: string // ✅ NUEVO: Rango de horario si se aplicó filtro
   registros: RegistroParaPdf[]
 }
 
@@ -51,6 +55,7 @@ export interface DateRangeResult {
   startDate: Date
   endDate: Date
   dateRange: string
+  timeRange?: string // ✅ NUEVO: Rango de horario si se aplicó filtro
 }
 
 export interface PdfGenerationResult {

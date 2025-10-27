@@ -10,7 +10,7 @@ export interface AuditEvent extends Record<string, unknown> {
   action: string
   details: Record<string, unknown>
   timestamp: string
-  sessionId: string
+  sessionId?: string
   ipAddress?: string
   userAgent?: string
 }
@@ -74,7 +74,7 @@ export const useAuditStore = defineStore('audit', () => {
     eventType: AuditEvent['eventType']
     action: string
     details?: Record<string, unknown>
-    sessionId: string
+    sessionId?: string
     ipAddress?: string
     userAgent?: string
   }): Promise<void> {

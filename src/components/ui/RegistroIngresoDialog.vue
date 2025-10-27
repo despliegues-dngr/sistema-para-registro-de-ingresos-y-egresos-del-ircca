@@ -46,6 +46,7 @@
 import { ref, computed } from 'vue'
 import { useAuthStore } from '@/stores/auth'
 import { useRegistroStore, type RegistroIngresoData } from '@/stores/registro'
+import { useFeedback } from '@/composables/useFeedback'
 import FullScreenModal from './FullScreenModal.vue'
 import RegistroIngresoForm from '@/components/forms/RegistroIngresoForm.vue'
 
@@ -64,6 +65,7 @@ const emit = defineEmits<Emits>()
 
 const authStore = useAuthStore()
 const registroStore = useRegistroStore()
+const feedbackComposable = useFeedback()
 
 // Estado reactivo
 const loading = ref(false)
@@ -97,6 +99,11 @@ const onSubmit = async (registroData: RegistroIngresoData) => {
       acompanantes: registroData.acompanantes, // ✅ INCLUIR ACOMPAÑANTES
       observaciones: registroData.observaciones,
     }, operadorId)
+
+    // Incrementar contador de feedback (solo para operadores)
+    if (authStore.user?.role === 'operador') {
+      await feedbackComposable.incrementarContadorRegistros(operadorId)
+    }
 
     const successMessage = `Ingreso registrado exitosamente para ${registroData.datosPersonales.nombre} ${registroData.datosPersonales.apellido}.`
     emit('success', successMessage)

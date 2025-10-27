@@ -25,7 +25,7 @@ export const useAppStore = defineStore('app', () => {
   const isOnline = ref(navigator.onLine)
   const lastBackup = ref<Date | null>(null)
   const notifications = ref<
-    Array<{ id: string; message: string; type: 'info' | 'warning' | 'error'; timestamp: Date }>
+    Array<{ id: string; message: string; type: 'info' | 'warning' | 'error' | 'success'; timestamp: Date }>
   >([])
 
   // Getters
@@ -54,7 +54,7 @@ export const useAppStore = defineStore('app', () => {
     isOnline.value = status
   }
 
-  function addNotification(message: string, type: 'info' | 'warning' | 'error' = 'info') {
+  function addNotification(message: string, type: 'info' | 'warning' | 'error' | 'success' = 'info') {
     const notification = {
       id: crypto.randomUUID(),
       message,

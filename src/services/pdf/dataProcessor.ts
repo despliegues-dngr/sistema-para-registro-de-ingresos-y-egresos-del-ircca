@@ -19,6 +19,7 @@ import { formatResponsable } from '@/utils/gradoUtils'
 /**
  * Calcula rango de fechas según opciones
  * ✅ FIX: Manejo correcto de zona horaria para evitar desfase de fechas
+ * ✅ NUEVO: Soporte para filtro de hora opcional
  */
 export function calculateDateRange(options: PdfReportOptions): DateRangeResult {
   if (options.type === 'current') {
@@ -37,19 +38,39 @@ export function calculateDateRange(options: PdfReportOptions): DateRangeResult {
     const [startYear, startMonth, startDay] = options.startDate!.split('-').map(Number)
     const [endYear, endMonth, endDay] = options.endDate!.split('-').map(Number)
 
-    // Crear fechas en hora local (evita desfase de zona horaria)
-    const startDate = new Date(startYear, startMonth - 1, startDay, 0, 0, 0, 0)
-    const endDate = new Date(endYear, endMonth - 1, endDay, 23, 59, 59, 999)
+    // ✅ NUEVO: Aplicar filtro de hora si está habilitado
+    let startHour = 0, startMinute = 0
+    let endHour = 23, endMinute = 59
+
+    if (options.useTimeFilter && options.startTime && options.endTime) {
+      const [sH, sM] = options.startTime.split(':').map(Number)
+      const [eH, eM] = options.endTime.split(':').map(Number)
+      startHour = sH
+      startMinute = sM
+      endHour = eH
+      endMinute = eM
+    }
+
+    // Crear fechas en hora local con horarios específicos
+    const startDate = new Date(startYear, startMonth - 1, startDay, startHour, startMinute, 0, 0)
+    const endDate = new Date(endYear, endMonth - 1, endDay, endHour, endMinute, 59, 999)
 
     // ✅ Verificar si es el mismo día
     const isSameDay = startYear === endYear && startMonth === endMonth && startDay === endDay
+
+    // ✅ NUEVO: Construir rango de horario si se aplicó filtro
+    let timeRange: string | undefined
+    if (options.useTimeFilter && options.startTime && options.endTime) {
+      timeRange = `${options.startTime} - ${options.endTime}`
+    }
 
     return {
       startDate,
       endDate,
       dateRange: isSameDay
         ? formatDateForPeriod(startDate) // ✅ Fecha única
-        : `${formatDateForPeriod(startDate)} al ${formatDateForPeriod(endDate)}` // ✅ Rango
+        : `${formatDateForPeriod(startDate)} al ${formatDateForPeriod(endDate)}`, // ✅ Rango
+      timeRange
     }
   }
 }

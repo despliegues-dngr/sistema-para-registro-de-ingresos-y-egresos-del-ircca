@@ -38,29 +38,81 @@
         <v-row v-if="reportType === 'date-range'" class="mt-2">
           <v-col cols="6">
             <v-text-field
+              ref="startDateInput"
               v-model="startDate"
               label="Fecha Inicio"
               type="date"
               variant="outlined"
               density="comfortable"
               color="success"
-              prepend-inner-icon="mdi-calendar-start"
+              hide-details="auto"
+              append-inner-icon="mdi-calendar"
               :max="maxDate"
               :rules="dateRules"
+              @click:append-inner="openDatePicker('startDateInput')"
             />
           </v-col>
           <v-col cols="6">
             <v-text-field
+              ref="endDateInput"
               v-model="endDate"
               label="Fecha Fin"
               type="date"
               variant="outlined"
               density="comfortable"
               color="success"
-              prepend-inner-icon="mdi-calendar-end"
+              hide-details="auto"
+              append-inner-icon="mdi-calendar"
               :min="startDate"
               :max="maxDate"
               :rules="dateRules"
+              @click:append-inner="openDatePicker('endDateInput')"
+            />
+          </v-col>
+        </v-row>
+
+        <!-- Selección de horario (opcional) -->
+        <v-row v-if="reportType === 'date-range'" class="mt-2">
+          <v-col cols="12">
+            <v-checkbox
+              v-model="useTimeFilter"
+              label="Filtrar por horario específico (opcional)"
+              color="success"
+              density="comfortable"
+              hide-details
+            />
+          </v-col>
+        </v-row>
+
+        <v-row v-if="reportType === 'date-range' && useTimeFilter" class="mt-2">
+          <v-col cols="6">
+            <v-text-field
+              ref="startTimeInput"
+              v-model="startTime"
+              label="Hora Inicio"
+              type="time"
+              variant="outlined"
+              density="comfortable"
+              color="success"
+              append-inner-icon="mdi-clock-outline"
+              hint="Formato 24 horas"
+              persistent-hint
+              @click:append-inner="openTimePicker('startTimeInput')"
+            />
+          </v-col>
+          <v-col cols="6">
+            <v-text-field
+              ref="endTimeInput"
+              v-model="endTime"
+              label="Hora Fin"
+              type="time"
+              variant="outlined"
+              density="comfortable"
+              color="success"
+              append-inner-icon="mdi-clock-outline"
+              hint="Formato 24 horas"
+              persistent-hint
+              @click:append-inner="openTimePicker('endTimeInput')"
             />
           </v-col>
         </v-row>
@@ -160,7 +212,7 @@
 </template>
 
 <script setup lang="ts">
-import { computed } from 'vue'
+import { computed, ref } from 'vue'
 import FullScreenModal from './FullScreenModal.vue'
 import { usePdfGenerator } from '@/composables/usePdfGenerator'
 
@@ -182,6 +234,9 @@ const {
   reportType,
   startDate,
   endDate,
+  useTimeFilter,
+  startTime,
+  endTime,
   loading,
   message,
   messageType,
@@ -212,6 +267,34 @@ const handleGeneratePdf = async () => {
   }
 }
 
+// Handler para abrir selector de fecha nativo
+const openDatePicker = (refName: string) => {
+  const inputRef = refName === 'startDateInput' ? startDateInput : endDateInput
+  if (inputRef.value) {
+    const inputElement = inputRef.value.$el.querySelector('input[type="date"]')
+    if (inputElement) {
+      inputElement.showPicker()
+    }
+  }
+}
+
+// Handler para abrir selector de hora nativo
+const openTimePicker = (refName: string) => {
+  const inputRef = refName === 'startTimeInput' ? startTimeInput : endTimeInput
+  if (inputRef.value) {
+    const inputElement = inputRef.value.$el.querySelector('input[type="time"]')
+    if (inputElement) {
+      inputElement.showPicker()
+    }
+  }
+}
+
+// Refs para los inputs
+const startDateInput = ref()
+const endDateInput = ref()
+const startTimeInput = ref()
+const endTimeInput = ref()
+
 // Handler para cerrar modal
 const handleClose = () => {
   reset()
@@ -234,5 +317,20 @@ const handleClose = () => {
   0% { opacity: 1; }
   50% { opacity: 0.5; }
   100% { opacity: 1; }
+}
+
+/* ✅ Ocultar iconos nativos del navegador para evitar duplicación */
+:deep(input[type="date"]::-webkit-calendar-picker-indicator),
+:deep(input[type="time"]::-webkit-calendar-picker-indicator) {
+  display: none;
+  -webkit-appearance: none;
+}
+
+:deep(input[type="date"]::-webkit-inner-spin-button),
+:deep(input[type="date"]::-webkit-outer-spin-button),
+:deep(input[type="time"]::-webkit-inner-spin-button),
+:deep(input[type="time"]::-webkit-outer-spin-button) {
+  -webkit-appearance: none;
+  margin: 0;
 }
 </style>

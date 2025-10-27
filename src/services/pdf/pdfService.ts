@@ -126,7 +126,7 @@ export class PdfService {
       await dbService.initializeWithSessionKey()
 
       // ✅ Usar módulo dataProcessor para cálculos
-      const { startDate, endDate, dateRange } = calculateDateRange(options)
+      const { startDate, endDate, dateRange, timeRange } = calculateDateRange(options)
       const registros = await getRegistrosFromDatabase(startDate, endDate, dbService)
       const operadores = await getOperadoresFromDatabase(dbService)
       const registrosProcesados = await processRegistrosForPdf(registros, operadores)
@@ -135,6 +135,7 @@ export class PdfService {
       return {
         ...stats,
         dateRange,
+        timeRange,
         registros: registrosProcesados
       }
 

@@ -66,6 +66,7 @@ interface UserData {
   nombre: string
   apellido: string
   fechaRegistro?: string
+  lastLogin?: Date | string
 }
 
 interface Props {

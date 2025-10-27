@@ -64,6 +64,7 @@
 - `configuracion` - Settings del sistema
 - `audit_logs` - Logs de auditoría cifrados (índices: userId, eventType, timestamp, action)
 - `personasConocidas` - Cache de autocompletado cifrado
+- `feedback_usuarios` - Respuestas de encuestas de satisfacción (índices: userId, timestamp, rating)
 
 ---
 
@@ -87,9 +88,9 @@
 - `FormSection.vue` - Componente reutilizable para secciones
 - Y 4 subcomponentes más...
 
-#### UI/Modales (12 componentes)
+#### UI/Modales (13 componentes)
 
-**✅ MIGRACIÓN COMPLETADA (12/12 - 100%):**
+**✅ MIGRACIÓN COMPLETADA (13/13 - 100%):**
 - `HelpDialog.vue` - Centro de ayuda con contactos de soporte
 - `RegistrationDialog.vue` - Auto-registro de nuevos operadores
 - `TermsAndConditionsDialog.vue` - Términos y condiciones legales
@@ -101,6 +102,7 @@
 - `SessionTimeoutDialog.vue` - Advertencia de timeout con persistent mode
 - `PdfGeneratorDialog.vue` - Generación de PDFs (modularizado con `usePdfGenerator`)
 - `EventDetailDialog.vue` - Detalles de evento de auditoría
+- `FeedbackModal.vue` - Encuesta de satisfacción con triggers automáticos y delay configurable
 - `FullScreenModal.vue` - Componente base optimizado con overlay institucional personalizado
 
 #### Admin/Audit (3 componentes)
@@ -113,7 +115,7 @@
 
 ---
 
-### 5. Composables (9 total)
+### 5. Composables (10 total)
 
 - `useAuth.ts` - Abstracción del store de autenticación
 - `useDatabase.ts` - Operaciones de bajo nivel con IndexedDB
@@ -123,6 +125,7 @@
 - `useKioskSecurity.ts` - Bloqueo de navegación para modo kiosco
 - `useStorageMonitor.ts` - Monitoreo de cuota de almacenamiento
 - `useAuditFilters.ts` - Lógica de filtrado de auditoría
+- `useFeedback.ts` - Sistema de encuestas de satisfacción con triggers automáticos
 
 ---
 
@@ -230,6 +233,45 @@
 ---
 
 ## 📝 HISTORIAL DE MEJORAS RECIENTES
+
+### 27-Oct-2025: Sistema de Feedback de Usuarios ✅ COMPLETADO
+
+**Encuestas de Satisfacción Automáticas:**
+
+- ✅ Composable `useFeedback.ts` con patrón singleton para estado compartido
+- ✅ Triggers automáticos: Al alcanzar 50 registros (configurable vía `VITE_FEEDBACK_THRESHOLD`)
+- ✅ Recordatorios cada 10 registros si usuario pospone (configurable vía `VITE_FEEDBACK_REMINDER_INTERVAL`)
+- ✅ Delay de 2 segundos antes de mostrar modal (configurable vía `VITE_FEEDBACK_MODAL_DELAY_MS`)
+- ✅ 3 acciones disponibles: Enviar encuesta, Recordar más tarde, No volver a preguntar
+- ✅ Persistencia en IndexedDB: Store `feedback_usuarios` con índices por userId, timestamp y rating
+- ✅ Integración con auditoría: Evento `feedback_completed` registrado en `audit_logs`
+- ✅ Migrado a `FullScreenModal` para consistencia visual con otros modales
+
+**Componente `FeedbackModal.vue`:**
+
+- ✅ Encuesta con 6 métricas: Rating general, Velocidad, Facilidad, Confiabilidad, Autocompletado, Impacto
+- ✅ Campo opcional de comentarios
+- ✅ Validación de formulario: Todas las preguntas obligatorias excepto comentarios
+- ✅ Tracking de usuario: Total de registros al momento de la encuesta
+- ✅ Header institucional con icono `mdi-comment-question` y color verde (success)
+
+**Configuración (constants.ts):**
+
+```typescript
+FEEDBACK_CONFIG = {
+  THRESHOLD: 50,              // Registros para primera encuesta
+  REMINDER_INTERVAL: 10,      // Cada cuántos registros recordar
+  MODAL_DELAY_MS: 2000,       // Delay antes de mostrar (ms)
+  MIN_RATING: 1,
+  MAX_RATING: 5
+}
+```
+
+**Integración:**
+
+- ✅ `RegistroIngresoDialog.vue`: Llama a `incrementarContadorRegistros()` después de cada registro (solo operadores)
+- ✅ `DashboardView.vue`: Renderiza `FeedbackModal` sin `v-if` para evitar race conditions
+- ✅ Campos de usuario actualizados: `totalRegistrosRealizados`, `encuestaCompletada`, `fechaEncuesta`, `encuestaPostpuesta`, `encuestaDismissed`, `ultimoRecordatorioEn`
 
 ### 25-Oct-2025: Migración de Modales a FullScreenModal ✅ COMPLETADO (100%)
 

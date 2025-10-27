@@ -2,11 +2,12 @@ import { ref, computed } from 'vue'
 import { defineStore } from 'pinia'
 import { EncryptionService } from '@/services/encryptionService'
 import { useDatabase } from '@/composables/useDatabase'
+import { createUser, generateUserId } from '@/utils/userFactory'
 import { useAuditStore } from './audit'
 import { AUTH_CONFIG } from '@/config/constants'
 
 // Interfaz para usuario almacenado en BD
-interface StoredUser {
+export interface StoredUser {
   id: string
   username: string
   role: 'admin' | 'supervisor' | 'operador'
@@ -22,13 +23,20 @@ interface StoredUser {
   lastFailedAttempt?: string | null
   isLocked?: boolean
   lockedUntil?: string | null
+  // ✅ NUEVO: Campos para sistema de feedback (v5)
+  totalRegistrosRealizados?: number  // Contador de registros creados por el usuario
+  encuestaCompletada?: boolean       // true si completó la encuesta
+  fechaEncuesta?: string | null      // ISO date cuando completó la encuesta
+  encuestaDismissed?: boolean        // true si eligió "No volver a preguntar"
+  encuestaPostpuesta?: boolean       // true si eligió "Recordarme más tarde"
+  ultimoRecordatorioEn?: number      // Número de registros cuando se mostró el último recordatorio
 }
 
 export interface User {
   id: string
   username: string
   role: 'admin' | 'supervisor' | 'operador'
-  lastLogin?: Date
+  lastLogin?: Date | string // Puede ser Date (objeto) o string (ISO de BD)
   nombre?: string
   apellido?: string
   grado?: string
@@ -247,7 +255,7 @@ export const useAuthStore = defineStore('auth', () => {
         apellido: dbUser.apellido,
         grado: dbUser.grado,
         cedula: dbUser.username, // Alias para compatibilidad
-        lastLogin: new Date(),
+        lastLogin: dbUser.lastLogin || undefined, // ✅ Usar el lastLogin ANTERIOR de la BD (null → undefined)
         fechaRegistro: dbUser.createdAt ? dbUser.createdAt.split('T')[0] : new Date().toISOString().split('T')[0]
       }
 
@@ -318,7 +326,6 @@ export const useAuthStore = defineStore('auth', () => {
   }
 
   // Instancias de servicios
-  const encryptionService = new EncryptionService()
   const { addRecord, getRecords, updateRecord, initDatabase } = useDatabase()
 
   // Actions
@@ -338,26 +345,21 @@ export const useAuthStore = defineStore('auth', () => {
         throw new Error('Ya existe un usuario registrado con ese documento')
       }
 
-      // Hashear la contraseña usando método estático (consistencia con initializeAdmin)
-      const { hash: hashedPassword, salt } = await EncryptionService.hashPassword(userData.password)
-
-      // Generar ID único para el usuario
-      const userId = encryptionService.generateSecureId()
-
-      // Crear objeto usuario
-      const newUser = {
-        id: userId,
-        username: userData.cedula, // La cédula funciona como username
-        role: 'operador' as const,
+      // ✅ REFACTORIZADO: Usar factory centralizado
+      const userId = generateUserId()
+      const userDataFromFactory = await createUser({
+        cedula: userData.cedula,
         nombre: userData.nombre,
         apellido: userData.apellido,
         grado: userData.grado,
-        hashedPassword,
-        salt,
-        terminosCondiciones: userData.terminosCondiciones,
-        fechaAceptacionTerminos: new Date().toISOString(),
-        createdAt: new Date().toISOString(),
-        lastLogin: null
+        password: userData.password,
+        role: 'operador',
+        terminosCondiciones: userData.terminosCondiciones
+      })
+
+      const newUser = {
+        id: userId,
+        ...userDataFromFactory
       }
 
       // Guardar en la base de datos
