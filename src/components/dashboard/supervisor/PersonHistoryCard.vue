@@ -56,7 +56,6 @@
                 :title="item.raw.displayText"
                 class="persona-item"
                 rounded="lg"
-                @click="console.log('Item seleccionado:', item)"
               >
                 <template #prepend>
                   <v-avatar color="primary" size="48" class="elevation-2">
@@ -282,16 +281,13 @@ function abrirSelectorFecha(refName: string) {
       if (typeof nativeInput.showPicker === 'function') {
         try {
           nativeInput.showPicker()
-          console.log('✅ Selector de fecha abierto con showPicker()')
-        } catch (error) {
-          console.warn('⚠️ Error al abrir selector con showPicker():', error)
-          // Fallback: hacer focus y click
+        } catch {
+          // Fallback: hacer focus y click si showPicker() falla
           nativeInput.focus()
           nativeInput.click()
         }
       } else {
         // Fallback para navegadores que no soportan showPicker()
-        console.log('ℹ️ showPicker() no disponible, usando focus + click')
         nativeInput.focus()
         nativeInput.click()
       }

@@ -79,15 +79,11 @@
 </template>
 
 <script setup lang="ts">
-import { ref, computed, watch } from 'vue'
+import { toRef } from 'vue'
 import CedulaAutocomplete from './CedulaAutocomplete.vue'
-import { useAutocomplete } from '@/composables/useAutocomplete'
+import { useCedulaAutocomplete } from '@/composables/useCedulaAutocomplete'
 import type { DatosAcompanante } from '@/stores/registro'
 import type { PersonaConocida } from '@/services/autocompleteService'
-
-interface AutocompleteItem extends PersonaConocida {
-  displayText: string
-}
 
 interface Props {
   acompanante: DatosAcompanante
@@ -106,58 +102,27 @@ interface Emits {
 const props = defineProps<Props>()
 const emit = defineEmits<Emits>()
 
-// ✅ REUTILIZAR: Composable de autocomplete (misma lógica que DatosPersonalesSection)
-const { sugerenciasCedula, buscando, buscarPorCedula, limpiarSugerencias } = useAutocomplete()
-
-// Estado local
-const personaSeleccionada = ref<AutocompleteItem | null>(null)
-const cedulaBusqueda = ref('')
-
 // Constantes
 const destinos = ['IRCCA', 'Ligeral', 'Simbiosys', 'Jabelor', 'Otra']
 
-// ✅ REUTILIZAR: Mapeo de sugerencias (misma lógica)
-const sugerenciasMapeadas = computed<AutocompleteItem[]>(() => {
-  return sugerenciasCedula.value.map(persona => ({
-    ...persona,
-    displayText: `${persona.nombre} ${persona.apellido} (${persona.cedula})`
-  }))
-})
-
-/**
- * ✅ REUTILIZAR: Watch para búsqueda automática (misma lógica que DatosPersonalesSection)
- */
-watch(cedulaBusqueda, async (newValue) => {
-  // Actualizar cédula en el formulario padre
-  emit('update:cedula', newValue)
-  
-  // Buscar sugerencias si hay al menos 1 dígito
-  if (newValue && newValue.length >= 1) {
-    await buscarPorCedula(newValue)
-  } else {
-    limpiarSugerencias()
+// ✅ NUEVO: Usar composable reutilizable con lógica completa de autocompletado
+const {
+  personaSeleccionada,
+  cedulaBusqueda,
+  buscando,
+  sugerenciasMapeadas,
+  autocompletarDatos
+} = useCedulaAutocomplete({
+  cedulaProp: toRef(() => props.acompanante.cedula),
+  onCedulaUpdate: (cedula) => emit('update:cedula', cedula),
+  onAutocompletar: (persona: PersonaConocida) => {
+    // Autocompletar todos los campos del acompañante
+    emit('update:cedula', persona.cedula)
+    emit('update:nombre', persona.nombre)
+    emit('update:apellido', persona.apellido)
+    emit('update:destino', persona.ultimoDestino)
   }
 })
-
-/**
- * Watch: Sincronizar cédula del padre con búsqueda local
- */
-watch(() => props.acompanante.cedula, (newValue) => {
-  if (newValue !== cedulaBusqueda.value) {
-    cedulaBusqueda.value = newValue
-  }
-})
-
-/**
- * ✅ REUTILIZAR: Autocompletar datos (misma lógica que DatosPersonalesSection)
- */
-const autocompletarDatos = (persona: PersonaConocida) => {
-  // Autocompletar todos los campos del acompañante
-  emit('update:cedula', persona.cedula)
-  emit('update:nombre', persona.nombre)
-  emit('update:apellido', persona.apellido)
-  emit('update:destino', persona.ultimoDestino)
-}
 
 // Reglas de validación
 const nombreRules = [

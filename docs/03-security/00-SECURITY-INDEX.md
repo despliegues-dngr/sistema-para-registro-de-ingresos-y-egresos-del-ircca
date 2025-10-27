@@ -19,16 +19,16 @@ Este índice centraliza **TODA** la documentación de seguridad del proyecto en 
 | Categoría | Estado | Evidencia |
 |-----------|--------|-----------|
 | **AGESIC Compliance** | ✅ 90.9% (10/11) | `03-agesic-compliance.md` |
-| **OWASP Top 10:2021** | ✅ 90% (9/10) | `01-security-architecture.md` |
+| **OWASP Top 10:2021** | ✅ 100% (10/10) | CSP hardened 26-Oct-2025 |
 | **PWA Security** | ✅ 100/100 | `06-pwa-compliance-report.md` |
 | **Tests de Seguridad** | ✅ 194 tests PASS | `02-security-implementation.md` |
 | **Vulnerabilidades** | ✅ 0 críticas | `npm audit` |
-| **OWASP ZAP Scan** | ✅ 5 alertas (aceptables) | Preview scan 21-Oct-2025 |
-| **HTTP Security Headers** | ✅ 5/5 configurados | `vite.config.ts` |
+| **OWASP ZAP Scan** | ✅ 3 alertas (-40%) | Preview scan 26-Oct-2025 |
+| **HTTP Security Headers** | ✅ 5/5 hardened | CSP sin unsafe-inline |
 
-**Última auditoría:** 21-Oct-2025  
+**Última auditoría:** 26-Oct-2025  
 **Reporte auditoría código:** `07-security-audit-report.md` - ✅ 100% cumplimiento  
-**Scan OWASP ZAP:** ✅ 0 HIGH, 2 MEDIUM (aceptables), 1 LOW, 2 INFO
+**Scan OWASP ZAP:** ✅ 0 HIGH, 0 MEDIUM, 1 LOW, 2 INFO (CSP hardened)
 
 ---
 

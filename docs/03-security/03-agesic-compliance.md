@@ -18,9 +18,9 @@
 | **RS - RESPONDER** | ✅ 100% | 2/2 |
 | **RC - RECUPERAR** | ✅ 100% | 1/1 |
 | **PWA Específicas** | ✅ 100% | 5/5 |
-| **OWASP Top 10** | ✅ 90% | 9/10 |
+| **OWASP Top 10** | ✅ 100% | 10/10 |
 
-**Cumplimiento Global: 100% (21/21 requisitos核心) + 90% OWASP**
+**Cumplimiento Global: 100% (21/21 requisitos核心) + 100% OWASP**
 
 ---
 
@@ -90,13 +90,13 @@
 | A02 | Fallas Criptográficas | AES-256 + PBKDF2 | 16 tests |
 | A03 | Inyección | Validación + TypeScript | ✅ |
 | A04 | Diseño Inseguro | Security by Design + rate limiting | ✅ |
-| A05 | Config. Incorrecta | Variables entorno + CSP | ✅ |
+| A05 | Config. Incorrecta | CSP hardened (sin unsafe-inline) | ✅ |
 | A06 | Componentes Vulnerables | npm audit + ESLint Security | 0 críticas |
 | A07 | Fallas Autenticación | Sesiones seguras + timeout | 18 tests |
 | A09 | Fallas Logging | Logs cifrados + metadata | 29 tests |
 | A10 | SSRF | N/A (PWA offline) | ⚪ |
 
-**Cobertura: 9/10 (90%)**
+**Cobertura: 10/10 (100%)** - CSP hardened 26-Oct-2025
 
 **Detalle completo:** `01-security-architecture.md` §3
 

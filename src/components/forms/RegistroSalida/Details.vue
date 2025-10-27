@@ -166,7 +166,7 @@ const getVehiculoInfo = (cedula: string) => {
   return registro?.datosVehiculo || null
 }
 
-const getAcompanantesData = (cedulaTitular: string) => {
+const getAcompanantesData = (cedulaTitular: string): PersonaDentro[] => {
   const registroTitular = registroStore.registrosRaw.find(r =>
     r.tipo === 'ingreso' &&
     (r as RegistroIngreso).datosPersonales?.cedula === cedulaTitular
@@ -176,13 +176,15 @@ const getAcompanantesData = (cedulaTitular: string) => {
     return []
   }
 
-  return registroTitular.acompanantes.map((acomp: DatosAcompanante) => ({
+  return registroTitular.acompanantes.map((acomp: DatosAcompanante): PersonaDentro => ({
     cedula: acomp.cedula,
     nombre: acomp.nombre,
     apellido: acomp.apellido,
     destino: acomp.destino,
     ingresoTimestamp: new Date(registroTitular.timestamp),
-    conVehiculo: false
+    conVehiculo: !!registroTitular.datosVehiculo,
+    tipoVehiculo: registroTitular.datosVehiculo?.tipo,
+    esAcompanante: true
   }))
 }
 

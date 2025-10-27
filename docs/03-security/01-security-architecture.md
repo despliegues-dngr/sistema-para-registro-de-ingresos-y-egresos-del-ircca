@@ -277,7 +277,52 @@ if (!authStore.isAdmin) {
 }
 ```
 
-### 3.4 Checklist de Desarrollo
+### 3.4 Content Security Policy (CSP)
+
+**Configuración Actual (26-Oct-2025):**
+
+```typescript
+// vite.config.ts
+'Content-Security-Policy': 
+  "script-src 'self';                          // ✅ SIN unsafe-inline (seguro)
+   style-src 'self' 'unsafe-inline' ...;       // ⚠️ CON unsafe-inline (necesario)"
+```
+
+**Análisis de Riesgo: `unsafe-inline` en `style-src`**
+
+| Aspecto | Evaluación | Justificación |
+|---------|------------|---------------|
+| **Riesgo Teórico** | ⚠️ MEDIO | Permite CSS injection |
+| **Riesgo Real (Offline)** | 🟢 NULO | Sin conexión = sin exfiltración |
+| **Necesidad Técnica** | ✅ ALTA | Requerido por Vuetify 3 |
+| **Impacto Seguridad** | 🟢 BAJO | `script-src` seguro (lo crítico) |
+
+**¿Por Qué Es Seguro en Nuestro Contexto?**
+
+1. **Deployment Offline:** App corre en tablet sin conexión a internet
+   - ❌ No hay vectores de ataque remotos (XSS reflejado)
+   - ❌ No hay exfiltración posible (CSS injection sin efecto)
+   - ❌ No hay MITM attacks (localhost)
+
+2. **`script-src` Protegido:** Sin `unsafe-inline` en scripts
+   - ✅ Bloquea ejecución de JavaScript inline
+   - ✅ Previene XSS (vulnerabilidad crítica)
+   - ✅ Protege contra código malicioso
+
+3. **Impacto Limitado de CSS Injection:**
+   - ⚠️ Peor caso: Modificar apariencia visual
+   - ✅ NO puede ejecutar código
+   - ✅ NO puede robar datos
+   - ✅ NO puede modificar comportamiento
+
+**Decisión:** Mantener `unsafe-inline` en `style-src` es **apropiado y seguro** para este sistema.
+
+**Alternativa Rechazada:** Usar hashes SHA256 para cada estilo
+- ❌ Complejidad alta (mantener lista de hashes)
+- ❌ Incompatible con estilos dinámicos de Vuetify
+- ✅ Beneficio: NULO (riesgo ya es bajo en offline)
+
+### 3.5 Checklist de Desarrollo
 
 ```
 [ ] Usar PBKDF2 para contraseñas (nunca texto plano)
@@ -286,7 +331,8 @@ if (!authStore.isAdmin) {
 [ ] Sanitizar datos antes de mostrar en UI
 [ ] Usar TypeScript strict mode
 [ ] Evitar eval() y innerHTML
-[ ] Implementar CSP (Content Security Policy)
+[ ] Mantener script-src SIN unsafe-inline (crítico)
+[ ] Validar que style-src con unsafe-inline es necesario
 ```
 
 ---

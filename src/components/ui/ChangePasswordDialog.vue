@@ -84,9 +84,11 @@ const onSubmit = async (passwordData: {
 
     const successMessage = 'Contraseña cambiada exitosamente.'
     emit('success', successMessage)
-    message.value = successMessage // ✅ MOSTRAR mensaje igual que perfil
-    isSuccess.value = true // ✅ Marcar como exitoso para cambiar botones
-    // ✅ NO cerrar modal para que usuario vea el mensaje
+    
+    // ✅ Cerrar modal automáticamente tras éxito (fix bug)
+    setTimeout(() => {
+      closeDialog()
+    }, 1500) // Esperar 1.5s para que usuario vea el mensaje de éxito en el snackbar
 
   } catch (error: unknown) {
     console.error('Error al cambiar contraseña:', error)

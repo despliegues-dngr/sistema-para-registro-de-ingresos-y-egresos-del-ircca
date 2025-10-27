@@ -175,27 +175,13 @@ const registroStore = useRegistroStore()
 // --- Computed bidireccional para v-model:search ---
 
 const searchModel = computed({
-  get: () => {
-    console.log('🔍 [SearchBar] GET search:', props.search)
-    console.log('📊 [SearchBar] Items disponibles:', props.items.length)
-    return props.search
-  },
-  set: (value: string) => {
-    console.log('⌨️ [SearchBar] SET search:', value)
-    console.log('📋 [SearchBar] Items en SET:', props.items)
-    emit('update:search', value)
-  }
+  get: () => props.search,
+  set: (value: string) => emit('update:search', value)
 })
 
-// --- Event handlers with logging ---
+// --- Event handlers ---
 
 const handleModelValueUpdate = (value: SearchItem | null) => {
-  console.log('🎯 [SearchBar] Selección cambió:', value)
-  if (value) {
-    console.log('✅ [SearchBar] Persona seleccionada:', value.persona.nombre, value.persona.cedula)
-  } else {
-    console.log('❌ [SearchBar] Selección limpiada')
-  }
   emit('update:modelValue', value)
 }
 

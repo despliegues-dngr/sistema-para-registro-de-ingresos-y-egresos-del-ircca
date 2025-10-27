@@ -75,18 +75,13 @@
 </template>
 
 <script setup lang="ts">
-import { ref, computed, watch } from 'vue'
-import { useDebounceFn } from '@vueuse/core'
+import { computed, toRef } from 'vue'
 import FormSection from '@/components/forms/FormSection.vue'
 import CedulaAutocomplete from './CedulaAutocomplete.vue'
-import { useAutocomplete } from '@/composables/useAutocomplete'
+import { useCedulaAutocomplete } from '@/composables/useCedulaAutocomplete'
 import { useAppStore } from '@/stores/app'
 import type { DatosPersonales, DatosVisita } from '@/stores/registro'
 import type { PersonaConocida } from '@/services/autocompleteService'
-
-interface AutocompleteItem extends PersonaConocida {
-  displayText: string
-}
 
 interface Props {
   datosPersonales: DatosPersonales
@@ -108,22 +103,35 @@ const emit = defineEmits<Emits>()
 
 // Composables
 const appStore = useAppStore()
-const { sugerenciasCedula, buscando, buscarPorCedula, limpiarSugerencias } = useAutocomplete()
 
-// Estado local
-const personaSeleccionada = ref<AutocompleteItem | null>(null)
-const cedulaBusqueda = ref('')
-const isAutocompletando = ref(false) // Flag para evitar búsqueda durante autocompletado
-
-// ⭐ NUEVO: Destinos dinámicos desde el store (reactivo)
+// ⭐ Destinos dinámicos desde el store (reactivo)
 const destinos = computed(() => appStore.config.destinos)
 
-// Computed: Mapear sugerencias a formato del autocomplete
-const sugerenciasMapeadas = computed<AutocompleteItem[]>(() => {
-  return sugerenciasCedula.value.map(persona => ({
-    ...persona,
-    displayText: `${persona.nombre} ${persona.apellido} (${persona.cedula})`
-  }))
+// ✅ NUEVO: Usar composable reutilizable con lógica completa de autocompletado
+const {
+  personaSeleccionada,
+  cedulaBusqueda,
+  buscando,
+  sugerenciasMapeadas,
+  autocompletarDatos
+} = useCedulaAutocomplete({
+  cedulaProp: toRef(() => props.datosPersonales.cedula),
+  onCedulaUpdate: (cedula) => emit('update:cedula', cedula),
+  onAutocompletar: (persona: PersonaConocida) => {
+    // Autocompletar todos los campos del titular
+    emit('update:cedula', persona.cedula)
+    emit('update:nombre', persona.nombre)
+    emit('update:apellido', persona.apellido)
+    emit('update:destino', persona.ultimoDestino)
+    
+    // ✅ Siempre emitir evento de vehículo (con datos o vacío)
+    if (persona.ultimoVehiculo) {
+      emit('update:vehiculo', persona.ultimoVehiculo)
+    } else {
+      // Limpiar vehículo si la persona no tiene uno registrado
+      emit('update:vehiculo', { tipo: '', matricula: '' })
+    }
+  }
 })
 
 // Reglas de validación
@@ -140,70 +148,4 @@ const apellidoRules = [
 const requiredRules = [
   (v: string) => !!v || 'Este campo es requerido',
 ]
-
-/**
- * ⚡ OPTIMIZACIÓN: Debounce para emit de cédula (evita re-renders innecesarios)
- */
-const debouncedEmitCedula = useDebounceFn((value: string) => {
-  emit('update:cedula', value)
-}, 150)
-
-/**
- * Watch: Buscar personas conocidas mientras escribe la cédula
- */
-watch(cedulaBusqueda, async (newValue) => {
-  // ⚡ Actualizar cédula con debounce para evitar lag
-  debouncedEmitCedula(newValue)
-  
-  // ✅ No buscar si estamos autocompletando (evita re-búsqueda)
-  if (isAutocompletando.value) {
-    return
-  }
-  
-  // Buscar sugerencias si hay al menos 1 dígito
-  if (newValue && newValue.length >= 1) {
-    await buscarPorCedula(newValue)
-  } else {
-    limpiarSugerencias()
-  }
-})
-
-/**
- * Watch: Sincronizar cédula del padre con búsqueda local
- */
-watch(() => props.datosPersonales.cedula, (newValue) => {
-  if (newValue !== cedulaBusqueda.value) {
-    cedulaBusqueda.value = newValue
-  }
-})
-
-/**
- * Autocompletar datos cuando se selecciona una persona conocida
- */
-const autocompletarDatos = (persona: PersonaConocida) => {
-  // ✅ Activar flag para evitar búsqueda durante autocompletado
-  isAutocompletando.value = true
-  
-  // Autocompletar todos los campos
-  emit('update:cedula', persona.cedula)
-  emit('update:nombre', persona.nombre)
-  emit('update:apellido', persona.apellido)
-  emit('update:destino', persona.ultimoDestino)
-  
-  // ✅ Siempre emitir evento de vehículo (con datos o vacío)
-  if (persona.ultimoVehiculo) {
-    emit('update:vehiculo', persona.ultimoVehiculo)
-  } else {
-    // Limpiar vehículo si la persona no tiene uno registrado
-    emit('update:vehiculo', { tipo: '', matricula: '' })
-  }
-  
-  // Limpiar sugerencias después de seleccionar
-  limpiarSugerencias()
-  
-  // ✅ Desactivar flag después de un breve delay
-  setTimeout(() => {
-    isAutocompletando.value = false
-  }, 100)
-}
 </script>

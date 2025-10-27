@@ -30,13 +30,11 @@ export function usePersonaAutocomplete() {
    * displayText = nombre completo con cédula (lo que se muestra en el campo cuando se selecciona)
    */
   const sugerenciasFormateadas = computed(() => {
-    const formatted = sugerenciasCedula.value.map((persona: PersonaConocida) => ({
+    return sugerenciasCedula.value.map((persona: PersonaConocida) => ({
       displayText: `${persona.nombre} ${persona.apellido} (${persona.cedula})`,
       persona: persona,
       searchText: persona.cedula
     }))
-    console.log('📊 Sugerencias formateadas:', formatted)
-    return formatted
   })
 
   /**

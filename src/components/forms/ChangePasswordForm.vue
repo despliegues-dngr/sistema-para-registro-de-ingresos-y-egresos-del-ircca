@@ -79,8 +79,17 @@
           autocomplete="new-password"
           @click:append-inner="showConfirmPassword = !showConfirmPassword"
           :disabled="loading"
+          :color="passwordMatchColor"
+          :hint="passwordMatchHint"
+          :persistent-hint="formData.confirmPassword.length > 0"
           validate-on="blur"
-        />
+        >
+          <template #append v-if="passwordMatchIcon">
+            <v-icon :color="passwordMatchColor" size="small" class="mr-2">
+              {{ passwordMatchIcon }}
+            </v-icon>
+          </template>
+        </v-text-field>
       </v-col>
     </v-row>
 
@@ -140,6 +149,27 @@ const formData = ref({
 const showCurrentPassword = ref(false)
 const showNewPassword = ref(false)
 const showConfirmPassword = ref(false)
+
+// Computed para validación visual en tiempo real de contraseñas
+const passwordsMatch = computed(() => {
+  if (!formData.value.confirmPassword) return null
+  return formData.value.newPassword === formData.value.confirmPassword
+})
+
+const passwordMatchColor = computed(() => {
+  if (passwordsMatch.value === null) return 'primary'
+  return passwordsMatch.value ? 'success' : 'error'
+})
+
+const passwordMatchIcon = computed(() => {
+  if (passwordsMatch.value === null) return ''
+  return passwordsMatch.value ? 'mdi-check-circle' : 'mdi-alert-circle'
+})
+
+const passwordMatchHint = computed(() => {
+  if (passwordsMatch.value === null) return ''
+  return passwordsMatch.value ? '✓ Las contraseñas coinciden' : '✗ Las contraseñas no coinciden'
+})
 
 // Constantes
 const PASSWORD_MIN_LENGTH = AUTH_CONFIG.PASSWORD_MIN_LENGTH

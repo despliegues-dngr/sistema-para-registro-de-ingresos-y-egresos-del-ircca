@@ -83,6 +83,8 @@ export interface PersonaDentro {
   ingresoTimestamp: Date
   destino: string
   conVehiculo: boolean
+  tipoVehiculo?: string // 'Auto' | 'Moto' | 'Camión' | 'Bus' - Solo si conVehiculo = true
+  esAcompanante: boolean // true si es acompañante, false si es titular
 }
 
 // Interfaces para compatibilidad con tests (estructura simplificada)
@@ -171,11 +173,13 @@ export const useRegistroStore = defineStore('registro', () => {
           apellido: datos.datosPersonales.apellido,
           ingresoTimestamp: result.registro.timestamp,
           destino: datos.datosVisita.destino,
-          conVehiculo: !!datos.datosVehiculo
+          conVehiculo: !!datos.datosVehiculo,
+          tipoVehiculo: datos.datosVehiculo?.tipo,
+          esAcompanante: false // Titular
         }
         personasDentro.value.push(nuevaPersona)
         
-        // Agregar acompañantes si los hay
+        // Agregar acompañantes si los hay (heredan vehículo del titular)
         if (datos.acompanantes) {
           for (const acompanante of datos.acompanantes) {
             const nuevoAcompanante: PersonaDentro = {
@@ -184,7 +188,9 @@ export const useRegistroStore = defineStore('registro', () => {
               apellido: acompanante.apellido,
               ingresoTimestamp: result.registro.timestamp,
               destino: acompanante.destino,
-              conVehiculo: false
+              conVehiculo: !!datos.datosVehiculo, // Heredan vehículo del titular
+              tipoVehiculo: datos.datosVehiculo?.tipo,
+              esAcompanante: true // Es acompañante
             }
             personasDentro.value.push(nuevoAcompanante)
           }
@@ -336,11 +342,7 @@ export const useRegistroStore = defineStore('registro', () => {
    * Busca personas dentro del predio
    */
   function buscarPersonasDentro(termino: string): PersonaDentro[] {
-    console.log('🔍 [Store] buscarPersonasDentro llamado con término:', termino)
-    console.log('📊 [Store] Total personas dentro:', personasDentro.value.length)
-    const resultados = search.searchPersonasDentro(personasDentro.value, termino)
-    console.log('📋 [Store] Resultados de búsqueda:', resultados.length)
-    return resultados
+    return search.searchPersonasDentro(personasDentro.value, termino)
   }
 
   /**
@@ -479,27 +481,31 @@ export const useRegistroStore = defineStore('registro', () => {
       
       if (!tieneSalida) {
         // Añadir persona principal
-        const personaPrincipal = {
+        const personaPrincipal: PersonaDentro = {
           cedula: ingreso.datosPersonales.cedula,
           nombre: ingreso.datosPersonales.nombre,
           apellido: ingreso.datosPersonales.apellido,
           ingresoTimestamp: ingreso.timestamp,
           destino: ingreso.datosVisita.destino,
-          conVehiculo: !!ingreso.datosVehiculo
+          conVehiculo: !!ingreso.datosVehiculo,
+          tipoVehiculo: ingreso.datosVehiculo?.tipo,
+          esAcompanante: false // Titular
         }
         
         personasDentro.value.push(personaPrincipal)
         
-        // Añadir acompañantes
+        // Añadir acompañantes (heredan vehículo del titular)
         if (ingreso.acompanantes && ingreso.acompanantes.length > 0) {
           for (const acompanante of ingreso.acompanantes) {
-            const acompanantePersona = {
+            const acompanantePersona: PersonaDentro = {
               cedula: acompanante.cedula,
               nombre: acompanante.nombre,
               apellido: acompanante.apellido,
               ingresoTimestamp: ingreso.timestamp,
               destino: acompanante.destino,
-              conVehiculo: false
+              conVehiculo: !!ingreso.datosVehiculo, // Heredan vehículo del titular
+              tipoVehiculo: ingreso.datosVehiculo?.tipo,
+              esAcompanante: true // Es acompañante
             }
             
             personasDentro.value.push(acompanantePersona)

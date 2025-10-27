@@ -10,11 +10,12 @@ import { VitePWA } from 'vite-plugin-pwa'
 // https://vite.dev/config/
 export default defineConfig(({ mode }) => {
   const isProduction = mode === 'production'
-  
-  // Security Headers - OWASP ZAP Scan Compliance (Actualizado: 22-Oct-2025)
+
+  // Security Headers - OWASP ZAP Scan Compliance (Actualizado: 26-Oct-2025)
   const securityHeaders = {
-    // ✅ CSP optimizado: permite Google Fonts y Material Design Icons (base64) manteniendo seguridad OWASP
-    'Content-Security-Policy': "default-src 'self'; script-src 'self' 'unsafe-inline'; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; img-src 'self' data: blob:; font-src 'self' data: https://fonts.gstatic.com; connect-src 'self' https://fonts.googleapis.com https://fonts.gstatic.com; form-action 'self'; frame-ancestors 'none'; base-uri 'self';",
+    // ⚠️ CSP: unsafe-inline SOLO en style-src (requerido por Vuetify 3)
+    // ✅ script-src SIN unsafe-inline (seguridad XSS mantenida)
+    'Content-Security-Policy': "default-src 'self'; script-src 'self'; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; img-src 'self' data: blob:; font-src 'self' data: https://fonts.gstatic.com; connect-src 'self' https://fonts.googleapis.com https://fonts.gstatic.com; form-action 'self'; frame-ancestors 'none'; base-uri 'self';",
     'X-Frame-Options': 'DENY',
     'X-Content-Type-Options': 'nosniff',
     'Referrer-Policy': 'strict-origin-when-cross-origin',
@@ -35,14 +36,14 @@ export default defineConfig(({ mode }) => {
       port: 4173,
       headers: securityHeaders
     },
-    
+
     // Variables globales para Vercel
     define: {
       __APP_ENV__: JSON.stringify(process.env.VITE_VERCEL_ENV || mode),
       __VERCEL_URL__: JSON.stringify(process.env.VITE_VERCEL_URL || ''),
       __PRODUCTION_URL__: JSON.stringify(process.env.VITE_VERCEL_PROJECT_PRODUCTION_URL || ''),
     },
-    
+
     // Configuración de build optimizada para Vercel
     build: {
       target: 'es2022',
@@ -55,13 +56,13 @@ export default defineConfig(({ mode }) => {
           manualChunks: {
             // Core framework - cargado siempre (todos los usuarios)
             vendor: ['vue', 'vue-router', 'pinia'],
-            
+
             // UI framework - cargado siempre (todos los usuarios)
             vuetify: ['vuetify'],
-            
+
             // Utilidades básicas - cargado siempre
             utils: ['@vueuse/core'],
-            
+
             // 🆕 PDF libraries - lazy load solo para Supervisores (~220 KB)
             // Evita que Operadores (80% usuarios) descarguen código que no usan
             'pdf-libs': ['jspdf', 'jspdf-autotable']
@@ -69,7 +70,7 @@ export default defineConfig(({ mode }) => {
         }
       }
     },
-    
+
     plugins: [
       vue(),
       vueJsx(),
@@ -148,13 +149,13 @@ export default defineConfig(({ mode }) => {
         }
       })
     ],
-    
+
     resolve: {
       alias: {
         '@': fileURLToPath(new URL('./src', import.meta.url))
       },
     },
-    
+
     // Optimizaciones adicionales
     esbuild: {
       // ⚠️ TEMPORALMENTE deshabilitado para debugging de persistencia

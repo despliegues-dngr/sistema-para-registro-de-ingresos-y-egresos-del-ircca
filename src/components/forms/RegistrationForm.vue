@@ -133,9 +133,18 @@
       spellcheck="false"
       :readonly="false"
       @click:append-inner="showConfirmPassword = !showConfirmPassword"
+      :color="passwordMatchColor"
+      :hint="passwordMatchHint"
+      :persistent-hint="userData.confirmPassword.length > 0"
       hide-details="auto"
       validate-on="blur"
-    />
+    >
+      <template #append v-if="passwordMatchIcon">
+        <v-icon :color="passwordMatchColor" size="small" class="mr-2">
+          {{ passwordMatchIcon }}
+        </v-icon>
+      </template>
+    </v-text-field>
 
     <!-- Términos y Condiciones -->
     <div class="terms-section mb-6">
@@ -196,7 +205,7 @@
 </template>
 
 <script setup lang="ts">
-import { ref } from 'vue'
+import { ref, computed } from 'vue'
 import { ICONS, MESSAGES, VALIDATION_PATTERNS } from '@/config/constants'
 import TermsAndConditionsDialog from '@/components/ui/TermsAndConditionsDialog.vue'
 
@@ -230,6 +239,27 @@ const formValid = ref(false)
 const showPassword = ref(false)
 const showConfirmPassword = ref(false)
 const showTermsDialog = ref(false)
+
+// Computed para validación visual en tiempo real
+const passwordsMatch = computed(() => {
+  if (!userData.value.confirmPassword) return null
+  return userData.value.password === userData.value.confirmPassword
+})
+
+const passwordMatchColor = computed(() => {
+  if (passwordsMatch.value === null) return 'primary'
+  return passwordsMatch.value ? 'success' : 'error'
+})
+
+const passwordMatchIcon = computed(() => {
+  if (passwordsMatch.value === null) return ''
+  return passwordsMatch.value ? 'mdi-check-circle' : 'mdi-alert-circle'
+})
+
+const passwordMatchHint = computed(() => {
+  if (passwordsMatch.value === null) return ''
+  return passwordsMatch.value ? '✓ Las contraseñas coinciden' : '✗ Las contraseñas no coinciden'
+})
 
 const userData = ref({
   cedula: '',
