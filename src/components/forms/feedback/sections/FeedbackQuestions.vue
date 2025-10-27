@@ -1,9 +1,9 @@
 <template>
   <v-card-text class="px-6 py-4" style="max-height: 500px; overflow-y: auto;">
-    <!-- Pregunta 0: Rating General -->
-    <div class="mb-6">
-      <label class="text-subtitle-1 font-weight-bold mb-2 d-block">
-        1. ¿Cómo calificarías tu experiencia general con el sistema?
+    <!-- Rating General -->
+    <div class="mb-5">
+      <label class="text-subtitle-1 font-weight-bold mb-3 d-block">
+        ¿Cómo calificarías tu experiencia general con el sistema?
         <span class="text-error">*</span>
       </label>
       <v-rating
@@ -23,15 +23,11 @@
 
     <v-divider class="my-4" />
 
-    <!-- Preguntas Específicas -->
-    <p class="text-subtitle-2 font-weight-bold mb-4">
-      Califica los siguientes aspectos (1 = Muy malo, 5 = Excelente):
-    </p>
-
-    <!-- Pregunta 1: Velocidad -->
+    <!-- Velocidad -->
     <div class="mb-4">
       <label class="text-body-2 font-weight-medium mb-2 d-block">
-        2. ¿Qué tan rápido es el sistema para registrar ingresos/salidas?
+        <v-icon size="small" class="mr-1" color="primary">mdi-speedometer</v-icon>
+        ¿Qué tan rápido es el sistema para registrar ingresos/salidas?
         <span class="text-error">*</span>
       </label>
       <v-slider
@@ -49,10 +45,11 @@
       />
     </div>
 
-    <!-- Pregunta 2: Facilidad -->
+    <!-- Facilidad -->
     <div class="mb-4">
       <label class="text-body-2 font-weight-medium mb-2 d-block">
-        3. ¿Qué tan fácil es usar el sistema en tu trabajo diario?
+        <v-icon size="small" class="mr-1" color="primary">mdi-hand-okay</v-icon>
+        ¿Qué tan fácil es usar el sistema en tu trabajo diario?
         <span class="text-error">*</span>
       </label>
       <v-slider
@@ -70,15 +67,16 @@
       />
     </div>
 
-    <!-- Pregunta 3: Confiabilidad -->
+    <!-- Implementación -->
     <div class="mb-4">
       <label class="text-body-2 font-weight-medium mb-2 d-block">
-        4. ¿Qué tan confiable es el sistema cuando no hay internet?
+        <v-icon size="small" class="mr-1" color="primary">mdi-office-building</v-icon>
+        ¿Qué opinas de implementar este sistema en servicios similares como los portones de ingreso de la Colonia Berro y el INISA?
         <span class="text-error">*</span>
       </label>
       <v-slider
-        :model-value="formData.confiabilidadScore"
-        @update:model-value="emitConfiabilidad"
+        :model-value="formData.implementacionScore"
+        @update:model-value="emitImplementacion"
         :min="1"
         :max="5"
         :step="1"
@@ -91,31 +89,11 @@
       />
     </div>
 
-    <!-- Pregunta 4: Autocompletado -->
+    <!-- Impacto -->
     <div class="mb-4">
       <label class="text-body-2 font-weight-medium mb-2 d-block">
-        5. ¿Qué tan útil es el autocompletado para personas recurrentes?
-        <span class="text-error">*</span>
-      </label>
-      <v-slider
-        :model-value="formData.autocompletadoScore"
-        @update:model-value="emitAutocompletado"
-        :min="1"
-        :max="5"
-        :step="1"
-        :ticks="tickLabels"
-        show-ticks="always"
-        tick-size="4"
-        color="primary"
-        track-color="grey-lighten-2"
-        thumb-label
-      />
-    </div>
-
-    <!-- Pregunta 5: Impacto -->
-    <div class="mb-4">
-      <label class="text-body-2 font-weight-medium mb-2 d-block">
-        6. ¿Cuánto ha mejorado tu flujo de trabajo vs. planillas manuales?
+        <v-icon size="small" class="mr-1" color="primary">mdi-chart-line</v-icon>
+        ¿Cuánto ha mejorado tu flujo de trabajo vs. planillas manuales?
         <span class="text-error">*</span>
       </label>
       <v-slider
@@ -135,17 +113,18 @@
 
     <v-divider class="my-4" />
 
-    <!-- Comentarios opcionales -->
+    <!-- Comentarios al final -->
     <div class="mb-2">
       <label class="text-body-2 font-weight-medium mb-2 d-block">
-        7. ¿Qué podríamos mejorar? ¿Qué te gusta más? (Opcional)
+        <v-icon size="small" class="mr-1" color="primary">mdi-comment-text</v-icon>
+        ¿Qué podríamos mejorar? Recomendaciones (Opcional)
       </label>
       <v-textarea
         :model-value="formData.comentarios"
         @update:model-value="emitComentarios"
         placeholder="Tus comentarios nos ayudan a mejorar el sistema..."
         variant="outlined"
-        rows="3"
+        rows="4"
         counter="500"
         :maxlength="500"
         hide-details="auto"
@@ -159,8 +138,7 @@ interface FormData {
   rating: number
   velocidadScore: number
   facilidadScore: number
-  confiabilidadScore: number
-  autocompletadoScore: number
+  implementacionScore: number
   impactoScore: number
   comentarios: string
 }
@@ -173,8 +151,7 @@ const emit = defineEmits<{
   'update:rating': [value: number]
   'update:velocidad-score': [value: number]
   'update:facilidad-score': [value: number]
-  'update:confiabilidad-score': [value: number]
-  'update:autocompletado-score': [value: number]
+  'update:implementacion-score': [value: number]
   'update:impacto-score': [value: number]
   'update:comentarios': [value: string]
 }>()
@@ -183,8 +160,7 @@ const emit = defineEmits<{
 const emitRating = (value: string | number) => emit('update:rating', Number(value))
 const emitVelocidad = (value: string | number) => emit('update:velocidad-score', Number(value))
 const emitFacilidad = (value: string | number) => emit('update:facilidad-score', Number(value))
-const emitConfiabilidad = (value: string | number) => emit('update:confiabilidad-score', Number(value))
-const emitAutocompletado = (value: string | number) => emit('update:autocompletado-score', Number(value))
+const emitImplementacion = (value: string | number) => emit('update:implementacion-score', Number(value))
 const emitImpacto = (value: string | number) => emit('update:impacto-score', Number(value))
 const emitComentarios = (value: string) => emit('update:comentarios', value)
 

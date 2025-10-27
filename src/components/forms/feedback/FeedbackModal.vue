@@ -17,8 +17,7 @@
       @update:rating="formData.rating = $event"
       @update:velocidad-score="formData.velocidadScore = $event"
       @update:facilidad-score="formData.facilidadScore = $event"
-      @update:confiabilidad-score="formData.confiabilidadScore = $event"
-      @update:autocompletado-score="formData.autocompletadoScore = $event"
+      @update:implementacion-score="formData.implementacionScore = $event"
       @update:impacto-score="formData.impactoScore = $event"
       @update:comentarios="formData.comentarios = $event"
     />
@@ -63,7 +62,7 @@
 </template>
 
 <script setup lang="ts">
-import { ref, computed, reactive } from 'vue'
+import { ref, computed, reactive, watch } from 'vue'
 import { useAuthStore } from '@/stores/auth'
 import { useFeedback } from '@/composables/useFeedback'
 import { useAppStore } from '@/stores/app'
@@ -96,8 +95,7 @@ const formData = reactive({
   rating: 0,
   velocidadScore: 3,
   facilidadScore: 3,
-  confiabilidadScore: 3,
-  autocompletadoScore: 3,
+  implementacionScore: 3,
   impactoScore: 3,
   comentarios: ''
 })
@@ -115,8 +113,7 @@ const isFormValid = computed(() => {
   return formData.rating > 0 &&
          formData.velocidadScore > 0 &&
          formData.facilidadScore > 0 &&
-         formData.confiabilidadScore > 0 &&
-         formData.autocompletadoScore > 0 &&
+         formData.implementacionScore > 0 &&
          formData.impactoScore > 0
 })
 
@@ -134,8 +131,12 @@ const loadUserStats = async () => {
   }
 }
 
-// Cargar stats al montar
-loadUserStats()
+// Watch para recargar stats cuando se abre el modal
+watch(() => props.modelValue, (isOpen) => {
+  if (isOpen) {
+    loadUserStats()
+  }
+}, { immediate: true })
 
 /**
  * Maneja el envío de la encuesta
@@ -153,8 +154,7 @@ async function handleSubmit() {
       formData.rating,
       formData.velocidadScore,
       formData.facilidadScore,
-      formData.confiabilidadScore,
-      formData.autocompletadoScore,
+      formData.implementacionScore,
       formData.impactoScore,
       formData.comentarios || undefined
     )
@@ -209,8 +209,7 @@ function resetForm() {
   formData.rating = 0
   formData.velocidadScore = 3
   formData.facilidadScore = 3
-  formData.confiabilidadScore = 3
-  formData.autocompletadoScore = 3
+  formData.implementacionScore = 3
   formData.impactoScore = 3
   formData.comentarios = ''
 }

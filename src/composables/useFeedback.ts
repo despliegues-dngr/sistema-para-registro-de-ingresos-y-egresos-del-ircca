@@ -111,8 +111,7 @@ export function useFeedback() {
     rating: number,
     velocidadScore: number,
     facilidadScore: number,
-    confiabilidadScore: number,
-    autocompletadoScore: number,
+    implementacionScore: number,
     impactoScore: number,
     comentarios?: string
   ): Promise<{ success: boolean; error?: string }> {
@@ -139,8 +138,7 @@ export function useFeedback() {
         rating,
         velocidadScore,
         facilidadScore,
-        confiabilidadScore,
-        autocompletadoScore,
+        implementacionScore,
         impactoScore,
         comentarios,
         totalRegistrosAlMomento: usuario.totalRegistrosRealizados || 0,
@@ -169,8 +167,7 @@ export function useFeedback() {
           rating,
           velocidadScore,
           facilidadScore,
-          confiabilidadScore,
-          autocompletadoScore,
+          implementacionScore,
           impactoScore,
           totalRegistros: usuario.totalRegistrosRealizados,
           tieneComentarios: !!comentarios
@@ -219,8 +216,7 @@ export function useFeedback() {
         rating,
         velocidadScore: 3, // Valor por defecto para retrocompatibilidad
         facilidadScore: 3,
-        confiabilidadScore: 3,
-        autocompletadoScore: 3,
+        implementacionScore: 3,
         impactoScore: 3,
         comentarios,
         totalRegistrosAlMomento: usuario.totalRegistrosRealizados || 0,

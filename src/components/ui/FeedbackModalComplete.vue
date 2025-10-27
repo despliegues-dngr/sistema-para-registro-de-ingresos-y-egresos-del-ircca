@@ -26,8 +26,8 @@
           <template #prepend>
             <v-icon>mdi-information-outline</v-icon>
           </template>
-          Has realizado <strong>{{ totalRegistros }} registros</strong> en el sistema. 
-          Ayúdanos a mejorar compartiendo tu experiencia (toma ~2 minutos).
+          Has realizado <strong>{{ totalRegistros }} registros</strong> en el sistema.
+          Ayúdanos a mejorar compartiendo tu experiencia (toma 2 minutos).
         </v-alert>
 
         <!-- Pregunta 0: Rating General -->
@@ -105,14 +105,14 @@
           </v-slider>
         </div>
 
-        <!-- Pregunta 3: Confiabilidad -->
+        <!-- Pregunta 3: Implementación -->
         <div class="mb-4">
           <label class="text-body-2 font-weight-medium mb-2 d-block">
-            4. ¿Qué tan confiable es el sistema cuando no hay internet?
+            4. ¿Qué opinas de implementar este sistema en servicios similares como los portones de ingreso de la Colonia Berro y el INISA?
             <span class="text-error">*</span>
           </label>
           <v-slider
-            v-model="formData.confiabilidadScore"
+            v-model="formData.implementacionScore"
             :min="1"
             :max="5"
             :step="1"
@@ -129,34 +129,10 @@
           </v-slider>
         </div>
 
-        <!-- Pregunta 4: Autocompletado -->
+        <!-- Pregunta 4: Impacto -->
         <div class="mb-4">
           <label class="text-body-2 font-weight-medium mb-2 d-block">
-            5. ¿Qué tan útil es el autocompletado para personas recurrentes?
-            <span class="text-error">*</span>
-          </label>
-          <v-slider
-            v-model="formData.autocompletadoScore"
-            :min="1"
-            :max="5"
-            :step="1"
-            :ticks="tickLabels"
-            show-ticks="always"
-            tick-size="4"
-            color="primary"
-            track-color="grey-lighten-2"
-            thumb-label
-          >
-            <template #thumb-label="{ modelValue }">
-              {{ modelValue }}
-            </template>
-          </v-slider>
-        </div>
-
-        <!-- Pregunta 5: Impacto -->
-        <div class="mb-4">
-          <label class="text-body-2 font-weight-medium mb-2 d-block">
-            6. ¿Cuánto ha mejorado tu flujo de trabajo vs. planillas manuales?
+            5. ¿Cuánto ha mejorado tu flujo de trabajo vs. planillas manuales?
             <span class="text-error">*</span>
           </label>
           <v-slider
@@ -182,7 +158,7 @@
         <!-- Comentarios opcionales -->
         <div class="mb-2">
           <label class="text-body-2 font-weight-medium mb-2 d-block">
-            7. ¿Qué podríamos mejorar? ¿Qué te gusta más? (Opcional)
+            6. ¿Qué podríamos mejorar? Recomendaciones (Opcional)
           </label>
           <v-textarea
             v-model="formData.comentarios"
@@ -270,8 +246,7 @@ const formData = reactive({
   rating: 0,
   velocidadScore: 3,
   facilidadScore: 3,
-  confiabilidadScore: 3,
-  autocompletadoScore: 3,
+  implementacionScore: 3,
   impactoScore: 3,
   comentarios: ''
 })
@@ -289,8 +264,7 @@ const isFormValid = computed(() => {
   return formData.rating > 0 &&
          formData.velocidadScore > 0 &&
          formData.facilidadScore > 0 &&
-         formData.confiabilidadScore > 0 &&
-         formData.autocompletadoScore > 0 &&
+         formData.implementacionScore > 0 &&
          formData.impactoScore > 0
 })
 
@@ -306,7 +280,7 @@ const tickLabels: Record<number, string> = {
 // Cargar total de registros del usuario
 const loadUserStats = async () => {
   if (!authStore.user) return
-  
+
   try {
     const usuario = await db.getRecord('usuarios', authStore.user.id) as StoredUser | undefined
     if (usuario) {
@@ -354,8 +328,7 @@ async function handleSubmit() {
       formData.rating,
       formData.velocidadScore,
       formData.facilidadScore,
-      formData.confiabilidadScore,
-      formData.autocompletadoScore,
+      formData.implementacionScore,
       formData.impactoScore,
       formData.comentarios || undefined
     )
@@ -401,8 +374,7 @@ function resetForm() {
   formData.rating = 0
   formData.velocidadScore = 3
   formData.facilidadScore = 3
-  formData.confiabilidadScore = 3
-  formData.autocompletadoScore = 3
+  formData.implementacionScore = 3
   formData.impactoScore = 3
   formData.comentarios = ''
 }
@@ -437,7 +409,7 @@ function resetForm() {
   .v-card-actions {
     flex-direction: column;
   }
-  
+
   .v-card-actions .v-btn {
     width: 100%;
   }

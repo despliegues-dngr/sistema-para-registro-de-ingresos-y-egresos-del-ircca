@@ -12,8 +12,7 @@ export interface FeedbackEntry {
   // ✅ Preguntas específicas (escala 1-5)
   velocidadScore: number  // Velocidad y rendimiento
   facilidadScore: number  // Facilidad de uso
-  confiabilidadScore: number  // Confiabilidad offline
-  autocompletadoScore: number  // Utilidad del autocompletado
+  implementacionScore: number  // Opinión sobre implementación en otros servicios
   impactoScore: number  // Impacto en flujo de trabajo
   comentarios?: string  // Comentarios opcionales del usuario
   totalRegistrosAlMomento: number  // Cuántos registros tenía cuando completó
