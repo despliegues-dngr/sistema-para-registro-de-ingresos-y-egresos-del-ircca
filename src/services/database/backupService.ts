@@ -10,6 +10,14 @@ import type { BackupData } from './types'
 export class BackupService {
   private _db: ReturnType<typeof useDatabase> | null = null
   private sessionKey?: string
+  private masterKey: string
+
+  constructor() {
+    // 🔐 Usar clave maestra desde variable de entorno
+    // Fallback a clave por defecto si no está definida
+    this.masterKey = import.meta.env.VITE_BACKUP_MASTER_KEY || 'IRCCA_Sistema_MasterKey_2025_Secure'
+    console.log('🔐 [BACKUP SERVICE] Clave maestra configurada:', this.masterKey ? 'Sí' : 'No')
+  }
 
   /**
    * Getter lazy para db
@@ -23,6 +31,7 @@ export class BackupService {
 
   /**
    * Inicializa el servicio con la clave de sesión
+   * NOTA: sessionKey ya no se usa para cifrado, solo para compatibilidad
    */
   async initialize(sessionKey: string): Promise<void> {
     this.sessionKey = sessionKey
@@ -39,31 +48,47 @@ export class BackupService {
   }
 
   /**
-   * ✅ CREAR BACKUP CIFRADO
+   * ✅ CREAR BACKUP CIFRADO COMPLETO
+   * Incluye TODOS los stores críticos para restauración total
    */
   async createBackup(): Promise<{ success: boolean; error?: string; backupId?: string }> {
     this.ensureInitialized()
     try {
-      // Obtener todos los datos
+      // Obtener todos los datos de stores críticos
       const registros = (await this.db.getRecords('registros')) as unknown[]
       const usuarios = (await this.db.getRecords('usuarios')) as unknown[]
       const config = (await this.db.getRecords('configuracion')) as unknown[]
       const personasConocidas = (await this.db.getRecords('personasConocidas')) as unknown[]
+      const auditLogs = (await this.db.getRecords('audit_logs')) as unknown[]
+      const feedbackUsuarios = (await this.db.getRecords('feedback_usuarios')) as unknown[]
 
       const backupData = {
         registros,
         usuarios,
         config,
         personasConocidas,
+        auditLogs,
+        feedbackUsuarios,
         timestamp: new Date(),
-        version: '2.0', // Actualizado para incluir personasConocidas
+        version: '3.0', // ✅ v3.0: Backup completo con audit_logs + feedback_usuarios
+        dbVersion: 5, // Versión de la BD para validación
       }
 
-      // Cifrar backup completo
+      // Cifrar backup completo con CLAVE MAESTRA
+      console.log('🔐 [BACKUP CREATE] Cifrando backup con CLAVE MAESTRA')
+      console.log('🔐 [BACKUP CREATE] MasterKey:', this.masterKey)
       const encrypted = await encryptionService.encrypt(
         JSON.stringify(backupData), 
-        this.sessionKey!
+        this.masterKey  // ✅ Usar clave maestra en lugar de sessionKey
       )
+      console.log('🔐 [BACKUP CREATE] Resultado de encrypt:', {
+        hasEncrypted: !!encrypted.encrypted,
+        hasSalt: !!encrypted.salt,
+        hasIv: !!encrypted.iv,
+        encryptedLength: encrypted.encrypted?.length,
+        saltLength: encrypted.salt?.length,
+        ivLength: encrypted.iv?.length
+      })
 
       const backup = {
         id: crypto.randomUUID(),
@@ -72,6 +97,11 @@ export class BackupService {
         encrypted: true,
         size: JSON.stringify(backupData).length,
       }
+      console.log('💾 [BACKUP CREATE] Backup creado:', {
+        id: backup.id,
+        dataType: typeof backup.data,
+        dataKeys: typeof backup.data === 'object' ? Object.keys(backup.data) : 'N/A'
+      })
 
       const result = await this.db.addRecord('backups', backup)
 

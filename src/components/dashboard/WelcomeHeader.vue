@@ -55,6 +55,18 @@
                   <v-list-item-subtitle class="text-caption">Seguridad de cuenta</v-list-item-subtitle>
                 </v-list-item>
                 
+                <!-- Gestión de Backups (Solo Supervisor) -->
+                <v-list-item 
+                  v-if="authStore.user?.role === 'supervisor'"
+                  @click="showBackupModal = true" 
+                  prepend-icon="mdi-database-export"
+                  class="menu-item"
+                >
+                  <v-list-item-title class="font-weight-medium">Gestión de Backups</v-list-item-title>
+                  <v-list-item-subtitle class="text-caption">Exportar copias de seguridad</v-list-item-subtitle>
+                </v-list-item>
+                
+
                 <v-divider class="my-2 mx-3"></v-divider>
                 
                 <v-list-item 
@@ -103,11 +115,19 @@
       @success="handleProfileSuccess"
       @close="handleDialogClose"
     />
-
+    
     <ChangePasswordDialog
       v-model="showChangePassword"
       @success="handlePasswordSuccess"
       @close="handleDialogClose"
+    />
+
+    <!-- Modal de Gestión de Backups (Solo Supervisor) -->
+    <BackupManagementModal
+      v-if="authStore.user?.role === 'supervisor'"
+      v-model="showBackupModal"
+      @close="handleDialogClose"
+      @success="handleBackupSuccess"
     />
   </v-card>
 </template>
@@ -117,12 +137,14 @@ import { ref, computed, onMounted, onUnmounted } from 'vue'
 import { useAuthStore } from '@/stores/auth'
 import UserProfileDialog from '@/components/ui/UserProfileDialog.vue'
 import ChangePasswordDialog from '@/components/ui/ChangePasswordDialog.vue'
+import BackupManagementModal from '@/components/ui/BackupManagementModal.vue'
 
 const authStore = useAuthStore()
 
 // Estado de los modales
 const showViewProfile = ref(false)
 const showChangePassword = ref(false)
+const showBackupModal = ref(false)
 
 // Definir eventos que emite este componente
 const emit = defineEmits<{
@@ -135,6 +157,11 @@ const emit = defineEmits<{
 // Handler para logout
 const handleLogoutClick = () => {
   emit('logout')
+}
+
+// Handler para éxito de backup
+const handleBackupSuccess = (message: string) => {
+  console.log('Backup exitoso:', message)
 }
 
 // Estado reactivo para fecha y hora
