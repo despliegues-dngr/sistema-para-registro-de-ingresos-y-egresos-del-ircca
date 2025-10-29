@@ -204,9 +204,9 @@ watch(() => props.exportSuccess, (newVal) => {
 }
 
 .status-empty-hint {
-  margin-top: 0.5rem !important;
-  font-size: 0.85rem !important;
-  opacity: 0.75 !important;
+  margin-top: 0.5rem;
+  font-size: 0.85rem;
+  opacity: 0.75;
 }
 
 .btn-primary-large {

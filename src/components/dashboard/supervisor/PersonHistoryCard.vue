@@ -352,7 +352,7 @@ async function registrarExportacion() {
 }
 
 .persona-item:hover {
-  background-color: rgba(var(--v-theme-primary), 0.08) !important;
+  background-color: rgba(var(--v-theme-primary), 0.08);
   transform: translateX(4px);
 }
 

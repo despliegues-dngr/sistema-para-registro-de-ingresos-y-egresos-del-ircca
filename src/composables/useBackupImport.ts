@@ -103,7 +103,6 @@ export function useBackupImport() {
       }
 
       reader.onerror = (error) => {
-        console.error('❌ [BACKUP IMPORT] FileReader error:', error)
         reject(new Error(`Error al leer el archivo: ${error}`))
       }
 
@@ -115,17 +114,14 @@ export function useBackupImport() {
    * Limpia todos los stores antes de restaurar
    */
   const clearAllStores = async (): Promise<void> => {
-    console.log('🗑️ [BACKUP IMPORT] Limpiando todos los stores...')
     const stores = ['registros', 'usuarios', 'configuracion', 'personasConocidas', 'audit_logs', 'feedback_usuarios']
     
     for (const storeName of stores) {
       const records = await db.getRecords(storeName)
-      console.log(`🗑️ [BACKUP IMPORT] Limpiando store: ${storeName}, registros: ${records.length}`)
       for (const record of records as Array<{ id: string }>) {
         await db.deleteRecord(storeName, record.id)
       }
     }
-    console.log('✅ [BACKUP IMPORT] Todos los stores limpiados')
   }
 
   /**
@@ -313,16 +309,13 @@ export function useBackupImport() {
 
       // 5. Limpiar stores existentes si se solicita
       if (options.clearExisting) {
-        console.log('🗑️ [BACKUP IMPORT] Limpiando stores existentes...')
         appStore.addNotification('Limpiando datos existentes...', 'info')
         await clearAllStores()
       }
 
       // 6. Restaurar datos
-      console.log('🔄 [BACKUP IMPORT] Paso 4: Iniciando restauración...')
       appStore.addNotification('Restaurando datos...', 'info')
       await restoreData(content)
-      console.log('✅ [BACKUP IMPORT] Restauración completada exitosamente')
 
       appStore.addNotification(
         '¡Backup restaurado exitosamente! La aplicación se recargará.',
@@ -340,9 +333,6 @@ export function useBackupImport() {
       const errorMsg = error instanceof Error 
         ? `Error importando backup: ${error.message}` 
         : `Error importando backup: ${String(error)}`
-      
-      console.error('❌ [BACKUP IMPORT] Error capturado:', error)
-      console.error('❌ [BACKUP IMPORT] Stack trace:', error instanceof Error ? error.stack : 'N/A')
       
       appStore.addNotification('No se pudo importar el backup', 'error')
       return { success: false, error: errorMsg }

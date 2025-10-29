@@ -125,7 +125,7 @@
                       </template>
                       <v-list-item-title>{{ backup.fileName }}</v-list-item-title>
                       <v-list-item-subtitle>
-                        {{ new Date(backup.timestamp).toLocaleString() }} - 
+                        {{ new Date(backup.timestamp).toLocaleString() }} -
                         {{ (backup.size / 1024 / 1024).toFixed(2) }} MB
                       </v-list-item-subtitle>
                       <template #append>
@@ -242,7 +242,7 @@ onMounted(async () => {
 async function loadBackupsInfo() {
   const backups = await getBackupsInfo()
   backupsList.value = backups
-  
+
   if (backups.length > 0) {
     const latest = backups[0]
     lastBackupInfo.value = {
@@ -276,7 +276,7 @@ async function exportSpecificBackup(backupId: string) {
   exportingId.value = backupId
   const result = await exportBackup(backupId)
   exportingId.value = null
-  
+
   if (result.success) {
     appStore.addNotification('✅ Backup exportado exitosamente', 'success')
   } else {
@@ -291,6 +291,6 @@ async function exportSpecificBackup(backupId: string) {
 }
 
 .v-expansion-panel {
-  border-radius: 8px !important;
+  border-radius: 8px;
 }
 </style>

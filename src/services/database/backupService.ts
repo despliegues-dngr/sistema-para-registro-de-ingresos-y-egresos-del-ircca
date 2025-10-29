@@ -16,7 +16,6 @@ export class BackupService {
     // 🔐 Usar clave maestra desde variable de entorno
     // Fallback a clave por defecto si no está definida
     this.masterKey = import.meta.env.VITE_BACKUP_MASTER_KEY || 'IRCCA_Sistema_MasterKey_2025_Secure'
-    console.log('🔐 [BACKUP SERVICE] Clave maestra configurada:', this.masterKey ? 'Sí' : 'No')
   }
 
   /**
@@ -75,20 +74,10 @@ export class BackupService {
       }
 
       // Cifrar backup completo con CLAVE MAESTRA
-      console.log('🔐 [BACKUP CREATE] Cifrando backup con CLAVE MAESTRA')
-      console.log('🔐 [BACKUP CREATE] MasterKey:', this.masterKey)
       const encrypted = await encryptionService.encrypt(
         JSON.stringify(backupData), 
         this.masterKey  // ✅ Usar clave maestra en lugar de sessionKey
       )
-      console.log('🔐 [BACKUP CREATE] Resultado de encrypt:', {
-        hasEncrypted: !!encrypted.encrypted,
-        hasSalt: !!encrypted.salt,
-        hasIv: !!encrypted.iv,
-        encryptedLength: encrypted.encrypted?.length,
-        saltLength: encrypted.salt?.length,
-        ivLength: encrypted.iv?.length
-      })
 
       const backup = {
         id: crypto.randomUUID(),
@@ -97,11 +86,6 @@ export class BackupService {
         encrypted: true,
         size: JSON.stringify(backupData).length,
       }
-      console.log('💾 [BACKUP CREATE] Backup creado:', {
-        id: backup.id,
-        dataType: typeof backup.data,
-        dataKeys: typeof backup.data === 'object' ? Object.keys(backup.data) : 'N/A'
-      })
 
       const result = await this.db.addRecord('backups', backup)
 

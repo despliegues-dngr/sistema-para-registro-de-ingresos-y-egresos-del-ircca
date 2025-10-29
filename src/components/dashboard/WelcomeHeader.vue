@@ -88,11 +88,17 @@
           </div>
         </div>
 
-        <!-- Derecha: Fecha -->
+        <!-- Derecha: Control de Brillo + Fecha -->
         <div class="text-right">
-          <div class="d-flex align-center justify-end">
-            <v-icon size="18" class="mr-2 opacity-75">mdi-calendar-today</v-icon>
-            <span class="text-body-2 opacity-90 font-weight-medium">{{ currentDate }}</span>
+          <div class="d-flex align-center justify-end gap-3">
+            <!-- Control de Brillo (solo en tablet) -->
+            <TabletBrightnessControl />
+            
+            <!-- Fecha -->
+            <div class="d-flex align-center">
+              <v-icon size="18" class="mr-2 opacity-75">mdi-calendar-today</v-icon>
+              <span class="text-body-2 opacity-90 font-weight-medium">{{ currentDate }}</span>
+            </div>
           </div>
         </div>
       </div>
@@ -138,6 +144,7 @@ import { useAuthStore } from '@/stores/auth'
 import UserProfileDialog from '@/components/ui/UserProfileDialog.vue'
 import ChangePasswordDialog from '@/components/ui/ChangePasswordDialog.vue'
 import BackupManagementModal from '@/components/ui/BackupManagementModal.vue'
+import TabletBrightnessControl from '@/components/tablet/TabletBrightnessControl.vue'
 
 const authStore = useAuthStore()
 
@@ -160,8 +167,8 @@ const handleLogoutClick = () => {
 }
 
 // Handler para éxito de backup
-const handleBackupSuccess = (message: string) => {
-  console.log('Backup exitoso:', message)
+const handleBackupSuccess = () => {
+  // Backup exitoso
 }
 
 // Estado reactivo para fecha y hora
@@ -349,5 +356,10 @@ onUnmounted(() => {
 .font-mono {
   font-family: 'Consolas', 'Monaco', 'Courier New', monospace;
   letter-spacing: 0.5px;
+}
+
+/* Gap para control de brillo */
+.gap-3 {
+  gap: 1rem;
 }
 </style>

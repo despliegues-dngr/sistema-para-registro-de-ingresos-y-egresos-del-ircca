@@ -48,12 +48,6 @@ export function useBackupExport() {
       }
 
       // Crear estructura de archivo con metadata
-      console.log('📤 [BACKUP EXPORT] Preparando exportación:', {
-        backupId: backup.id,
-        dataType: typeof backup.data,
-        dataKeys: typeof backup.data === 'object' && backup.data ? Object.keys(backup.data) : 'N/A',
-        encrypted: backup.encrypted
-      })
       
       const exportData = {
         id: backup.id,
@@ -66,13 +60,6 @@ export function useBackupExport() {
         format: 'ircca-backup-v3.0'
       }
       
-      console.log('📤 [BACKUP EXPORT] Datos a exportar:', {
-        keys: Object.keys(exportData),
-        dataType: typeof exportData.data,
-        dataIsObject: typeof exportData.data === 'object',
-        dataHasEncrypted: typeof exportData.data === 'object' && exportData.data !== null && 'encrypted' in exportData.data
-      })
-
       // Convertir a JSON
       const jsonString = JSON.stringify(exportData, null, 2)
       const blob = new Blob([jsonString], { type: 'application/json' })
@@ -123,13 +110,11 @@ export function useBackupExport() {
         
         // Si el último backup tiene menos de 5 minutos, reutilizarlo
         if (diffMinutes < 5) {
-          console.log('📦 [BACKUP] Reutilizando backup reciente (< 5 min)')
           return await exportBackup(latest.id)
         }
       }
 
       // Si no hay backups o el último es muy antiguo, crear uno nuevo
-      console.log('📦 [BACKUP] Creando nuevo backup')
       return await createAndExportBackup()
     } catch (error) {
       return { success: false, error: String(error) }

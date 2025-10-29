@@ -3,6 +3,7 @@
 // Importamos AuthBackground para aplicar el fondo gubernamental a toda la aplicación
 import { onMounted } from 'vue'
 import AuthBackground from '@/components/layout/AuthBackground.vue'
+import TabletLockFAB from '@/components/tablet/TabletLockFAB.vue'
 import { useStorageMonitor } from '@/composables/useStorageMonitor'
 import { useAutoBackup } from '@/composables/useAutoBackup'
 import { useAppStore } from '@/stores/app'
@@ -34,6 +35,9 @@ onMounted(async () => {
         <router-view />
       </AuthBackground>
     </v-main>
+    
+    <!-- Botón Flotante de Bloqueo (solo visible en tablets) -->
+    <TabletLockFAB />
   </v-app>
 </template>
 

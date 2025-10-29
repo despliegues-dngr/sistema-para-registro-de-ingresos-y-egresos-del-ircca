@@ -1,5 +1,5 @@
 <template>
-  <div class="dashboard-footer">
+  <div class="dashboard-footer footer-spacer">
     <v-container fluid class="pa-4">
       <v-divider class="footer-divider mx-auto mb-3" style="width: 120px; opacity: 0.3"></v-divider>
       <p class="footer-text text-caption text-center mb-0">

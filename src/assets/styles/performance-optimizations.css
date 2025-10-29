@@ -30,7 +30,7 @@
  * ⚡ OPTIMIZACIÓN CRÍTICA: Blur eliminado para tablets
  * backdrop-filter es MUY costoso en dispositivos móviles
  * Causa lag significativo en apertura/cierre de modales
- * 
+ *
  * NOTA: Si necesitas blur en futuro, usa valores muy bajos (2-3px máximo)
  * y solo en dispositivos desktop con GPU potente
  */
@@ -507,14 +507,14 @@ a,
   * {
     touch-action: manipulation;
   }
-  
+
   /* Acelerar transiciones en touch */
   .v-btn,
   .v-card,
   .v-list-item {
     transition-duration: 0.1s;
   }
-  
+
   /* Feedback visual inmediato en touch */
   .v-btn:active,
   .v-card:active,
@@ -534,7 +534,7 @@ a,
  */
 .v-enter-active,
 .v-leave-active {
-  transition-duration: 0.2s !important;
+  transition-duration: 0.2s;
 }
 
 /**
@@ -544,7 +544,7 @@ a,
 .v-slide-x-transition-leave-active,
 .v-slide-y-transition-enter-active,
 .v-slide-y-transition-leave-active {
-  transition-duration: 0.2s !important;
+  transition-duration: 0.2s;
   will-change: transform, opacity;
 }
 

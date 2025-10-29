@@ -153,8 +153,6 @@ function closeModal() {
 }
 
 async function handleImportBackup(file: File) {
-  console.log('🎯 [MODAL] handleImportBackup llamado', { fileName: file.name, fileType: file.type, fileSize: file.size })
-  
   // Confirmar antes de importar
   const confirmed = confirm(
     '⚠️ ADVERTENCIA CRÍTICA\n\n' +
@@ -163,17 +161,12 @@ async function handleImportBackup(file: File) {
     'Se recomienda exportar un backup antes de proceder.'
   )
 
-  console.log('🎯 [MODAL] Usuario confirmó:', confirmed)
   if (!confirmed) return
 
   // Obtener CLAVE MAESTRA desde variable de entorno
   const masterKey = import.meta.env.VITE_BACKUP_MASTER_KEY || 'IRCCA_Sistema_MasterKey_2025_Secure'
-  console.log('🎯 [MODAL] Usando CLAVE MAESTRA para importar')
-  console.log('🎯 [MODAL] MasterKey configurada:', masterKey ? 'Sí' : 'No')
 
-  console.log('🎯 [MODAL] Llamando a importBackup...')
   const result = await importBackup(file, masterKey)
-  console.log('🎯 [MODAL] Resultado de importBackup:', result)
   
   if (result.success) {
     appStore.addNotification(
