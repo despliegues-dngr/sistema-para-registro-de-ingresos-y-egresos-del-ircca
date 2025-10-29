@@ -31,10 +31,37 @@ export function useTabletBrightness() {
   })
 
   /**
-   * Verifica si Fully Kiosk está disponible
+   * Verifica si está ejecutándose en una tablet
+   * Detecta por múltiples métodos:
+   * 1. Fully Kiosk Browser (preferido)
+   * 2. User Agent (fallback para tablets Android/iOS)
    */
   const checkFullyKiosk = (): boolean => {
-    return typeof window !== 'undefined' && !!window.fully
+    // Método 1: Verificar si Fully Kiosk está disponible
+    if (typeof window !== 'undefined' && !!window.fully) {
+      return true
+    }
+    
+    // Método 2: Detectar por User Agent (tablets Android/iOS)
+    if (typeof navigator !== 'undefined') {
+      const ua = navigator.userAgent.toLowerCase()
+      
+      // Detectar Android tablets
+      const isAndroid = ua.includes('android')
+      const isMobile = ua.includes('mobile')
+      const isAndroidTablet = isAndroid && !isMobile
+      
+      // Detectar iPad/iOS tablets
+      const isIPad = ua.includes('ipad') || 
+                     (ua.includes('macintosh') && navigator.maxTouchPoints > 1)
+      
+      // Detectar tablets genéricas
+      const isTabletUA = ua.includes('tablet')
+      
+      return isAndroidTablet || isIPad || isTabletUA
+    }
+    
+    return false
   }
 
   /**
