@@ -1,20 +1,21 @@
 import { ref, onMounted, computed } from 'vue'
 
 /**
- * Composable para gestionar el brillo de la pantalla en tablets con Fully Kiosk Browser
+ * Composable para gestionar el brillo de la pantalla con Fully Kiosk Browser
  * 
  * Funcionalidades:
- * - Detecta si está ejecutándose en Fully Kiosk
- * - Permite ajustar brillo (0-255)
+ * - Controles siempre visibles (graceful degradation)
+ * - Permite ajustar brillo (0-255) si Fully Kiosk está disponible
  * - Guarda preferencia del usuario en localStorage
  * - Restaura brillo al cargar la aplicación
+ * - Si Fully Kiosk no está disponible, los controles se muestran pero no hacen nada
  * 
  * @returns {Object} Estado y métodos para controlar el brillo
  */
 export function useTabletBrightness() {
   // Estado reactivo
   const brightness = ref(180) // 70% por defecto (valor medio-alto)
-  const isTablet = ref(false)
+  const isTablet = ref(true) // ✅ Siempre visible - funciona con graceful degradation
   const isLoading = ref(true)
 
   // Constantes
@@ -31,37 +32,12 @@ export function useTabletBrightness() {
   })
 
   /**
-   * Verifica si está ejecutándose en una tablet
-   * Detecta por múltiples métodos:
-   * 1. Fully Kiosk Browser (preferido)
-   * 2. User Agent (fallback para tablets Android/iOS)
+   * Verifica si Fully Kiosk está disponible
+   * Nota: Los controles son siempre visibles, esta función solo verifica
+   * si las funcionalidades de Fully Kiosk están disponibles
    */
   const checkFullyKiosk = (): boolean => {
-    // Método 1: Verificar si Fully Kiosk está disponible
-    if (typeof window !== 'undefined' && !!window.fully) {
-      return true
-    }
-    
-    // Método 2: Detectar por User Agent (tablets Android/iOS)
-    if (typeof navigator !== 'undefined') {
-      const ua = navigator.userAgent.toLowerCase()
-      
-      // Detectar Android tablets
-      const isAndroid = ua.includes('android')
-      const isMobile = ua.includes('mobile')
-      const isAndroidTablet = isAndroid && !isMobile
-      
-      // Detectar iPad/iOS tablets
-      const isIPad = ua.includes('ipad') || 
-                     (ua.includes('macintosh') && navigator.maxTouchPoints > 1)
-      
-      // Detectar tablets genéricas
-      const isTabletUA = ua.includes('tablet')
-      
-      return isAndroidTablet || isIPad || isTabletUA
-    }
-    
-    return false
+    return typeof window !== 'undefined' && !!window.fully
   }
 
   /**
@@ -166,37 +142,27 @@ export function useTabletBrightness() {
 
   /**
    * Inicializa el control de brillo
+   * Los controles son siempre visibles - funciona con graceful degradation
    */
   const initialize = (): void => {
     isLoading.value = true
 
-    // Verificar si está en Fully Kiosk
-    isTablet.value = checkFullyKiosk()
+    // Intentar obtener brillo actual del dispositivo (si Fully Kiosk está disponible)
+    const currentBrightness = getCurrentBrightness()
+    
+    // Cargar preferencia guardada (tiene prioridad)
+    const savedBrightness = loadSavedBrightness()
+    
+    // Usar el brillo guardado si existe, sino el actual del dispositivo
+    const initialBrightness = savedBrightness !== DEFAULT_BRIGHTNESS 
+      ? savedBrightness 
+      : currentBrightness
 
-    // 🔧 MODO DESARROLLO: Mostrar siempre en desarrollo para testing
-    // ⚠️ COMENTAR ESTA LÍNEA EN PRODUCCIÓN
-    if (import.meta.env.DEV) {
-      isTablet.value = true
-    }
-
-    if (isTablet.value) {
-      // Intentar obtener brillo actual del dispositivo
-      const currentBrightness = getCurrentBrightness()
-      
-      // Cargar preferencia guardada (tiene prioridad)
-      const savedBrightness = loadSavedBrightness()
-      
-      // Usar el brillo guardado si existe, sino el actual del dispositivo
-      const initialBrightness = savedBrightness !== DEFAULT_BRIGHTNESS 
-        ? savedBrightness 
-        : currentBrightness
-
-      brightness.value = initialBrightness
-      
-      // Aplicar el brillo inicial (solo si window.fully existe)
-      if (window.fully) {
-        applyBrightness(initialBrightness)
-      }
+    brightness.value = initialBrightness
+    
+    // Aplicar el brillo inicial (solo si Fully Kiosk está disponible)
+    if (checkFullyKiosk()) {
+      applyBrightness(initialBrightness)
     }
 
     isLoading.value = false
