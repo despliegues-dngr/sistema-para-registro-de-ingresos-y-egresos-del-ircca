@@ -191,17 +191,17 @@ export function addPdfTable(doc: jsPDF, data: ReportData, summaryY: number, marg
     },
     // ✅ Todas las columnas alineadas a la izquierda con anchos optimizados
     columnStyles: {
-      0: { halign: 'left', cellWidth: 8 },    // N° - Muy estrecha
+      0: { halign: 'left', cellWidth: 12 },   // N° - Aumentada +2mm (de 8 a 10)
       1: { halign: 'left', cellWidth: 18 },   // Fecha
       2: { halign: 'left', cellWidth: 18 },   // H. Ingreso
       3: { halign: 'left', cellWidth: 24 },   // Documento - Formato X.XXX.XXX-X
       4: { halign: 'left', cellWidth: 45 },   // Nombre
-      5: { halign: 'left', cellWidth: 28 },   // Destino
-      6: { halign: 'left', cellWidth: 22 },   // Vehículo - Aumentada +4mm (de 18 a 22)
+      5: { halign: 'left', cellWidth: 32 },   // Destino - Aumentada +4mm (de 28 a 32)
+      6: { halign: 'left', cellWidth: 22 },   // Vehículo
       7: { halign: 'left', cellWidth: 18 },   // Matrícula
       8: { halign: 'left', cellWidth: 18 },   // H. Salida
       9: { halign: 'left', cellWidth: 38 },   // Responsable
-      10: { halign: 'left', cellWidth: 'auto' }   // Observ. - AUTO: reducida implícitamente
+      10: { halign: 'left', cellWidth: 'auto' }   // Observ. - AUTO: se reduce automáticamente -6mm
     },
     // ✅ Hook para centrar guiones ("-") en celdas vacías
     didParseCell: (data) => {

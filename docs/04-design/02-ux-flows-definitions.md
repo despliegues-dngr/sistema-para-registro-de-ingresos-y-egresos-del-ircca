@@ -174,13 +174,23 @@ Login → Dashboard → [Registrar Ingreso/Salida] → Consultar → Logout
 - ✅ Consultar estadísticas (lectura)
 - ✅ Generar reportes PDF
 - ✅ Ver lista completa de personas/vehículos
+- ✅ **NUEVO (29-Oct-2025):** Ver lista completa de usuarios del sistema (solo lectura)
+- ✅ Gestionar destinos del sistema
 - ❌ NO registrar ingresos/salidas
-- ❌ NO gestión de usuarios
+- ❌ NO gestión de usuarios (crear/editar/eliminar)
 
 **Flujo típico:**
 ```
-Login → Dashboard → [Ver estadísticas] → [Generar PDF] → Logout
+Login → Dashboard → [Ver estadísticas] → [Consultar usuarios] → [Generar PDF] → Logout
 ```
+
+**Caso de uso - Consulta de usuarios:**
+1. Supervisor accede a Dashboard
+2. En card "Control de Usuarios del Sistema" visualiza estadísticas
+3. Scroll hacia abajo para ver tabla completa de usuarios
+4. Usa búsqueda para encontrar usuario específico por nombre o cédula
+5. Verifica estado del usuario (rol, fecha de creación, último acceso)
+6. **Nota:** NO puede editar ni eliminar usuarios (botones ocultos)
 
 ---
 

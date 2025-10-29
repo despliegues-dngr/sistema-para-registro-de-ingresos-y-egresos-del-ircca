@@ -61,120 +61,13 @@
     <!-- Tabla de Usuarios -->
     <v-row class="mb-8">
       <v-col cols="12">
-        <v-card class="pa-0" elevation="2">
-          <!-- Header de la tabla -->
-          <v-card-title class="bg-primary pa-4">
-            <div class="d-flex align-center">
-              <v-icon size="24" color="white" class="mr-3">mdi-account-multiple-outline</v-icon>
-              <div>
-                <h3 class="text-h6 text-white mb-0">Lista de Usuarios del Sistema</h3>
-                <p class="text-caption text-blue-lighten-4 mb-0">Usuarios registrados y activos</p>
-              </div>
-            </div>
-          </v-card-title>
-
-          <!-- Barra de búsqueda rápida -->
-          <v-card-text class="pa-4 pb-0">
-            <v-text-field
-              v-model="searchQuery"
-              prepend-inner-icon="mdi-magnify"
-              label="Buscar usuarios..."
-              placeholder="Buscar por nombre completo o documento..."
-              variant="outlined"
-              density="compact"
-              clearable
-              hide-details
-              class="mb-4"
-            />
-          </v-card-text>
-
-          <!-- Tabla de datos -->
-          <v-data-table
-            :headers="tableHeaders"
-            :items="filteredUsersData"
-            item-value="id"
-            class="elevation-0"
-            :items-per-page="10"
-            :no-data-text="searchQuery.trim() ? `No se encontraron usuarios que coincidan con '${searchQuery}'` : 'No hay usuarios registrados'"
-            loading-text="Cargando usuarios..."
-          >
-            <!-- Columna personalizada para el grado -->
-            <template v-slot:[`item.grado`]="{ item }">
-              <span class="font-weight-medium">{{ item.grado }}</span>
-            </template>
-
-            <!-- Columna personalizada para cédula -->
-            <template v-slot:[`item.cedula`]="{ item }">
-              <v-chip
-                color="primary"
-                variant="outlined"
-                size="small"
-              >
-                {{ item.cedula }}
-              </v-chip>
-            </template>
-
-            <!-- Columna personalizada para rol -->
-            <template v-slot:[`item.role`]="{ item }">
-              <v-chip
-                :color="getRoleColor(item.role)"
-                size="small"
-                variant="tonal"
-              >
-                <v-icon size="16" class="mr-1">
-                  {{ item.role === 'admin' ? 'mdi-shield-crown' : item.role === 'supervisor' ? 'mdi-account-tie' : 'mdi-account' }}
-                </v-icon>
-                {{ getRoleText(item.role) }}
-              </v-chip>
-            </template>
-
-            <!-- Columna de acciones -->
-            <template v-slot:[`item.actions`]="{ item }">
-              <div class="d-flex gap-2 justify-center">
-                <v-btn
-                  icon
-                  size="small"
-                  color="primary"
-                  variant="text"
-                  @click="handleEditUser(item)"
-                >
-                  <v-icon size="18">mdi-pencil</v-icon>
-                  <v-tooltip activator="parent" location="top">
-                    Editar usuario
-                  </v-tooltip>
-                </v-btn>
-
-                <v-btn
-                  icon
-                  size="small"
-                  color="error"
-                  variant="text"
-                  @click="handleDeleteUser(item)"
-                  :disabled="item.role === 'admin' && usersData.admins <= 1"
-                >
-                  <v-icon size="18">mdi-delete</v-icon>
-                  <v-tooltip activator="parent" location="top">
-                    {{ item.role === 'admin' && usersData.admins <= 1
-                      ? 'No se puede eliminar el último administrador'
-                      : 'Eliminar usuario' }}
-                  </v-tooltip>
-                </v-btn>
-              </div>
-            </template>
-
-            <!-- Información del pie de tabla -->
-            <template #bottom>
-              <div class="pa-4 text-center text-body-2 text-grey-darken-1">
-                <span v-if="searchQuery.trim()">
-                  Mostrando: {{ filteredUsersData.length }} de {{ usersTableData.length }} usuarios para "<strong>{{ searchQuery }}</strong>"
-                </span>
-                <span v-else>
-                  Total de usuarios: {{ usersTableData.length }}
-                </span>
-              </div>
-            </template>
-          </v-data-table>
-        </v-card>
+        <UsersTable
+          ref="usersTableRef"
+          :show-actions="true"
+          @edit-user="handleEditUser"
+          @delete-user="handleDeleteUser"
+          @users-loaded="handleUsersLoaded"
+        />
       </v-col>
     </v-row>
 
@@ -274,7 +167,7 @@
 </template>
 
 <script setup lang="ts">
-import { ref, computed, onMounted } from 'vue'
+import { ref, onMounted } from 'vue'
 import { useDatabase } from '@/composables/useDatabase'
 import type { AuditEvent } from '@/stores/audit'
 
@@ -285,6 +178,9 @@ import EventDetailDialog from '../admin/audit/EventDetailDialog.vue'
 
 // Componente ARCO
 import ArcoDataExportCard from '../admin/ArcoDataExportCard.vue'
+
+// Componente compartido de tabla de usuarios
+import UsersTable from '../shared/UsersTable.vue'
 
 // Interface para usuarios de la BD
 interface User {
@@ -327,75 +223,8 @@ const usersData = ref({
   newUsersToday: 0
 })
 
-// Estado para la tabla de usuarios
-const usersTableData = ref<UserTableRow[]>([])
-
-// Estado para búsqueda en la tabla
-const searchQuery = ref('')
-
-// Datos filtrados usando el mismo patrón exitoso del DataListModal
-const filteredUsersData = computed(() => {
-  if (!searchQuery.value.trim()) {
-    return usersTableData.value
-  }
-
-  const query = searchQuery.value.toLowerCase().trim()
-
-  return usersTableData.value.filter((user: UserTableRow) => {
-    // Buscar solo en nombre completo y cédula como solicitaste
-    const nombre = user.nombre.toLowerCase()
-    const cedula = user.cedula.toLowerCase()
-
-    return nombre.includes(query) || cedula.includes(query)
-  })
-})
-
-// Función utilitaria para formatear fechas
-const formatearFecha = (fecha: string | undefined): string => {
-  if (!fecha) return 'N/A'
-  try {
-    const date = new Date(fecha)
-    return date.toLocaleDateString('es-UY', {
-      day: '2-digit',
-      month: '2-digit',
-      year: 'numeric'
-    })
-  } catch {
-    return 'N/A'
-  }
-}
-
-// Headers para la tabla
-const tableHeaders = [
-  { title: '#', key: 'numero', sortable: true, width: '80px' },
-  { title: 'Grado', key: 'grado', sortable: true },
-  { title: 'Nombre Completo', key: 'nombre', sortable: true },
-  { title: 'Cédula', key: 'cedula', sortable: true },
-  { title: 'Rol', key: 'role', sortable: true, width: '140px' },
-  { title: 'Fecha Creación', key: 'fechaCreacion', sortable: true },
-  { title: 'Último Acceso', key: 'ultimoAcceso', sortable: true },
-  { title: 'Acciones', key: 'actions', sortable: false, width: '120px', align: 'center' as const }
-]
-
-// Función para obtener color del chip según el rol
-const getRoleColor = (role: string): string => {
-  const colors = {
-    'admin': 'error',
-    'supervisor': 'warning',
-    'operador': 'success'
-  }
-  return colors[role as keyof typeof colors] || 'default'
-}
-
-// Función para obtener texto del rol
-const getRoleText = (role: string): string => {
-  const texts = {
-    'admin': 'Administrador',
-    'supervisor': 'Supervisor',
-    'operador': 'Operador'
-  }
-  return texts[role as keyof typeof texts] || role
-}
+// Referencia al componente de tabla
+const usersTableRef = ref<InstanceType<typeof UsersTable> | null>(null)
 
 // Estado para modal de confirmación de eliminación
 const showDeleteDialog = ref(false)
@@ -405,6 +234,23 @@ const isDeleting = ref(false)
 // Estado para modal de detalles de auditoría
 const showEventDetailDialog = ref(false)
 const eventoSeleccionado = ref<AuditEvent | null>(null)
+
+// Función para obtener texto del rol (usada en modal de confirmación)
+const getRoleText = (role: string): string => {
+  const texts = {
+    'admin': 'Administrador',
+    'supervisor': 'Supervisor',
+    'operador': 'Operador'
+  }
+  return texts[role as keyof typeof texts] || role
+}
+
+// Handler para cuando se cargan los usuarios
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
+const handleUsersLoaded = (_count: number) => {
+  // Actualizar estadísticas cuando la tabla carga los datos
+  loadUsersStats()
+}
 
 // Funciones para acciones de la tabla
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
@@ -433,23 +279,13 @@ const confirmDeleteUser = async () => {
     const result = await deleteRecord('usuarios', userToDelete.value.id)
 
     if (result.success) {
-      // Actualizar el array local
-      const index = usersTableData.value.findIndex(u => u.id === userToDelete.value!.id)
-      if (index > -1) {
-        usersTableData.value.splice(index, 1)
-
-        // Actualizar estadísticas
-        usersData.value.totalUsers = usersTableData.value.length
-        usersData.value.admins = usersTableData.value.filter(u => u.role === 'admin').length
-        usersData.value.supervisors = usersTableData.value.filter(u => u.role === 'supervisor').length
-        usersData.value.operators = usersTableData.value.filter(u => u.role === 'operador').length
-
-        // Usuarios creados hoy (recalcular)
-        const today = new Date().toDateString()
-        usersData.value.newUsersToday = usersTableData.value.filter((u: UserTableRow) =>
-          u.fechaCreacion && new Date(u.fechaCreacion).toDateString() === today
-        ).length
+      // Recargar la tabla de usuarios
+      if (usersTableRef.value) {
+        await usersTableRef.value.reload()
       }
+      
+      // Recargar estadísticas
+      await loadUsersStats()
     } else {
       throw new Error(result.error || 'Error desconocido')
     }
@@ -512,18 +348,6 @@ const loadUsersStats = async () => {
       usersData.value.newUsersToday = users.filter((u: User) =>
         u.createdAt && new Date(u.createdAt).toDateString() === today
       ).length
-
-      // Cargar datos completos para la tabla
-      usersTableData.value = users.map((user, index) => ({
-        numero: index + 1,
-        grado: user.grado || 'N/A',
-        nombre: `${user.nombre} ${user.apellido}`,
-        cedula: user.username,
-        fechaCreacion: formatearFecha(user.createdAt),
-        ultimoAcceso: formatearFecha(user.lastLogin),
-        role: user.role,
-        id: user.id
-      }))
     }
   } catch {
     // Error silencioso

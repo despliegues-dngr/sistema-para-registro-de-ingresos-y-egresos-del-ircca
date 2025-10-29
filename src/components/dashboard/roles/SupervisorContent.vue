@@ -2,6 +2,21 @@
   <div class="supervisor-content">
     <!-- Dashboard Supervisor - Vista Operacional sin Acciones de Registro -->
     
+    <!-- Botón de Descarga PDF -->
+    <v-row class="mb-8">
+      <v-col cols="12" class="text-center">
+        <v-btn
+          color="success"
+          size="large"
+          variant="elevated"
+          prepend-icon="mdi-file-pdf-box"
+          @click="showPdfDialog = true"
+        >
+          Descargar Planilla de Registros
+        </v-btn>
+      </v-col>
+    </v-row>
+
     <!-- ⭐ NUEVA SECCIÓN: Consulta de Historial de Personas -->
     <v-row class="mb-8">
       <v-col cols="12">
@@ -16,7 +31,7 @@
       </v-col>
     </v-row>
 
-    <!-- Control de Usuarios del Sistema - Solo estadísticas -->
+    <!-- Control de Usuarios del Sistema - Estadísticas + Tabla -->
     <v-row class="mb-8" style="margin-top: -1rem;">
       <v-col cols="12">
         <v-card class="users-control-card" elevation="2">
@@ -27,7 +42,7 @@
           
           <v-card-text class="px-6 pb-6">
             <!-- Estadísticas de usuarios - Una sola línea -->
-            <v-row>
+            <v-row class="mb-6">
               <v-col cols="3">
                 <div class="text-center user-stat-item">
                   <div class="text-h3 font-weight-bold text-primary">{{ usersData.totalUsers }}</div>
@@ -53,23 +68,17 @@
                 </div>
               </v-col>
             </v-row>
+
+            <!-- Divider -->
+            <v-divider class="mb-6" />
+
+            <!-- Tabla de usuarios (solo lectura) -->
+            <UsersTable
+              :show-actions="false"
+              @users-loaded="handleUsersLoaded"
+            />
           </v-card-text>
         </v-card>
-      </v-col>
-    </v-row>
-
-    <!-- Botón de Descarga PDF -->
-    <v-row class="mb-8">
-      <v-col cols="12" class="text-center">
-        <v-btn
-          color="success"
-          size="large"
-          variant="elevated"
-          prepend-icon="mdi-file-pdf-box"
-          @click="showPdfDialog = true"
-        >
-          Descargar Planilla de Registros
-        </v-btn>
       </v-col>
     </v-row>
 
@@ -91,6 +100,9 @@ import { useMultipleCounters } from '@/composables/useCounterAnimation'
 import PersonHistoryCard from '../supervisor/PersonHistoryCard.vue'
 import DestinosManager from './sections/DestinosManager.vue'
 import PdfGeneratorDialog from '@/components/ui/PdfGeneratorDialog.vue'
+
+// Componente compartido de tabla de usuarios
+import UsersTable from '../shared/UsersTable.vue'
 
 // Interface para usuarios de la BD
 interface User {
@@ -139,6 +151,13 @@ const usersData = computed(() => ({
 
 // Estado para modal de PDF
 const showPdfDialog = ref(false)
+
+// Handler para cuando se cargan los usuarios desde la tabla
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
+const handleUsersLoaded = (_count: number) => {
+  // Actualizar estadísticas cuando la tabla carga los datos
+  loadUsersStats()
+}
 
 // Cargar estadísticas de usuarios
 const loadUsersStats = async () => {

@@ -76,7 +76,7 @@
 - `VehicleStatsCard.vue` - Estadísticas de vehículos por tipo
 - `ActionButtons.vue` - Botones de acción principales
 - `AdminContent.vue` - Dashboard del administrador con sistema de auditoría
-- `SupervisorContent.vue` - Dashboard del supervisor (solo lectura)
+- `SupervisorContent.vue` - Dashboard del supervisor con tabla de usuarios (solo lectura)
 
 #### Forms (11 componentes)
 - `LoginForm.vue` - Formulario de autenticación
@@ -115,6 +115,9 @@
 - `AuditActivityCard.vue` - Resumen del sistema de auditoría (métricas globales de 6 meses)
 - `AuditTableSection.vue` - Tabla completa con histórico de 6 meses y filtros avanzados
 - `EventDetailDialog.vue` - Modal de detalles de evento
+
+#### Shared (1 componente)
+- `UsersTable.vue` - **✨ NUEVO (29-Oct-2025)** - Tabla reutilizable de usuarios con búsqueda y paginación. Usado en AdminContent (con acciones) y SupervisorContent (solo lectura). Props: `showActions`, `autoLoad`. Emits: `edit-user`, `delete-user`, `users-loaded`.
 
 #### Layout (5 componentes)
 - `AuthBackground.vue`, `InstitutionalHeader.vue`, `GovernmentFooter.vue`, etc.
@@ -242,6 +245,36 @@
 ---
 
 ## 📝 HISTORIAL DE MEJORAS RECIENTES
+
+### 29-Oct-2025: Integración de Tabla de Usuarios en Dashboard Supervisor ✅ COMPLETADO
+
+**Refactorización de Componentes para Reutilización:**
+
+- ✅ Creado componente compartido `UsersTable.vue` (300 líneas) - Tabla reutilizable con búsqueda y paginación
+- ✅ Refactorizado `AdminContent.vue` - Eliminadas ~120 líneas de código duplicado, ahora usa `<UsersTable :show-actions="true" />`
+- ✅ Integrado en `SupervisorContent.vue` - Agregada tabla de usuarios con `<UsersTable :show-actions="false" />` (solo lectura)
+- ✅ Separación de responsabilidades clara: Admin gestiona usuarios, Supervisor consulta usuarios
+
+**Props del componente `UsersTable.vue`:**
+- `showActions` (boolean, default: false) - Muestra/oculta columna de acciones (Editar/Eliminar)
+- `autoLoad` (boolean, default: true) - Carga automática de datos al montar
+
+**Eventos emitidos:**
+- `edit-user` - Usuario seleccionado para edición (solo si showActions=true)
+- `delete-user` - Usuario seleccionado para eliminación (solo si showActions=true)
+- `users-loaded` - Notifica cuando los datos se cargaron (count: number)
+
+**Beneficios UX:**
+- ✅ Supervisor puede consultar usuarios sin cambiar de vista
+- ✅ Acceso rápido para verificar usuarios bloqueados/activos en tablet
+- ✅ Consistencia visual: Mismo patrón de "estadísticas + detalles" usado en otras cards
+- ✅ Reducción de código: ~120 líneas eliminadas de AdminContent.vue
+
+**Seguridad:**
+- ✅ Supervisor NO tiene acceso a botones de edición/eliminación
+- ✅ Validación en backend mediante guards de navegación existentes
+
+---
 
 ### 28-Oct-2025: Sistema de Backups Mejorado ✅ COMPLETADO
 

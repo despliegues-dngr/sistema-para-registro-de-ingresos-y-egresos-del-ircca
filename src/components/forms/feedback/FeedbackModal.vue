@@ -8,11 +8,24 @@
     :persistent="isSubmitting"
     @close="handleClose"
   >
+    <!-- Mensaje de feedback (mismo patrón que RegistroIngresoForm) -->
+    <v-alert
+      v-if="feedbackMessage"
+      :type="feedbackType"
+      variant="tonal"
+      class="mb-4"
+      closable
+      @click:close="clearFeedbackMessage"
+    >
+      {{ feedbackMessage }}
+    </v-alert>
+
     <!-- Header con mensaje introductorio -->
-    <FeedbackHeader :total-registros="totalRegistros" />
+    <FeedbackHeader v-if="modelValue" :total-registros="totalRegistros" />
 
     <!-- Preguntas del formulario -->
     <FeedbackQuestions
+      v-if="modelValue"
       :form-data="formData"
       @update:rating="formData.rating = $event"
       @update:velocidad-score="formData.velocidadScore = $event"
@@ -102,6 +115,8 @@ const formData = reactive({
 
 const isSubmitting = ref(false)
 const totalRegistros = ref(0)
+const feedbackMessage = ref('')
+const feedbackType = ref<'success' | 'info' | 'warning' | 'error'>('success')
 
 // Computed
 const modelValue = computed({
@@ -160,9 +175,21 @@ async function handleSubmit() {
     )
 
     if (result.success) {
-      appStore.addNotification('¡Gracias por tu feedback! Nos ayuda a mejorar 🎉', 'info')
-      modelValue.value = false
-      resetForm()
+      // Mensaje personalizado según el rating
+      const message = getSuccessFeedbackMessage(formData.rating)
+      
+      // Mostrar mensaje de éxito dentro del modal
+      feedbackMessage.value = message
+      feedbackType.value = 'success'
+      
+      // También agregar notificación al store
+      appStore.addNotification(message, 'success')
+      
+      // Cerrar modal después de 2 segundos para que usuario vea el feedback
+      setTimeout(() => {
+        modelValue.value = false
+        resetForm()
+      }, 2000)
     } else {
       appStore.addNotification(result.error || 'Error al enviar feedback', 'error')
     }
@@ -177,8 +204,18 @@ async function handleSubmit() {
  * Maneja "Recordarme más tarde"
  */
 async function handlePostpone() {
-  await feedbackComposable.handleFeedbackAction({ type: 'postpone' })
+  // Mostrar mensaje de confirmación dentro del modal
+  feedbackMessage.value = 'De acuerdo, te preguntaremos en otra ocasión 📅'
+  feedbackType.value = 'info'
+  
+  // Esperar 2 segundos para que usuario vea el mensaje
+  await new Promise(resolve => setTimeout(resolve, 2000))
+  
+  // Ejecutar acción en segundo plano
+  feedbackComposable.handleFeedbackAction({ type: 'postpone' })
   appStore.addNotification('Te recordaremos en unos registros más', 'info')
+  
+  // Cerrar modal
   modelValue.value = false
   resetForm()
 }
@@ -187,8 +224,18 @@ async function handlePostpone() {
  * Maneja "No volver a preguntar"
  */
 async function handleDismiss() {
-  await feedbackComposable.handleFeedbackAction({ type: 'dismiss' })
+  // Mostrar mensaje de confirmación dentro del modal
+  feedbackMessage.value = 'Perfecto, no volveremos a mostrar esta encuesta ✓'
+  feedbackType.value = 'success'
+  
+  // Esperar 2 segundos para que usuario vea el mensaje
+  await new Promise(resolve => setTimeout(resolve, 2000))
+  
+  // Ejecutar acción en segundo plano
+  feedbackComposable.handleFeedbackAction({ type: 'dismiss' })
   appStore.addNotification('Entendido, no volveremos a preguntar', 'info')
+  
+  // Cerrar modal
   modelValue.value = false
   resetForm()
 }
@@ -203,6 +250,26 @@ function handleClose() {
 }
 
 /**
+ * Limpia el mensaje de feedback
+ */
+function clearFeedbackMessage() {
+  feedbackMessage.value = ''
+}
+
+/**
+ * Obtiene mensaje personalizado según el rating del usuario
+ */
+function getSuccessFeedbackMessage(rating: number): string {
+  if (rating >= 4) {
+    return '¡Gracias por tu feedback positivo! Nos alegra que te guste el sistema 🎉'
+  } else if (rating === 3) {
+    return '¡Gracias por tu feedback! Trabajaremos en mejorar tu experiencia 💪'
+  } else {
+    return '¡Gracias por tu sinceridad! Lamentamos tu experiencia, trabajaremos en mejorar 🔧'
+  }
+}
+
+/**
  * Resetea el formulario
  */
 function resetForm() {
@@ -212,6 +279,7 @@ function resetForm() {
   formData.implementacionScore = 3
   formData.impactoScore = 3
   formData.comentarios = ''
+  feedbackMessage.value = ''
 }
 </script>
 
