@@ -4,9 +4,13 @@
 import { onMounted } from 'vue'
 import AuthBackground from '@/components/layout/AuthBackground.vue'
 import TabletLockFAB from '@/components/tablet/TabletLockFAB.vue'
+import DebugConsolePanel from '@/components/dev/DebugConsolePanel.vue'
 import { useStorageMonitor } from '@/composables/useStorageMonitor'
 import { useAutoBackup } from '@/composables/useAutoBackup'
 import { useAppStore } from '@/stores/app'
+
+// Detectar si estamos en modo desarrollo
+const isDevelopment = import.meta.env.DEV
 
 // Inicializar stores y composables
 const appStore = useAppStore()
@@ -38,6 +42,9 @@ onMounted(async () => {
     
     <!-- Botón Flotante de Bloqueo (solo visible en tablets) -->
     <TabletLockFAB />
+    
+    <!-- Panel de Debug Console (solo en desarrollo) -->
+    <DebugConsolePanel v-if="isDevelopment" :max-logs="150" />
   </v-app>
 </template>
 
