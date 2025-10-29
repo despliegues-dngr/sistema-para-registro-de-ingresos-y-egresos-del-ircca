@@ -138,7 +138,6 @@ import { useSessionTimeout } from '@/composables/useSessionTimeout'
 import { useDashboardStats } from '@/composables/useDashboardStats'
 import { useDashboardModals } from '@/composables/useDashboardModals'
 import { useFeedback } from '@/composables/useFeedback'
-import { useAutoBackup } from '@/composables/useAutoBackup'
 
 // Componentes del Dashboard
 import WelcomeHeader from '@/components/dashboard/WelcomeHeader.vue'
@@ -219,8 +218,8 @@ const {
 // Composable para el sistema de feedback
 const { showFeedbackModal } = useFeedback()
 
-// Composable para backups automáticos cada 2 horas
-const { iniciarTimer: iniciarBackupAutomatico, detenerTimer: detenerBackupAutomatico } = useAutoBackup()
+// ⚠️ NOTA: useAutoBackup() se inicializa en App.vue (global)
+// No es necesario llamarlo aquí para evitar múltiples instancias
 
 // Adaptador reactivo para vehiculosData que depende de un estado local (selectedVehicleType)
 const vehiculosData = computed(() => {
@@ -292,14 +291,10 @@ onMounted(async () => {
     startAnimation()
     updateVehicleAnimation()
   }, 100) // Pequeño delay para asegurar que los datos estén cargados
-  
-  // ⭐ Iniciar backups automáticos cada 2 horas
-  iniciarBackupAutomatico()
 })
 
 onUnmounted(() => {
   cleanupTimeout()
-  detenerBackupAutomatico()
 })
 </script>
 

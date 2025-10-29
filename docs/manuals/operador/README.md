@@ -20,7 +20,8 @@ operador/
 ├── 07-errores.html               # Sección 7: Errores en Registros
 ├── 08-buenas-practicas.html      # Sección 8: Buenas Prácticas
 ├── 09-troubleshooting.html       # Sección 9: Solución de Problemas
-└── 10-soporte.html               # Sección 10: Soporte Técnico
+├── 10-soporte.html               # Sección 10: Soporte Técnico
+└── 11-privacidad-datos.html      # Sección 11: Privacidad y Protección de Datos
 ```
 
 ### 🚀 Cómo Usar
@@ -69,7 +70,7 @@ El archivo original monolítico se conserva como:
 ### 📊 Estadísticas
 
 - **Original:** 1 archivo de 723 líneas (~30KB)
-- **Modular:** 11 archivos (índice + 10 secciones)
+- **Modular:** 12 archivos (índice + 11 secciones)
 - **Promedio por sección:** ~70 líneas
 - **Estilos:** 1 archivo CSS compartido (405 líneas)
 - **Impresión:** 1 archivo maestro que carga dinámicamente (sin duplicar contenido)
