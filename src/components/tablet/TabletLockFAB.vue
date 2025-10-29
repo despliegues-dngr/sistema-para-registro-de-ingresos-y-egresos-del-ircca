@@ -116,31 +116,70 @@ const cancelConfirmationMode = (): void => {
 }
 
 /**
- * Bloquea la pantalla usando Fully Kiosk API
+ * Bloquea la pantalla usando múltiples métodos
  */
 const lockScreen = (): void => {
   console.log('🔒 [Lock] Intentando bloquear pantalla')
-  console.log('🔒 [Lock] window.fully existe:', !!window.fully)
   
   // Limpiar timers
   cancelConfirmationMode()
 
-  // Llamar a Fully Kiosk API
+  // Método 1: Fully Kiosk API (tablets)
   if (window.fully && typeof window.fully.screenOff === 'function') {
     try {
-      console.log('🔒 [Lock] Llamando a window.fully.screenOff()')
       window.fully.screenOff()
-      console.log('✅ [Lock] Pantalla bloqueada exitosamente')
+      console.log('✅ [Lock] Pantalla bloqueada con Fully Kiosk')
+      return
     } catch (error) {
-      console.error('❌ [Lock] Error al bloquear pantalla:', error)
+      console.error('❌ [Lock] Error con Fully Kiosk:', error)
     }
-  } else {
-    console.warn('⚠️ [Lock] Fully Kiosk no disponible o sin función screenOff')
-    console.log('🔍 [Lock] Diagnóstico:')
-    console.log('  - window existe:', typeof window !== 'undefined')
-    console.log('  - window.fully existe:', !!window.fully)
-    console.log('  - screenOff es función:', window.fully ? typeof window.fully.screenOff === 'function' : false)
   }
+
+  // Método 2: Screen Wake Lock API (navegadores modernos)
+  if ('wakeLock' in navigator) {
+    try {
+      // Liberar wake lock para permitir que la pantalla se apague
+      navigator.wakeLock.request('screen').then(wakeLock => {
+        wakeLock.release()
+        console.log('✅ [Lock] Wake lock liberado')
+      })
+    } catch (error) {
+      console.error('❌ [Lock] Error con Wake Lock:', error)
+    }
+  }
+
+  // Método 3: Fullscreen API + mensaje
+  if (document.fullscreenElement) {
+    document.exitFullscreen()
+  }
+  
+  // Método 4: Simulación visual (fallback)
+  const overlay = document.createElement('div')
+  overlay.style.cssText = `
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100vw;
+    height: 100vh;
+    background: black;
+    z-index: 9999;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: white;
+    font-size: 24px;
+    font-family: Arial, sans-serif;
+  `
+  overlay.innerHTML = `
+    <div style="text-align: center;">
+      <div>🔒 Pantalla Bloqueada</div>
+      <div style="font-size: 16px; margin-top: 20px;">Toca para desbloquear</div>
+    </div>
+  `
+  overlay.onclick = () => document.body.removeChild(overlay)
+  document.body.appendChild(overlay)
+  
+  console.log('✅ [Lock] Simulación de bloqueo activada')
 }
 </script>
 

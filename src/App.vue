@@ -4,7 +4,6 @@
 import { onMounted } from 'vue'
 import AuthBackground from '@/components/layout/AuthBackground.vue'
 import TabletLockFAB from '@/components/tablet/TabletLockFAB.vue'
-import DebugConsolePanel from '@/components/dev/DebugConsolePanel.vue'
 import { useStorageMonitor } from '@/composables/useStorageMonitor'
 import { useAutoBackup } from '@/composables/useAutoBackup'
 import { useAppStore } from '@/stores/app'
@@ -37,11 +36,8 @@ onMounted(async () => {
       </AuthBackground>
     </v-main>
     
-    <!-- Botón Flotante de Bloqueo (solo visible en tablets) -->
+    <!-- Botón Flotante de Bloqueo -->
     <TabletLockFAB />
-    
-    <!-- Panel de Debug Console (siempre disponible) -->
-    <DebugConsolePanel :max-logs="150" />
   </v-app>
 </template>
 
