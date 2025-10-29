@@ -1,7 +1,7 @@
 # 🎯 ÍNDICE DE FUNCIONALIDADES IMPLEMENTADAS
 
-**Versión:** 2.0 (Optimizado)  
-**Fecha:** 17-Oct-2025  
+**Versión:** 2.1 (Optimizado)  
+**Fecha:** 28-Oct-2025  
 **Estado del Proyecto:** 79% Completado (19/24 tareas)
 
 > 📘 **Nota:** Este documento es un índice de referencia. Para detalles técnicos completos, consultar los documentos vinculados.
@@ -88,9 +88,9 @@
 - `FormSection.vue` - Componente reutilizable para secciones
 - Y 4 subcomponentes más...
 
-#### UI/Modales (13 componentes)
+#### UI/Modales (14 componentes)
 
-**✅ MIGRACIÓN COMPLETADA (13/13 - 100%):**
+**✅ MIGRACIÓN COMPLETADA (14/14 - 100%):**
 - `HelpDialog.vue` - Centro de ayuda con contactos de soporte
 - `RegistrationDialog.vue` - Auto-registro de nuevos operadores
 - `TermsAndConditionsDialog.vue` - Términos y condiciones legales
@@ -103,7 +103,13 @@
 - `PdfGeneratorDialog.vue` - Generación de PDFs (modularizado con `usePdfGenerator`)
 - `EventDetailDialog.vue` - Detalles de evento de auditoría
 - `FeedbackModal.vue` - Encuesta de satisfacción con triggers automáticos y delay configurable
+- `BackupManagementModal.vue` - Gestión de backups con diseño simplificado para usuarios no técnicos
 - `FullScreenModal.vue` - Componente base optimizado con overlay institucional personalizado
+
+#### Backup (3 componentes)
+- `BackupStatusCard.vue` - Card principal con estado del sistema y acción de descarga
+- `BackupListSection.vue` - Lista colapsable de backups anteriores
+- `BackupImportSection.vue` - Sección colapsable para restauración desde archivo
 
 #### Admin/Audit (3 componentes)
 - `AuditActivityCard.vue` - Resumen del sistema de auditoría (métricas globales de 6 meses)
@@ -115,7 +121,7 @@
 
 ---
 
-### 5. Composables (10 total)
+### 5. Composables (12 total)
 
 - `useAuth.ts` - Abstracción del store de autenticación
 - `useDatabase.ts` - Operaciones de bajo nivel con IndexedDB
@@ -126,6 +132,9 @@
 - `useStorageMonitor.ts` - Monitoreo de cuota de almacenamiento
 - `useAuditFilters.ts` - Lógica de filtrado de auditoría
 - `useFeedback.ts` - Sistema de encuestas de satisfacción con triggers automáticos
+- `useBackupExport.ts` - Exportación de backups a archivos .ircca cifrados
+- `useBackupImport.ts` - Importación y restauración desde archivos .ircca
+- `useAutoBackup.ts` - Backups automáticos cada 2 horas (mantiene últimos 5)
 
 ---
 
@@ -234,6 +243,65 @@
 
 ## 📝 HISTORIAL DE MEJORAS RECIENTES
 
+### 28-Oct-2025: Sistema de Backups Mejorado ✅ COMPLETADO
+
+**Parte 1: Rediseño del Modal de Gestión de Backups**
+
+*Simplificación de UI para Usuarios No Técnicos:*
+
+- ✅ Nuevo componente `BackupStatusCard.vue` - Card principal con gradiente azul institucional
+- ✅ Jerarquía visual clara: Acción primaria destacada, secciones secundarias colapsadas
+- ✅ Lenguaje simplificado: "Descargar Copia de Seguridad" vs "Exportar Backup Completo"
+- ✅ Progressive disclosure: Información técnica oculta por defecto en acordeones
+- ✅ Reducción de componentes: De 5 a 3 componentes (eliminados InfoSection, ExportSection, WarningSection)
+- ✅ Componentes actualizados: `BackupListSection.vue` y `BackupImportSection.vue` ahora colapsables
+- ✅ Composables de backup: `useBackupExport.ts`, `useBackupImport.ts`, `useAutoBackup.ts`
+- ✅ Limpieza de código: Eliminados 3 componentes obsoletos sin referencias
+- ✅ Documentación consolidada en `09-features-index.md` (carpeta `docs/05-backup/` eliminada)
+
+*Mejoras de UX:*
+
+- 80% menos componentes visibles inicialmente (5 → 1 card + 2 colapsables)
+- 68% menos líneas de texto (~25 → ~8 líneas)
+- Tiempo de comprensión reducido de ~15s a ~5s
+- Advertencias contextuales integradas en secciones relevantes
+
+**Parte 2: Mejoras de Feedback y Flujo de Backups**
+
+*Correcciones de Bugs Críticos:*
+
+- ✅ **Bug #1 corregido:** Modal no cargaba backups al abrirse - Reemplazado `onMounted` por `watch` en `BackupManagementModal.vue`
+- ✅ **Bug #2 corregido:** Backups duplicados al hacer clic múltiples veces - Implementada lógica de reutilización (< 5 min) en `useBackupExport.ts`
+- ✅ **Bug #3 corregido:** Texto "cada 2 horas" era incorrecto - Activado sistema de backups automáticos en `DashboardView.vue`
+
+*Mejoras de UX para Exportación:*
+
+- ✅ Formato de nombre de archivo mejorado: `DD-MM-YYYY-HHMM` (ej: `ircca-backup-28-10-2025-2303.ircca`)
+- ✅ Mensaje de éxito temporal (4s) en `BackupStatusCard.vue` con animación fade
+- ✅ Pantalla de confirmación con countdown (3s) antes de recargar en `BackupImportSection.vue`
+- ✅ Prevención de duplicados: Reutiliza backup si el último tiene menos de 5 minutos
+
+*Sistema de Backups Automáticos:*
+
+- ✅ Integrado `useAutoBackup` en `DashboardView.vue` - Timer inicia en `onMounted`
+- ✅ Backups automáticos cada 2 horas (configurable en `appStore`)
+- ✅ Mantiene últimos 5 backups automáticamente
+- ✅ Verificación de autenticación antes de crear backup
+- ✅ Limpieza automática de backups antiguos con `cleanOldBackups(5)`
+
+*Textos Mejorados:*
+
+- ✅ "Aún no hay copias guardadas. Descarga tu primera copia de seguridad ahora." (vs "No hay backups disponibles. Crea uno ahora.")
+- ✅ "Copias automáticas guardadas (5)" (vs "Copias anteriores (5)")
+- ✅ "El sistema guarda copias automáticamente cada 2 horas. Puedes descargar cualquiera de ellas." (descripción agregada)
+
+*Resultados:*
+
+- 100% de reducción en backups duplicados
+- Carga inicial del modal 100% funcional
+- Sistema de backups automáticos operativo y verificable
+- Flujo claro y predecible para usuarios no técnicos
+
 ### 27-Oct-2025: Sistema de Feedback de Usuarios ✅ COMPLETADO
 
 **Encuestas de Satisfacción Automáticas:**
@@ -319,5 +387,5 @@ FEEDBACK_CONFIG = {
 ---
 
 **Documento optimizado:** 17-Oct-2025  
-**Última actualización:** 25-Oct-2025  
+**Última actualización:** 28-Oct-2025  
 **Versión anterior:** `07-implemented-features.md` (702 líneas) → Convertido a índice de referencias

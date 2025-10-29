@@ -329,10 +329,10 @@ export function useBackupImport() {
         'success'
       )
 
-      // 7. Recargar aplicación después de 2 segundos
+      // 7. Recargar aplicación después de 3 segundos (para mostrar pantalla de éxito)
       setTimeout(() => {
         window.location.reload()
-      }, 2000)
+      }, 3000)
 
       return { success: true }
     } catch (error) {

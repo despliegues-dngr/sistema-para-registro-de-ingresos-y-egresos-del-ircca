@@ -98,6 +98,8 @@ Estado actual del proyecto y pendientes.
 
 **Cuándo consultar:** Diario - saber qué hacer siguiente.
 
+**Nota:** La carpeta `05-backup/` fue eliminada el 28-Oct-2025. La información del sistema de backups está consolidada en `02-architecture/09-features-index.md`.
+
 ---
 
 ### **07-development/** - Backlog y Planificación 🚀

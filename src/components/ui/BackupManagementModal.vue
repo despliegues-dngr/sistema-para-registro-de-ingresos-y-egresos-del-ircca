@@ -10,27 +10,22 @@
   >
     <!-- Contenido del modal -->
     <div v-if="modelValue" class="backup-management-content">
-      <!-- Información del backup -->
-      <BackupInfoSection />
-
-      <!-- Botón de exportación principal -->
-      <BackupExportSection
-        :is-exporting="isExporting"
+      <!-- Card de Estado Principal -->
+      <BackupStatusCard
         :last-backup-info="lastBackupInfo"
+        :is-exporting="isExporting"
+        :export-success="exportSuccess"
         @export="handleExportBackup"
       />
 
-      <!-- Advertencia de seguridad -->
-      <BackupWarningSection />
-
-      <!-- Lista de backups disponibles -->
+      <!-- Lista de backups disponibles (colapsable) -->
       <BackupListSection
         :backups-list="backupsList"
         :exporting-id="exportingId"
         @export-backup="exportSpecificBackup"
       />
 
-      <!-- Sección de importación -->
+      <!-- Sección de importación (colapsable) -->
       <BackupImportSection
         :is-importing="isImporting"
         :import-progress="importProgress"
@@ -55,14 +50,12 @@
 </template>
 
 <script setup lang="ts">
-import { ref, computed, onMounted } from 'vue'
+import { ref, computed, watch } from 'vue'
 import { useAppStore } from '@/stores/app'
 import { useBackupExport } from '@/composables/useBackupExport'
 import { useBackupImport } from '@/composables/useBackupImport'
 import FullScreenModal from './FullScreenModal.vue'
-import BackupInfoSection from './backup/BackupInfoSection.vue'
-import BackupExportSection from './backup/BackupExportSection.vue'
-import BackupWarningSection from './backup/BackupWarningSection.vue'
+import BackupStatusCard from './backup/BackupStatusCard.vue'
 import BackupListSection from './backup/BackupListSection.vue'
 import BackupImportSection from './backup/BackupImportSection.vue'
 
@@ -86,17 +79,19 @@ const { isImporting, importProgress, importBackup } = useBackupImport()
 const lastBackupInfo = ref<{ date: string; size: string } | null>(null)
 const backupsList = ref<Array<{ id: string; timestamp: Date; size: number; fileName: string }>>([])
 const exportingId = ref<string | null>(null)
+const exportSuccess = ref(false)
 
 const modelValue = computed({
   get: () => props.modelValue,
   set: (value: boolean) => emit('update:modelValue', value)
 })
 
-onMounted(async () => {
-  if (props.modelValue) {
+// ✅ FIX: Cargar backups cuando el modal se abre (no solo en mount)
+watch(() => props.modelValue, async (newVal) => {
+  if (newVal) {
     await loadBackupsInfo()
   }
-})
+}, { immediate: true })
 
 async function loadBackupsInfo() {
   const backups = await getBackupsInfo()
@@ -117,6 +112,13 @@ async function loadBackupsInfo() {
 async function handleExportBackup() {
   const result = await exportLatestBackup()
   if (result.success) {
+    // Activar mensaje de éxito visual
+    exportSuccess.value = true
+    // Resetear después de 4 segundos
+    setTimeout(() => {
+      exportSuccess.value = false
+    }, 4000)
+    
     appStore.addNotification(
       '✅ Backup exportado exitosamente. Guárdalo en un lugar seguro.',
       'success'
@@ -198,8 +200,8 @@ function handleClose() {
 
 <style scoped>
 .backup-management-content {
-  padding: 2rem;
-  max-width: 900px;
+  padding: 1.5rem;
+  max-width: 800px;
   margin: 0 auto;
 }
 

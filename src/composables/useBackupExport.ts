@@ -14,6 +14,8 @@ export function useBackupExport() {
 
   /**
    * Formatea el nombre del archivo de backup
+   * Formato: ircca-backup-DD-MM-YYYY-HHMM.ircca
+   * Ejemplo: ircca-backup-28-10-2025-1601.ircca
    */
   const getBackupFileName = (timestamp: Date): string => {
     const date = new Date(timestamp)
@@ -23,7 +25,7 @@ export function useBackupExport() {
     const hours = String(date.getHours()).padStart(2, '0')
     const minutes = String(date.getMinutes()).padStart(2, '0')
     
-    return `ircca-backup-${year}${month}${day}-${hours}${minutes}.ircca`
+    return `ircca-backup-${day}-${month}-${year}-${hours}${minutes}.ircca`
   }
 
   /**
@@ -106,18 +108,29 @@ export function useBackupExport() {
 
   /**
    * Exporta el último backup disponible
+   * Si el último backup tiene menos de 5 minutos, lo reutiliza
+   * Si no, crea uno nuevo para evitar duplicados
    */
   const exportLatestBackup = async (): Promise<{ success: boolean; error?: string }> => {
     try {
       const backups = await databaseService.getBackups()
       
-      if (backups.length === 0) {
-        appStore.addNotification('No hay backups disponibles para exportar', 'warning')
-        return { success: false, error: 'No hay backups disponibles' }
+      if (backups.length > 0) {
+        const latest = backups[0]
+        const now = new Date().getTime()
+        const lastBackupTime = new Date(latest.timestamp).getTime()
+        const diffMinutes = (now - lastBackupTime) / 1000 / 60
+        
+        // Si el último backup tiene menos de 5 minutos, reutilizarlo
+        if (diffMinutes < 5) {
+          console.log('📦 [BACKUP] Reutilizando backup reciente (< 5 min)')
+          return await exportBackup(latest.id)
+        }
       }
 
-      // El primer backup es el más reciente (ya están ordenados)
-      return await exportBackup(backups[0].id)
+      // Si no hay backups o el último es muy antiguo, crear uno nuevo
+      console.log('📦 [BACKUP] Creando nuevo backup')
+      return await createAndExportBackup()
     } catch (error) {
       return { success: false, error: String(error) }
     }
