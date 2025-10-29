@@ -1,6 +1,6 @@
 <template>
-  <!-- Botón Flotante de Bloqueo (solo visible en tablets) -->
-  <div v-if="isTablet" class="lock-fab-container">
+  <!-- Botón Flotante de Bloqueo - Siempre visible -->
+  <div class="lock-fab-container">
     <!-- Botón Principal -->
     <v-btn
       :class="['lock-fab', { 'lock-fab--waiting': isWaitingSecondTap }]"
@@ -42,10 +42,6 @@
 
 <script setup lang="ts">
 import { ref } from 'vue'
-import { useTabletBrightness } from '@/composables/useTabletBrightness'
-
-// Detectar si es tablet
-const { isTablet } = useTabletBrightness()
 
 // Estado del componente
 const isWaitingSecondTap = ref(false)

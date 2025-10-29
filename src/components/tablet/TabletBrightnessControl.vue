@@ -1,6 +1,6 @@
 <template>
-  <!-- Solo renderizar si está en tablet -->
-  <v-menu v-if="isTablet" offset-y :close-on-content-click="false">
+  <!-- Siempre visible - funciona con graceful degradation -->
+  <v-menu offset-y :close-on-content-click="false">
     <template #activator="{ props }">
       <v-btn
         v-bind="props"
@@ -123,20 +123,21 @@
 </template>
 
 <script setup lang="ts">
-import { computed } from 'vue'
-import { useTabletBrightness } from '@/composables/useTabletBrightness'
+import { ref, computed } from 'vue'
 
-const {
-  brightness,
-  brightnessPercent,
-  isTablet,
-  MIN_BRIGHTNESS,
-  MAX_BRIGHTNESS,
-  setBrightness,
-  increaseBrightness,
-  decreaseBrightness,
-  resetBrightness,
-} = useTabletBrightness()
+// Constantes
+const MIN_BRIGHTNESS = 50
+const MAX_BRIGHTNESS = 255
+const DEFAULT_BRIGHTNESS = 180
+const STORAGE_KEY = 'ircca-tablet-brightness'
+
+// Estado
+const brightness = ref(DEFAULT_BRIGHTNESS)
+
+// Computed
+const brightnessPercent = computed(() => {
+  return Math.round((brightness.value / MAX_BRIGHTNESS) * 100)
+})
 
 const brightnessIcon = computed(() => {
   const percent = brightnessPercent.value
@@ -144,6 +145,62 @@ const brightnessIcon = computed(() => {
   if (percent <= 70) return 'mdi-brightness-5'
   return 'mdi-brightness-7'
 })
+
+// Funciones
+const applyBrightness = (value: number): void => {
+  if (typeof window !== 'undefined' && window.fully && typeof window.fully.setScreenBrightness === 'function') {
+    try {
+      window.fully.setScreenBrightness(value)
+    } catch {
+      // Silencioso si falla
+    }
+  }
+}
+
+const saveBrightness = (value: number): void => {
+  try {
+    localStorage.setItem(STORAGE_KEY, value.toString())
+  } catch {
+    // Silencioso si falla
+  }
+}
+
+const loadSavedBrightness = (): number => {
+  try {
+    const saved = localStorage.getItem(STORAGE_KEY)
+    if (saved) {
+      const value = parseInt(saved, 10)
+      if (!isNaN(value) && value >= MIN_BRIGHTNESS && value <= MAX_BRIGHTNESS) {
+        return value
+      }
+    }
+  } catch {
+    // Silencioso si falla
+  }
+  return DEFAULT_BRIGHTNESS
+}
+
+const setBrightness = (value: number): void => {
+  const clampedValue = Math.max(MIN_BRIGHTNESS, Math.min(MAX_BRIGHTNESS, value))
+  brightness.value = clampedValue
+  applyBrightness(clampedValue)
+  saveBrightness(clampedValue)
+}
+
+const increaseBrightness = (): void => {
+  setBrightness(brightness.value + 25)
+}
+
+const decreaseBrightness = (): void => {
+  setBrightness(brightness.value - 25)
+}
+
+const resetBrightness = (): void => {
+  setBrightness(DEFAULT_BRIGHTNESS)
+}
+
+// Inicializar
+brightness.value = loadSavedBrightness()
 </script>
 
 <style scoped>
