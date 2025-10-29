@@ -9,9 +9,6 @@ import { useStorageMonitor } from '@/composables/useStorageMonitor'
 import { useAutoBackup } from '@/composables/useAutoBackup'
 import { useAppStore } from '@/stores/app'
 
-// Detectar si estamos en modo desarrollo
-const isDevelopment = import.meta.env.DEV
-
 // Inicializar stores y composables
 const appStore = useAppStore()
 const { ensurePersistence, startMonitoring } = useStorageMonitor()
@@ -43,8 +40,8 @@ onMounted(async () => {
     <!-- Botón Flotante de Bloqueo (solo visible en tablets) -->
     <TabletLockFAB />
     
-    <!-- Panel de Debug Console (solo en desarrollo) -->
-    <DebugConsolePanel v-if="isDevelopment" :max-logs="150" />
+    <!-- Panel de Debug Console (siempre disponible) -->
+    <DebugConsolePanel :max-logs="150" />
   </v-app>
 </template>
 
