@@ -57,11 +57,16 @@ const PROGRESS_INTERVAL = 30 // Actualizar cada 30ms
  * Maneja el tap en el botón de bloqueo
  */
 const handleLockTap = (): void => {
+  console.log('🔒 [Lock] Click detectado en botón de bloqueo')
+  console.log('🔒 [Lock] Esperando segundo tap:', isWaitingSecondTap.value)
+  
   if (!isWaitingSecondTap.value) {
     // Primer tap: Activar modo de confirmación
+    console.log('🔒 [Lock] Primer tap - activando modo confirmación')
     startConfirmationMode()
   } else {
     // Segundo tap: Bloquear pantalla
+    console.log('🔒 [Lock] Segundo tap - bloqueando pantalla')
     lockScreen()
   }
 }
@@ -114,16 +119,27 @@ const cancelConfirmationMode = (): void => {
  * Bloquea la pantalla usando Fully Kiosk API
  */
 const lockScreen = (): void => {
+  console.log('🔒 [Lock] Intentando bloquear pantalla')
+  console.log('🔒 [Lock] window.fully existe:', !!window.fully)
+  
   // Limpiar timers
   cancelConfirmationMode()
 
   // Llamar a Fully Kiosk API
   if (window.fully && typeof window.fully.screenOff === 'function') {
     try {
+      console.log('🔒 [Lock] Llamando a window.fully.screenOff()')
       window.fully.screenOff()
-    } catch {
-      // Error al bloquear pantalla
+      console.log('✅ [Lock] Pantalla bloqueada exitosamente')
+    } catch (error) {
+      console.error('❌ [Lock] Error al bloquear pantalla:', error)
     }
+  } else {
+    console.warn('⚠️ [Lock] Fully Kiosk no disponible o sin función screenOff')
+    console.log('🔍 [Lock] Diagnóstico:')
+    console.log('  - window existe:', typeof window !== 'undefined')
+    console.log('  - window.fully existe:', !!window.fully)
+    console.log('  - screenOff es función:', window.fully ? typeof window.fully.screenOff === 'function' : false)
   }
 }
 </script>

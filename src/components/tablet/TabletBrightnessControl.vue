@@ -148,12 +148,23 @@ const brightnessIcon = computed(() => {
 
 // Funciones
 const applyBrightness = (value: number): void => {
+  console.log('🔆 [Brightness] Intentando aplicar brillo:', value)
+  console.log('🔆 [Brightness] window.fully existe:', !!window.fully)
+  
   if (typeof window !== 'undefined' && window.fully && typeof window.fully.setScreenBrightness === 'function') {
     try {
+      console.log('🔆 [Brightness] Llamando a window.fully.setScreenBrightness()', value)
       window.fully.setScreenBrightness(value)
-    } catch {
-      // Silencioso si falla
+      console.log('✅ [Brightness] Brillo aplicado exitosamente')
+    } catch (error) {
+      console.error('❌ [Brightness] Error al aplicar brillo:', error)
     }
+  } else {
+    console.warn('⚠️ [Brightness] Fully Kiosk no disponible o sin función setScreenBrightness')
+    console.log('🔍 [Brightness] Diagnóstico:')
+    console.log('  - window existe:', typeof window !== 'undefined')
+    console.log('  - window.fully existe:', !!window.fully)
+    console.log('  - setScreenBrightness es función:', window.fully ? typeof window.fully.setScreenBrightness === 'function' : false)
   }
 }
 
@@ -200,7 +211,11 @@ const resetBrightness = (): void => {
 }
 
 // Inicializar
-brightness.value = loadSavedBrightness()
+const initialBrightness = loadSavedBrightness()
+console.log('🔆 [Brightness] Inicializando componente')
+console.log('🔆 [Brightness] Brillo cargado:', initialBrightness)
+console.log('🔆 [Brightness] window.fully disponible:', !!window.fully)
+brightness.value = initialBrightness
 </script>
 
 <style scoped>
