@@ -57,16 +57,11 @@ const PROGRESS_INTERVAL = 30 // Actualizar cada 30ms
  * Maneja el tap en el botón de bloqueo
  */
 const handleLockTap = (): void => {
-  console.log('🔒 [Lock] Click detectado en botón de bloqueo')
-  console.log('🔒 [Lock] Esperando segundo tap:', isWaitingSecondTap.value)
-  
   if (!isWaitingSecondTap.value) {
     // Primer tap: Activar modo de confirmación
-    console.log('🔒 [Lock] Primer tap - activando modo confirmación')
     startConfirmationMode()
   } else {
     // Segundo tap: Bloquear pantalla
-    console.log('🔒 [Lock] Segundo tap - bloqueando pantalla')
     lockScreen()
   }
 }
@@ -119,8 +114,6 @@ const cancelConfirmationMode = (): void => {
  * Bloquea la pantalla usando múltiples métodos
  */
 const lockScreen = (): void => {
-  console.log('🔒 [Lock] Intentando bloquear pantalla')
-  
   // Limpiar timers
   cancelConfirmationMode()
 
@@ -128,7 +121,6 @@ const lockScreen = (): void => {
   if (window.fully && typeof window.fully.screenOff === 'function') {
     try {
       window.fully.screenOff()
-      console.log('✅ [Lock] Pantalla bloqueada con Fully Kiosk')
       return
     } catch (error) {
       console.error('❌ [Lock] Error con Fully Kiosk:', error)
@@ -141,7 +133,6 @@ const lockScreen = (): void => {
       // Liberar wake lock para permitir que la pantalla se apague
       navigator.wakeLock.request('screen').then(wakeLock => {
         wakeLock.release()
-        console.log('✅ [Lock] Wake lock liberado')
       })
     } catch (error) {
       console.error('❌ [Lock] Error con Wake Lock:', error)
@@ -178,8 +169,6 @@ const lockScreen = (): void => {
   `
   overlay.onclick = () => document.body.removeChild(overlay)
   document.body.appendChild(overlay)
-  
-  console.log('✅ [Lock] Simulación de bloqueo activada')
 }
 </script>
 

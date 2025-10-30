@@ -101,7 +101,7 @@
                   <span class="log-timestamp text-caption text-grey-darken-1 mr-2">
                     {{ formatTime(item.timestamp) }}
                   </span>
-                  
+
                   <!-- Tipo -->
                   <v-icon
                     :color="getTypeColor(item.type)"
@@ -110,7 +110,7 @@
                   >
                     {{ getTypeIcon(item.type) }}
                   </v-icon>
-                  
+
                   <!-- Mensaje -->
                   <div class="log-message flex-grow-1">
                     <div
@@ -210,12 +210,12 @@ const filteredLogs = computed(() => {
   return logs.value.filter(log => {
     if (activeFilter.value === 'error') return log.type === 'error'
     if (activeFilter.value === 'warn') return log.type === 'warn'
-    
+
     // Filtrar por categoría (emoji en el mensaje)
     const firstMessage = String(log.messages[0] || '')
     if (activeFilter.value === 'lock') return firstMessage.includes('🔒')
     if (activeFilter.value === 'brightness') return firstMessage.includes('🔆')
-    
+
     return true
   })
 })
@@ -238,15 +238,15 @@ const clearLogs = (): void => {
 
 const getFilterCount = (filterValue: string): number => {
   if (filterValue === 'all') return logs.value.length
-  
+
   return logs.value.filter(log => {
     if (filterValue === 'error') return log.type === 'error'
     if (filterValue === 'warn') return log.type === 'warn'
-    
+
     const firstMessage = String(log.messages[0] || '')
     if (filterValue === 'lock') return firstMessage.includes('🔒')
     if (filterValue === 'brightness') return firstMessage.includes('🔆')
-    
+
     return false
   }).length
 }
@@ -267,7 +267,7 @@ const formatMessage = (msg: unknown): string => {
   if (typeof msg === 'number' || typeof msg === 'boolean') return String(msg)
   if (msg === null) return 'null'
   if (msg === undefined) return 'undefined'
-  
+
   try {
     return JSON.stringify(msg, null, 2)
   } catch {
@@ -382,7 +382,7 @@ onUnmounted(() => {
 
 /* Drawer */
 .debug-drawer {
-  z-index: 2002 !important;
+  z-index: 2002;
 }
 
 /* Logs container */

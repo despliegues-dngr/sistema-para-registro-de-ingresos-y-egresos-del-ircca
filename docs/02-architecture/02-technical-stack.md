@@ -47,7 +47,63 @@ El proyecto utiliza Vite con una configuración optimizada a través de varios p
 
 ---
 
-## 4. Calidad de Código
+## 4. Configuración Fully Kiosk Browser
+
+### **4.1 Configuración de Producción**
+**URL PWA:** `https://sistema-para-registro-de-ingresos-y.vercel.app/`  
+**Versión Fully Kiosk:** 1.59.1-play  
+**Archivo Config:** `fully-settings.json` (raíz del proyecto)
+
+### **4.2 Configuraciones Críticas**
+```yaml
+# Seguridad Kiosk
+kioskMode: true                    # Modo kiosk activado
+disableHomeButton: true            # Bloquear botón home
+disablePowerButton: true           # Bloquear botón power
+disableVolumeButtons: true         # Bloquear botones volumen
+disableStatusBar: true             # Ocultar barra estado
+disableOtherApps: true             # Bloquear otras apps
+advancedKioskProtection: true      # Protección avanzada
+
+# Seguridad USB/ADB
+mdmDisableADB: true                # Bloquear USB debugging
+knoxDisableUsbDebugging: true      # Doble protección USB
+mdmDisableUsbStorage: true         # Bloquear almacenamiento USB
+
+# Control Hardware PWA
+screenBrightness: "180"            # Habilita control brillo
+keepScreenOn: true                 # Mantener pantalla activa
+```
+
+### **4.3 PINs de Acceso**
+- **PIN Administrador:** Cifrado en `kioskPinEnc` (salida completa kiosk)
+- **PIN WiFi:** Cifrado en `kioskWifiPinEnc` (solo configuración WiFi)
+- **Acción WiFi:** `kioskWifiPinAction: "0"` (Android WiFi Settings)
+
+### **4.4 Configuración JavaScript Interface**
+```javascript
+// Funciones disponibles en window.fully
+window.fully.screenOff()           // Bloquear pantalla
+window.fully.setScreenBrightness(value) // Control brillo
+```
+
+### **4.5 Seguridad Implementada**
+- ✅ **Nivel Actual:** 85% (ALTO)
+- ✅ **USB/ADB:** Completamente bloqueado
+- ✅ **Botones físicos:** Todos deshabilitados
+- ✅ **Aplicaciones:** Acceso restringido solo a PWA
+- ✅ **Configuración:** Protegida con PINs cifrados
+
+### **4.6 Despliegue en Tablet**
+1. Instalar Fully Kiosk Browser
+2. Importar `fully-settings.json`
+3. Configurar como app predeterminada
+4. Verificar funcionamiento botones PWA
+5. Activar modo kiosk
+
+---
+
+## 5. Calidad de Código
 
 -   **Linting:** Se utiliza **ESLint** con la configuración recomendada para Vue y TypeScript (`@vue/eslint-config-typescript`). Las reglas se definen en `eslint.config.ts`.
 -   **Formato:** Se utiliza **Prettier** para mantener un formato de código consistente en todo el proyecto. La configuración se encuentra en `.prettierrc.json`.

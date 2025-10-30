@@ -205,7 +205,7 @@ async function handleSubmit() {
  */
 async function handlePostpone() {
   // Mostrar mensaje de confirmación dentro del modal
-  feedbackMessage.value = 'De acuerdo, te preguntaremos en otra ocasión 📅'
+  feedbackMessage.value = 'De acuerdo, te preguntaremos en otra ocasión.'
   feedbackType.value = 'info'
   
   // Esperar 2 segundos para que usuario vea el mensaje
@@ -225,7 +225,7 @@ async function handlePostpone() {
  */
 async function handleDismiss() {
   // Mostrar mensaje de confirmación dentro del modal
-  feedbackMessage.value = 'Perfecto, no volveremos a mostrar esta encuesta ✓'
+  feedbackMessage.value = 'Perfecto, no volveremos a mostrar esta encuesta.'
   feedbackType.value = 'success'
   
   // Esperar 2 segundos para que usuario vea el mensaje
@@ -261,11 +261,11 @@ function clearFeedbackMessage() {
  */
 function getSuccessFeedbackMessage(rating: number): string {
   if (rating >= 4) {
-    return '¡Gracias por tu feedback positivo! Nos alegra que te guste el sistema 🎉'
+    return 'Gracias por tu evaluación positiva. Nos complace saber que el sistema cumple con tus expectativas.'
   } else if (rating === 3) {
-    return '¡Gracias por tu feedback! Trabajaremos en mejorar tu experiencia 💪'
+    return 'Gracias por tu evaluación. Continuaremos trabajando para mejorar el sistema.'
   } else {
-    return '¡Gracias por tu sinceridad! Lamentamos tu experiencia, trabajaremos en mejorar 🔧'
+    return 'Gracias por tu evaluación. Tomaremos en cuenta tus comentarios para implementar mejoras.'
   }
 }
 

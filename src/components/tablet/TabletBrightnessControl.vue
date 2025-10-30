@@ -148,13 +148,10 @@ const brightnessIcon = computed(() => {
 
 // Funciones
 const applyBrightness = (value: number): void => {
-  console.log('🔆 [Brightness] Aplicando brillo:', value)
-  
   // Método 1: Fully Kiosk API (tablets)
   if (window.fully && typeof window.fully.setScreenBrightness === 'function') {
     try {
       window.fully.setScreenBrightness(value)
-      console.log('✅ [Brightness] Brillo aplicado con Fully Kiosk')
       return
     } catch (error) {
       console.error('❌ [Brightness] Error con Fully Kiosk:', error)
@@ -165,7 +162,6 @@ const applyBrightness = (value: number): void => {
   try {
     const brightness = (value / 255) * 100
     document.documentElement.style.filter = `brightness(${brightness}%)`
-    console.log('✅ [Brightness] Brillo aplicado con CSS filter')
     return
   } catch (error) {
     console.error('❌ [Brightness] Error con CSS filter:', error)
@@ -191,7 +187,6 @@ const applyBrightness = (value: number): void => {
   
   const opacity = Math.max(0, (255 - value) / 255 * 0.7)
   overlay.style.backgroundColor = `rgba(0, 0, 0, ${opacity})`
-  console.log('✅ [Brightness] Simulación de brillo aplicada')
 }
 
 const saveBrightness = (value: number): void => {
@@ -238,7 +233,6 @@ const resetBrightness = (): void => {
 
 // Inicializar
 const initialBrightness = loadSavedBrightness()
-console.log('🔆 [Brightness] Inicializando con brillo:', initialBrightness)
 brightness.value = initialBrightness
 </script>
 

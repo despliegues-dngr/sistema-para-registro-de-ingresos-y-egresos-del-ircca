@@ -43,7 +43,7 @@ Guías conceptuales sobre cómo está construido el sistema.
 | Archivo | Descripción |
 |---------|-------------|
 | `01-pwa-architecture.md` | Decisiones de diseño PWA |
-| `02-technical-stack.md` | **📌 Stack tecnológico (fuente única verdad)** |
+| `02-technical-stack.md` | **📌 Stack tecnológico + Configuración Fully Kiosk** |
 | `03-vuetify-guidelines.md` | Convenciones Vuetify 3 |
 | `04-database-schema.md` | Schema IndexedDB (Parte 1) |
 | `05-database-operations.md` | Operaciones DB (Parte 2) |
@@ -197,6 +197,7 @@ npm audit                # ✅ 0 vulnerabilidades críticas
 - **Seguridad:** AES-256-GCM + PBKDF2
 - **Testing:** Vitest (194 unitarios) + Playwright (18 E2E en Chromium/WebKit)
 - **PWA:** Service Worker + Workbox
+- **Kiosk:** Fully Kiosk Browser (configuración en `fully-settings.json`)
 
 ### **Principios de Desarrollo**
 1. **Offline-first** - App funciona sin internet

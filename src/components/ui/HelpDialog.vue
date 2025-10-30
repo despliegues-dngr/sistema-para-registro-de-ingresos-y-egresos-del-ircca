@@ -77,7 +77,7 @@ interface Emits {
 
 const props = withDefaults(defineProps<Props>(), {
   supportEmail: 'gr-depto.infoygc@minterior.gub.uy',
-  whatsappNumber: '099 505 227',
+  whatsappNumber: '092 703 856',
 })
 
 const emit = defineEmits<Emits>()
@@ -113,7 +113,7 @@ const copyToClipboard = async (text: string) => {
 
 .support-icon {
   font-size: 3rem;
-  color: #1565C0;
+  color: #1565c0;
   margin-bottom: 0.5rem;
 }
 
@@ -147,7 +147,7 @@ const copyToClipboard = async (text: string) => {
   font-size: 0.875rem;
   font-weight: 500;
   transition: all 0.2s ease;
-  
+
   /* ⚡ GPU ACCELERATION */
   transform: translateZ(0);
   backface-visibility: hidden;
@@ -158,22 +158,22 @@ const copyToClipboard = async (text: string) => {
 }
 
 .email-btn {
-  border-color: #1565C0;
-  color: #1565C0;
+  border-color: #1565c0;
+  color: #1565c0;
 }
 
 .email-btn:hover {
-  background: #E3F2FD;
+  background: #e3f2fd;
   transform: translateY(-2px) translateZ(0);
 }
 
 .whatsapp-btn {
-  border-color: #25D366;
-  color: #25D366;
+  border-color: #25d366;
+  color: #25d366;
 }
 
 .whatsapp-btn:hover {
-  background: #E8F5E9;
+  background: #e8f5e9;
   transform: translateY(-2px) translateZ(0);
 }
 
@@ -189,19 +189,19 @@ const copyToClipboard = async (text: string) => {
   padding: 1rem;
   border-radius: 8px;
   margin-bottom: 1rem;
-  
+
   /* ⚡ GPU ACCELERATION */
   transform: translateZ(0);
 }
 
 .info-card--info {
-  background: #E3F2FD;
-  border-left: 4px solid #1976D2;
+  background: #e3f2fd;
+  border-left: 4px solid #1976d2;
 }
 
 .info-card--warning {
-  background: #FFF3E0;
-  border-left: 4px solid #F57C00;
+  background: #fff3e0;
+  border-left: 4px solid #f57c00;
 }
 
 .info-card-header {
@@ -213,11 +213,11 @@ const copyToClipboard = async (text: string) => {
 }
 
 .info-card--info .info-card-header {
-  color: #1976D2;
+  color: #1976d2;
 }
 
 .info-card--warning .info-card-header {
-  color: #F57C00;
+  color: #f57c00;
 }
 
 .info-card-header i {
@@ -249,7 +249,7 @@ const copyToClipboard = async (text: string) => {
   align-items: center;
   gap: 0.5rem;
   padding: 0.75rem 1.5rem;
-  background: #1565C0;
+  background: #1565c0;
   color: white;
   border: none;
   border-radius: 8px;
@@ -257,14 +257,14 @@ const copyToClipboard = async (text: string) => {
   font-weight: 600;
   cursor: pointer;
   transition: all 0.2s ease;
-  
+
   /* ⚡ GPU ACCELERATION */
   transform: translateZ(0);
   backface-visibility: hidden;
 }
 
 .btn-primary:hover {
-  background: #0D47A1;
+  background: #0d47a1;
   transform: translateY(-2px) translateZ(0);
   box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
 }
@@ -285,10 +285,9 @@ const copyToClipboard = async (text: string) => {
   .support-icon {
     font-size: 2.5rem;
   }
-  
+
   .support-title {
     font-size: 1.125rem;
   }
 }
 </style>
-
