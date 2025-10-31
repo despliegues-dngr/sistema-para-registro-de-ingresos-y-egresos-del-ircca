@@ -53,7 +53,7 @@
               </v-list-item-title>
               
               <v-list-item-subtitle class="text-caption">
-                C.I: {{ item.cedula }} • {{ item.ultimoDestino }}
+                C.I: {{ formatCedula(item.cedula) }} • {{ item.ultimoDestino }}
                 <span v-if="item.ultimoVehiculo" class="ml-2">
                   • {{ item.ultimoVehiculo.tipo }} ({{ item.ultimoVehiculo.matricula }})
                 </span>
@@ -77,7 +77,8 @@
 </template>
 
 <script setup lang="ts">
-import type { PersonaConocida } from '@/services/autocompleteService'
+import { useCedulaFormat } from '@/composables/useCedulaFormat'
+import type { PersonaConocida } from '@/services/autocomplete/types'
 
 interface AutocompleteItem extends PersonaConocida {
   displayText: string
@@ -101,6 +102,8 @@ withDefaults(defineProps<Props>(), {
 })
 
 const emit = defineEmits<Emits>()
+
+const { formatCedula } = useCedulaFormat()
 
 // Reglas de validación para documento (solo requerido, sin límites de longitud)
 const cedulaRules = [

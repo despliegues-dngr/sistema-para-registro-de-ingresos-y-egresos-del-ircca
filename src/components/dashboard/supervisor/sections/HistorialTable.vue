@@ -28,7 +28,7 @@
         <v-col cols="6" md="2">
           <div class="info-item">
             <span class="info-label">C.I:</span>
-            <span class="info-value">{{ historial.persona.cedula }}</span>
+            <span class="info-value">{{ formatCedula(historial.persona.cedula) }}</span>
           </div>
         </v-col>
         <v-col cols="12" md="4">
@@ -103,6 +103,7 @@
 
 <script setup lang="ts">
 import type { RegistroHistorial, HistorialCompleto } from '@/composables/usePersonHistory'
+import { useCedulaFormat } from '@/composables/useCedulaFormat'
 
 defineProps<{
   registros: RegistroHistorial[]
@@ -112,6 +113,8 @@ defineProps<{
 defineEmits<{
   exportar: []
 }>()
+
+const { formatCedula } = useCedulaFormat()
 
 const headers = [
   { title: 'Fecha', key: 'fecha', sortable: true },

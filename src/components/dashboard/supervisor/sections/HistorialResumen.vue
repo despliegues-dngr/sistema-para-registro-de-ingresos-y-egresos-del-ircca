@@ -7,7 +7,7 @@
             {{ historial.persona.nombre }} {{ historial.persona.apellido }}
           </div>
           <div class="text-body-2">
-            <strong>C.I:</strong> {{ historial.persona.cedula }}
+            <strong>C.I:</strong> {{ formatCedula(historial.persona.cedula) }}
           </div>
         </v-col>
         <v-col cols="12" md="6">
@@ -33,8 +33,11 @@
 
 <script setup lang="ts">
 import type { HistorialCompleto } from '@/composables/usePersonHistory'
+import { useCedulaFormat } from '@/composables/useCedulaFormat'
 
 defineProps<{
   historial: HistorialCompleto
 }>()
+
+const { formatCedula } = useCedulaFormat()
 </script>

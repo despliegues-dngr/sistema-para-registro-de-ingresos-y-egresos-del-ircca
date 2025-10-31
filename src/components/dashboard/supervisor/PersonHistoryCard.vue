@@ -37,7 +37,7 @@
                 <v-icon size="16" color="primary" class="mr-1">mdi-account-circle</v-icon>
                 {{ item.raw.persona.nombre }} {{ item.raw.persona.apellido }}
                 <span class="text-caption text-medium-emphasis ml-2">
-                  ({{ item.raw.persona.cedula }})
+                  ({{ formatCedula(item.raw.persona.cedula) }})
                 </span>
               </span>
               <span v-else class="text-body-2">{{ item.value }}</span>
@@ -154,6 +154,7 @@ import { usePersonHistory } from '@/composables/usePersonHistory'
 import { usePersonaAutocomplete } from '@/composables/usePersonaAutocomplete'
 import { useAuthStore } from '@/stores/auth'
 import { useAuditStore } from '@/stores/audit'
+import { useCedulaFormat } from '@/composables/useCedulaFormat'
 import HistorialTable from './sections/HistorialTable.vue'
 
 // Composables
@@ -168,6 +169,9 @@ const {
   buscandoCedula,
   onSearchUpdate
 } = usePersonaAutocomplete()
+
+// Formateo de cédulas
+const { formatCedula } = useCedulaFormat()
 
 // Estado
 const cedula = ref('')

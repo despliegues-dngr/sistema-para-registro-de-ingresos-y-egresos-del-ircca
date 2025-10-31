@@ -1,6 +1,7 @@
 import { ref, computed } from 'vue'
 import { useRegistrosSearch } from '@/composables/useRegistros'
 import { databaseService } from '@/services/databaseService'
+import { useCedulaFormat } from '@/composables/useCedulaFormat'
 import type { RegistroIngreso, RegistroSalida } from '@/stores/registro'
 
 /**
@@ -64,6 +65,7 @@ interface OperadorInfo {
 
 export function usePersonHistory() {
   const { searchByCedula } = useRegistrosSearch()
+  const { formatCedula } = useCedulaFormat()
 
   // Estado
   const isLoading = ref(false)
@@ -255,7 +257,7 @@ export function usePersonHistory() {
     // Construir CSV con formato profesional (similar a ARCO)
     const csvContent = [
       `"Historial de Registros - IRCCA"`,
-      `"Documento: ${persona.cedula}"`,
+      `"Documento: ${formatCedula(persona.cedula)}"`,
       `"Nombre: ${persona.nombre} ${persona.apellido}"`,
       `"Total registros: ${registros.length}"`,
       `"Fecha generación: ${fechaGen}"`,

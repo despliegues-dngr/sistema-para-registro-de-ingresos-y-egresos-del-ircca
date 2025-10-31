@@ -36,11 +36,6 @@
       :no-data-text="searchQuery.trim() ? `No se encontraron usuarios que coincidan con '${searchQuery}'` : 'No hay usuarios registrados'"
       loading-text="Cargando usuarios..."
     >
-      <!-- Columna personalizada para el grado -->
-      <template v-slot:[`item.grado`]="{ item }">
-        <span class="font-weight-medium">{{ item.grado }}</span>
-      </template>
-
       <!-- Columna personalizada para cédula -->
       <template v-slot:[`item.cedula`]="{ item }">
         <v-chip
@@ -48,7 +43,7 @@
           variant="outlined"
           size="small"
         >
-          {{ item.cedula }}
+          {{ formatCedula(item.cedula) }}
         </v-chip>
       </template>
 
@@ -64,6 +59,27 @@
           </v-icon>
           {{ getRoleText(item.role) }}
         </v-chip>
+      </template>
+
+      <!-- Columna personalizada para grado -->
+      <template v-slot:[`item.grado`]="{ item }">
+        <v-chip
+          :color="getGradoColor(item.grado)"
+          variant="outlined"
+          size="small"
+          class="font-weight-bold"
+        >
+          {{ item.grado }}
+        </v-chip>
+      </template>
+
+      <!-- Columna personalizada para último acceso -->
+      <template v-slot:[`item.ultimoAcceso`]="{ item }">
+        <span 
+          :class="item.ultimoAcceso === 'Sin registro' ? 'text-grey text-caption font-italic' : 'text-body-2'"
+        >
+          {{ item.ultimoAcceso }}
+        </span>
       </template>
 
       <!-- Columna de acciones (solo si showActions = true) -->
@@ -118,6 +134,8 @@
 <script setup lang="ts">
 import { ref, computed, onMounted, watch } from 'vue'
 import { useDatabase } from '@/composables/useDatabase'
+import { useCedulaFormat } from '@/composables/useCedulaFormat'
+import { gradoToCode } from '@/utils/gradoUtils'
 
 // Props
 interface Props {
@@ -163,6 +181,23 @@ interface UserTableRow {
 
 // Composables
 const { getRecords, initDatabase } = useDatabase()
+const { formatCedula } = useCedulaFormat()
+
+// Función para formatear grado con lógica especial
+const formatearGrado = (grado: string): string => {
+  if (!grado) return 'N/A'
+  
+  // Lista de grados especiales que se muestran tal como están
+  const gradosEspeciales = ['Encargado', 'encargado', 'Desarrollador', 'desarrollador']
+  
+  // Si es un grado especial, mostrarlo tal como está
+  if (gradosEspeciales.includes(grado)) {
+    return grado
+  }
+  
+  // Para grados militares, usar la conversión a código
+  return gradoToCode(grado)
+}
 
 // Estado reactivo
 const usersTableData = ref<UserTableRow[]>([])
@@ -224,6 +259,21 @@ const formatearFecha = (fecha: string | undefined): string => {
   }
 }
 
+// Función específica para formatear último acceso con mensaje más claro
+const formatearUltimoAcceso = (fecha: string | undefined): string => {
+  if (!fecha) return 'Sin registro'
+  try {
+    const date = new Date(fecha)
+    return date.toLocaleDateString('es-UY', {
+      day: '2-digit',
+      month: '2-digit',
+      year: 'numeric'
+    })
+  } catch {
+    return 'Sin registro'
+  }
+}
+
 // Función para obtener color del chip según el rol
 const getRoleColor = (role: string): string => {
   const colors = {
@@ -232,6 +282,25 @@ const getRoleColor = (role: string): string => {
     'operador': 'success'
   }
   return colors[role as keyof typeof colors] || 'default'
+}
+
+// Función para obtener color del chip según el grado
+const getGradoColor = (grado: string): string => {
+  // Grados militares (G1-G10) - azul
+  if (grado.startsWith('G') && /^G\d+$/.test(grado)) {
+    return 'info'
+  }
+  
+  // Grados especiales - colores distintivos
+  const gradosEspeciales: Record<string, string> = {
+    'Encargado': 'warning',
+    'encargado': 'warning',
+    'Desarrollador': 'purple',
+    'desarrollador': 'purple'
+  }
+  
+  // eslint-disable-next-line security/detect-object-injection -- Safe: grado is validated string, gradosEspeciales is typed Record
+  return gradosEspeciales[grado] || 'default'
 }
 
 // Función para obtener texto del rol
@@ -272,11 +341,11 @@ const loadUsers = async () => {
       // Cargar datos completos para la tabla
       usersTableData.value = users.map((user, index) => ({
         numero: index + 1,
-        grado: user.grado || 'N/A',
+        grado: formatearGrado(user.grado),
         nombre: `${user.nombre} ${user.apellido}`,
         cedula: user.username,
         fechaCreacion: formatearFecha(user.createdAt),
-        ultimoAcceso: formatearFecha(user.lastLogin),
+        ultimoAcceso: formatearUltimoAcceso(user.lastLogin),
         role: user.role,
         id: user.id
       }))
